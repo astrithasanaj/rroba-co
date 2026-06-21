@@ -10,7 +10,7 @@ export const Route = createFileRoute("/search")({
   component: SearchPage,
 });
 
-const recent = ["Zara blazer", "Nike Air Max", "Vintage çantë", "Gucci"];
+const recent = ["Zara blazer", "Nike Air Max", "Vintage çantë", "\n"];
 
 const filterGroups = [
   { label: "Gjinia", options: ["Femra", "Meshkuj", "Fëmijë"] },
@@ -19,7 +19,7 @@ const filterGroups = [
     options: ["Veshje", "Këpucë", "Çanta", "Aksesorë", "Vintage", "Premium"],
   },
   { label: "Madhësia", options: ["XS", "S", "M", "L", "XL", "38", "40", "42"] },
-  { label: "Marka", options: ["Zara", "Nike", "H&M", "Gucci", "Levi's", "Mango"] },
+  { label: "Marka", options: ["Zara", "Nike", "H&M", "\n", "Levi's", "Mango"] },
   { label: "Çmimi", options: ["< €20", "€20–50", "€50–100", "€100+"] },
   { label: "Gjendja", options: ["Si i ri", "Shumë i mirë", "I mirë"] },
   { label: "Qyteti", options: ["Prishtinë", "Prizren", "Pejë", "Tiranë"] },
