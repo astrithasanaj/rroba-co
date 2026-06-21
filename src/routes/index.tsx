@@ -48,7 +48,7 @@ function HomePage() {
       {/* Header */}
       <header className="sticky top-0 z-30 flex items-center justify-between bg-background/95 px-5 py-4 backdrop-blur">
         <h1 className="font-display text-3xl tracking-tight">
-          rroba<span className="text-accent">.</span>
+          Rroba
         </h1>
         <div className="flex items-center gap-1">
           <Link
