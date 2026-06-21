@@ -108,11 +108,11 @@ function SearchPage() {
         <div className="px-5 py-4">
           <section>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {"\n"}
+              Kërkimet e fundit
             </h3>
             <div className="">
               {recent.map((r, i) => (
-                <CategoryChip key={i} label={r} onClick={() => setQ(r)} />
+                r.trim() ? <CategoryChip key={i} label={r} onClick={() => setQ(r)} /> : null
               ))}
             </div>
           </section>
