@@ -17,7 +17,7 @@ const womenMenSubs = [
   "Çanta",
   "Aksesorë",
   "Vintage",
-  "Designer/Premium",
+  "Designer",
 ];
 const kidsSubs = ["Vajza", "Djem", "Këpucë", "Aksesorë"];
 
