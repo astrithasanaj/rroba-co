@@ -5,7 +5,7 @@ export type Subcategory =
   | "Çanta"
   | "Aksesorë"
   | "Vintage"
-  | "Designer/Premium"
+  | "Designer"
   | "Vajza"
   | "Djem";
 
@@ -134,7 +134,7 @@ export const products: Product[] = [
     color: "E zezë",
     city: "Prishtinë",
     gender: "Femra",
-    category: "Designer/Premium",
+    category: "Designer",
     image: u("photo-1584917865442-de89df76afd3"),
     description: "GG Marmont autentike me kartelë. Pa gërvishtje.",
     seller: {
