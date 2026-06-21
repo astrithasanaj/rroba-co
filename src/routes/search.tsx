@@ -108,7 +108,7 @@ function SearchPage() {
         <div className="px-5 py-4">
           <section>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Kërkimet e fundit
+              {"\n"}
             </h3>
             <div className="flex flex-wrap gap-2">
               {recent.map((r) => (
