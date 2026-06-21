@@ -110,7 +110,7 @@ function SearchPage() {
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {"\n"}
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="">
               {recent.map((r, i) => (
                 <CategoryChip key={i} label={r} onClick={() => setQ(r)} />
               ))}
