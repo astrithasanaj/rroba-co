@@ -10,7 +10,7 @@ export const Route = createFileRoute("/search")({
   component: SearchPage,
 });
 
-const recent = ["Zara blazer", "Nike Air Max", "Vintage çantë", "\n"];
+const recent = ["\n", "\n", "\n", "\n"];
 
 const filterGroups = [
   { label: "Gjinia", options: ["Femra", "Meshkuj", "Fëmijë"] },
@@ -110,9 +110,9 @@ function SearchPage() {
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {"\n"}
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {recent.map((r) => (
-                <CategoryChip key={r} label={r} onClick={() => setQ(r)} />
+            <div className="">
+              {recent.map((r, i) => (
+                <CategoryChip key={i} label={r} onClick={() => setQ(r)} />
               ))}
             </div>
           </section>
