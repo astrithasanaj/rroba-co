@@ -73,7 +73,7 @@ function SearchPage() {
               autoFocus
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Kërko marka, stile ose artikuj"
+              placeholder="Kerko"
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
             {q && (
