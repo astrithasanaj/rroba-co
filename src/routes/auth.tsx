@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -13,10 +13,12 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -26,23 +28,34 @@ function AuthPage() {
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
     setLoading(true);
+    setAuthError("");
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: normalizedEmail,
           password,
           options: { emailRedirectTo: window.location.origin + "/profile" },
         });
         if (error) throw error;
         toast.success("Kontrollo emailin për të konfirmuar llogarinë");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
+        });
         if (error) throw error;
-        navigate({ to: "/profile" });
+        if (!data.session || !data.user) {
+          throw new Error("Innloggingen ble ikke fullført. Prøv igjen.");
+        }
+        await router.invalidate();
+        navigate({ to: "/profile", replace: true });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Diçka shkoi keq");
+      const message = getAuthErrorMessage(err);
+      setAuthError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -89,7 +102,10 @@ function AuthPage() {
             required
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setAuthError("");
+            }}
             className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
           />
           <input
@@ -98,9 +114,13 @@ function AuthPage() {
             minLength={6}
             placeholder="Fjalëkalim"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setAuthError("");
+            }}
             className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
           />
+          {authError ? <p className="px-2 text-sm text-destructive">{authError}</p> : null}
           <PrimaryButton type="submit" disabled={loading}>
             {loading ? "Duke pritur..." : mode === "signin" ? "Hyr" : "Regjistrohu"}
           </PrimaryButton>
