@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      listings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_paths: string[]
+          price: number
+          size: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_paths: string[]
+          price: number
+          size: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_paths?: string[]
+          price?: number
+          size?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       photos: {
         Row: {
           caption: string | null
