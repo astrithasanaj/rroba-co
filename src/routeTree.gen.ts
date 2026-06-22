@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as SearchRouteImport } from './routes/search'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
@@ -27,11 +26,6 @@ const SellRoute = SellRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -71,7 +65,6 @@ export interface FileRoutesByFullPath {
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
   '/product/$id': typeof ProductIdRoute
@@ -82,7 +75,6 @@ export interface FileRoutesByTo {
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
   '/product/$id': typeof ProductIdRoute
@@ -94,7 +86,6 @@ export interface FileRoutesById {
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
   '/product/$id': typeof ProductIdRoute
@@ -107,7 +98,6 @@ export interface FileRouteTypes {
     | '/messages'
     | '/notifications'
     | '/onboarding'
-    | '/profile'
     | '/search'
     | '/sell'
     | '/product/$id'
@@ -118,7 +108,6 @@ export interface FileRouteTypes {
     | '/messages'
     | '/notifications'
     | '/onboarding'
-    | '/profile'
     | '/search'
     | '/sell'
     | '/product/$id'
@@ -129,7 +118,6 @@ export interface FileRouteTypes {
     | '/messages'
     | '/notifications'
     | '/onboarding'
-    | '/profile'
     | '/search'
     | '/sell'
     | '/product/$id'
@@ -141,7 +129,6 @@ export interface RootRouteChildren {
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
-  ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
   SellRoute: typeof SellRoute
   ProductIdRoute: typeof ProductIdRoute
@@ -161,13 +148,6 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -221,7 +201,6 @@ const rootRouteChildren: RootRouteChildren = {
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
-  ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,
   SellRoute: SellRoute,
   ProductIdRoute: ProductIdRoute,
