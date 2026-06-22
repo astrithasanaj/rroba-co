@@ -14,8 +14,61 @@ export type Database = {
   }
   public: {
     Tables: {
+      listing_likes: {
+        Row: {
+          created_at: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_likes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_saves: {
+        Row: {
+          created_at: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_saves_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
+          brand: string
           category: string
           created_at: string
           description: string
@@ -23,11 +76,13 @@ export type Database = {
           image_paths: string[]
           price: number
           size: string
+          sold: boolean
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          brand?: string
           category: string
           created_at?: string
           description: string
@@ -35,11 +90,13 @@ export type Database = {
           image_paths: string[]
           price: number
           size: string
+          sold?: boolean
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          brand?: string
           category?: string
           created_at?: string
           description?: string
@@ -47,6 +104,7 @@ export type Database = {
           image_paths?: string[]
           price?: number
           size?: string
+          sold?: boolean
           title?: string
           updated_at?: string
           user_id?: string
@@ -77,6 +135,36 @@ export type Database = {
           public_url?: string
           storage_path?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      ratings: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          rater_id: string
+          seller_id: string
+          stars: number
+          updated_at: string
+        }
+        Insert: {
+          comment?: string
+          created_at?: string
+          id?: string
+          rater_id: string
+          seller_id: string
+          stars: number
+          updated_at?: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          rater_id?: string
+          seller_id?: string
+          stars?: number
+          updated_at?: string
         }
         Relationships: []
       }
