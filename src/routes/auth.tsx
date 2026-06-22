@@ -11,6 +11,18 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+function getAuthErrorMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : "Innloggingen feilet. Prøv igjen.";
+  const lower = message.toLowerCase();
+  if (lower.includes("invalid login credentials")) {
+    return "Feil e-post eller passord.";
+  }
+  if (lower.includes("email not confirmed")) {
+    return "E-posten må bekreftes før du kan logge inn.";
+  }
+  return message;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const router = useRouter();
