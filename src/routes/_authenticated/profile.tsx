@@ -93,25 +93,87 @@ function ProfilePage() {
     };
   }, []);
 
+  const ALLOWED_MIME: Record<string, string> = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "image/gif": "gif",
+  };
+  const MAX_BYTES = 10 * 1024 * 1024;
+  const MIN_DIM = 100;
+  const MAX_DIM = 8000;
+  // Magic-byte signatures for the allowed MIME types
+  const sniffMime = async (file: File): Promise<string | null> => {
+    const buf = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    const hex = Array.from(buf).map((b) => b.toString(16).padStart(2, "0")).join("");
+    if (hex.startsWith("ffd8ff")) return "image/jpeg";
+    if (hex.startsWith("89504e470d0a1a0a")) return "image/png";
+    if (hex.startsWith("47494638")) return "image/gif";
+    if (hex.startsWith("52494646") && buf.length >= 12) {
+      const tag = String.fromCharCode(...buf.slice(8, 12));
+      if (tag === "WEBP") return "image/webp";
+    }
+    return null;
+  };
+  const readDimensions = (file: File): Promise<{ w: number; h: number }> =>
+    new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve({ w: img.naturalWidth, h: img.naturalHeight });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("decode_failed"));
+      };
+      img.src = url;
+    });
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
     setUploading(true);
+    let successCount = 0;
     try {
       for (const file of Array.from(files)) {
-        if (!file.type.startsWith("image/")) {
-          toast.error(`${file.name} nuk është foto`);
+        if (!ALLOWED_MIME[file.type]) {
+          toast.error(`${file.name}: format i palejuar (vetëm JPG, PNG, WEBP, GIF)`);
           continue;
         }
-        if (file.size > 10 * 1024 * 1024) {
-          toast.error(`${file.name} është më e madhe se 10MB`);
+        if (file.size === 0) {
+          toast.error(`${file.name} është bosh`);
           continue;
         }
-        const ext = file.name.split(".").pop() || "jpg";
+        if (file.size > MAX_BYTES) {
+          toast.error(`${file.name} kalon 10MB`);
+          continue;
+        }
+        const sniffed = await sniffMime(file);
+        if (!sniffed || sniffed !== file.type) {
+          toast.error(`${file.name}: përmbajtja nuk përputhet me llojin e skedarit`);
+          continue;
+        }
+        let dims: { w: number; h: number };
+        try {
+          dims = await readDimensions(file);
+        } catch {
+          toast.error(`${file.name}: nuk u dekodua si foto e vlefshme`);
+          continue;
+        }
+        if (dims.w < MIN_DIM || dims.h < MIN_DIM) {
+          toast.error(`${file.name}: foto shumë e vogël (min ${MIN_DIM}px)`);
+          continue;
+        }
+        if (dims.w > MAX_DIM || dims.h > MAX_DIM) {
+          toast.error(`${file.name}: foto shumë e madhe (max ${MAX_DIM}px)`);
+          continue;
+        }
+        const ext = ALLOWED_MIME[sniffed];
         const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from("photos")
-          .upload(path, file, { contentType: file.type, upsert: false });
+          .upload(path, file, { contentType: sniffed, upsert: false });
         if (upErr) {
           toast.error(upErr.message);
           continue;
@@ -124,9 +186,11 @@ function ProfilePage() {
         if (insErr) {
           toast.error(insErr.message);
           await supabase.storage.from("photos").remove([path]);
+          continue;
         }
+        successCount++;
       }
-      toast.success("Fotot u ngarkuan");
+      if (successCount > 0) toast.success(`${successCount} foto u ngarkuan`);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
