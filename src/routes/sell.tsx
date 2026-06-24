@@ -256,32 +256,6 @@ function SellPage() {
               onChange={pickFiles}
             />
 
-            <button
-              type="button"
-              onClick={runAi}
-              disabled={aiLoading || images.length === 0}
-              className="mt-5 flex w-full items-center gap-4 rounded-2xl bg-black p-4 text-left text-white disabled:opacity-60"
-            >
-              <span
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-full"
-                style={{ background: "rgba(185,74,31,0.18)", color: RUST }}
-              >
-                {aiLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Sparkles className="h-5 w-5" />
-                )}
-              </span>
-              <span className="flex-1">
-                <span className="block text-[10px] font-semibold tracking-[0.22em] text-white/60">
-                  AI ASSISTANT
-                </span>
-                <span className="block font-display text-lg italic">
-                  {aiLoading ? "Po analizon fotot..." : "Sugjero me AI"}
-                </span>
-              </span>
-              <ArrowRight className="h-4 w-4 text-white/70" />
-            </button>
           </Section>
 
           {/* 04 */}
