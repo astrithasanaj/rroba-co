@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ListingView } from "@/lib/listings";
+import { LikeButton } from "@/components/marketplace/LikeButton";
 
 export function ListingCard({ listing }: { listing: ListingView }) {
   return (
@@ -19,6 +20,10 @@ export function ListingCard({ listing }: { listing: ListingView }) {
             }`}
           />
         )}
+        <LikeButton
+          listingId={listing.id}
+          className="absolute right-2 top-2 h-8 w-8 shadow-sm"
+        />
         {listing.sold && (
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
             <span className="rotate-[-18deg] rounded-md bg-destructive px-4 py-1 text-xs font-black tracking-widest text-destructive-foreground shadow">
