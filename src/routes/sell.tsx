@@ -364,13 +364,15 @@ function ChipRow({
   options,
   value,
   onChange,
+  scrollable,
 }: {
   options: string[];
   value: string;
   onChange: (v: string) => void;
+  scrollable?: boolean;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={`flex gap-2 ${scrollable ? "flex-nowrap overflow-x-auto pb-1" : "flex-wrap"}`}>
       {options.map((opt) => {
         const active = value === opt;
         return (
@@ -378,7 +380,7 @@ function ChipRow({
             key={opt}
             type="button"
             onClick={() => onChange(opt)}
-            className={`rounded-full border px-4 py-2 text-sm transition ${
+            className={`shrink-0 rounded-full border px-4 py-2 text-sm transition ${
               active
                 ? "border-black bg-black text-white"
                 : "border-black/15 bg-transparent text-foreground hover:bg-black/[0.04]"
