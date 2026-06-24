@@ -13,7 +13,6 @@ import {
   MoreVertical,
   Plus,
   Settings as SettingsIcon,
-  Star,
   Tag,
   X,
 } from "lucide-react";
@@ -355,6 +354,18 @@ function ProfilePage() {
           <SheetHeader>
             <SheetTitle>Cilësimet</SheetTitle>
           </SheetHeader>
+          <button
+            onClick={() => {
+              setSettingsOpen(false);
+              setOffersOpen(true);
+            }}
+            className="mt-4 inline-flex w-full items-center justify-between rounded-2xl border border-border px-4 py-3 text-sm font-semibold hover:bg-secondary"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Tag className="h-4 w-4" /> Ofertat
+            </span>
+            <span className="text-muted-foreground">›</span>
+          </button>
           <div className="mt-4">
             <SettingsTab
               profile={profile}
