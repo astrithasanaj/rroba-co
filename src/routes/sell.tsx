@@ -12,7 +12,7 @@ const GENDERS = ["Femra", "Meshkuj", "Fëmijë"] as const;
 const CATEGORIES = ["Veshje", "Këpucë", "Çanta", "Aksesorë", "Vintage", "Designer/Premium"];
 const CONDITIONS = ["I ri me etiketë", "Shkëlqyeshëm", "Shumë mirë", "Mirë"];
 const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
-const DELIVERY = ["Posta", "Takim", "Dorëzim në shtëpi"];
+const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "One size"];
 const COLORS = ["E zezë", "E bardhë", "Bezhë", "Kafe", "Gri", "Blu", "E gjelbër", "E kuqe", "E verdhë", "Portokalli", "Rozë", "Vjollcë"];
 
