@@ -52,12 +52,6 @@ function HomePage() {
         </h1>
         <div className="flex items-center gap-1">
           <Link
-            to="/search"
-            className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
-          >
-            <Search className="h-5 w-5" strokeWidth={1.7} />
-          </Link>
-          <Link
             to="/notifications"
             className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
           >
