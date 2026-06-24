@@ -26,11 +26,34 @@ function getAuthErrorMessage(error: unknown) {
 function AuthPage() {
   const navigate = useNavigate();
   const router = useRouter();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState("");
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) return;
+    setLoading(true);
+    setAuthError("");
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: window.location.origin + "/reset-password",
+      });
+      if (error) throw error;
+      toast.success("Të dërguam një email me lidhjen për rivendosjen e fjalëkalimit");
+      setMode("signin");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Dërgimi dështoi";
+      setAuthError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -108,45 +131,84 @@ function AuthPage() {
           <div className="h-px flex-1 bg-border" /> ose <div className="h-px flex-1 bg-border" />
         </div>
 
-        <form onSubmit={handleEmail} className="space-y-3">
-          <input
-            type="email"
-            required
-            placeholder="Email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setAuthError("");
-            }}
-            className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
-          />
-          <input
-            type="password"
-            required
-            minLength={6}
-            placeholder="Fjalëkalim"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setAuthError("");
-            }}
-            className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
-          />
-          {authError ? <p className="px-2 text-sm text-destructive">{authError}</p> : null}
-          <PrimaryButton type="submit" disabled={loading}>
-            {loading ? "Duke pritur..." : mode === "signin" ? "Hyr" : "Regjistrohu"}
-          </PrimaryButton>
-        </form>
+        {mode === "forgot" ? (
+          <form onSubmit={handleForgot} className="space-y-3">
+            <input
+              type="email"
+              required
+              placeholder="Email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setAuthError("");
+              }}
+              className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
+            />
+            {authError ? <p className="px-2 text-sm text-destructive">{authError}</p> : null}
+            <PrimaryButton type="submit" disabled={loading}>
+              {loading ? "Duke dërguar..." : "Dërgo lidhjen"}
+            </PrimaryButton>
+          </form>
+        ) : (
+          <form onSubmit={handleEmail} className="space-y-3">
+            <input
+              type="email"
+              required
+              placeholder="Email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setAuthError("");
+              }}
+              className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
+            />
+            <input
+              type="password"
+              required
+              minLength={6}
+              placeholder="Fjalëkalim"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setAuthError("");
+              }}
+              className="w-full rounded-full border border-border bg-background px-4 py-3 text-sm outline-none focus:border-foreground"
+            />
+            {authError ? <p className="px-2 text-sm text-destructive">{authError}</p> : null}
+            <PrimaryButton type="submit" disabled={loading}>
+              {loading ? "Duke pritur..." : mode === "signin" ? "Hyr" : "Regjistrohu"}
+            </PrimaryButton>
+            {mode === "signin" ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("forgot");
+                  setAuthError("");
+                }}
+                className="w-full pt-1 text-center text-xs text-muted-foreground underline"
+              >
+                Keni harruar fjalëkalimin?
+              </button>
+            ) : null}
+          </form>
+        )}
 
         <button
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          onClick={() => {
+            setAuthError("");
+            if (mode === "forgot") setMode("signin");
+            else setMode(mode === "signin" ? "signup" : "signin");
+          }}
           className="mt-6 w-full text-center text-sm text-muted-foreground underline"
         >
-          {mode === "signin"
-            ? "Nuk ke llogari? Regjistrohu"
-            : "Ke llogari? Hyr"}
+          {mode === "forgot"
+            ? "Kthehu tek hyrja"
+            : mode === "signin"
+              ? "Nuk ke llogari? Regjistrohu"
+              : "Ke llogari? Hyr"}
         </button>
       </div>
     </MobileShell>
   );
 }
+
