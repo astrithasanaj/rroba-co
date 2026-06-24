@@ -109,6 +109,7 @@ export type Database = {
           color: string
           condition: string
           created_at: string
+          delivery: string[]
           description: string
           gender: string
           id: string
@@ -128,7 +129,8 @@ export type Database = {
           color?: string
           condition?: string
           created_at?: string
-          description: string
+          delivery?: string[]
+          description?: string
           gender?: string
           id?: string
           image_paths: string[]
@@ -147,6 +149,7 @@ export type Database = {
           color?: string
           condition?: string
           created_at?: string
+          delivery?: string[]
           description?: string
           gender?: string
           id?: string
