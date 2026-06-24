@@ -1,27 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Camera, ChevronLeft, Loader2, Plus, X } from "lucide-react";
+import { ArrowRight, Camera, ChevronLeft, Loader2, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
-import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CATEGORIES, CITIES, CONDITIONS, GENDERS } from "@/lib/listings";
+import { suggestListingFromPhotos } from "@/lib/sell-ai.functions";
 
 export const Route = createFileRoute("/sell")({
   component: SellPage,
 });
 
-const MIN = 3;
-const MAX = 10;
+const GENDERS = ["Femra", "Meshkuj", "Fëmijë"] as const;
+const CATEGORIES = ["Veshje", "Këpucë", "Çanta", "Aksesorë", "Vintage", "Designer/Premium"];
+const CONDITIONS = ["I ri me etiketë", "Shkëlqyeshëm", "Shumë mirë", "Mirë"];
+const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
+const DELIVERY = ["Posta", "Takim", "Dorëzim në shtëpi"];
+
+const MAX_PHOTOS = 10;
 const ALLOWED: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
@@ -31,24 +26,30 @@ const MAX_BYTES = 10 * 1024 * 1024;
 
 type PendingImage = { file: File; previewUrl: string; mime: string };
 
+const CREAM = "#f6f1e7";
+const RUST = "#b94a1f";
+
 function SellPage() {
   const navigate = useNavigate();
+  const suggest = useServerFn(suggestListingFromPhotos);
   const [userId, setUserId] = useState<string | null>(null);
-  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [images, setImages] = useState<PendingImage[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [gender, setGender] = useState("");
+  const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
   const [size, setSize] = useState("");
-  const [condition, setCondition] = useState("");
   const [color, setColor] = useState("");
-  const [city, setCity] = useState("");
-  const [gender, setGender] = useState("");
+  const [condition, setCondition] = useState("");
   const [price, setPrice] = useState("");
+  const [city, setCity] = useState("");
+  const [delivery, setDelivery] = useState<string[]>([]);
   const [description, setDescription] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -57,13 +58,12 @@ function SellPage() {
     });
   }, [navigate]);
 
-  const pickFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const pickFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    const remaining = MAX - images.length;
-    const list = Array.from(files).slice(0, remaining);
+    const remaining = MAX_PHOTOS - images.length;
     const added: PendingImage[] = [];
-    for (const file of list) {
+    for (const file of Array.from(files).slice(0, remaining)) {
       if (!ALLOWED[file.type]) {
         toast.error(`${file.name}: format i palejuar`);
         continue;
@@ -81,39 +81,60 @@ function SellPage() {
   const removeImage = (idx: number) => {
     setImages((p) => {
       const next = [...p];
-      const [removed] = next.splice(idx, 1);
-      if (removed) URL.revokeObjectURL(removed.previewUrl);
+      const [r] = next.splice(idx, 1);
+      if (r) URL.revokeObjectURL(r.previewUrl);
       return next;
     });
   };
 
-  const moveImage = (idx: number, dir: -1 | 1) => {
-    setImages((p) => {
-      const next = [...p];
-      const target = idx + dir;
-      if (target < 0 || target >= next.length) return p;
-      [next[idx], next[target]] = [next[target], next[idx]];
-      return next;
+  const toggleDelivery = (opt: string) =>
+    setDelivery((p) => (p.includes(opt) ? p.filter((x) => x !== opt) : [...p, opt]));
+
+  const fileToDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
     });
+
+  const runAi = async () => {
+    if (images.length === 0) {
+      toast.error("Shto së paku një foto për të përdorur AI");
+      return;
+    }
+    if (aiLoading) return;
+    setAiLoading(true);
+    try {
+      const dataUrls = await Promise.all(images.slice(0, 6).map((i) => fileToDataUrl(i.file)));
+      const s = await suggest({ data: { images: dataUrls } });
+      if (s.title) setTitle(s.title);
+      if (s.brand) setBrand(s.brand);
+      if (s.size) setSize(s.size);
+      if (s.color) setColor(s.color);
+      if (s.condition) setCondition(s.condition);
+      toast.success("Sugjerimet u plotësuan");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "AI dështoi");
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const priceNum = Number(price.replace(",", "."));
-  const step1Valid = images.length >= MIN && images.length <= MAX;
-  const step2Valid =
+  const canPublish =
+    !!gender &&
+    !!category &&
+    images.length >= 1 &&
     title.trim().length > 0 &&
-    brand.trim().length > 0 &&
-    category &&
-    size.trim().length > 0 &&
-    condition &&
-    city &&
-    gender &&
+    !!condition &&
     price.trim().length > 0 &&
     Number.isFinite(priceNum) &&
     priceNum >= 0 &&
-    description.trim().length > 0;
+    !!city;
 
   const publish = async () => {
-    if (!userId || submitting || !step1Valid || !step2Valid) return;
+    if (!userId || submitting || !canPublish) return;
     setSubmitting(true);
     const uploaded: string[] = [];
     try {
@@ -141,6 +162,8 @@ function SellPage() {
           price: priceNum,
           description: description.trim(),
           image_paths: uploaded,
+          delivery,
+          status: "active",
         })
         .select("id")
         .single();
@@ -148,7 +171,7 @@ function SellPage() {
         await supabase.storage.from("photos").remove(uploaded);
         throw new Error(error.message);
       }
-      toast.success("Artikulli u publikua!");
+      toast.success("Artikulli u publikua me sukses! 🎉");
       navigate({ to: "/product/$id", params: { id: data.id } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Publikimi dështoi");
@@ -158,221 +181,317 @@ function SellPage() {
   };
 
   return (
-    <MobileShell>
-      <header className="sticky top-0 z-30 flex items-center gap-3 bg-background/95 px-4 py-3 backdrop-blur">
-        {step > 1 ? (
+    <div className="min-h-screen" style={{ background: CREAM }}>
+      <div
+        className="relative mx-auto min-h-screen w-full max-w-[480px] pb-32"
+        style={{ background: CREAM }}
+      >
+        <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-black/5 px-4 py-4 backdrop-blur" style={{ background: `${CREAM}f0` }}>
           <button
-            onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
-            className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary"
+            onClick={() => navigate({ to: "/" })}
+            aria-label="Mbyll"
+            className="grid h-9 w-9 place-items-center rounded-full hover:bg-black/5"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
-        ) : (
-          <div className="h-9 w-9" />
-        )}
-        <h1 className="flex-1 text-center font-display text-lg">
-          Shit artikull · Hap {step}/3
-        </h1>
-        <div className="h-9 w-9" />
-      </header>
+          <h1 className="font-display text-2xl italic">Shit një artikull</h1>
+        </header>
 
-      <div className="flex h-1 gap-1 px-5">
-        {[1, 2, 3].map((s) => (
-          <div
-            key={s}
-            className={`flex-1 rounded-full ${s <= step ? "bg-foreground" : "bg-secondary"}`}
-          />
-        ))}
-      </div>
-
-      <div className="space-y-5 px-5 py-5">
-        {step === 1 && (
-          <div className="space-y-3">
-            <div>
-              <Label>
-                Foto ({images.length}/{MAX}) — minimum {MIN}
-              </Label>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {images.map((img, idx) => (
-                  <div
-                    key={img.previewUrl}
-                    className="relative aspect-square overflow-hidden rounded-lg bg-secondary"
+        <div className="space-y-10 px-5 py-6">
+          {/* 01 */}
+          <Section num="01" title="Për kë është artikulli?">
+            <div className="grid grid-cols-3 gap-2.5">
+              {GENDERS.map((g) => {
+                const active = gender === g;
+                return (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setGender(g)}
+                    className={`rounded-lg px-3 py-4 text-xs font-semibold tracking-[0.15em] transition ${
+                      active
+                        ? "bg-black text-white"
+                        : "bg-black/[0.04] text-foreground hover:bg-black/[0.07]"
+                    }`}
                   >
-                    <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
-                    {idx === 0 && (
-                      <span className="absolute bottom-1 left-1 rounded bg-background/90 px-1.5 text-[10px] font-semibold">
-                        Kopertinë
+                    {g.toUpperCase()}
+                  </button>
+                );
+              })}
+            </div>
+          </Section>
+
+          {/* 02 */}
+          <Section num="02" title="Zgjedh kategorinë">
+            <ChipRow options={CATEGORIES} value={category} onChange={setCategory} />
+          </Section>
+
+          {/* 03 */}
+          <Section num="03" title="Foto">
+            <div className="grid grid-cols-4 gap-2.5">
+              {Array.from({ length: 4 }).map((_, i) => {
+                const img = images[i];
+                if (img) {
+                  return (
+                    <div
+                      key={img.previewUrl}
+                      className="relative aspect-square overflow-hidden rounded-lg bg-black/[0.04]"
+                    >
+                      <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(i)}
+                        className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/70 text-white"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                }
+                const isFirstEmpty = i === images.length;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => isFirstEmpty && fileRef.current?.click()}
+                    disabled={!isFirstEmpty}
+                    className={`grid aspect-square place-items-center rounded-lg text-muted-foreground transition ${
+                      isFirstEmpty
+                        ? "border border-dashed border-black/30 bg-black/[0.04] hover:bg-black/[0.07]"
+                        : "bg-black/[0.04]"
+                    }`}
+                  >
+                    {isFirstEmpty && (
+                      <span className="flex flex-col items-center gap-1.5">
+                        <Camera className="h-5 w-5" />
+                        <span className="text-[10px] font-semibold tracking-[0.15em]">SHTO</span>
                       </span>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => removeImage(idx)}
-                      className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-background/90"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                    <div className="absolute inset-x-1 bottom-1 flex justify-between">
-                      <button
-                        type="button"
-                        onClick={() => moveImage(idx, -1)}
-                        disabled={idx === 0}
-                        className="grid h-5 w-5 place-items-center rounded-full bg-background/90 disabled:opacity-30"
-                      >
-                        <ArrowLeft className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveImage(idx, 1)}
-                        disabled={idx === images.length - 1}
-                        className="grid h-5 w-5 place-items-center rounded-full bg-background/90 disabled:opacity-30"
-                      >
-                        <ArrowRight className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                {images.length < MAX && (
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    className="grid aspect-square place-items-center rounded-lg border-2 border-dashed border-border text-muted-foreground hover:bg-secondary"
-                  >
-                    {images.length === 0 ? (
-                      <Camera className="h-5 w-5" />
-                    ) : (
-                      <Plus className="h-5 w-5" />
-                    )}
                   </button>
+                );
+              })}
+            </div>
+            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Shto deri në {MAX_PHOTOS} foto {images.length > 0 ? `· ${images.length}/${MAX_PHOTOS}` : ""}
+            </p>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              className="hidden"
+              onChange={pickFiles}
+            />
+
+            <button
+              type="button"
+              onClick={runAi}
+              disabled={aiLoading || images.length === 0}
+              className="mt-5 flex w-full items-center gap-4 rounded-2xl bg-black p-4 text-left text-white disabled:opacity-60"
+            >
+              <span
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full"
+                style={{ background: "rgba(185,74,31,0.18)", color: RUST }}
+              >
+                {aiLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Sparkles className="h-5 w-5" />
                 )}
-              </div>
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                multiple
-                className="hidden"
-                onChange={pickFiles}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              disabled={!step1Valid}
-              className="inline-flex w-full items-center justify-center rounded-full bg-foreground py-3.5 text-sm font-semibold text-background disabled:opacity-50"
-            >
-              Vazhdo
+              </span>
+              <span className="flex-1">
+                <span className="block text-[10px] font-semibold tracking-[0.22em] text-white/60">
+                  AI ASSISTANT
+                </span>
+                <span className="block font-display text-lg italic">
+                  {aiLoading ? "Po analizon fotot..." : "Sugjero me AI"}
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 text-white/70" />
             </button>
-          </div>
-        )}
+          </Section>
 
-        {step === 2 && (
-          <div className="space-y-4">
-            <Field label="Titulli">
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} placeholder="P.sh. Xhaketë Levi's" />
-            </Field>
-            <Field label="Përshkrimi">
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                maxLength={2000}
-                rows={4}
-                placeholder="Tregoji blerësit gjendjen, materialin..."
-              />
-            </Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Kategoria">
-                <SelectInput value={category} onChange={setCategory} options={CATEGORIES.map((c) => c.value)} />
-              </Field>
-              <Field label="Marka">
-                <Input value={brand} onChange={(e) => setBrand(e.target.value)} maxLength={60} placeholder="Zara" />
-              </Field>
-              <Field label="Madhësia">
-                <Input value={size} onChange={(e) => setSize(e.target.value)} maxLength={20} placeholder="M, 38" />
-              </Field>
-              <Field label="Gjendja">
-                <SelectInput value={condition} onChange={setCondition} options={[...CONDITIONS]} />
-              </Field>
-              <Field label="Ngjyra">
-                <Input value={color} onChange={(e) => setColor(e.target.value)} maxLength={40} placeholder="E zezë" />
-              </Field>
-              <Field label="Qyteti">
-                <SelectInput value={city} onChange={setCity} options={[...CITIES]} />
-              </Field>
-              <Field label="Gjinia">
-                <SelectInput value={gender} onChange={setGender} options={[...GENDERS]} />
-              </Field>
-              <Field label="Çmimi (€)">
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
+          {/* 04 */}
+          <Section num="04" title="Detajet">
+            <FieldLabel>Titulli</FieldLabel>
+            <TextInput value={title} onChange={setTitle} placeholder="p.sh. Zara Oversized Blazer" maxLength={120} />
+
+            <FieldLabel className="mt-5">Marka</FieldLabel>
+            <TextInput value={brand} onChange={setBrand} placeholder="Zara" maxLength={60} />
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel>Madhësia</FieldLabel>
+                <TextInput value={size} onChange={setSize} placeholder="M" maxLength={20} />
+              </div>
+              <div>
+                <FieldLabel>Ngjyra</FieldLabel>
+                <TextInput value={color} onChange={setColor} placeholder="Bezhë" maxLength={40} />
+              </div>
+            </div>
+
+            <FieldLabel className="mt-5">Gjendja</FieldLabel>
+            <ChipRow options={CONDITIONS} value={condition} onChange={setCondition} />
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel>Çmimi (€)</FieldLabel>
+                <TextInput
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="25"
+                  onChange={setPrice}
+                  placeholder="45"
+                  inputMode="decimal"
+                  type="number"
                 />
-              </Field>
-            </div>
-            <button
-              type="button"
-              onClick={() => setStep(3)}
-              disabled={!step2Valid}
-              className="inline-flex w-full items-center justify-center rounded-full bg-foreground py-3.5 text-sm font-semibold text-background disabled:opacity-50"
-            >
-              Vazhdo në pamje
-            </button>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="space-y-4">
-            <div className="overflow-hidden rounded-2xl border border-border">
-              <img src={images[0]?.previewUrl} alt="" className="aspect-[4/5] w-full object-cover" />
-              <div className="space-y-2 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="font-display text-2xl">{title}</h2>
-                  <p className="font-display text-2xl">€{price}</p>
-                </div>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">{brand}</p>
-                <dl className="mt-3 grid grid-cols-2 gap-y-2 rounded-xl bg-secondary/50 p-3 text-sm">
-                  {[
-                    ["Kategoria", category],
-                    ["Madhësia", size],
-                    ["Gjendja", condition],
-                    ["Ngjyra", color || "—"],
-                    ["Qyteti", city],
-                    ["Gjinia", gender],
-                  ].map(([k, v]) => (
-                    <div key={k}>
-                      <dt className="text-[10px] uppercase text-muted-foreground">{k}</dt>
-                      <dd>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="whitespace-pre-wrap pt-2 text-sm">{description}</p>
+              </div>
+              <div>
+                <FieldLabel>Qyteti</FieldLabel>
+                <SelectInput value={city} onChange={setCity} options={CITIES} />
               </div>
             </div>
-            <button
-              type="button"
-              onClick={publish}
-              disabled={submitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground py-3.5 text-sm font-semibold text-background disabled:opacity-50"
-            >
-              {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {submitting ? "Po publikon..." : "Publiko"}
-            </button>
-          </div>
-        )}
+
+            <FieldLabel className="mt-5">Dorëzimi</FieldLabel>
+            <div className="flex flex-wrap gap-2">
+              {DELIVERY.map((d) => {
+                const active = delivery.includes(d);
+                return (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => toggleDelivery(d)}
+                    className={`rounded-full border px-4 py-2 text-sm transition ${
+                      active
+                        ? "border-black bg-black text-white"
+                        : "border-black/15 bg-transparent text-foreground hover:bg-black/[0.04]"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                );
+              })}
+            </div>
+
+            <FieldLabel className="mt-5">Përshkrimi</FieldLabel>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength={2000}
+              rows={5}
+              placeholder="Trego diçka për artikullin..."
+              className="w-full resize-none rounded-lg border-none bg-black/[0.04] px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-black/20"
+            />
+          </Section>
+
+          <button
+            type="button"
+            onClick={publish}
+            disabled={!canPublish || submitting}
+            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-black py-4 text-sm font-semibold tracking-[0.2em] text-white transition disabled:bg-black/40"
+          >
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {submitting ? "PO PUBLIKON..." : "PUBLIKO"}
+          </button>
+        </div>
       </div>
-    </MobileShell>
+    </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Section({
+  num,
+  title,
+  children,
+}: {
+  num: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div>
-      <Label>{label}</Label>
-      <div className="mt-1">{children}</div>
+    <section>
+      <div className="mb-4 flex items-baseline gap-3">
+        <span className="font-display text-xs italic tracking-widest" style={{ color: RUST }}>
+          {num}
+        </span>
+        <h2 className="font-display text-2xl italic">{title}</h2>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function ChipRow({
+  options,
+  value,
+  onChange,
+}: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((opt) => {
+        const active = value === opt;
+        return (
+          <button
+            key={opt}
+            type="button"
+            onClick={() => onChange(opt)}
+            className={`rounded-full border px-4 py-2 text-sm transition ${
+              active
+                ? "border-black bg-black text-white"
+                : "border-black/15 bg-transparent text-foreground hover:bg-black/[0.04]"
+            }`}
+          >
+            {opt}
+          </button>
+        );
+      })}
     </div>
+  );
+}
+
+function FieldLabel({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <p
+      className={`mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground ${className}`}
+    >
+      {children}
+    </p>
+  );
+}
+
+function TextInput({
+  value,
+  onChange,
+  placeholder,
+  maxLength,
+  inputMode,
+  type = "text",
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  maxLength?: number;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  type?: string;
+}) {
+  return (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      maxLength={maxLength}
+      inputMode={inputMode}
+      type={type}
+      className="w-full rounded-lg border-none bg-black/[0.04] px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-black/20"
+    />
   );
 }
 
@@ -386,17 +505,19 @@ function SelectInput({
   options: string[];
 }) {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger>
-        <SelectValue placeholder="Zgjidh" />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((o) => (
-          <SelectItem key={o} value={o}>
-            {o}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full appearance-none rounded-lg border-none bg-black/[0.04] bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%2218 15 12 21 6 15%22/><polyline points=%226 9 12 3 18 15%22/></svg>')] bg-[right_1rem_center] bg-no-repeat px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
+    >
+      <option value="" disabled>
+        Zgjidh
+      </option>
+      {options.map((o) => (
+        <option key={o} value={o}>
+          {o}
+        </option>
+      ))}
+    </select>
   );
 }
