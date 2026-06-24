@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Heart, Share2, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
+import { ArrowLeft, Share2, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
+import { LikeButton, SaveButton } from "@/components/marketplace/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
@@ -27,7 +28,6 @@ function ProductDetail() {
   const [seller, setSeller] = useState<Seller | null>(null);
   const [similar, setSimilar] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(true);
-  const [liked, setLiked] = useState(false);
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
@@ -64,35 +64,12 @@ function ProductDetail() {
       setSeller(prof as Seller | null);
       setSimilar(simHydrated);
       setLoading(false);
-      if (me) {
-        const { data: like } = await supabase
-          .from("listing_likes")
-          .select("listing_id")
-          .eq("user_id", me)
-          .eq("listing_id", row.id)
-          .maybeSingle();
-        setLiked(!!like);
-      }
     };
     load();
     return () => {
       active = false;
     };
-  }, [id, me]);
-
-  const toggleLike = async () => {
-    if (!me) {
-      navigate({ to: "/auth" });
-      return;
-    }
-    if (liked) {
-      await supabase.from("listing_likes").delete().eq("user_id", me).eq("listing_id", id);
-      setLiked(false);
-    } else {
-      await supabase.from("listing_likes").insert({ user_id: me, listing_id: id });
-      setLiked(true);
-    }
-  };
+  }, [id]);
 
   const sendMessage = async () => {
     if (!me) {
