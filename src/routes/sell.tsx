@@ -13,6 +13,8 @@ const CATEGORIES = ["Veshje", "Këpucë", "Çanta", "Aksesorë", "Vintage", "Des
 const CONDITIONS = ["I ri me etiketë", "Shkëlqyeshëm", "Shumë mirë", "Mirë"];
 const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
 const DELIVERY = ["Posta", "Takim", "Dorëzim në shtëpi"];
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "One size"];
+const COLORS = ["E zezë", "E bardhë", "Bezhë", "Kafe", "Gri", "Blu", "E gjelbër", "E kuqe", "E verdhë", "Portokalli", "Rozë", "Vjollcë"];
 
 const MAX_PHOTOS = 10;
 const ALLOWED: Record<string, string> = {
@@ -119,9 +121,9 @@ function SellPage() {
           title: title.trim(),
           brand: brand.trim(),
           category,
-          size: size.trim(),
+          size,
           condition,
-          color: color.trim(),
+          color,
           city,
           gender,
           price: priceNum,
@@ -261,11 +263,11 @@ function SellPage() {
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div>
                 <FieldLabel>Madhësia</FieldLabel>
-                <TextInput value={size} onChange={setSize} placeholder="M" maxLength={20} />
+                <SelectInput value={size} onChange={setSize} options={SIZES} />
               </div>
               <div>
                 <FieldLabel>Ngjyra</FieldLabel>
-                <TextInput value={color} onChange={setColor} placeholder="Bezhë" maxLength={40} />
+                <SelectInput value={color} onChange={setColor} options={COLORS} />
               </div>
             </div>
 
@@ -460,3 +462,4 @@ function SelectInput({
     </select>
   );
 }
+
