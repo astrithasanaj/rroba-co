@@ -1,8 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Archive,
   BadgeCheck,
+  Bookmark,
   Check,
+  Grid2x2,
+  Heart,
   Loader2,
   LogOut,
   MapPin,
@@ -10,6 +14,7 @@ import {
   Plus,
   Settings as SettingsIcon,
   Star,
+  Tag,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -17,12 +22,14 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
+import { useUserCollections } from "@/lib/user-collections";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,7 +38,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
-type Tab = "mine" | "saved" | "offers" | "settings";
+type Tab = "mine" | "liked" | "saved" | "wardrobe";
 
 type Profile = {
   id: string;
@@ -56,38 +63,32 @@ type OfferRow = {
 function ProfilePage() {
   const { user } = Route.useRouteContext();
   const navigate = useNavigate();
+  const { likes, saves } = useUserCollections();
   const [tab, setTab] = useState<Tab>("mine");
-  const [subTab, setSubTab] = useState<"active" | "sold">("active");
-  const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [ratingsOpen, setRatingsOpen] = useState(false);
+  const [offersOpen, setOffersOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [myListings, setMyListings] = useState<ListingView[]>([]);
+  const [likedListings, setLikedListings] = useState<ListingView[]>([]);
   const [savedListings, setSavedListings] = useState<ListingView[]>([]);
   const [offersReceived, setOffersReceived] = useState<OfferRow[]>([]);
   const [offersSent, setOffersSent] = useState<OfferRow[]>([]);
   const [listingTitles, setListingTitles] = useState<Record<string, string>>({});
+  const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [prof, mine, savesRes, offRec, offSent] = await Promise.all([
+    const [prof, mine, offRec, offSent] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
       supabase.from("listings").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("listing_saves").select("listing_id").eq("user_id", user.id),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
     ]);
     setProfile(prof.data as Profile | null);
     setMyListings(await hydrateListings((mine.data ?? []) as ListingRow[]));
-
-    const saveIds = (savesRes.data ?? []).map((r) => r.listing_id);
-    if (saveIds.length) {
-      const { data } = await supabase.from("listings").select("*").in("id", saveIds);
-      setSavedListings(await hydrateListings((data ?? []) as ListingRow[]));
-    } else {
-      setSavedListings([]);
-    }
 
     const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
     setOffersReceived((offRec.data ?? []) as OfferRow[]);
@@ -107,6 +108,41 @@ function ProfilePage() {
     loadAll();
   }, [loadAll]);
 
+  // Load liked/saved listings whenever the underlying sets change
+  useEffect(() => {
+    const ids = Array.from(likes);
+    if (ids.length === 0) {
+      setLikedListings([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.from("listings").select("*").in("id", ids);
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+      if (!cancelled) setLikedListings(hydrated);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [likes]);
+
+  useEffect(() => {
+    const ids = Array.from(saves);
+    if (ids.length === 0) {
+      setSavedListings([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.from("listings").select("*").in("id", ids);
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+      if (!cancelled) setSavedListings(hydrated);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [saves]);
+
   useEffect(() => {
     const ch = supabase
       .channel("profile-live")
@@ -125,7 +161,10 @@ function ProfilePage() {
   };
   const deleteListing = async (l: ListingView) => {
     await supabase.from("listings").delete().eq("id", l.id);
-    if (l.image_paths?.length) await supabase.storage.from("photos").remove(l.image_paths);
+    if (l.image_paths?.length) {
+      const cleanup = l.image_paths.filter((p) => !/^https?:\/\//i.test(p));
+      if (cleanup.length) await supabase.storage.from("photos").remove(cleanup);
+    }
   };
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -143,10 +182,15 @@ function ProfilePage() {
     `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
   const username = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
 
-  const visibleMine = useMemo(
-    () => myListings.filter((l) => (subTab === "active" ? !l.sold : l.sold)),
-    [myListings, subTab],
-  );
+  const activeListings = useMemo(() => myListings.filter((l) => !l.sold), [myListings]);
+  const wardrobeListings = useMemo(() => myListings.filter((l) => l.sold), [myListings]);
+
+  const tabs: { id: Tab; label: string; icon: typeof Grid2x2 }[] = [
+    { id: "mine", label: "Artikujt e mi", icon: Grid2x2 },
+    { id: "liked", label: "Të pëlqyera", icon: Heart },
+    { id: "saved", label: "Të ruajtura", icon: Bookmark },
+    { id: "wardrobe", label: "Garderoba ime", icon: Archive },
+  ];
 
   return (
     <MobileShell>
@@ -161,7 +205,7 @@ function ProfilePage() {
             <Plus className="h-5 w-5" strokeWidth={1.7} />
           </Link>
           <button
-            onClick={() => setTab("settings")}
+            onClick={() => setSettingsOpen(true)}
             className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
             aria-label="Cilësimet"
           >
@@ -191,113 +235,81 @@ function ProfilePage() {
           </div>
         </div>
         {profile?.bio && <p className="mt-3 text-sm text-foreground/85">{profile.bio}</p>}
-        <button
-          onClick={() => setRatingsOpen(true)}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold hover:bg-secondary"
-        >
-          <Star className="h-4 w-4" /> Vlerësimet
-        </button>
+        <div className="mt-4 flex gap-2">
+          <button
+            onClick={() => setRatingsOpen(true)}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold hover:bg-secondary"
+          >
+            <Star className="h-4 w-4" /> Vlerësimet
+          </button>
+          <button
+            onClick={() => setOffersOpen(true)}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold hover:bg-secondary"
+          >
+            <Tag className="h-4 w-4" /> Ofertat
+          </button>
+        </div>
       </section>
 
-      <div className="mt-6 border-b border-border px-5">
-        <div className="no-scrollbar flex gap-6 overflow-x-auto">
-          {[
-            { id: "mine" as const, label: "Artikujt e mi" },
-            { id: "saved" as const, label: "Të ruajtura" },
-            { id: "offers" as const, label: "Ofertat" },
-            { id: "settings" as const, label: "Cilësimet" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`relative shrink-0 pb-3 text-sm font-medium transition ${
-                tab === t.id ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              {t.label}
-              {tab === t.id && (
-                <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-foreground" />
-              )}
-            </button>
-          ))}
+      {/* 4-tab icon nav with underline indicator */}
+      <div className="mt-6 border-b border-border">
+        <div className="grid grid-cols-4">
+          {tabs.map((t) => {
+            const Icon = t.icon;
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                aria-label={t.label}
+                aria-pressed={active}
+                className="relative flex items-center justify-center py-3.5"
+              >
+                <Icon
+                  className={`h-6 w-6 transition ${active ? "text-foreground" : "text-muted-foreground"}`}
+                  strokeWidth={active ? 2.2 : 1.7}
+                  fill={active && t.id === "liked" ? "currentColor" : "none"}
+                />
+                {active && (
+                  <span className="absolute inset-x-6 -bottom-px h-0.5 rounded-full bg-foreground" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <section className="px-5 pt-4">
-        {loading ? (
+      <section className="px-2 pt-2">
+        {loading && tab === "mine" ? (
           <div className="grid place-items-center py-10">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : tab === "mine" ? (
-          <>
-            <div className="mb-3 flex gap-2">
-              {(["active", "sold"] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSubTab(s)}
-                  className={`rounded-full px-3 py-1.5 text-xs ${
-                    subTab === s ? "bg-foreground text-background" : "bg-secondary"
-                  }`}
-                >
-                  {s === "active" ? "Aktive" : "Të shitura"}
-                </button>
-              ))}
-            </div>
-            {visibleMine.length === 0 ? (
-              <EmptyMsg text="Asnjë artikull këtu." />
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {visibleMine.map((l) => (
-                  <OwnerCard key={l.id} listing={l} onMarkSold={() => markSold(l)} onDelete={() => deleteListing(l)} />
-                ))}
-              </div>
-            )}
-          </>
+          activeListings.length === 0 ? (
+            <EmptyMsg
+              text="Ende nuk ke publikuar asnjë artikull."
+              actionLabel="Publiko të parin"
+              to="/sell"
+            />
+          ) : (
+            <OwnerGrid listings={activeListings} onMarkSold={markSold} onDelete={deleteListing} />
+          )
+        ) : tab === "liked" ? (
+          likedListings.length === 0 ? (
+            <EmptyMsg text="Asnjë artikull i pëlqyer ende — fillo të eksplorosh!" actionLabel="Shfleto" to="/" />
+          ) : (
+            <PhotoGrid listings={likedListings} />
+          )
         ) : tab === "saved" ? (
           savedListings.length === 0 ? (
-            <EmptyMsg text="Asnjë artikull i ruajtur." />
+            <EmptyMsg text="Asnjë artikull i ruajtur — ruaj artikujt që dëshiron t'i shikosh më vonë." actionLabel="Shfleto" to="/" />
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {savedListings.map((l) => (
-                <Link key={l.id} to="/product/$id" params={{ id: l.id }} className="block">
-                  <div className="aspect-square overflow-hidden rounded-2xl bg-secondary">
-                    {l.coverUrl && <img src={l.coverUrl} className="h-full w-full object-cover" alt={l.title} />}
-                  </div>
-                  <p className="mt-1 truncate text-sm">{l.title}</p>
-                  <p className="text-xs font-semibold">€{l.price}</p>
-                </Link>
-              ))}
-            </div>
+            <PhotoGrid listings={savedListings} />
           )
-        ) : tab === "offers" ? (
-          <>
-            <div className="mb-3 flex gap-2">
-              {(["received", "sent"] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setOfferSub(s)}
-                  className={`rounded-full px-3 py-1.5 text-xs ${
-                    offerSub === s ? "bg-foreground text-background" : "bg-secondary"
-                  }`}
-                >
-                  {s === "received" ? "Të marra" : "Të dërguara"}
-                </button>
-              ))}
-            </div>
-            <OffersList
-              offers={offerSub === "received" ? offersReceived : offersSent}
-              titles={listingTitles}
-              canRespond={offerSub === "received"}
-              onRespond={respondOffer}
-            />
-          </>
+        ) : wardrobeListings.length === 0 ? (
+          <EmptyMsg text="Garderoba jote është bosh — artikujt e shitur shfaqen këtu." />
         ) : (
-          <SettingsTab
-            profile={profile}
-            email={user.email ?? ""}
-            onSaved={loadAll}
-            onSignOut={handleSignOut}
-          />
+          <PhotoGrid listings={wardrobeListings} sold />
         )}
       </section>
 
@@ -308,73 +320,142 @@ function ProfilePage() {
         currentUserId={user.id}
         sellerName={displayName}
       />
+
+      <Sheet open={offersOpen} onOpenChange={setOffersOpen}>
+        <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Ofertat</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 flex gap-2">
+            {(["received", "sent"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setOfferSub(s)}
+                className={`rounded-full px-3 py-1.5 text-xs ${
+                  offerSub === s ? "bg-foreground text-background" : "bg-secondary"
+                }`}
+              >
+                {s === "received" ? "Të marra" : "Të dërguara"}
+              </button>
+            ))}
+          </div>
+          <div className="mt-4">
+            <OffersList
+              offers={offerSub === "received" ? offersReceived : offersSent}
+              titles={listingTitles}
+              canRespond={offerSub === "received"}
+              onRespond={respondOffer}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Cilësimet</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4">
+            <SettingsTab
+              profile={profile}
+              email={user.email ?? ""}
+              onSaved={loadAll}
+              onSignOut={handleSignOut}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
     </MobileShell>
   );
 }
 
-function EmptyMsg({ text }: { text: string }) {
+function PhotoGrid({ listings, sold = false }: { listings: ListingView[]; sold?: boolean }) {
   return (
-    <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-      {text}
+    <div className="grid grid-cols-3 gap-0.5">
+      {listings.map((l) => (
+        <Link
+          key={l.id}
+          to="/product/$id"
+          params={{ id: l.id }}
+          className="relative aspect-square overflow-hidden bg-secondary"
+        >
+          {l.coverUrl && (
+            <img
+              src={l.coverUrl}
+              alt={l.title}
+              className={`h-full w-full object-cover ${sold || l.sold ? "opacity-80" : ""}`}
+              loading="lazy"
+            />
+          )}
+          {(sold || l.sold) && (
+            <span className="pointer-events-none absolute bottom-1 left-1 rounded bg-destructive px-1.5 py-0.5 text-[9px] font-black tracking-wider text-destructive-foreground">
+              SHITUR
+            </span>
+          )}
+        </Link>
+      ))}
     </div>
   );
 }
 
-function OwnerCard({
-  listing,
+function OwnerGrid({
+  listings,
   onMarkSold,
   onDelete,
 }: {
-  listing: ListingView;
-  onMarkSold: () => void;
-  onDelete: () => void;
+  listings: ListingView[];
+  onMarkSold: (l: ListingView) => void;
+  onDelete: (l: ListingView) => void;
 }) {
   return (
-    <div className="relative">
-      <Link to="/product/$id" params={{ id: listing.id }} className="block">
-        <div className="relative aspect-square overflow-hidden rounded-2xl bg-secondary">
-          {listing.coverUrl && (
-            <img
-              src={listing.coverUrl}
-              alt={listing.title}
-              className={`h-full w-full object-cover ${listing.sold ? "opacity-70 grayscale" : ""}`}
-            />
-          )}
-          {listing.sold && (
-            <div className="pointer-events-none absolute inset-0 grid place-items-center">
-              <span className="rotate-[-18deg] rounded-md bg-destructive px-4 py-1 text-xs font-black tracking-widest text-destructive-foreground shadow">
-                SHITUR
-              </span>
-            </div>
-          )}
+    <div className="grid grid-cols-3 gap-0.5">
+      {listings.map((l) => (
+        <div key={l.id} className="relative aspect-square overflow-hidden bg-secondary">
+          <Link to="/product/$id" params={{ id: l.id }} className="block h-full w-full">
+            {l.coverUrl && (
+              <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
+            )}
+          </Link>
+          <div className="absolute right-1 top-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="grid h-6 w-6 place-items-center rounded-full bg-background/90 backdrop-blur"
+                  aria-label="Më shumë"
+                >
+                  <MoreVertical className="h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onMarkSold(l)}>Shëno si i shitur</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onDelete(l)} className="text-destructive focus:text-destructive">
+                  Fshij
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-background/90 px-1.5 py-0.5 text-[10px] font-semibold">
+            €{l.price}
+          </span>
         </div>
-        <p className="mt-1 truncate text-sm">{listing.title}</p>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">{listing.size}</span>
-          <span className="text-sm font-bold">€{listing.price}</span>
-        </div>
-      </Link>
-      <div className="absolute right-1.5 top-1.5">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded-full bg-background/90 backdrop-blur"
-              aria-label="Më shumë"
-            >
-              <MoreVertical className="h-3.5 w-3.5" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onMarkSold}>
-              {listing.sold ? "Shëno si i disponueshëm" : "Shëno si i shitur"}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
-              Fshij
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      ))}
+    </div>
+  );
+}
+
+function EmptyMsg({ text, actionLabel, to }: { text: string; actionLabel?: string; to?: string }) {
+  return (
+    <div className="mx-3 mt-6 rounded-2xl border border-dashed border-border p-8 text-center">
+      <p className="text-sm text-muted-foreground">{text}</p>
+      {actionLabel && to && (
+        <Link
+          to={to}
+          className="mt-4 inline-flex items-center justify-center rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-background"
+        >
+          {actionLabel}
+        </Link>
+      )}
     </div>
   );
 }
@@ -390,7 +471,8 @@ function OffersList({
   canRespond: boolean;
   onRespond: (o: OfferRow, status: "accepted" | "declined") => void;
 }) {
-  if (offers.length === 0) return <EmptyMsg text="Asnjë ofertë." />;
+  if (offers.length === 0)
+    return <p className="py-6 text-center text-sm text-muted-foreground">Asnjë ofertë.</p>;
   return (
     <ul className="space-y-2">
       {offers.map((o) => (
@@ -480,9 +562,7 @@ function SettingsTab({
       return;
     }
     const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60 * 24 * 365);
-    if (signed?.signedUrl) {
-      setAvatarUrl(signed.signedUrl);
-    }
+    if (signed?.signedUrl) setAvatarUrl(signed.signedUrl);
     setUploading(false);
   };
 
