@@ -156,12 +156,8 @@ function ProductDetail() {
             <button className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur">
               <Share2 className="h-4 w-4" />
             </button>
-            <button
-              onClick={toggleLike}
-              className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
-            >
-              <Heart className="h-4 w-4" fill={liked ? "currentColor" : "none"} />
-            </button>
+            <SaveButton listingId={listing.id} className="h-10 w-10" size={16} />
+            <LikeButton listingId={listing.id} className="h-10 w-10" size={16} />
           </div>
         </div>
         {images.length > 1 && (
