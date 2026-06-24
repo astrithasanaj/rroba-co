@@ -1,10 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Camera, ChevronLeft, Loader2, Sparkles, X } from "lucide-react";
+import { Camera, ChevronLeft, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { suggestListingFromPhotos } from "@/lib/sell-ai.functions";
 
 export const Route = createFileRoute("/sell")({
   component: SellPage,
@@ -31,7 +29,6 @@ const RUST = "#b94a1f";
 
 function SellPage() {
   const navigate = useNavigate();
-  const suggest = useServerFn(suggestListingFromPhotos);
   const [userId, setUserId] = useState<string | null>(null);
   const [images, setImages] = useState<PendingImage[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -49,7 +46,6 @@ function SellPage() {
   const [description, setDescription] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -89,37 +85,6 @@ function SellPage() {
 
   const toggleDelivery = (opt: string) =>
     setDelivery((p) => (p.includes(opt) ? p.filter((x) => x !== opt) : [...p, opt]));
-
-  const fileToDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-
-  const runAi = async () => {
-    if (images.length === 0) {
-      toast.error("Shto së paku një foto për të përdorur AI");
-      return;
-    }
-    if (aiLoading) return;
-    setAiLoading(true);
-    try {
-      const dataUrls = await Promise.all(images.slice(0, 6).map((i) => fileToDataUrl(i.file)));
-      const s = await suggest({ data: { images: dataUrls } });
-      if (s.title) setTitle(s.title);
-      if (s.brand) setBrand(s.brand);
-      if (s.size) setSize(s.size);
-      if (s.color) setColor(s.color);
-      if (s.condition) setCondition(s.condition);
-      toast.success("Sugjerimet u plotësuan");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "AI dështoi");
-    } finally {
-      setAiLoading(false);
-    }
-  };
 
   const priceNum = Number(price.replace(",", "."));
   const canPublish =
@@ -194,7 +159,7 @@ function SellPage() {
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h1 className="font-display text-2xl italic">Shit një artikull</h1>
+          <h1 className="font-sans text-2xl font-semibold">Shit një artikull</h1>
         </header>
 
         <div className="space-y-10 px-5 py-6">
@@ -283,32 +248,6 @@ function SellPage() {
               onChange={pickFiles}
             />
 
-            <button
-              type="button"
-              onClick={runAi}
-              disabled={aiLoading || images.length === 0}
-              className="mt-5 flex w-full items-center gap-4 rounded-2xl bg-black p-4 text-left text-white disabled:opacity-60"
-            >
-              <span
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-full"
-                style={{ background: "rgba(185,74,31,0.18)", color: RUST }}
-              >
-                {aiLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Sparkles className="h-5 w-5" />
-                )}
-              </span>
-              <span className="flex-1">
-                <span className="block text-[10px] font-semibold tracking-[0.22em] text-white/60">
-                  AI ASSISTANT
-                </span>
-                <span className="block font-display text-lg italic">
-                  {aiLoading ? "Po analizon fotot..." : "Sugjero me AI"}
-                </span>
-              </span>
-              <ArrowRight className="h-4 w-4 text-white/70" />
-            </button>
           </Section>
 
           {/* 04 */}
@@ -409,10 +348,10 @@ function Section({
   return (
     <section>
       <div className="mb-4 flex items-baseline gap-3">
-        <span className="font-display text-xs italic tracking-widest" style={{ color: RUST }}>
+        <span className="font-sans text-xs font-bold tracking-widest" style={{ color: RUST }}>
           {num}
         </span>
-        <h2 className="font-display text-2xl italic">{title}</h2>
+        <h2 className="font-sans text-2xl font-semibold">{title}</h2>
       </div>
       {children}
     </section>
