@@ -86,14 +86,6 @@ function SellPage() {
   const toggleDelivery = (opt: string) =>
     setDelivery((p) => (p.includes(opt) ? p.filter((x) => x !== opt) : [...p, opt]));
 
-  const fileToDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-
   const priceNum = Number(price.replace(",", "."));
   const canPublish =
     !!gender &&
