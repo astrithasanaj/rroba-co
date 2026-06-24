@@ -10,7 +10,7 @@ export const Route = createFileRoute("/sell")({
 
 const GENDERS = ["Femra", "Meshkuj", "Fëmijë"] as const;
 const CATEGORIES = ["Veshje", "Këpucë", "Çanta", "Aksesorë", "Vintage", "Designer/Premium"];
-const CONDITIONS = ["I ri me etiketë", "Shkëlqyeshëm", "Shumë mirë", "Mirë"];
+const CONDITIONS = ["I ri me etiketë", "Shumë mirë", "Mirë", "Mirë i përdorur"];
 const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "One size"];
@@ -272,7 +272,7 @@ function SellPage() {
             </div>
 
             <FieldLabel className="mt-5">Gjendja</FieldLabel>
-            <ChipRow options={CONDITIONS} value={condition} onChange={setCondition} />
+            <ChipRow options={CONDITIONS} value={condition} onChange={setCondition} scrollable />
 
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div>
@@ -364,13 +364,15 @@ function ChipRow({
   options,
   value,
   onChange,
+  scrollable,
 }: {
   options: string[];
   value: string;
   onChange: (v: string) => void;
+  scrollable?: boolean;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={`flex gap-2 ${scrollable ? "flex-nowrap overflow-x-auto pb-1" : "flex-wrap"}`}>
       {options.map((opt) => {
         const active = value === opt;
         return (
@@ -378,7 +380,7 @@ function ChipRow({
             key={opt}
             type="button"
             onClick={() => onChange(opt)}
-            className={`rounded-full border px-4 py-2 text-sm transition ${
+            className={`shrink-0 rounded-full border px-4 py-2 text-sm transition ${
               active
                 ? "border-black bg-black text-white"
                 : "border-black/15 bg-transparent text-foreground hover:bg-black/[0.04]"
