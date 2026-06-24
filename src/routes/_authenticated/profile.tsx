@@ -241,12 +241,9 @@ function ProfilePage() {
             {profile.bio}
           </p>
         ) : (
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="mt-3 text-sm text-muted-foreground underline-offset-2 hover:underline"
-          >
+          <p className="mt-3 text-sm text-muted-foreground">
             Shto një bio…
-          </button>
+          </p>
         )}
       </section>
 
