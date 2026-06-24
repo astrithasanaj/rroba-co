@@ -24,7 +24,7 @@ export type ListingView = ListingRow & { coverUrl: string; imageUrls: string[] }
 const SIGN_TTL = 60 * 60;
 
 export async function signPaths(paths: string[]): Promise<Record<string, string>> {
-  const filtered = paths.filter(Boolean);
+  const filtered = paths.filter((p) => p && !/^https?:\/\//i.test(p));
   if (filtered.length === 0) return {};
   const { data } = await supabase.storage.from("photos").createSignedUrls(filtered, SIGN_TTL);
   const map: Record<string, string> = {};
@@ -38,7 +38,9 @@ export async function hydrateListings(rows: ListingRow[]): Promise<ListingView[]
   const all = rows.flatMap((r) => r.image_paths ?? []);
   const urls = await signPaths(all);
   return rows.map((r) => {
-    const imageUrls = (r.image_paths ?? []).map((p) => urls[p] ?? "").filter(Boolean);
+    const imageUrls = (r.image_paths ?? [])
+      .map((p) => (/^https?:\/\//i.test(p) ? p : urls[p] ?? ""))
+      .filter(Boolean);
     return { ...r, coverUrl: imageUrls[0] ?? "", imageUrls };
   });
 }
