@@ -272,7 +272,7 @@ function SellPage() {
             </div>
 
             <FieldLabel className="mt-5">Gjendja</FieldLabel>
-            <ChipRow options={CONDITIONS} value={condition} onChange={setCondition} />
+            <ChipRow options={CONDITIONS} value={condition} onChange={setCondition} scrollable />
 
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div>
