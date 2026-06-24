@@ -167,7 +167,7 @@ function SellPage() {
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h1 className="font-display text-2xl italic">Shit një artikull</h1>
+          <h1 className="font-sans text-2xl font-semibold">Shit një artikull</h1>
         </header>
 
         <div className="space-y-10 px-5 py-6">
@@ -356,10 +356,10 @@ function Section({
   return (
     <section>
       <div className="mb-4 flex items-baseline gap-3">
-        <span className="font-display text-xs italic tracking-widest" style={{ color: RUST }}>
+        <span className="font-sans text-xs font-bold tracking-widest" style={{ color: RUST }}>
           {num}
         </span>
-        <h2 className="font-display text-2xl italic">{title}</h2>
+        <h2 className="font-sans text-2xl font-semibold">{title}</h2>
       </div>
       {children}
     </section>
