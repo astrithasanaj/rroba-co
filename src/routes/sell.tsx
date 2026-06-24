@@ -1,10 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Camera, ChevronLeft, Loader2, Sparkles, X } from "lucide-react";
+import { Camera, ChevronLeft, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { suggestListingFromPhotos } from "@/lib/sell-ai.functions";
 
 export const Route = createFileRoute("/sell")({
   component: SellPage,
@@ -31,7 +29,6 @@ const RUST = "#b94a1f";
 
 function SellPage() {
   const navigate = useNavigate();
-  const suggest = useServerFn(suggestListingFromPhotos);
   const [userId, setUserId] = useState<string | null>(null);
   const [images, setImages] = useState<PendingImage[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -49,7 +46,6 @@ function SellPage() {
   const [description, setDescription] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
