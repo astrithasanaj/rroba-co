@@ -94,29 +94,6 @@ function SellPage() {
       reader.readAsDataURL(file);
     });
 
-  const runAi = async () => {
-    if (images.length === 0) {
-      toast.error("Shto së paku një foto për të përdorur AI");
-      return;
-    }
-    if (aiLoading) return;
-    setAiLoading(true);
-    try {
-      const dataUrls = await Promise.all(images.slice(0, 6).map((i) => fileToDataUrl(i.file)));
-      const s = await suggest({ data: { images: dataUrls } });
-      if (s.title) setTitle(s.title);
-      if (s.brand) setBrand(s.brand);
-      if (s.size) setSize(s.size);
-      if (s.color) setColor(s.color);
-      if (s.condition) setCondition(s.condition);
-      toast.success("Sugjerimet u plotësuan");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "AI dështoi");
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
   const priceNum = Number(price.replace(",", "."));
   const canPublish =
     !!gender &&
