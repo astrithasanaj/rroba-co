@@ -13,7 +13,6 @@ import {
   MoreVertical,
   Plus,
   Settings as SettingsIcon,
-  Star,
   Tag,
   X,
 } from "lucide-react";
@@ -227,28 +226,28 @@ function ProfilePage() {
                 <MapPin className="h-3 w-3" /> {profile.city}
               </p>
             )}
-            <div className="mt-1 flex items-center gap-1 text-xs">
+            <button
+              onClick={() => setRatingsOpen(true)}
+              className="mt-1 flex items-center gap-1 text-xs hover:opacity-80"
+            >
               <StarRow value={profile?.rating_avg ?? 0} size={12} />
               <span className="ml-1 font-semibold">{(profile?.rating_avg ?? 0).toFixed(1)}</span>
               <span className="text-muted-foreground">· {profile?.rating_count ?? 0} vlerësime</span>
-            </div>
+            </button>
           </div>
         </div>
-        {profile?.bio && <p className="mt-3 text-sm text-foreground/85">{profile.bio}</p>}
-        <div className="mt-4 flex gap-2">
+        {profile?.bio ? (
+          <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+            {profile.bio}
+          </p>
+        ) : (
           <button
-            onClick={() => setRatingsOpen(true)}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold hover:bg-secondary"
+            onClick={() => setSettingsOpen(true)}
+            className="mt-3 text-sm text-muted-foreground underline-offset-2 hover:underline"
           >
-            <Star className="h-4 w-4" /> Vlerësimet
+            Shto një bio…
           </button>
-          <button
-            onClick={() => setOffersOpen(true)}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold hover:bg-secondary"
-          >
-            <Tag className="h-4 w-4" /> Ofertat
-          </button>
-        </div>
+        )}
       </section>
 
       {/* 4-tab icon nav with underline indicator */}
@@ -355,6 +354,18 @@ function ProfilePage() {
           <SheetHeader>
             <SheetTitle>Cilësimet</SheetTitle>
           </SheetHeader>
+          <button
+            onClick={() => {
+              setSettingsOpen(false);
+              setOffersOpen(true);
+            }}
+            className="mt-4 inline-flex w-full items-center justify-between rounded-2xl border border-border px-4 py-3 text-sm font-semibold hover:bg-secondary"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Tag className="h-4 w-4" /> Ofertat
+            </span>
+            <span className="text-muted-foreground">›</span>
+          </button>
           <div className="mt-4">
             <SettingsTab
               profile={profile}
