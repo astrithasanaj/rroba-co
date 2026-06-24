@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, Image as ImageIcon, Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
+import { supabase } from "@/integrations/supabase/client";
+import { signPaths } from "@/lib/listings";
 
 export const Route = createFileRoute("/messages")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -10,104 +12,227 @@ export const Route = createFileRoute("/messages")({
   component: MessagesPage,
 });
 
-const threads = [
-  {
-    id: "1",
-    name: "Erza M.",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
-    last: "A është ende në dispozicion?",
-    time: "2 min",
-    product: "Blazer i zi Zara",
-    unread: 2,
-  },
-  {
-    id: "2",
-    name: "Driton K.",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-    last: "Mund të takohemi nesër në qendër.",
-    time: "1 orë",
-    product: "Nike Air Max 90",
-    unread: 0,
-  },
-  {
-    id: "3",
-    name: "Albulena R.",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80",
-    last: "Faleminderit për blerjen! 💛",
-    time: "Dje",
-    product: "Çantë vintage",
-    unread: 0,
-  },
-];
+type ThreadRow = {
+  id: string;
+  listing_id: string;
+  buyer_id: string;
+  seller_id: string;
+  last_message_at: string;
+};
 
-const suggestions = [
-  "A është ende në dispozicion?",
-  "A mund të bëj ofertë?",
-  "A mund të takohemi në Prishtinë?",
-];
+type ThreadView = {
+  id: string;
+  otherId: string;
+  otherName: string;
+  otherAvatar: string;
+  listingTitle: string;
+  listingCover: string;
+  lastPreview: string;
+  lastAt: string;
+};
 
 function MessagesPage() {
   const { thread } = useSearch({ from: "/messages" });
-  if (thread) return <Thread id={thread} />;
+  const navigate = useNavigate();
+  const [me, setMe] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) navigate({ to: "/auth" });
+      else setMe(data.user.id);
+    });
+  }, [navigate]);
+
+  if (!me) {
+    return (
+      <MobileShell>
+        <div className="grid h-[60vh] place-items-center">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </MobileShell>
+    );
+  }
+
+  return thread ? <Thread id={thread} me={me} /> : <ThreadList me={me} />;
+}
+
+function ThreadList({ me }: { me: string }) {
+  const [threads, setThreads] = useState<ThreadView[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const { data: convs } = await supabase
+        .from("conversations")
+        .select("*")
+        .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
+        .order("last_message_at", { ascending: false });
+      const rows = (convs ?? []) as ThreadRow[];
+      if (rows.length === 0) {
+        if (active) {
+          setThreads([]);
+          setLoading(false);
+        }
+        return;
+      }
+      const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
+      const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
+      const [profs, listings, lastMsgs] = await Promise.all([
+        supabase.from("profiles").select("id,name,avatar_url").in("id", otherIds),
+        supabase.from("listings").select("id,title,image_paths").in("id", listingIds),
+        supabase.from("messages").select("conversation_id,content,created_at").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
+      ]);
+      const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
+      const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
+      const lastMap = new Map<string, string>();
+      for (const m of lastMsgs.data ?? []) {
+        if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m.content);
+      }
+      const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
+      const urls = await signPaths(allCovers);
+
+      const views: ThreadView[] = rows.map((r) => {
+        const otherId = r.buyer_id === me ? r.seller_id : r.buyer_id;
+        const prof = profMap.get(otherId);
+        const listing = listingMap.get(r.listing_id);
+        const cover = listing?.image_paths?.[0] ?? "";
+        return {
+          id: r.id,
+          otherId,
+          otherName: prof?.name || "Përdorues",
+          otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
+          listingTitle: listing?.title || "Artikull",
+          listingCover: urls[cover] || "",
+          lastPreview: lastMap.get(r.id) || "Bisedë e re",
+          lastAt: r.last_message_at,
+        };
+      });
+      if (active) {
+        setThreads(views);
+        setLoading(false);
+      }
+    };
+    load();
+    const ch = supabase
+      .channel("messages-list")
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => load())
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => load())
+      .subscribe();
+    return () => {
+      active = false;
+      supabase.removeChannel(ch);
+    };
+  }, [me]);
 
   return (
     <MobileShell>
       <header className="sticky top-0 z-30 bg-background/95 px-5 py-4 backdrop-blur">
         <h1 className="font-display text-3xl">Mesazhet</h1>
       </header>
-
-      <ul className="divide-y divide-border">
-        {threads.map((t) => (
-          <li key={t.id}>
-            <Link
-              to="/messages"
-              search={{ thread: t.id }}
-              className="flex items-center gap-3 px-5 py-4"
-            >
-              <img
-                src={t.avatar}
-                alt={t.name}
-                className="h-12 w-12 shrink-0 rounded-full object-cover"
-              />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="truncate text-sm font-semibold">{t.name}</p>
-                  <span className="shrink-0 text-[11px] text-muted-foreground">
-                    {t.time}
-                  </span>
+      {loading ? (
+        <div className="grid place-items-center py-10">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : threads.length === 0 ? (
+        <div className="mx-5 mt-6 rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+          Ende nuk ke biseda.
+        </div>
+      ) : (
+        <ul className="divide-y divide-border">
+          {threads.map((t) => (
+            <li key={t.id}>
+              <Link
+                to="/messages"
+                search={{ thread: t.id }}
+                className="flex items-center gap-3 px-5 py-4"
+              >
+                <div className="relative shrink-0">
+                  <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
+                  {t.listingCover && (
+                    <img src={t.listingCover} alt="" className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 border-background object-cover" />
+                  )}
                 </div>
-                <p className="truncate text-xs text-muted-foreground">
-                  Re: {t.product}
-                </p>
-                <p className="mt-0.5 truncate text-sm text-foreground/80">
-                  {t.last}
-                </p>
-              </div>
-              {t.unread > 0 && (
-                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1.5 text-[10px] font-semibold">
-                  {t.unread}
-                </span>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="truncate text-sm font-semibold">{t.otherName}</p>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">
+                      {new Date(t.lastAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="truncate text-xs text-muted-foreground">Re: {t.listingTitle}</p>
+                  <p className="mt-0.5 truncate text-sm text-foreground/80">{t.lastPreview}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </MobileShell>
   );
 }
 
-function Thread({ id }: { id: string }) {
-  const t = threads.find((x) => x.id === id) ?? threads[0];
+type MessageRow = { id: string; sender_id: string; content: string; created_at: string };
+
+function Thread({ id, me }: { id: string; me: string }) {
   const navigate = useNavigate();
-  const [msgs, setMsgs] = useState([
-    { from: "them", text: "Përshëndetje! A është ende në dispozicion?" },
-    { from: "me", text: "Po, është ende këtu :)" },
-    { from: "them", text: "Shumë mirë. A pranon ofertë €30?" },
-  ]);
+  const [info, setInfo] = useState<{ otherName: string; otherAvatar: string; listingTitle: string } | null>(null);
+  const [msgs, setMsgs] = useState<MessageRow[]>([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(true);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const { data: conv } = await supabase.from("conversations").select("*").eq("id", id).maybeSingle();
+      if (!conv) {
+        if (active) setLoading(false);
+        return;
+      }
+      const otherId = conv.buyer_id === me ? conv.seller_id : conv.buyer_id;
+      const [prof, listing, msgRes] = await Promise.all([
+        supabase.from("profiles").select("name,avatar_url").eq("id", otherId).maybeSingle(),
+        supabase.from("listings").select("title").eq("id", conv.listing_id).maybeSingle(),
+        supabase.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: true }),
+      ]);
+      if (!active) return;
+      setInfo({
+        otherName: prof.data?.name || "Përdorues",
+        otherAvatar: prof.data?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof.data?.name || "U")}`,
+        listingTitle: listing.data?.title || "Artikull",
+      });
+      setMsgs((msgRes.data ?? []) as MessageRow[]);
+      setLoading(false);
+    };
+    load();
+    const ch = supabase
+      .channel(`thread-${id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
+        (payload) => {
+          setMsgs((prev) => [...prev, payload.new as MessageRow]);
+        },
+      )
+      .subscribe();
+    return () => {
+      active = false;
+      supabase.removeChannel(ch);
+    };
+  }, [id, me]);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
+
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text) return;
+    setInput("");
+    await supabase.from("messages").insert({ conversation_id: id, sender_id: me, content: text });
+  };
 
   return (
     <MobileShell hideNav>
@@ -118,52 +243,44 @@ function Thread({ id }: { id: string }) {
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
-        <img src={t.avatar} alt="" className="h-9 w-9 rounded-full object-cover" />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">{t.name}</p>
-          <p className="truncate text-[11px] text-muted-foreground">Re: {t.product}</p>
-        </div>
+        {info && (
+          <>
+            <img src={info.otherAvatar} alt="" className="h-9 w-9 rounded-full object-cover" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold">{info.otherName}</p>
+              <p className="truncate text-[11px] text-muted-foreground">Re: {info.listingTitle}</p>
+            </div>
+          </>
+        )}
       </header>
 
-      <div className="flex flex-col gap-2 px-4 py-4">
-        {msgs.map((m, i) => (
-          <div
-            key={i}
-            className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${
-              m.from === "me"
-                ? "ml-auto bg-foreground text-background"
-                : "mr-auto bg-secondary text-foreground"
-            }`}
-          >
-            {m.text}
-          </div>
-        ))}
-      </div>
-
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-background/95 backdrop-blur">
-        <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pt-3">
-          {suggestions.map((s) => (
-            <button
-              key={s}
-              onClick={() => setInput(s)}
-              className="shrink-0 rounded-full border border-border bg-background px-3 py-1.5 text-xs"
-            >
-              {s}
-            </button>
-          ))}
+      {loading ? (
+        <div className="grid place-items-center py-10">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!input.trim()) return;
-            setMsgs([...msgs, { from: "me", text: input }]);
-            setInput("");
-          }}
-          className="flex items-center gap-2 p-3"
-        >
-          <button type="button" className="grid h-10 w-10 place-items-center rounded-full bg-secondary">
-            <ImageIcon className="h-4 w-4" />
-          </button>
+      ) : (
+        <div className="flex flex-col gap-2 px-4 py-4 pb-32">
+          {msgs.map((m) => (
+            <div
+              key={m.id}
+              className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${
+                m.sender_id === me
+                  ? "ml-auto bg-foreground text-background"
+                  : "mr-auto bg-secondary text-foreground"
+              }`}
+            >
+              {m.content}
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+      )}
+
+      <form
+        onSubmit={send}
+        className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-background/95 p-3 backdrop-blur"
+      >
+        <div className="flex items-center gap-2">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -172,13 +289,14 @@ function Thread({ id }: { id: string }) {
           />
           <button
             type="submit"
-            className="grid h-10 w-10 place-items-center rounded-full bg-foreground text-background"
+            disabled={!input.trim()}
+            className="grid h-10 w-10 place-items-center rounded-full bg-foreground text-background disabled:opacity-50"
           >
             <Send className="h-4 w-4" />
           </button>
-        </form>
+        </div>
         <div className="h-[env(safe-area-inset-bottom)]" />
-      </div>
+      </form>
     </MobileShell>
   );
 }

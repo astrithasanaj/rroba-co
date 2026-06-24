@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversations: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          last_message_at: string
+          listing_id: string
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          listing_id: string
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          listing_id?: string
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_likes: {
         Row: {
           created_at: string
@@ -70,13 +105,18 @@ export type Database = {
         Row: {
           brand: string
           category: string
+          city: string
+          color: string
+          condition: string
           created_at: string
           description: string
+          gender: string
           id: string
           image_paths: string[]
           price: number
           size: string
           sold: boolean
+          status: string
           title: string
           updated_at: string
           user_id: string
@@ -84,13 +124,18 @@ export type Database = {
         Insert: {
           brand?: string
           category: string
+          city?: string
+          color?: string
+          condition?: string
           created_at?: string
           description: string
+          gender?: string
           id?: string
           image_paths: string[]
           price: number
           size: string
           sold?: boolean
+          status?: string
           title: string
           updated_at?: string
           user_id: string
@@ -98,18 +143,123 @@ export type Database = {
         Update: {
           brand?: string
           category?: string
+          city?: string
+          color?: string
+          condition?: string
           created_at?: string
           description?: string
+          gender?: string
           id?: string
           image_paths?: string[]
           price?: number
           size?: string
           sold?: boolean
+          status?: string
           title?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          read: boolean
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          read?: boolean
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          read?: boolean
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      offers: {
+        Row: {
+          amount: number
+          buyer_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          buyer_id: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       photos: {
         Row: {
@@ -135,6 +285,42 @@ export type Database = {
           public_url?: string
           storage_path?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string
+          city: string
+          created_at: string
+          id: string
+          name: string
+          rating_avg: number
+          rating_count: number
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string
+          city?: string
+          created_at?: string
+          id: string
+          name?: string
+          rating_avg?: number
+          rating_count?: number
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string
+          city?: string
+          created_at?: string
+          id?: string
+          name?: string
+          rating_avg?: number
+          rating_count?: number
+          updated_at?: string
         }
         Relationships: []
       }

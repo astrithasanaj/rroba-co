@@ -1,79 +1,108 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Search as SearchIcon, X, ArrowLeft, SlidersHorizontal } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { Search as SearchIcon, X, ArrowLeft, SlidersHorizontal, Loader2 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
-import { ProductCard } from "@/components/marketplace/ProductCard";
-import { CategoryChip } from "@/components/marketplace/CategoryChip";
-import { products } from "@/data/products";
+import { ListingCard } from "@/components/marketplace/ListingCard";
+import { supabase } from "@/integrations/supabase/client";
+import { CATEGORIES, CITIES, CONDITIONS, GENDERS, hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+type Search = {
+  q?: string;
+  section?: "new" | "trending";
+};
 
 export const Route = createFileRoute("/search")({
+  validateSearch: (s: Record<string, unknown>): Search => ({
+    q: typeof s.q === "string" ? s.q : undefined,
+    section: s.section === "new" || s.section === "trending" ? s.section : undefined,
+  }),
   component: SearchPage,
 });
 
-const recent = ["\n", "\n", "\n", "\n"];
-
-const filterGroups = [
-  { label: "Gjinia", options: ["Femra", "Meshkuj", "Fëmijë"] },
-  {
-    label: "Nënkategoria",
-    options: ["Veshje", "Këpucë", "Çanta", "Aksesorë", "Vintage", "Premium"],
-  },
-  { label: "Madhësia", options: ["XS", "S", "M", "L", "XL", "38", "40", "42"] },
-  { label: "Marka", options: ["Zara", "Nike", "H&M", "\n", "Levi's", "Mango"] },
-  { label: "Çmimi", options: ["< €20", "€20–50", "€50–100", "€100+"] },
-  { label: "Gjendja", options: ["Si i ri", "Shumë i mirë", "I mirë"] },
-  { label: "Qyteti", options: ["Prishtinë", "Prizren", "Pejë", "Tiranë"] },
-  { label: "Ngjyra", options: ["E zezë", "E bardhë", "Blu", "Kafe", "E kuqe"] },
-  { label: "Dorëzimi", options: ["Personalisht", "Postë"] },
-];
-
-const tiles = [
-  {
-    gender: "Femra",
-    items: [
-      { label: "Veshje", img: "photo-1483985988355-763728e1935b" },
-      { label: "Këpucë", img: "photo-1543163521-1bf539c55dd2" },
-      { label: "Çanta", img: "photo-1548036328-c9fa89d128fa" },
-    ],
-  },
-  {
-    gender: "Meshkuj",
-    items: [
-      { label: "Veshje", img: "photo-1516257984-b1b4d707412e" },
-      { label: "Këpucë", img: "photo-1542291026-7eec264c27ff" },
-      { label: "Aksesorë", img: "photo-1622434641406-a158123450f9" },
-    ],
-  },
-  {
-    gender: "Fëmijë",
-    items: [
-      { label: "Vajza", img: "photo-1518831959646-742c3a14ebf7" },
-      { label: "Djem", img: "photo-1622290291468-a28f7a7dc480" },
-    ],
-  },
-];
+type Filters = {
+  category?: string;
+  size?: string;
+  condition?: string;
+  city?: string;
+  gender?: string;
+  priceMin?: string;
+  priceMax?: string;
+};
 
 function SearchPage() {
-  const [q, setQ] = useState("");
+  const navigate = useNavigate();
+  const { q: initialQ, section } = Route.useSearch();
+  const [q, setQ] = useState(initialQ ?? "");
   const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<Filters>({});
+  const [results, setResults] = useState<ListingView[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const results = q
-    ? products.filter((p) =>
-        (p.title + " " + p.brand).toLowerCase().includes(q.toLowerCase())
-      )
-    : [];
+  useEffect(() => {
+    setQ(initialQ ?? "");
+  }, [initialQ]);
+
+  const activeCount = useMemo(
+    () => Object.values(filters).filter((v) => v && v.length > 0).length,
+    [filters],
+  );
+
+  useEffect(() => {
+    let active = true;
+    const search = async () => {
+      setLoading(true);
+      let query = supabase.from("listings").select("*").eq("sold", false);
+      if (q.trim()) {
+        const term = `%${q.trim()}%`;
+        query = query.or(`title.ilike.${term},description.ilike.${term},brand.ilike.${term}`);
+      }
+      if (filters.category) query = query.eq("category", filters.category);
+      if (filters.size) query = query.ilike("size", filters.size);
+      if (filters.condition) query = query.eq("condition", filters.condition);
+      if (filters.city) query = query.eq("city", filters.city);
+      if (filters.gender) query = query.eq("gender", filters.gender);
+      if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
+      if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
+      query = query.order("created_at", { ascending: section !== "trending" });
+      const { data } = await query.limit(60);
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+      if (active) {
+        setResults(hydrated);
+        setLoading(false);
+      }
+    };
+    const t = setTimeout(search, 250);
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
+  }, [q, filters, section]);
 
   return (
     <MobileShell>
       <header className="sticky top-0 z-30 bg-background/95 px-5 pb-3 pt-4 backdrop-blur">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate({ to: "/" })}
+            className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
           <div className="flex flex-1 items-center gap-2 rounded-full bg-secondary px-4 py-2.5">
             <SearchIcon className="h-4 w-4 text-muted-foreground" />
             <input
               autoFocus
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Kërko"
+              placeholder="Kërko për artikuj, marka..."
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
             {q && (
@@ -83,110 +112,124 @@ function SearchPage() {
             )}
           </div>
           <button
-            onClick={() => setShowFilters((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-full bg-secondary"
+            onClick={() => setShowFilters(true)}
+            className="relative grid h-10 w-10 place-items-center rounded-full bg-secondary"
           >
             <SlidersHorizontal className="h-4 w-4" />
+            {activeCount > 0 && (
+              <span className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full bg-foreground text-[9px] font-bold text-background">
+                {activeCount}
+              </span>
+            )}
           </button>
         </div>
       </header>
 
-      {showFilters ? (
-        <FiltersPanel onClose={() => setShowFilters(false)} />
-      ) : q ? (
-        <div className="px-5 py-4">
-          <p className="mb-3 text-xs text-muted-foreground">
-            {results.length} rezultate për "{q}"
-          </p>
+      <div className="px-5 py-3">
+        <p className="mb-3 text-xs text-muted-foreground">
+          {loading ? "Po kërkon..." : `${results.length} rezultate`}
+        </p>
+        {loading ? (
+          <div className="grid place-items-center py-10">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : results.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+            Asgjë nuk u gjet. Provo me fjalë tjera ose hiq disa filtra.
+          </div>
+        ) : (
           <div className="grid grid-cols-2 gap-3">
-            {results.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {results.map((r) => (
+              <ListingCard key={r.id} listing={r} />
             ))}
           </div>
-        </div>
-      ) : (
-        <div className="px-5 py-4">
-          <section>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Kërkimet e fundit
-            </h3>
-            <div className="">
-              {recent.map((r, i) => (
-                r.trim() ? <CategoryChip key={i} label={r} onClick={() => setQ(r)} /> : null
-              ))}
-            </div>
-          </section>
+        )}
+      </div>
 
-          <section className="mt-8">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Kategoritë
-            </h3>
-            <div className="space-y-5">
-              {tiles.map((group) => (
-                <div key={group.gender}>
-                  <h4 className="font-display text-xl">{group.gender}</h4>
-                  <div className="mt-2 grid grid-cols-3 gap-2">
-                    {group.items.map((it) => (
-                      <Link
-                        key={it.label}
-                        to="/"
-                        className="relative aspect-square overflow-hidden rounded-2xl bg-secondary"
-                      >
-                        <img
-                          src={`https://images.unsplash.com/${it.img}?auto=format&fit=crop&w=400&q=80`}
-                          alt={it.label}
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
-                        <span className="absolute bottom-2 left-2 text-xs font-medium text-white">
-                          {it.label}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
+      <Sheet open={showFilters} onOpenChange={setShowFilters}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Filtra</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 space-y-4">
+            <FilterSelect label="Kategoria" value={filters.category} onChange={(v) => setFilters((p) => ({ ...p, category: v }))} options={CATEGORIES.map((c) => c.value)} />
+            <FilterSelect label="Gjendja" value={filters.condition} onChange={(v) => setFilters((p) => ({ ...p, condition: v }))} options={[...CONDITIONS]} />
+            <FilterSelect label="Qyteti" value={filters.city} onChange={(v) => setFilters((p) => ({ ...p, city: v }))} options={[...CITIES]} />
+            <FilterSelect label="Gjinia" value={filters.gender} onChange={(v) => setFilters((p) => ({ ...p, gender: v }))} options={[...GENDERS]} />
+            <div>
+              <Label>Madhësia</Label>
+              <Input
+                value={filters.size ?? ""}
+                onChange={(e) => setFilters((p) => ({ ...p, size: e.target.value }))}
+                placeholder="P.sh. M"
+              />
             </div>
-          </section>
-        </div>
-      )}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label>Çmimi min (€)</Label>
+                <Input
+                  type="number"
+                  value={filters.priceMin ?? ""}
+                  onChange={(e) => setFilters((p) => ({ ...p, priceMin: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label>Çmimi maks (€)</Label>
+                <Input
+                  type="number"
+                  value={filters.priceMax ?? ""}
+                  onChange={(e) => setFilters((p) => ({ ...p, priceMax: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => setFilters({})}
+                className="flex-1 rounded-full border border-border py-3 text-sm font-medium"
+              >
+                Pastro
+              </button>
+              <button
+                onClick={() => setShowFilters(false)}
+                className="flex-1 rounded-full bg-foreground py-3 text-sm font-semibold text-background"
+              >
+                Apliko
+              </button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </MobileShell>
   );
 }
 
-function FiltersPanel({ onClose }: { onClose: () => void }) {
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value?: string;
+  onChange: (v: string) => void;
+  options: string[];
+}) {
   return (
-    <div className="px-5 py-4">
-      <div className="mb-4 flex items-center gap-2">
-        <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-full bg-secondary">
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        <h2 className="font-display text-2xl">Filtra</h2>
-      </div>
-      <div className="space-y-6">
-        {filterGroups.map((g) => (
-          <div key={g.label}>
-            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {g.label}
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {g.options.map((o) => (
-                <CategoryChip key={o} label={o} />
-              ))}
-            </div>
-          </div>
+    <div>
+      <Label>{label}</Label>
+      <div className="mt-1 flex flex-wrap gap-2">
+        {options.map((o) => (
+          <button
+            key={o}
+            type="button"
+            onClick={() => onChange(value === o ? "" : o)}
+            className={`rounded-full px-3 py-1.5 text-xs ${
+              value === o ? "bg-foreground text-background" : "bg-secondary text-foreground/80"
+            }`}
+          >
+            {o}
+          </button>
         ))}
-      </div>
-      <div className="sticky bottom-24 mt-8 flex gap-2">
-        <button className="flex-1 rounded-full border border-border bg-background py-3 text-sm font-medium">
-          Pastro
-        </button>
-        <button
-          onClick={onClose}
-          className="flex-1 rounded-full bg-foreground py-3 text-sm font-semibold text-background"
-        >
-          Apliko
-        </button>
       </div>
     </div>
   );

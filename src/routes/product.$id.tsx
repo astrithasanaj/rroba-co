@@ -1,121 +1,267 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, Heart, Share2, MessageCircle } from "lucide-react";
+import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Heart, Share2, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
+import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
-import { ProductCard } from "@/components/marketplace/ProductCard";
-import { SellerCard } from "@/components/marketplace/SellerCard";
-import { PrimaryButton } from "@/components/marketplace/PrimaryButton";
-import { getProduct, products } from "@/data/products";
+import { ListingCard } from "@/components/marketplace/ListingCard";
+import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/product/$id")({
   component: ProductDetail,
 });
 
+type Seller = {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  rating_avg: number;
+  rating_count: number;
+};
+
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
-  const product = getProduct(id);
+  const navigate = useNavigate();
+  const [listing, setListing] = useState<ListingView | null>(null);
+  const [seller, setSeller] = useState<Seller | null>(null);
+  const [similar, setSimilar] = useState<ListingView[]>([]);
+  const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
+  const [me, setMe] = useState<string | null>(null);
+  const [offerOpen, setOfferOpen] = useState(false);
+  const [activeImg, setActiveImg] = useState(0);
 
-  if (!product) {
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      setLoading(true);
+      const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
+      if (!row) {
+        setLoading(false);
+        return;
+      }
+      const [hydrated] = await hydrateListings([row as ListingRow]);
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("id,name,avatar_url,rating_avg,rating_count")
+        .eq("id", row.user_id)
+        .maybeSingle();
+      const { data: sim } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("category", row.category)
+        .neq("id", row.id)
+        .eq("sold", false)
+        .limit(6);
+      const simHydrated = await hydrateListings((sim ?? []) as ListingRow[]);
+      if (!active) return;
+      setListing(hydrated);
+      setSeller(prof as Seller | null);
+      setSimilar(simHydrated);
+      setLoading(false);
+      if (me) {
+        const { data: like } = await supabase
+          .from("listing_likes")
+          .select("listing_id")
+          .eq("user_id", me)
+          .eq("listing_id", row.id)
+          .maybeSingle();
+        setLiked(!!like);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [id, me]);
+
+  const toggleLike = async () => {
+    if (!me) {
+      navigate({ to: "/auth" });
+      return;
+    }
+    if (liked) {
+      await supabase.from("listing_likes").delete().eq("user_id", me).eq("listing_id", id);
+      setLiked(false);
+    } else {
+      await supabase.from("listing_likes").insert({ user_id: me, listing_id: id });
+      setLiked(true);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!me) {
+      navigate({ to: "/auth" });
+      return;
+    }
+    if (!listing) return;
+    if (me === listing.user_id) {
+      toast.error("Nuk mund të dërgosh mesazh vetes");
+      return;
+    }
+    // Find or create conversation
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("listing_id", listing.id)
+      .eq("buyer_id", me)
+      .maybeSingle();
+    let convId = existing?.id;
+    if (!convId) {
+      const { data: created, error } = await supabase
+        .from("conversations")
+        .insert({ listing_id: listing.id, buyer_id: me, seller_id: listing.user_id })
+        .select("id")
+        .single();
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      convId = created.id;
+    }
+    navigate({ to: "/messages", search: { thread: convId } });
+  };
+
+  if (loading) {
     return (
-      <MobileShell>
-        <div className="p-10 text-center">
-          <p>Artikulli nuk u gjet.</p>
-          <Link to="/" className="text-accent underline">
-            Kthehu në kreu
-          </Link>
+      <MobileShell hideNav>
+        <div className="grid h-screen place-items-center">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       </MobileShell>
     );
   }
 
-  const similar = products.filter(
-    (p) => p.id !== product.id && p.gender === product.gender && p.category === product.category
-  );
+  if (!listing) {
+    return (
+      <MobileShell>
+        <div className="p-10 text-center">
+          <p>Artikulli nuk u gjet.</p>
+          <Link to="/" className="text-accent underline">Kthehu në kreu</Link>
+        </div>
+      </MobileShell>
+    );
+  }
 
   const meta: [string, string][] = [
-    ["Gjinia", product.gender],
-    ["Kategoria", product.category],
-    ["Marka", product.brand],
-    ["Madhësia", product.size],
-    ["Gjendja", product.condition],
-    ["Ngjyra", product.color],
-    ["Qyteti", product.city],
+    ["Marka", listing.brand || "—"],
+    ["Kategoria", listing.category],
+    ["Madhësia", listing.size],
+    ["Gjendja", listing.condition],
+    ["Ngjyra", listing.color || "—"],
+    ["Qyteti", listing.city || "—"],
+    ["Gjinia", listing.gender],
   ];
+
+  const images = listing.imageUrls.length ? listing.imageUrls : [listing.coverUrl];
 
   return (
     <MobileShell hideNav>
       <div className="relative">
         <img
-          src={product.image}
-          alt={product.title}
+          src={images[activeImg]}
+          alt={listing.title}
           className="aspect-[4/5] w-full object-cover"
         />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
-          <Link
-            to="/"
+          <button
+            onClick={() => navigate({ to: "/" })}
             className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
           >
             <ArrowLeft className="h-4 w-4" />
-          </Link>
+          </button>
           <div className="flex gap-2">
             <button className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur">
               <Share2 className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setLiked((v) => !v)}
+              onClick={toggleLike}
               className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
             >
               <Heart className="h-4 w-4" fill={liked ? "currentColor" : "none"} />
             </button>
           </div>
         </div>
-        <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-          {[0, 1, 2, 3].map((i) => (
-            <span
-              key={i}
-              className={`h-1.5 rounded-full ${
-                i === 0 ? "w-6 bg-background" : "w-1.5 bg-background/60"
-              }`}
-            />
-          ))}
-        </div>
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveImg(i)}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === activeImg ? "w-6 bg-background" : "w-1.5 bg-background/60"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="px-5 pt-5">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          {product.brand}
+          {listing.brand || "—"}
         </p>
         <div className="mt-1 flex items-start justify-between gap-3">
-          <h1 className="font-display text-3xl leading-tight">{product.title}</h1>
-          <p className="shrink-0 font-display text-3xl">€{product.price}</p>
+          <h1 className="font-display text-3xl leading-tight">{listing.title}</h1>
+          <p className="shrink-0 font-display text-3xl">€{listing.price}</p>
         </div>
 
         <dl className="mt-5 grid grid-cols-2 gap-y-3 rounded-2xl bg-secondary/60 p-4 text-sm">
           {meta.map(([k, v]) => (
             <div key={k}>
-              <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                {k}
-              </dt>
+              <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
               <dd className="mt-0.5">{v}</dd>
             </div>
           ))}
         </dl>
 
-        <p className="mt-5 text-sm leading-relaxed text-foreground/85">
-          {product.description}
+        <p className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">
+          {listing.description}
         </p>
 
-        <div className="mt-6">
-          <SellerCard seller={product.seller} />
-        </div>
+        {seller && (
+          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
+            <img
+              src={
+                seller.avatar_url ||
+                `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
+              }
+              alt={seller.name}
+              className="h-12 w-12 shrink-0 rounded-full object-cover"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1">
+                <p className="truncate text-sm font-semibold">{seller.name || "Përdorues"}</p>
+                <BadgeCheck className="h-4 w-4 text-accent" fill="currentColor" />
+              </div>
+              <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-0.5">
+                  <Star className="h-3 w-3" fill="currentColor" /> {seller.rating_avg.toFixed(1)}
+                </span>
+                <span>· {seller.rating_count} vlerësime</span>
+              </div>
+            </div>
+            <Link
+              to="/user/$id"
+              params={{ id: seller.id }}
+              className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+            >
+              Shiko profilin
+            </Link>
+          </div>
+        )}
 
         {similar.length > 0 && (
           <section className="mt-8">
             <h3 className="mb-3 font-display text-2xl">Artikuj të ngjashëm</h3>
             <div className="grid grid-cols-2 gap-3">
               {similar.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ListingCard key={p.id} listing={p} />
               ))}
             </div>
           </section>
@@ -126,15 +272,32 @@ function ProductDetail() {
 
       <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-background/95 p-4 backdrop-blur">
         <div className="flex gap-2">
-          <PrimaryButton variant="secondary" className="!py-3">
+          <button
+            onClick={() => setOfferOpen(true)}
+            disabled={listing.sold || me === listing.user_id}
+            className="flex-1 rounded-full border border-border bg-background px-4 py-3 text-sm font-semibold disabled:opacity-50"
+          >
             Bëj ofertë
-          </PrimaryButton>
-          <PrimaryButton className="!py-3">
+          </button>
+          <button
+            onClick={sendMessage}
+            disabled={me === listing.user_id}
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-background disabled:opacity-50"
+          >
             <MessageCircle className="h-4 w-4" /> Dërgo mesazh
-          </PrimaryButton>
+          </button>
         </div>
         <div className="h-[env(safe-area-inset-bottom)]" />
       </div>
+
+      <MakeOfferDialog
+        open={offerOpen}
+        onOpenChange={setOfferOpen}
+        listingId={listing.id}
+        sellerId={listing.user_id}
+        buyerId={me}
+        listingPrice={listing.price}
+      />
     </MobileShell>
   );
 }

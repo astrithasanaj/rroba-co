@@ -1,90 +1,74 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Bell, ArrowRight } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Bell, ArrowRight, Loader2 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { GenderToggle } from "@/components/marketplace/GenderToggle";
-import { CategoryChip } from "@/components/marketplace/CategoryChip";
-import { ProductCard } from "@/components/marketplace/ProductCard";
-import { products } from "@/data/products";
+import { ListingCard } from "@/components/marketplace/ListingCard";
+import { supabase } from "@/integrations/supabase/client";
+import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const womenMenSubs = [
-  "Veshje",
-  "Këpucë",
-  "Çanta",
-  "Aksesorë",
-  "Vintage",
-  "Designer",
-];
-const kidsSubs = ["Vajza", "Djem", "Këpucë", "Aksesorë"];
+type Gender = "Të gjitha" | "Femra" | "Meshkuj" | "Fëmijë";
 
 function HomePage() {
-  const [gender, setGender] = useState<"Të gjitha" | "Femra" | "Meshkuj" | "Fëmijë">(
-    "Të gjitha"
-  );
-  const [sub, setSub] = useState<string | null>(null);
+  const [gender, setGender] = useState<Gender>("Të gjitha");
+  const [listings, setListings] = useState<ListingView[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const subs =
-    gender === "Femra" || gender === "Meshkuj"
-      ? womenMenSubs
-      : gender === "Fëmijë"
-      ? kidsSubs
-      : null;
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      setLoading(true);
+      const { data } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("sold", false)
+        .order("created_at", { ascending: false })
+        .limit(60);
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+      if (active) {
+        setListings(hydrated);
+        setLoading(false);
+      }
+    };
+    load();
+    const ch = supabase
+      .channel("home-feed")
+      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => load())
+      .subscribe();
+    return () => {
+      active = false;
+      supabase.removeChannel(ch);
+    };
+  }, []);
 
-  const filtered = products.filter((p) => {
-    if (gender !== "Të gjitha" && p.gender !== gender) return false;
-    if (sub && p.category !== sub) return false;
-    return true;
-  });
+  const filtered = useMemo(() => {
+    if (gender === "Të gjitha") return listings;
+    return listings.filter((l) => l.gender === gender);
+  }, [listings, gender]);
 
-  const newThisWeek = products.filter((p) => p.tag === "new");
-  const trending = products.filter((p) => p.tag === "trending");
+  const newThisWeek = useMemo(() => filtered.slice(0, 6), [filtered]);
+  const trending = useMemo(() => filtered.slice(0, 6).reverse(), [filtered]);
 
   return (
     <MobileShell>
-      {/* Header */}
       <header className="sticky top-0 z-30 flex items-center justify-between bg-background/95 px-5 py-4 backdrop-blur">
-        <h1 className="font-display text-3xl tracking-tight">
-          Rroba
-        </h1>
-        <div className="flex items-center gap-1">
-          <Link
-            to="/notifications"
-            className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
-          >
-            <Bell className="h-5 w-5" strokeWidth={1.7} />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent" />
-          </Link>
-        </div>
+        <h1 className="font-display text-3xl tracking-tight">Rroba</h1>
+        <Link
+          to="/notifications"
+          className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
+        >
+          <Bell className="h-5 w-5" strokeWidth={1.7} />
+        </Link>
       </header>
 
       <div className="px-5">
-        <GenderToggle
-          value={gender}
-          onChange={(v) => {
-            setGender(v);
-            setSub(null);
-          }}
-        />
-
-        {subs && (
-          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
-            {subs.map((s) => (
-              <CategoryChip
-                key={s}
-                label={s}
-                active={sub === s}
-                onClick={() => setSub(sub === s ? null : s)}
-              />
-            ))}
-          </div>
-        )}
+        <GenderToggle value={gender} onChange={setGender} />
       </div>
 
-      {/* Hero */}
       <section className="mx-5 mt-5 overflow-hidden rounded-3xl bg-accent/40">
         <div className="grid grid-cols-[1.1fr_1fr] items-stretch">
           <div className="flex flex-col justify-between p-5">
@@ -95,9 +79,12 @@ function HomePage() {
               <h2 className="font-display text-3xl leading-[1.05]">
                 Gjej stilin tënd për më pak.
               </h2>
-              <button className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-2 text-xs font-semibold text-background">
+              <Link
+                to="/search"
+                className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-2 text-xs font-semibold text-background"
+              >
                 Shfleto <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+              </Link>
             </div>
           </div>
           <img
@@ -108,20 +95,27 @@ function HomePage() {
         </div>
       </section>
 
-      {/* New this week */}
-      <Section title="E re këtë javë" subtitle="Sapo të publikuar">
-        <Grid products={newThisWeek} />
-      </Section>
-
-      {/* Trending */}
-      <Section title="Trending tani" subtitle="Çfarë po duan të gjithë">
-        <Grid products={trending} />
-      </Section>
-
-      {/* All / filtered feed */}
-      <Section title={sub ?? gender}>
-        <Grid products={filtered} />
-      </Section>
+      {loading ? (
+        <div className="grid place-items-center py-16 text-muted-foreground">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="mx-5 mt-8 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+          Ende nuk ka artikuj. Bëhu i pari që publikon!
+        </div>
+      ) : (
+        <>
+          <Section title="E re këtë javë" subtitle="Sapo të publikuar" sectionKey="new">
+            <Grid listings={newThisWeek} />
+          </Section>
+          <Section title="Trending tani" subtitle="Çfarë po duan të gjithë" sectionKey="trending">
+            <Grid listings={trending} />
+          </Section>
+          <Section title={gender === "Të gjitha" ? "Të gjitha" : gender}>
+            <Grid listings={filtered} />
+          </Section>
+        </>
+      )}
     </MobileShell>
   );
 }
@@ -129,10 +123,12 @@ function HomePage() {
 function Section({
   title,
   subtitle,
+  sectionKey,
   children,
 }: {
   title: string;
   subtitle?: string;
+  sectionKey?: "new" | "trending";
   children: React.ReactNode;
 }) {
   return (
@@ -140,24 +136,26 @@ function Section({
       <div className="mb-3 flex items-end justify-between">
         <div>
           <h3 className="font-display text-2xl">{title}</h3>
-          {subtitle && (
-            <p className="text-xs text-muted-foreground">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
         </div>
-        <button className="text-xs font-medium text-muted-foreground">
+        <Link
+          to="/search"
+          search={sectionKey ? { section: sectionKey } : undefined}
+          className="text-xs font-medium text-muted-foreground"
+        >
           Shiko të gjitha
-        </button>
+        </Link>
       </div>
       {children}
     </section>
   );
 }
 
-function Grid({ products }: { products: typeof import("@/data/products").products }) {
+function Grid({ listings }: { listings: ListingView[] }) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      {products.map((p) => (
-        <ProductCard key={p.id} product={p} />
+      {listings.map((l) => (
+        <ListingCard key={l.id} listing={l} />
       ))}
     </div>
   );
