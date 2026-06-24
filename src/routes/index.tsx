@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Bell, ArrowRight } from "lucide-react";
+import { Bell, ArrowRight } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { GenderToggle } from "@/components/marketplace/GenderToggle";
 import { CategoryChip } from "@/components/marketplace/CategoryChip";
