@@ -344,6 +344,21 @@ function SellPage() {
             {submitting ? "PO PUBLIKON..." : "PUBLIKO"}
           </button>
         </div>
+
+        <SizePickerSheet
+          open={sizeSheetOpen}
+          onOpenChange={setSizeSheetOpen}
+          value={size}
+          onChange={setSize}
+          gender={gender}
+          category={category}
+        />
+      </div>
+    </div>
+  );
+}
+{/* __SELLPAGE_END__ */}
+        </div>
       </div>
     </div>
   );
