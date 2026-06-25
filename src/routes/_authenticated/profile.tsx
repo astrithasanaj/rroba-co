@@ -194,7 +194,7 @@ function ProfilePage() {
     { id: "mine", icon: Grid2x2 },
     { id: "liked", icon: Heart },
     { id: "saved", icon: Bookmark },
-    { id: "wardrobe", icon: ShirtIcon },
+    { id: "wardrobe", icon: Shirt },
   ];
 
   const currentGrid =
