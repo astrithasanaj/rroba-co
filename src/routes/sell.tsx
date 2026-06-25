@@ -127,7 +127,7 @@ function SellPage() {
           category,
           size,
           condition,
-          color,
+          color: color.length ? color.join(", ") : "",
           city,
           gender,
           price: priceNum,
