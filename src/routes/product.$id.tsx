@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Share2, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
+import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
 import { LikeButton, SaveButton } from "@/components/marketplace/LikeButton";
@@ -30,7 +31,7 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
-  const [activeImg, setActiveImg] = useState(0);
+  
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
@@ -140,12 +141,8 @@ function ProductDetail() {
   return (
     <MobileShell hideNav>
       <div className="relative">
-        <img
-          src={images[activeImg]}
-          alt={listing.title}
-          className="aspect-[4/5] w-full object-cover"
-        />
-        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
+        <ImageGallery images={images} alt={listing.title} />
+        <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 pt-6">
           <button
             onClick={() => navigate({ to: "/" })}
             className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
@@ -160,20 +157,8 @@ function ProductDetail() {
             <LikeButton listingId={listing.id} className="h-10 w-10" size={16} />
           </div>
         </div>
-        {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveImg(i)}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === activeImg ? "w-6 bg-background" : "w-1.5 bg-background/60"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
+
 
       <div className="px-5 pt-5">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">

@@ -20,6 +20,16 @@ export function ListingCard({ listing }: { listing: ListingView }) {
             }`}
           />
         )}
+        {listing.imageUrls.length > 1 && (
+          <div className="pointer-events-none absolute inset-x-2 top-2 flex gap-1">
+            {listing.imageUrls.map((_, i) => (
+              <div
+                key={i}
+                className={`h-0.5 flex-1 rounded-full ${i === 0 ? "bg-white opacity-100" : "bg-white opacity-30"}`}
+              />
+            ))}
+          </div>
+        )}
         <LikeButton
           listingId={listing.id}
           className="absolute right-2 top-2 h-8 w-8 shadow-sm"
