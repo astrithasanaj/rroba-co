@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, ChevronLeft, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SizePickerSheet } from "@/components/marketplace/SizePickerSheet";
 
 export const Route = createFileRoute("/sell")({
   component: SellPage,
