@@ -11,7 +11,6 @@ import {
   LogOut,
   MapPin,
   MoreVertical,
-  Plus,
   Settings as SettingsIcon,
   Tag,
   X,
@@ -195,22 +194,13 @@ function ProfilePage() {
     <MobileShell>
       <header className="flex items-center justify-between px-5 py-4">
         <h1 className="font-display text-xl">{username}</h1>
-        <div className="flex items-center gap-1">
-          <Link
-            to="/sell"
-            className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
-            aria-label="Shit"
-          >
-            <Plus className="h-5 w-5" strokeWidth={1.7} />
-          </Link>
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
-            aria-label="Cilësimet"
-          >
-            <SettingsIcon className="h-5 w-5" strokeWidth={1.7} />
-          </button>
-        </div>
+        <button
+          onClick={() => setSettingsOpen(true)}
+          className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
+          aria-label="Cilësimet"
+        >
+          <SettingsIcon className="h-5 w-5" strokeWidth={1.7} />
+        </button>
       </header>
 
       <section className="px-5">
