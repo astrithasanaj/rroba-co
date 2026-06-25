@@ -1,17 +1,21 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  Archive,
-  BadgeCheck,
+  ArrowDownUp,
+  Bell,
   Bookmark,
   Check,
+  Gem,
   Grid2x2,
   Heart,
   Loader2,
   LogOut,
-  MapPin,
-  MoreVertical,
+  Ruler,
   Settings as SettingsIcon,
+  Share2,
+  Shirt,
+  SlidersHorizontal,
+  Star,
   Tag,
   X,
 } from "lucide-react";
@@ -21,12 +25,6 @@ import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
 import { useUserCollections } from "@/lib/user-collections";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +35,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 type Tab = "mine" | "liked" | "saved" | "wardrobe";
+type SortMode = "new" | "low" | "high";
 
 type Profile = {
   id: string;
@@ -46,6 +45,7 @@ type Profile = {
   bio: string;
   rating_avg: number;
   rating_count: number;
+  height_cm: number | null;
 };
 
 type OfferRow = {
@@ -58,12 +58,22 @@ type OfferRow = {
   created_at: string;
 };
 
+const CREAM = "#f6f1e7";
+const CARD = "#ede8de";
+const INK = "#1a1a1a";
+const MUTED = "#a89f94";
+const DIVIDER = "#ddd8ce";
+const SOLD = "#e8826a";
+
 function ProfilePage() {
   const { user } = Route.useRouteContext();
   const navigate = useNavigate();
   const { likes, saves } = useUserCollections();
   const [tab, setTab] = useState<Tab>("mine");
+  const [sort, setSort] = useState<SortMode>("new");
   const [ratingsOpen, setRatingsOpen] = useState(false);
+  const [benefitsOpen, setBenefitsOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
   const [offersOpen, setOffersOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -76,6 +86,9 @@ function ProfilePage() {
   const [listingTitles, setListingTitles] = useState<Record<string, string>>({});
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
+  const [followers] = useState(0);
+  const [following] = useState(0);
+  const [streak] = useState(2);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -106,39 +119,28 @@ function ProfilePage() {
     loadAll();
   }, [loadAll]);
 
-  // Load liked/saved listings whenever the underlying sets change
   useEffect(() => {
     const ids = Array.from(likes);
-    if (ids.length === 0) {
-      setLikedListings([]);
-      return;
-    }
+    if (ids.length === 0) { setLikedListings([]); return; }
     let cancelled = false;
     (async () => {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (!cancelled) setLikedListings(hydrated);
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [likes]);
 
   useEffect(() => {
     const ids = Array.from(saves);
-    if (ids.length === 0) {
-      setSavedListings([]);
-      return;
-    }
+    if (ids.length === 0) { setSavedListings([]); return; }
     let cancelled = false;
     (async () => {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (!cancelled) setSavedListings(hydrated);
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [saves]);
 
   useEffect(() => {
@@ -149,21 +151,9 @@ function ProfilePage() {
       .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `buyer_id=eq.${user.id}` }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "ratings", filter: `seller_id=eq.${user.id}` }, () => loadAll())
       .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
+    return () => { supabase.removeChannel(ch); };
   }, [user.id, loadAll]);
 
-  const markSold = async (l: ListingView) => {
-    await supabase.from("listings").update({ sold: !l.sold }).eq("id", l.id);
-  };
-  const deleteListing = async (l: ListingView) => {
-    await supabase.from("listings").delete().eq("id", l.id);
-    if (l.image_paths?.length) {
-      const cleanup = l.image_paths.filter((p) => !/^https?:\/\//i.test(p));
-      if (cleanup.length) await supabase.storage.from("photos").remove(cleanup);
-    }
-  };
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
@@ -174,131 +164,231 @@ function ProfilePage() {
     else toast.success(status === "accepted" ? "Oferta u pranua" : "Oferta u refuzua");
   };
 
+  const handleShare = async () => {
+    const url = window.location.origin + `/user/${user.id}`;
+    try {
+      if (navigator.share) await navigator.share({ url, title: displayName });
+      else { await navigator.clipboard.writeText(url); toast.success("Linku u kopjua"); }
+    } catch {}
+  };
+
   const displayName = profile?.name || user.email?.split("@")[0] || "Përdorues";
-  const avatar =
-    profile?.avatar_url ||
-    `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
+  const avatar = profile?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
   const username = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
 
-  const activeListings = useMemo(() => myListings.filter((l) => !l.sold), [myListings]);
-  const wardrobeListings = useMemo(() => myListings.filter((l) => l.sold), [myListings]);
+  const sortFn = (a: ListingView, b: ListingView) => {
+    if (sort === "low") return a.price - b.price;
+    if (sort === "high") return b.price - a.price;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  };
 
-  const tabs: { id: Tab; label: string; icon: typeof Grid2x2 }[] = [
-    { id: "mine", label: "Artikujt e mi", icon: Grid2x2 },
-    { id: "liked", label: "Të pëlqyera", icon: Heart },
-    { id: "saved", label: "Të ruajtura", icon: Bookmark },
-    { id: "wardrobe", label: "Garderoba ime", icon: Archive },
+  const activeListings = useMemo(() => myListings.filter((l) => !l.sold).sort(sortFn), [myListings, sort]);
+  const wardrobeListings = useMemo(() => myListings.filter((l) => l.sold).sort(sortFn), [myListings, sort]);
+  const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
+  const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
+
+  const salesCount = useMemo(() => myListings.filter((l) => l.sold).length, [myListings]);
+  const tier = salesCount >= 20 ? "top" : salesCount >= 5 ? "trusted" : "starter";
+
+  const tabs: { id: Tab; icon: typeof Grid2x2 }[] = [
+    { id: "mine", icon: Grid2x2 },
+    { id: "liked", icon: Heart },
+    { id: "saved", icon: Bookmark },
+    { id: "wardrobe", icon: Shirt },
   ];
+
+  const currentGrid =
+    tab === "mine" ? activeListings :
+    tab === "liked" ? sortedLiked :
+    tab === "saved" ? sortedSaved :
+    wardrobeListings;
 
   return (
     <MobileShell>
-      <header className="flex items-center justify-between px-5 py-4">
-        <h1 className="font-display text-xl">{username}</h1>
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
-          aria-label="Cilësimet"
-        >
-          <SettingsIcon className="h-5 w-5" strokeWidth={1.7} />
-        </button>
-      </header>
-
-      <section className="px-5">
-        <div className="flex items-start gap-4">
-          <img src={avatar} alt="" className="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-border" />
-          <div className="flex-1 pt-1">
-            <div className="flex items-center gap-1">
-              <p className="font-display text-lg">{displayName}</p>
-              <BadgeCheck className="h-4 w-4 text-accent" fill="currentColor" />
-            </div>
-            {profile?.city && (
-              <p className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                <MapPin className="h-3 w-3" /> {profile.city}
-              </p>
-            )}
-            <button
-              onClick={() => setRatingsOpen(true)}
-              className="mt-1 flex items-center gap-1 text-xs hover:opacity-80"
-            >
-              <StarRow value={profile?.rating_avg ?? 0} size={12} />
-              <span className="ml-1 font-semibold">{(profile?.rating_avg ?? 0).toFixed(1)}</span>
-              <span className="text-muted-foreground">· {profile?.rating_count ?? 0} vlerësime</span>
+      <div style={{ backgroundColor: CREAM, color: INK }} className="min-h-screen pb-24">
+        {/* Header */}
+        <header className="flex items-center justify-between px-4 pt-3 pb-2">
+          <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
+            <button onClick={() => navigate({ to: "/notifications" })} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Njoftimet">
+              <Bell className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            </button>
+            <button onClick={() => setSortOpen(true)} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Filtro">
+              <SlidersHorizontal className="h-[18px] w-[18px]" strokeWidth={1.8} />
             </button>
           </div>
-        </div>
-        {profile?.bio ? (
-          <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-            {profile.bio}
-          </p>
-        ) : (
-          <p className="mt-3 text-sm text-muted-foreground">
-            Shto një bio…
-          </p>
-        )}
-      </section>
-
-      {/* 4-tab icon nav with underline indicator */}
-      <div className="mt-6 border-b border-border">
-        <div className="grid grid-cols-4">
-          {tabs.map((t) => {
-            const Icon = t.icon;
-            const active = tab === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                aria-label={t.label}
-                aria-pressed={active}
-                className="relative flex items-center justify-center py-3.5"
-              >
-                <Icon
-                  className={`h-6 w-6 transition ${active ? "text-foreground" : "text-muted-foreground"}`}
-                  strokeWidth={active ? 2.2 : 1.7}
-                  fill={active && t.id === "liked" ? "currentColor" : "none"}
-                />
-                {active && (
-                  <span className="absolute inset-x-6 -bottom-px h-0.5 rounded-full bg-foreground" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <section className="px-2 pt-2">
-        {loading && tab === "mine" ? (
-          <div className="grid place-items-center py-10">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <h1 className="text-[15px] font-medium">{username}</h1>
+          <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
+            <button onClick={handleShare} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Shpërndaj">
+              <Share2 className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            </button>
+            <button onClick={() => setSettingsOpen(true)} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Cilësimet">
+              <SettingsIcon className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            </button>
           </div>
-        ) : tab === "mine" ? (
-          activeListings.length === 0 ? (
+        </header>
+
+        {/* Profile section */}
+        <section className="px-5 pt-3">
+          <div className="flex items-center gap-5">
+            <img src={avatar} alt="" className="h-[90px] w-[90px] shrink-0 rounded-full object-cover" style={{ boxShadow: `0 0 0 3px ${CREAM}, 0 0 0 4px ${DIVIDER}` }} />
+            <div className="flex flex-1 items-center justify-around">
+              <Stat value={streak} label="streak" />
+              <Stat value={followers} label="følgjarit" />
+              <Stat value={following} label="ndjek" />
+            </div>
+          </div>
+
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={() => setBenefitsOpen(true)}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[13px] font-semibold"
+              style={{ borderColor: INK, color: INK }}
+            >
+              <Gem className="h-4 w-4" strokeWidth={1.8} /> Përfitimet
+            </button>
+            <button
+              onClick={() => setRatingsOpen(true)}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[13px] font-semibold"
+              style={{ borderColor: INK, color: INK }}
+            >
+              {(profile?.rating_count ?? 0) > 0 ? (
+                <>
+                  <Star className="h-4 w-4" fill="currentColor" strokeWidth={0} />
+                  {(profile?.rating_avg ?? 0).toFixed(1)} ({profile?.rating_count})
+                </>
+              ) : (
+                "Asnjë vlerësim"
+              )}
+            </button>
+          </div>
+
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <p className="text-[20px] font-bold leading-tight" style={{ color: INK }}>{displayName}</p>
+              {profile?.city && (
+                <p className="mt-0.5 text-[13px]" style={{ color: MUTED }}>{profile.city}</p>
+              )}
+            </div>
+            {profile?.height_cm ? (
+              <p className="inline-flex items-center gap-1 text-[13px]" style={{ color: MUTED }}>
+                <Ruler className="h-3.5 w-3.5" /> {profile.height_cm} cm
+              </p>
+            ) : null}
+          </div>
+
+          {profile?.bio && (
+            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>{profile.bio}</p>
+          )}
+        </section>
+
+        {/* Tabs */}
+        <div className="mt-5" style={{ borderBottom: `1px solid ${DIVIDER}` }}>
+          <div className="grid grid-cols-4">
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className="relative flex items-center justify-center py-3"
+                >
+                  <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.2 : 1.7} style={{ color: active ? INK : MUTED }} />
+                  {active && <span className="absolute inset-x-8 -bottom-px h-[2px]" style={{ backgroundColor: INK }} />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Grid */}
+        <section className="pt-0">
+          {loading && tab === "mine" ? (
+            <div className="grid place-items-center py-10">
+              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            </div>
+          ) : currentGrid.length === 0 ? (
             <EmptyMsg
-              text="Ende nuk ke publikuar asnjë artikull."
-              actionLabel="Publiko të parin"
-              to="/sell"
+              text={
+                tab === "mine" ? "Ende nuk ke publikuar asnjë artikull." :
+                tab === "liked" ? "Asnjë artikull i pëlqyer ende." :
+                tab === "saved" ? "Asnjë artikull i ruajtur." :
+                "Garderoba është bosh — artikujt e shitur shfaqen këtu."
+              }
+              actionLabel={tab === "mine" ? "Publiko të parin" : tab !== "wardrobe" ? "Shfleto" : undefined}
+              to={tab === "mine" ? "/sell" : tab !== "wardrobe" ? "/" : undefined}
             />
           ) : (
-            <OwnerGrid listings={activeListings} onMarkSold={markSold} onDelete={deleteListing} />
-          )
-        ) : tab === "liked" ? (
-          likedListings.length === 0 ? (
-            <EmptyMsg text="Asnjë artikull i pëlqyer ende — fillo të eksplorosh!" actionLabel="Shfleto" to="/" />
-          ) : (
-            <PhotoGrid listings={likedListings} />
-          )
-        ) : tab === "saved" ? (
-          savedListings.length === 0 ? (
-            <EmptyMsg text="Asnjë artikull i ruajtur — ruaj artikujt që dëshiron t'i shikosh më vonë." actionLabel="Shfleto" to="/" />
-          ) : (
-            <PhotoGrid listings={savedListings} />
-          )
-        ) : wardrobeListings.length === 0 ? (
-          <EmptyMsg text="Garderoba jote është bosh — artikujt e shitur shfaqen këtu." />
-        ) : (
-          <PhotoGrid listings={wardrobeListings} sold />
-        )}
-      </section>
+            <ListingsGrid listings={currentGrid} />
+          )}
+        </section>
 
+        {/* Floating sort button */}
+        {currentGrid.length > 0 && (
+          <button
+            onClick={() => setSortOpen(true)}
+            className="fixed bottom-20 left-1/2 z-30 -translate-x-1/2 inline-flex items-center gap-2 rounded-full px-5 py-3 text-[13px] font-semibold text-white shadow-lg"
+            style={{ backgroundColor: INK }}
+          >
+            Rendit <ArrowDownUp className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Sort sheet */}
+      <Sheet open={sortOpen} onOpenChange={setSortOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CARD }}>
+          <div className="mx-auto mt-3 h-1.5 w-12 rounded-full" style={{ backgroundColor: DIVIDER }} />
+          <div className="px-5 pb-8 pt-4">
+            <h2 className="mb-3 text-[17px] font-bold" style={{ color: INK }}>Rendit sipas</h2>
+            {([
+              { id: "new", label: "Më të rejat" },
+              { id: "low", label: "Çmimi: ulët-lartë" },
+              { id: "high", label: "Çmimi: lartë-ulët" },
+            ] as const).map((o) => (
+              <button
+                key={o.id}
+                onClick={() => { setSort(o.id); setSortOpen(false); }}
+                className="flex w-full items-center justify-between py-3 text-left text-[15px]"
+                style={{ color: INK, borderBottom: `1px solid ${DIVIDER}` }}
+              >
+                {o.label}
+                {sort === o.id && <Check className="h-4 w-4" />}
+              </button>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Benefits sheet */}
+      <Sheet open={benefitsOpen} onOpenChange={setBenefitsOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CREAM }}>
+          <div className="mx-auto mt-3 h-1.5 w-12 rounded-full" style={{ backgroundColor: DIVIDER }} />
+          <div className="px-5 pb-8 pt-4">
+            <h2 className="mb-1 text-[18px] font-bold" style={{ color: INK }}>Përfitimet e shitësit</h2>
+            <p className="mb-4 text-[13px]" style={{ color: MUTED }}>Sa më shumë shet, aq më shumë përfitime.</p>
+            <div className="space-y-2.5">
+              <TierCard
+                emoji="🥉" title="Fillestar" range="0–4 shitje"
+                body="Akses bazë në listim dhe shitje."
+                active={tier === "starter"}
+              />
+              <TierCard
+                emoji="🥈" title="I besueshëm" range="5–19 shitje"
+                body="Prioritet në kërkim dhe shenjë e verifikuar."
+                active={tier === "trusted"}
+              />
+              <TierCard
+                emoji="🥇" title="Top shitës" range="20+ shitje"
+                body="Promovim falas, shenjë e artë dhe shfaqje në kryefaqe."
+                active={tier === "top"}
+              />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Reviews dialog */}
       <RatingsDialog
         open={ratingsOpen}
         onOpenChange={setRatingsOpen}
@@ -307,19 +397,17 @@ function ProfilePage() {
         sellerName={displayName}
       />
 
+      {/* Offers sheet */}
       <Sheet open={offersOpen} onOpenChange={setOffersOpen}>
-        <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Ofertat</SheetTitle>
-          </SheetHeader>
+        <SheetContent side="bottom" className="h-[85vh] overflow-y-auto" style={{ backgroundColor: CREAM }}>
+          <SheetHeader><SheetTitle>Ofertat</SheetTitle></SheetHeader>
           <div className="mt-4 flex gap-2">
             {(["received", "sent"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setOfferSub(s)}
-                className={`rounded-full px-3 py-1.5 text-xs ${
-                  offerSub === s ? "bg-foreground text-background" : "bg-secondary"
-                }`}
+                className="rounded-full px-3 py-1.5 text-xs"
+                style={{ backgroundColor: offerSub === s ? INK : CARD, color: offerSub === s ? "white" : INK }}
               >
                 {s === "received" ? "Të marra" : "Të dërguara"}
               </button>
@@ -336,30 +424,20 @@ function ProfilePage() {
         </SheetContent>
       </Sheet>
 
+      {/* Settings sheet */}
       <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Cilësimet</SheetTitle>
-          </SheetHeader>
+        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto" style={{ backgroundColor: CREAM }}>
+          <SheetHeader><SheetTitle>Cilësimet</SheetTitle></SheetHeader>
           <button
-            onClick={() => {
-              setSettingsOpen(false);
-              setOffersOpen(true);
-            }}
-            className="mt-4 inline-flex w-full items-center justify-between rounded-2xl border border-border px-4 py-3 text-sm font-semibold hover:bg-secondary"
+            onClick={() => { setSettingsOpen(false); setOffersOpen(true); }}
+            className="mt-4 inline-flex w-full items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold"
+            style={{ backgroundColor: CARD, color: INK }}
           >
-            <span className="inline-flex items-center gap-2">
-              <Tag className="h-4 w-4" /> Ofertat
-            </span>
-            <span className="text-muted-foreground">›</span>
+            <span className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Ofertat</span>
+            <span style={{ color: MUTED }}>›</span>
           </button>
           <div className="mt-4">
-            <SettingsTab
-              profile={profile}
-              email={user.email ?? ""}
-              onSaved={loadAll}
-              onSignOut={handleSignOut}
-            />
+            <SettingsTab profile={profile} email={user.email ?? ""} onSaved={loadAll} onSignOut={handleSignOut} />
           </div>
         </SheetContent>
       </Sheet>
@@ -367,89 +445,80 @@ function ProfilePage() {
   );
 }
 
-function PhotoGrid({ listings, sold = false }: { listings: ListingView[]; sold?: boolean }) {
+function Stat({ value, label }: { value: number; label: string }) {
   return (
-    <div className="grid grid-cols-3 gap-0.5">
+    <div className="text-center">
+      <p className="text-[18px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
+      <p className="text-[12px]" style={{ color: MUTED }}>{label}</p>
+    </div>
+  );
+}
+
+function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {
+  return (
+    <div
+      className="rounded-2xl p-4"
+      style={{ backgroundColor: active ? INK : CARD, color: active ? "white" : INK }}
+    >
+      <div className="flex items-center justify-between">
+        <p className="text-[15px] font-bold">{emoji} {title}</p>
+        <p className="text-[12px] opacity-80">{range}</p>
+      </div>
+      <p className="mt-1 text-[13px] opacity-90">{body}</p>
+    </div>
+  );
+}
+
+function ListingsGrid({ listings }: { listings: ListingView[] }) {
+  return (
+    <div className="grid grid-cols-2 gap-0">
       {listings.map((l) => (
         <Link
           key={l.id}
           to="/product/$id"
           params={{ id: l.id }}
-          className="relative aspect-square overflow-hidden bg-secondary"
+          className="relative block aspect-[3/4] overflow-hidden"
+          style={{ backgroundColor: CARD }}
         >
           {l.coverUrl && (
-            <img
-              src={l.coverUrl}
-              alt={l.title}
-              className={`h-full w-full object-cover ${sold || l.sold ? "opacity-80" : ""}`}
-              loading="lazy"
-            />
+            <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
           )}
-          {(sold || l.sold) && (
-            <span className="pointer-events-none absolute bottom-1 left-1 rounded bg-destructive px-1.5 py-0.5 text-[9px] font-black tracking-wider text-destructive-foreground">
-              SHITUR
-            </span>
-          )}
+          {/* Brand watermark */}
+          <span className="pointer-events-none absolute left-2 top-2 text-[11px] italic text-white/95" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
+            Rroba
+          </span>
+          {/* Sold ribbon */}
+          {l.sold && <SoldRibbon />}
+          {/* Bottom overlay */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-8" style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0))" }}>
+            <p className="truncate text-[13px] font-bold text-white">{l.title}</p>
+            <p className="truncate text-[11px] text-white/85">
+              {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
+            </p>
+          </div>
         </Link>
       ))}
     </div>
   );
 }
 
-function OwnerGrid({
-  listings,
-  onMarkSold,
-  onDelete,
-}: {
-  listings: ListingView[];
-  onMarkSold: (l: ListingView) => void;
-  onDelete: (l: ListingView) => void;
-}) {
+function SoldRibbon() {
   return (
-    <div className="grid grid-cols-3 gap-0.5">
-      {listings.map((l) => (
-        <div key={l.id} className="relative aspect-square overflow-hidden bg-secondary">
-          <Link to="/product/$id" params={{ id: l.id }} className="block h-full w-full">
-            {l.coverUrl && (
-              <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
-            )}
-          </Link>
-          <div className="absolute right-1 top-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="grid h-6 w-6 place-items-center rounded-full bg-background/90 backdrop-blur"
-                  aria-label="Më shumë"
-                >
-                  <MoreVertical className="h-3 w-3" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onMarkSold(l)}>Shëno si i shitur</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(l)} className="text-destructive focus:text-destructive">
-                  Fshij
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-background/90 px-1.5 py-0.5 text-[10px] font-semibold">
-            €{l.price}
-          </span>
-        </div>
-      ))}
+    <div className="pointer-events-none absolute -right-10 top-4 w-36 rotate-45 py-1 text-center text-[11px] font-bold tracking-wider text-white" style={{ backgroundColor: SOLD }}>
+      Shitur
     </div>
   );
 }
 
 function EmptyMsg({ text, actionLabel, to }: { text: string; actionLabel?: string; to?: string }) {
   return (
-    <div className="mx-3 mt-6 rounded-2xl border border-dashed border-border p-8 text-center">
-      <p className="text-sm text-muted-foreground">{text}</p>
+    <div className="mx-5 mt-8 rounded-2xl p-8 text-center" style={{ backgroundColor: CARD }}>
+      <p className="text-sm" style={{ color: MUTED }}>{text}</p>
       {actionLabel && to && (
         <Link
           to={to}
-          className="mt-4 inline-flex items-center justify-center rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-background"
+          className="mt-4 inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold text-white"
+          style={{ backgroundColor: INK }}
         >
           {actionLabel}
         </Link>
@@ -459,10 +528,7 @@ function EmptyMsg({ text, actionLabel, to }: { text: string; actionLabel?: strin
 }
 
 function OffersList({
-  offers,
-  titles,
-  canRespond,
-  onRespond,
+  offers, titles, canRespond, onRespond,
 }: {
   offers: OfferRow[];
   titles: Record<string, string>;
@@ -470,44 +536,31 @@ function OffersList({
   onRespond: (o: OfferRow, status: "accepted" | "declined") => void;
 }) {
   if (offers.length === 0)
-    return <p className="py-6 text-center text-sm text-muted-foreground">Asnjë ofertë.</p>;
+    return <p className="py-6 text-center text-sm" style={{ color: MUTED }}>Asnjë ofertë.</p>;
   return (
     <ul className="space-y-2">
       {offers.map((o) => (
-        <li key={o.id} className="rounded-2xl border border-border bg-card p-3">
+        <li key={o.id} className="rounded-2xl p-3" style={{ backgroundColor: CARD }}>
           <div className="flex items-center justify-between">
             <Link to="/product/$id" params={{ id: o.listing_id }} className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold">{titles[o.listing_id] ?? "Artikull"}</p>
-              <p className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleString()}</p>
+              <p className="truncate text-sm font-semibold" style={{ color: INK }}>{titles[o.listing_id] ?? "Artikull"}</p>
+              <p className="text-xs" style={{ color: MUTED }}>{new Date(o.created_at).toLocaleString()}</p>
             </Link>
-            <p className="shrink-0 font-display text-xl">€{o.amount}</p>
+            <p className="shrink-0 text-xl font-bold" style={{ color: INK }}>€{o.amount}</p>
           </div>
           <div className="mt-2 flex items-center justify-between">
-            <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                o.status === "accepted"
-                  ? "bg-emerald-100 text-emerald-700"
-                  : o.status === "declined"
-                  ? "bg-destructive/15 text-destructive"
-                  : "bg-secondary"
-              }`}
-            >
+            <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{
+              backgroundColor: o.status === "accepted" ? "#d1f4e0" : o.status === "declined" ? "#f4d1d1" : DIVIDER,
+              color: INK,
+            }}>
               {o.status === "pending" ? "Në pritje" : o.status === "accepted" ? "Pranuar" : "Refuzuar"}
             </span>
             {canRespond && o.status === "pending" && (
               <div className="flex gap-2">
-                <button
-                  onClick={() => onRespond(o, "declined")}
-                  className="grid h-7 w-7 place-items-center rounded-full bg-secondary"
-                  aria-label="Refuzo"
-                >
+                <button onClick={() => onRespond(o, "declined")} className="grid h-7 w-7 place-items-center rounded-full" style={{ backgroundColor: DIVIDER }} aria-label="Refuzo">
                   <X className="h-3.5 w-3.5" />
                 </button>
-                <button
-                  onClick={() => onRespond(o, "accepted")}
-                  className="grid h-7 w-7 place-items-center rounded-full bg-foreground text-background"
-                  aria-label="Prano"
-                >
+                <button onClick={() => onRespond(o, "accepted")} className="grid h-7 w-7 place-items-center rounded-full text-white" style={{ backgroundColor: INK }} aria-label="Prano">
                   <Check className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -520,10 +573,7 @@ function OffersList({
 }
 
 function SettingsTab({
-  profile,
-  email,
-  onSaved,
-  onSignOut,
+  profile, email, onSaved, onSignOut,
 }: {
   profile: Profile | null;
   email: string;
@@ -533,6 +583,7 @@ function SettingsTab({
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [city, setCity] = useState(profile?.city ?? "");
+  const [height, setHeight] = useState<string>(profile?.height_cm?.toString() ?? "");
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -541,6 +592,7 @@ function SettingsTab({
     setName(profile?.name ?? "");
     setBio(profile?.bio ?? "");
     setCity(profile?.city ?? "");
+    setHeight(profile?.height_cm?.toString() ?? "");
     setAvatarUrl(profile?.avatar_url ?? "");
   }, [profile]);
 
@@ -550,15 +602,8 @@ function SettingsTab({
     setUploading(true);
     const ext = file.name.split(".").pop() ?? "jpg";
     const path = `avatars/${profile.id}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("photos").upload(path, file, {
-      contentType: file.type,
-      upsert: false,
-    });
-    if (error) {
-      toast.error(error.message);
-      setUploading(false);
-      return;
-    }
+    const { error } = await supabase.storage.from("photos").upload(path, file, { contentType: file.type, upsert: false });
+    if (error) { toast.error(error.message); setUploading(false); return; }
     const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60 * 24 * 365);
     if (signed?.signedUrl) setAvatarUrl(signed.signedUrl);
     setUploading(false);
@@ -567,70 +612,44 @@ function SettingsTab({
   const save = async () => {
     if (!profile) return;
     setSaving(true);
+    const h = height.trim() === "" ? null : Math.max(0, Math.min(260, parseInt(height, 10) || 0));
     const { error } = await supabase
       .from("profiles")
-      .update({ name, bio, city, avatar_url: avatarUrl || null })
+      .update({ name, bio, city, avatar_url: avatarUrl || null, height_cm: h })
       .eq("id", profile.id);
     setSaving(false);
     if (error) toast.error(error.message);
-    else {
-      toast.success("Profili u ruajt");
-      onSaved();
-    }
+    else { toast.success("Profili u ruajt"); onSaved(); }
   };
 
   return (
     <div className="space-y-4 pb-6">
       <div className="flex items-center gap-3">
-        <img
-          src={avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`}
-          alt=""
-          className="h-16 w-16 rounded-full object-cover ring-2 ring-border"
-        />
-        <label className="cursor-pointer rounded-full border border-border px-3 py-2 text-xs font-medium hover:bg-secondary">
+        <img src={avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`} alt="" className="h-16 w-16 rounded-full object-cover" style={{ boxShadow: `0 0 0 2px ${DIVIDER}` }} />
+        <label className="cursor-pointer rounded-full px-3 py-2 text-xs font-medium" style={{ backgroundColor: CARD, color: INK }}>
           {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
           <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
         </label>
       </div>
+      <div><Label>Email</Label><Input value={email} disabled /></div>
+      <div><Label>Emri</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} /></div>
+      <div><Label>Bio</Label><Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} /></div>
       <div>
-        <Label>Email</Label>
-        <Input value={email} disabled />
-      </div>
-      <div>
-        <Label>Emri</Label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} />
-      </div>
-      <div>
-        <Label>Bio</Label>
-        <Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} />
+        <Label>Lartësia (cm)</Label>
+        <Input type="number" inputMode="numeric" min={0} max={260} value={height} onChange={(e) => setHeight(e.target.value)} placeholder="p.sh. 175" />
       </div>
       <div>
         <Label>Qyteti</Label>
-        <select
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="mt-1 h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
-        >
+        <select value={city} onChange={(e) => setCity(e.target.value)} className="mt-1 h-10 w-full rounded-md px-3 text-sm" style={{ backgroundColor: CARD, border: `1px solid ${DIVIDER}`, color: INK }}>
           <option value="">Zgjidh</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
+          {CITIES.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
       </div>
-      <button
-        onClick={save}
-        disabled={saving}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground py-3 text-sm font-semibold text-background disabled:opacity-50"
-      >
+      <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white disabled:opacity-50" style={{ backgroundColor: INK }}>
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
         Ruaj
       </button>
-      <button
-        onClick={onSignOut}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-semibold"
-      >
+      <button onClick={onSignOut} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold" style={{ border: `1px solid ${DIVIDER}`, color: INK }}>
         <LogOut className="h-4 w-4" /> Dil
       </button>
     </div>
