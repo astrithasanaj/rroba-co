@@ -297,6 +297,7 @@ export type Database = {
           bio: string
           city: string
           created_at: string
+          height_cm: number | null
           id: string
           name: string
           rating_avg: number
@@ -308,6 +309,7 @@ export type Database = {
           bio?: string
           city?: string
           created_at?: string
+          height_cm?: number | null
           id: string
           name?: string
           rating_avg?: number
@@ -319,6 +321,7 @@ export type Database = {
           bio?: string
           city?: string
           created_at?: string
+          height_cm?: number | null
           id?: string
           name?: string
           rating_avg?: number
