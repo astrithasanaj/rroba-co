@@ -286,33 +286,41 @@ function SellPage() {
                   className="flex w-full items-center justify-between rounded-lg bg-black/[0.04] px-4 py-3 text-left text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
                 >
                   <span className="flex items-center gap-2 min-w-0">
-                    {color && (() => {
-                      const opt = COLOR_OPTIONS.find((c) => c.name === color);
-                      if (!opt) return null;
-                      if (opt.swatch === "rainbow") {
-                        return (
-                          <span
-                            className="h-4 w-4 shrink-0 rounded-full"
-                            style={{
-                              background:
-                                "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)",
-                            }}
-                          />
-                        );
-                      }
-                      return (
-                        <span
-                          className="h-4 w-4 shrink-0 rounded-full"
-                          style={{
-                            background: opt.swatch,
-                            boxShadow: opt.ring ? `0 0 0 1.5px ${opt.ring} inset` : undefined,
-                          }}
-                        />
-                      );
-                    })()}
-                    <span className={`truncate ${color ? "text-foreground" : "text-muted-foreground"}`}>
-                      {color || "Zgjidh"}
-                    </span>
+                    {color.length === 0 ? (
+                      <span className="text-muted-foreground">Zgjidh</span>
+                    ) : (
+                      <>
+                        <span className="flex -space-x-1.5">
+                          {color.map((c) => {
+                            const opt = COLOR_OPTIONS.find((o) => o.name === c);
+                            if (!opt) return null;
+                            if (opt.inner === "rainbow") {
+                              return (
+                                <span
+                                  key={c}
+                                  className="h-4 w-4 shrink-0 rounded-full border border-[#c8c3b9]"
+                                  style={{
+                                    background:
+                                      "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)",
+                                  }}
+                                />
+                              );
+                            }
+                            return (
+                              <span
+                                key={c}
+                                className="h-4 w-4 shrink-0 rounded-full border border-[#c8c3b9]"
+                                style={{
+                                  background: opt.inner,
+                                  boxShadow: opt.innerRing ? `0 0 0 1px ${opt.innerRing} inset` : undefined,
+                                }}
+                              />
+                            );
+                          })}
+                        </span>
+                        <span className="truncate text-foreground">{color.join(", ")}</span>
+                      </>
+                    )}
                   </span>
                   <ChevronLeft className="h-4 w-4 -rotate-90 text-muted-foreground" />
                 </button>
