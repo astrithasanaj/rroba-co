@@ -5,18 +5,26 @@ import {
   Bell,
   Bookmark,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Gem,
   Grid2x2,
   Heart,
+  HelpCircle,
   Loader2,
   LogOut,
+  MessageSquare,
+  Minus,
+  Plus,
   Ruler,
   Settings as SettingsIcon,
   Share2,
   Shirt,
+  ShieldCheck,
   SlidersHorizontal,
   Star,
   Tag,
+  User as UserIcon,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -425,22 +433,15 @@ function ProfilePage() {
       </Sheet>
 
       {/* Settings sheet */}
-      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto" style={{ backgroundColor: CREAM }}>
-          <SheetHeader><SheetTitle>Cilësimet</SheetTitle></SheetHeader>
-          <button
-            onClick={() => { setSettingsOpen(false); setOffersOpen(true); }}
-            className="mt-4 inline-flex w-full items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold"
-            style={{ backgroundColor: CARD, color: INK }}
-          >
-            <span className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Ofertat</span>
-            <span style={{ color: MUTED }}>›</span>
-          </button>
-          <div className="mt-4">
-            <SettingsTab profile={profile} email={user.email ?? ""} onSaved={loadAll} onSignOut={handleSignOut} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <SettingsSheet
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        profile={profile}
+        email={user.email ?? ""}
+        onSaved={loadAll}
+        onSignOut={handleSignOut}
+        onOpenOffers={() => { setSettingsOpen(false); setOffersOpen(true); }}
+      />
     </MobileShell>
   );
 }
@@ -572,14 +573,158 @@ function OffersList({
   );
 }
 
-function SettingsTab({
-  profile, email, onSaved, onSignOut,
+type SettingsView = "main" | "profile" | "notifications" | "preferences" | "faq" | "support";
+
+function SettingsSheet({
+  open, onOpenChange, profile, email, onSaved, onSignOut, onOpenOffers,
 }: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
   profile: Profile | null;
   email: string;
   onSaved: () => void;
   onSignOut: () => void;
+  onOpenOffers: () => void;
 }) {
+  const [view, setView] = useState<SettingsView>("main");
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
+  useEffect(() => { if (open) setView("main"); }, [open]);
+
+  const titles: Record<SettingsView, string> = {
+    main: "Cilësimet",
+    profile: "Ndrysho profilin",
+    notifications: "Njoftimet",
+    preferences: "Preferencat",
+    faq: "Pyetjet e shpeshta",
+    support: "Mbështetje",
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="bottom"
+        className="h-[92vh] overflow-y-auto border-0 p-0"
+        style={{ backgroundColor: CREAM, color: INK }}
+      >
+        {/* Header */}
+        <SheetHeader className="sticky top-0 z-10 flex-row items-center gap-2 border-0 px-2 py-3" style={{ backgroundColor: CREAM }}>
+          {view !== "main" ? (
+            <button onClick={() => setView("main")} aria-label="Mbrapa" className="grid h-9 w-9 place-items-center rounded-full" style={{ color: INK }}>
+              <ChevronLeft className="h-6 w-6" strokeWidth={2} />
+            </button>
+          ) : <span className="h-9 w-9" />}
+          <SheetTitle className="flex-1 text-center text-[17px] font-bold" style={{ color: INK }}>
+            {titles[view]}
+          </SheetTitle>
+          <button onClick={() => onOpenChange(false)} aria-label="Mbyll" className="grid h-9 w-9 place-items-center rounded-full" style={{ color: INK }}>
+            <X className="h-5 w-5" strokeWidth={2} />
+          </button>
+        </SheetHeader>
+
+        <div className="px-0 pb-10">
+          {view === "main" && (
+            <SettingsMain
+              onNavigate={setView}
+              onOpenOffers={onOpenOffers}
+              onLogout={() => setConfirmLogout(true)}
+            />
+          )}
+          {view === "profile" && (
+            <div className="px-5 pt-2">
+              <ProfileForm profile={profile} email={email} onSaved={onSaved} />
+            </div>
+          )}
+          {view === "notifications" && <NotificationsView />}
+          {view === "preferences" && <PreferencesView />}
+          {view === "faq" && <FaqView />}
+          {view === "support" && <SupportView />}
+        </div>
+
+        <LogoutConfirm
+          open={confirmLogout}
+          onOpenChange={setConfirmLogout}
+          onConfirm={() => { setConfirmLogout(false); onSignOut(); }}
+        />
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-5 pb-2 pt-6 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: MUTED, backgroundColor: CREAM }}>
+      {children}
+    </div>
+  );
+}
+
+function Row({
+  icon: Icon, title, subtitle, onClick, danger,
+}: {
+  icon?: typeof UserIcon;
+  title: string;
+  subtitle?: string;
+  onClick?: () => void;
+  danger?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex w-full items-center gap-3 px-5 py-4 text-left"
+      style={{ backgroundColor: CREAM }}
+    >
+      {Icon && <Icon className="h-5 w-5 shrink-0" strokeWidth={1.9} style={{ color: danger ? SOLD : INK }} />}
+      <div className="flex-1">
+        <div className="text-[15px] font-semibold" style={{ color: danger ? SOLD : INK }}>{title}</div>
+        {subtitle && <div className="mt-0.5 text-[13px]" style={{ color: MUTED }}>{subtitle}</div>}
+      </div>
+      {!danger && <ChevronRight className="h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MUTED }} />}
+    </button>
+  );
+}
+
+function RowDivider() {
+  return <div className="ml-[52px]" style={{ height: 1, backgroundColor: DIVIDER }} />;
+}
+function SectionDivider() {
+  return <div style={{ height: 2, backgroundColor: DIVIDER }} />;
+}
+
+function SettingsMain({
+  onNavigate, onOpenOffers, onLogout,
+}: {
+  onNavigate: (v: SettingsView) => void;
+  onOpenOffers: () => void;
+  onLogout: () => void;
+}) {
+  return (
+    <div>
+      <SectionHeader>Konto</SectionHeader>
+      <Row icon={UserIcon} title="Ndrysho profilin" subtitle="Emri, bio, foto, qyteti" onClick={() => onNavigate("profile")} />
+      <RowDivider />
+      <Row icon={Tag} title="Ofertat" subtitle="Shih ofertat e marra dhe të dërguara" onClick={onOpenOffers} />
+      <RowDivider />
+      <Row icon={Bell} title="Njoftimet" subtitle="Menaxho njoftimet push dhe email" onClick={() => onNavigate("notifications")} />
+      <RowDivider />
+      <Row icon={SlidersHorizontal} title="Preferencat" subtitle="Kategoritë dhe madhësitë e preferuara" onClick={() => onNavigate("preferences")} />
+
+      <SectionDivider />
+      <SectionHeader>Ndihmë</SectionHeader>
+      <Row icon={HelpCircle} title="Pyetjet e shpeshta" onClick={() => onNavigate("faq")} />
+      <RowDivider />
+      <Row icon={MessageSquare} title="Kontakto mbështetjen" onClick={() => onNavigate("support")} />
+
+      <SectionDivider />
+      <SectionHeader>Tjetër</SectionHeader>
+      <Row icon={ShieldCheck} title="Privatësia" subtitle="Politikat dhe të dhënat e tua" />
+      <RowDivider />
+      <Row icon={LogOut} title="Dil" onClick={onLogout} danger />
+    </div>
+  );
+}
+
+function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; email: string; onSaved: () => void }) {
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [city, setCity] = useState(profile?.city ?? "");
@@ -622,6 +767,8 @@ function SettingsTab({
     else { toast.success("Profili u ruajt"); onSaved(); }
   };
 
+  const inputStyle = { backgroundColor: CARD, color: INK, borderColor: DIVIDER } as const;
+
   return (
     <div className="space-y-4 pb-6">
       <div className="flex items-center gap-3">
@@ -631,27 +778,217 @@ function SettingsTab({
           <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
         </label>
       </div>
-      <div><Label>Email</Label><Input value={email} disabled /></div>
-      <div><Label>Emri</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} /></div>
-      <div><Label>Bio</Label><Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} /></div>
+      <div><Label style={{ color: INK }}>Email</Label><Input value={email} disabled style={inputStyle} /></div>
+      <div><Label style={{ color: INK }}>Emri</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} style={inputStyle} /></div>
+      <div><Label style={{ color: INK }}>Bio</Label><Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} style={inputStyle} /></div>
       <div>
-        <Label>Lartësia (cm)</Label>
-        <Input type="number" inputMode="numeric" min={0} max={260} value={height} onChange={(e) => setHeight(e.target.value)} placeholder="p.sh. 175" />
+        <Label style={{ color: INK }}>Lartësia (cm)</Label>
+        <Input type="number" inputMode="numeric" min={0} max={260} value={height} onChange={(e) => setHeight(e.target.value)} placeholder="p.sh. 175" style={inputStyle} />
       </div>
       <div>
-        <Label>Qyteti</Label>
+        <Label style={{ color: INK }}>Qyteti</Label>
         <select value={city} onChange={(e) => setCity(e.target.value)} className="mt-1 h-10 w-full rounded-md px-3 text-sm" style={{ backgroundColor: CARD, border: `1px solid ${DIVIDER}`, color: INK }}>
           <option value="">Zgjidh</option>
           {CITIES.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
       </div>
-      <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white disabled:opacity-50" style={{ backgroundColor: INK }}>
+      <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold disabled:opacity-50" style={{ backgroundColor: INK, color: "#ffffff" }}>
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
         Ruaj
-      </button>
-      <button onClick={onSignOut} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold" style={{ border: `1px solid ${DIVIDER}`, color: INK }}>
-        <LogOut className="h-4 w-4" /> Dil
       </button>
     </div>
   );
 }
+
+function ToggleRow({ title, subtitle, value, onChange }: { title: string; subtitle?: string; value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-center gap-3 px-5 py-4" style={{ backgroundColor: CREAM }}>
+      <div className="flex-1">
+        <div className="text-[15px] font-semibold" style={{ color: INK }}>{title}</div>
+        {subtitle && <div className="mt-0.5 text-[13px]" style={{ color: MUTED }}>{subtitle}</div>}
+      </div>
+      <button
+        onClick={() => onChange(!value)}
+        role="switch"
+        aria-checked={value}
+        className="relative h-7 w-12 shrink-0 rounded-full transition-colors"
+        style={{ backgroundColor: value ? INK : DIVIDER }}
+      >
+        <span
+          className="absolute top-0.5 h-6 w-6 rounded-full transition-all"
+          style={{ left: value ? "calc(100% - 26px)" : "2px", backgroundColor: CREAM, boxShadow: "0 1px 2px rgba(0,0,0,0.15)" }}
+        />
+      </button>
+    </div>
+  );
+}
+
+function NotificationsView() {
+  const [push, setPush] = useState(true);
+  const [emailNotif, setEmailNotif] = useState(false);
+  const [offers, setOffers] = useState(true);
+  const [messages, setMessages] = useState(true);
+  const [marketing, setMarketing] = useState(false);
+  return (
+    <div>
+      <SectionHeader>Kanalet</SectionHeader>
+      <ToggleRow title="Njoftime push" subtitle="Në telefonin tënd" value={push} onChange={setPush} />
+      <RowDivider />
+      <ToggleRow title="Email" subtitle="Përmbledhje në email" value={emailNotif} onChange={setEmailNotif} />
+      <SectionDivider />
+      <SectionHeader>Llojet</SectionHeader>
+      <ToggleRow title="Oferta të reja" value={offers} onChange={setOffers} />
+      <RowDivider />
+      <ToggleRow title="Mesazhe" value={messages} onChange={setMessages} />
+      <RowDivider />
+      <ToggleRow title="Promovime" subtitle="Lajme dhe oferta speciale" value={marketing} onChange={setMarketing} />
+    </div>
+  );
+}
+
+const PREF_CATEGORIES = ["Topp", "Bukse", "Fustan", "Këpucë", "Xhup", "Aksesorë", "Çantë"];
+const PREF_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+
+function Chip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-full px-4 py-2 text-[13px] font-semibold transition-colors"
+      style={{
+        backgroundColor: selected ? INK : CARD,
+        color: selected ? "#ffffff" : INK,
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function PreferencesView() {
+  const [cats, setCats] = useState<string[]>([]);
+  const [sizes, setSizes] = useState<string[]>([]);
+  const toggle = (arr: string[], set: (v: string[]) => void, v: string) =>
+    set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  return (
+    <div>
+      <SectionHeader>Kategoritë e preferuara</SectionHeader>
+      <div className="flex flex-wrap gap-2 px-5 pt-2">
+        {PREF_CATEGORIES.map((c) => (
+          <Chip key={c} label={c} selected={cats.includes(c)} onClick={() => toggle(cats, setCats, c)} />
+        ))}
+      </div>
+      <SectionHeader>Madhësitë</SectionHeader>
+      <div className="flex flex-wrap gap-2 px-5 pt-2">
+        {PREF_SIZES.map((s) => (
+          <Chip key={s} label={s} selected={sizes.includes(s)} onClick={() => toggle(sizes, setSizes, s)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const FAQS = [
+  { q: "Si mund të shes një artikull?", a: "Shko te tab-i 'Shit', ngarko deri në 10 foto, plotëso detajet dhe publikojeni. Artikulli yt do të shfaqet menjëherë në feed." },
+  { q: "Si funksionojnë ofertat?", a: "Blerësit mund të dërgojnë një ofertë më të ulët se çmimi. Ti mund ta pranosh, refuzosh ose të kundërpërgjigjesh me një çmim tjetër." },
+  { q: "Si paguhem për një shitje?", a: "Pasi blerësi konfirmon marrjen, pagesa lëshohet në llogarinë tënde brenda 2 ditëve të punës." },
+  { q: "Çfarë ndodh nëse artikulli nuk arrin?", a: "Na kontakto nga 'Mbështetje' brenda 7 ditëve dhe ne do të hetojmë rastin dhe do të rimbursojmë nëse është e nevojshme." },
+  { q: "Si mund ta fshij llogarinë time?", a: "Na shkruaj nga 'Mbështetje' me kërkesën tënde dhe llogaria do të fshihet brenda 30 ditëve." },
+];
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ backgroundColor: CREAM }}>
+      <button onClick={() => setOpen((v) => !v)} className="flex w-full items-center gap-3 px-5 py-4 text-left">
+        <div className="flex-1 text-[15px] font-bold" style={{ color: INK }}>{q}</div>
+        {open
+          ? <Minus className="h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MUTED }} />
+          : <Plus className="h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MUTED }} />}
+      </button>
+      {open && <div className="px-5 pb-4 text-[14px] leading-relaxed" style={{ color: MUTED }}>{a}</div>}
+    </div>
+  );
+}
+
+function FaqView() {
+  return (
+    <div className="pt-2">
+      {FAQS.map((f, i) => (
+        <div key={f.q}>
+          <FaqItem {...f} />
+          {i < FAQS.length - 1 && <RowDivider />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SupportView() {
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const inputBase = "w-full rounded-xl px-4 py-3 text-[15px] outline-none placeholder:font-normal";
+  const inputStyle = { backgroundColor: CARD, color: INK } as const;
+  const placeholderStyle = { ["--tw-placeholder-color" as never]: MUTED };
+
+  const send = async () => {
+    if (!subject.trim() || !body.trim()) { toast.error("Plotëso të gjitha fushat"); return; }
+    setSending(true);
+    await new Promise((r) => setTimeout(r, 600));
+    setSending(false);
+    setSubject(""); setBody("");
+    toast.success("Mesazhi u dërgua");
+  };
+
+  return (
+    <div className="space-y-3 px-5 pt-4">
+      <input
+        value={subject}
+        onChange={(e) => setSubject(e.target.value)}
+        placeholder="Tema"
+        className={inputBase}
+        style={{ ...inputStyle, ...placeholderStyle }}
+      />
+      <textarea
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+        placeholder="Përshkruaj problemin..."
+        rows={6}
+        className={inputBase + " resize-none"}
+        style={{ ...inputStyle, ...placeholderStyle }}
+      />
+      <style>{`textarea::placeholder, input::placeholder { color: ${MUTED}; }`}</style>
+      <button
+        onClick={send}
+        disabled={sending}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-[15px] font-semibold disabled:opacity-50"
+        style={{ backgroundColor: INK, color: "#ffffff" }}
+      >
+        {sending && <Loader2 className="h-4 w-4 animate-spin" />}
+        Dërgo
+      </button>
+    </div>
+  );
+}
+
+function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpenChange: (v: boolean) => void; onConfirm: () => void }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[60] grid place-items-center p-6" style={{ backgroundColor: "rgba(26,26,26,0.45)" }} onClick={() => onOpenChange(false)}>
+      <div className="w-full max-w-sm rounded-2xl p-6" style={{ backgroundColor: CREAM, color: INK }} onClick={(e) => e.stopPropagation()}>
+        <div className="text-[17px] font-bold" style={{ color: INK }}>Dil nga llogaria?</div>
+        <div className="mt-2 text-[14px]" style={{ color: INK }}>A je i sigurt që dëshiron të dalësh?</div>
+        <div className="mt-5 flex gap-2">
+          <button onClick={() => onOpenChange(false)} className="flex-1 rounded-full py-3 text-[14px] font-semibold" style={{ backgroundColor: CARD, color: INK }}>
+            Anulo
+          </button>
+          <button onClick={onConfirm} className="flex-1 rounded-full py-3 text-[14px] font-semibold" style={{ backgroundColor: SOLD, color: "#ffffff" }}>
+            Dil
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
