@@ -13,7 +13,7 @@ import {
   Ruler,
   Settings as SettingsIcon,
   Share2,
-  ShirtIcon,
+  Shirt,
   SlidersHorizontal,
   Star,
   Tag,
