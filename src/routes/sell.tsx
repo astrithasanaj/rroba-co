@@ -265,7 +265,16 @@ function SellPage() {
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div>
                 <FieldLabel>Madhësia</FieldLabel>
-                <SelectInput value={size} onChange={setSize} options={SIZES} />
+                <button
+                  type="button"
+                  onClick={() => setSizeSheetOpen(true)}
+                  className="flex w-full items-center justify-between rounded-lg bg-black/[0.04] px-4 py-3 text-left text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
+                >
+                  <span className={size ? "text-foreground" : "text-muted-foreground"}>
+                    {size || "Zgjidh"}
+                  </span>
+                  <ChevronLeft className="h-4 w-4 -rotate-90 text-muted-foreground" />
+                </button>
               </div>
               <div>
                 <FieldLabel>Ngjyra</FieldLabel>
