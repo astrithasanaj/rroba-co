@@ -44,13 +44,13 @@ export function ImageGallery({ images, alt }: Props) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative aspect-[4/5] w-full overflow-hidden">
       <div
         ref={scrollerRef}
         onScroll={onScroll}
         onClick={handleTap}
-        className="flex aspect-[4/5] w-full snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ scrollSnapType: "x mandatory" }}
+        className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollSnapType: "x mandatory", touchAction: "pan-x", willChange: "transform" }}
       >
         {images.map((src, i) => (
           <div key={i} className="relative h-full w-full flex-shrink-0 snap-center snap-always">
