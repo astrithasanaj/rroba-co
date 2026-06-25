@@ -178,7 +178,7 @@ export function SizePickerSheet({
                 <div className="px-4 pb-4">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="text-xs uppercase tracking-wider text-muted-foreground">
+                      <tr className="text-xs uppercase tracking-wider" style={{ color: "#8a8478" }}>
                         {guide.headers.map((h) => (
                           <th key={h} className="py-2 font-medium">{h}</th>
                         ))}
@@ -186,11 +186,12 @@ export function SizePickerSheet({
                     </thead>
                     <tbody>
                       {guide.rows.map((row, i) => (
-                        <tr key={i} className="border-t" style={{ borderColor: "#dcd6c8" }}>
+                        <tr key={i} className="border-t" style={{ borderColor: "#d8d3c9" }}>
                           {row.map((cell, j) => (
                             <td
                               key={j}
-                              className={`py-2.5 ${j === 0 ? "font-semibold" : "text-muted-foreground"}`}
+                              className="py-2.5"
+                              style={{ color: j === 0 ? "#1a1a1a" : "#8a8478", fontWeight: j === 0 ? 600 : 400 }}
                             >
                               {cell}
                             </td>

@@ -4,6 +4,7 @@ import { Camera, ChevronLeft, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SizePickerSheet } from "@/components/marketplace/SizePickerSheet";
+import { ColorPickerSheet, COLOR_OPTIONS } from "@/components/marketplace/ColorPickerSheet";
 
 export const Route = createFileRoute("/sell")({
   component: SellPage,
@@ -50,6 +51,7 @@ function SellPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [sizeSheetOpen, setSizeSheetOpen] = useState(false);
+  const [colorSheetOpen, setColorSheetOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -278,7 +280,42 @@ function SellPage() {
               </div>
               <div>
                 <FieldLabel>Ngjyra</FieldLabel>
-                <SelectInput value={color} onChange={setColor} options={COLORS} />
+                <button
+                  type="button"
+                  onClick={() => setColorSheetOpen(true)}
+                  className="flex w-full items-center justify-between rounded-lg bg-black/[0.04] px-4 py-3 text-left text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    {color && (() => {
+                      const opt = COLOR_OPTIONS.find((c) => c.name === color);
+                      if (!opt) return null;
+                      if (opt.swatch === "rainbow") {
+                        return (
+                          <span
+                            className="h-4 w-4 shrink-0 rounded-full"
+                            style={{
+                              background:
+                                "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)",
+                            }}
+                          />
+                        );
+                      }
+                      return (
+                        <span
+                          className="h-4 w-4 shrink-0 rounded-full"
+                          style={{
+                            background: opt.swatch,
+                            boxShadow: opt.ring ? `0 0 0 1.5px ${opt.ring} inset` : undefined,
+                          }}
+                        />
+                      );
+                    })()}
+                    <span className={`truncate ${color ? "text-foreground" : "text-muted-foreground"}`}>
+                      {color || "Zgjidh"}
+                    </span>
+                  </span>
+                  <ChevronLeft className="h-4 w-4 -rotate-90 text-muted-foreground" />
+                </button>
               </div>
             </div>
 
@@ -352,6 +389,12 @@ function SellPage() {
           onChange={setSize}
           gender={gender}
           category={category}
+        />
+        <ColorPickerSheet
+          open={colorSheetOpen}
+          onOpenChange={setColorSheetOpen}
+          value={color}
+          onChange={setColor}
         />
       </div>
     </div>
