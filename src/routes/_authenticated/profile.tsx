@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Archive,
@@ -11,7 +11,6 @@ import {
   LogOut,
   MapPin,
   MoreVertical,
-  Plus,
   Settings as SettingsIcon,
   Tag,
   X,
