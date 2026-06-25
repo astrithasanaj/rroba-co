@@ -425,22 +425,15 @@ function ProfilePage() {
       </Sheet>
 
       {/* Settings sheet */}
-      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto" style={{ backgroundColor: CREAM }}>
-          <SheetHeader><SheetTitle>Cilësimet</SheetTitle></SheetHeader>
-          <button
-            onClick={() => { setSettingsOpen(false); setOffersOpen(true); }}
-            className="mt-4 inline-flex w-full items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold"
-            style={{ backgroundColor: CARD, color: INK }}
-          >
-            <span className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Ofertat</span>
-            <span style={{ color: MUTED }}>›</span>
-          </button>
-          <div className="mt-4">
-            <SettingsTab profile={profile} email={user.email ?? ""} onSaved={loadAll} onSignOut={handleSignOut} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <SettingsSheet
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        profile={profile}
+        email={user.email ?? ""}
+        onSaved={loadAll}
+        onSignOut={handleSignOut}
+        onOpenOffers={() => { setSettingsOpen(false); setOffersOpen(true); }}
+      />
     </MobileShell>
   );
 }
