@@ -42,7 +42,7 @@ function SellPage() {
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
   const [size, setSize] = useState("");
-  const [color, setColor] = useState("");
+  const [color, setColor] = useState<string[]>([]);
   const [condition, setCondition] = useState("");
   const [price, setPrice] = useState("");
   const [city, setCity] = useState("");
