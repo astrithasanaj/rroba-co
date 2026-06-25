@@ -1,48 +1,37 @@
+import { useEffect, useState } from "react";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 
-export type ColorOption = { name: string; swatch: string; ring?: string };
+export type ColorOption = {
+  name: string;
+  inner: string;
+  innerRing?: string;
+  selectedBorder: string;
+};
 
 export const COLOR_OPTIONS: ColorOption[] = [
-  { name: "E zezë", swatch: "#1a1a1a" },
-  { name: "E bardhë", swatch: "#ffffff", ring: "#c8c3b9" },
-  { name: "Bezhë", swatch: "#d9c7a7" },
-  { name: "Kafe", swatch: "#6b3a2a" },
-  { name: "Gri", swatch: "#9aa0a6" },
-  { name: "Blu", swatch: "#2f6fed" },
-  { name: "E gjelbër", swatch: "#3a8f4f" },
-  { name: "E kuqe", swatch: "#d8352a" },
-  { name: "E verdhë", swatch: "#f4cf3a" },
-  { name: "Portokalli", swatch: "#ef7a1a" },
-  { name: "Rozë", swatch: "#f29bc0" },
-  { name: "Vjollcë", swatch: "#7a4ad1" },
-  { name: "Shumëngjyrësh", swatch: "rainbow" },
+  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#1a1a1a" },
+  { name: "Gri", inner: "#9e9e9e", selectedBorder: "#9e9e9e" },
+  { name: "E bardhë", inner: "#f5f5f5", innerRing: "#c8c3b9", selectedBorder: "#c8c3b9" },
+  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#1a1a1a" },
+  { name: "Bezhë", inner: "#d4b896", selectedBorder: "#bca07d" },
+  { name: "E gjelbër", inner: "#43a047", selectedBorder: "#2e7d32" },
+  { name: "Kaki", inner: "#8a8c5a", selectedBorder: "#6b6d45" },
+  { name: "Blu", inner: "#42a5f5", selectedBorder: "#1976d2" },
+  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#1a1a1a" },
+  { name: "Turkez", inner: "#26c6da", selectedBorder: "#0097a7" },
+  { name: "Vjollcë", inner: "#8e24aa", selectedBorder: "#6a1b9a" },
+  { name: "Rozë", inner: "#f48fb1", selectedBorder: "#c2185b" },
+  { name: "E kuqe", inner: "#e53935", selectedBorder: "#c62828" },
+  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#1a1a1a" },
+  { name: "Kafe", inner: "#8B5E3C", selectedBorder: "#5d4037" },
+  { name: "Portokalli", inner: "#fb8c00", selectedBorder: "#ef6c00" },
+  { name: "E verdhë", inner: "#fdd835", selectedBorder: "#fbc02d" },
+  { name: "Argjend", inner: "#c0c0c0", selectedBorder: "#9e9e9e" },
+  { name: "Ari", inner: "#d4af37", selectedBorder: "#b8860b" },
 ];
 
-function Swatch({ option, selected }: { option: ColorOption; selected?: boolean }) {
-  const base = "h-6 w-6 rounded-full shrink-0";
-  if (option.swatch === "rainbow") {
-    return (
-      <span
-        className={base}
-        style={{
-          background:
-            "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)",
-          boxShadow: selected ? "0 0 0 2px #ffffff inset" : undefined,
-        }}
-      />
-    );
-  }
-  const ring = selected ? "#ffffff" : option.ring;
-  return (
-    <span
-      className={base}
-      style={{
-        background: option.swatch,
-        boxShadow: ring ? `0 0 0 1.5px ${ring} inset` : undefined,
-      }}
-    />
-  );
-}
+const RAINBOW =
+  "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)";
 
 export function ColorPickerSheet({
   open,
@@ -52,54 +41,100 @@ export function ColorPickerSheet({
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  value: string;
-  onChange: (v: string) => void;
+  value: string[];
+  onChange: (v: string[]) => void;
 }) {
-  const pick = (name: string) => {
-    onChange(name);
-    setTimeout(() => onOpenChange(false), 200);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (open) setSelected(value);
+  }, [open, value]);
+
+  const toggle = (name: string) => {
+    setSelected((prev) => {
+      if (prev.includes(name)) return prev.filter((n) => n !== name);
+      if (prev.length >= 2) return [...prev.slice(1), name];
+      return [...prev, name];
+    });
+  };
+
+  const confirm = () => {
+    onChange(selected);
+    onOpenChange(false);
   };
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="border-0" style={{ background: "#f6f1e7", maxHeight: "92vh" }}>
-        <div className="mx-auto h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
-        <div className="flex items-center justify-between px-5 pb-3 pt-4">
-          <DrawerTitle className="text-base font-medium" style={{ color: "#1a1a1a" }}>
-            Zgjedh ngjyrën
-          </DrawerTitle>
-          <button
-            onClick={() => onOpenChange(false)}
-            className="rounded-full px-4 py-1.5 text-sm font-medium text-white"
-            style={{ background: "#1a1a1a" }}
-          >
-            Mbyll
-          </button>
+      <DrawerContent
+        className="flex flex-col border-0"
+        style={{ background: "#f6f1e7", maxHeight: "92vh" }}
+      >
+        <div className="shrink-0">
+          <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
+          <div className="flex items-center justify-end px-5 pb-2 pt-2">
+            <button
+              onClick={() => onOpenChange(false)}
+              className="rounded-full px-4 py-1.5 text-sm font-medium text-white"
+              style={{ background: "#1a1a1a" }}
+            >
+              Mbyll
+            </button>
+          </div>
+          <div className="px-5 pb-3 text-center">
+            <DrawerTitle className="text-lg font-medium" style={{ color: "#1a1a1a" }}>
+              Zgjedh ngjyrën
+            </DrawerTitle>
+            <p className="mt-1 text-xs" style={{ color: "#8a8478" }}>
+              Mund të zgjedhësh deri në dy ngjyra.
+            </p>
+          </div>
         </div>
-        <div className="overflow-y-auto px-5 pb-8">
-          <h2 className="mb-5 text-2xl font-bold leading-tight" style={{ color: "#1a1a1a" }}>
-            Çfarë ngjyre ka artikulli?
-          </h2>
-          <div className="grid grid-cols-3 gap-2.5">
+
+        <div className="flex-1 overflow-y-auto px-5 pb-6">
+          <div className="grid grid-cols-4 gap-x-3 gap-y-5">
             {COLOR_OPTIONS.map((opt) => {
-              const active = value === opt.name;
+              const active = selected.includes(opt.name);
               return (
                 <button
                   key={opt.name}
-                  onClick={() => pick(opt.name)}
-                  className="flex items-center gap-2 rounded-xl px-3 py-3.5 text-left text-sm font-semibold transition"
-                  style={{
-                    background: active ? "#1a1a1a" : "#e8e3d9",
-                    color: active ? "#ffffff" : "#1a1a1a",
-                    minHeight: 52,
-                  }}
+                  type="button"
+                  onClick={() => toggle(opt.name)}
+                  className="flex flex-col items-center gap-2"
                 >
-                  <Swatch option={opt} selected={active} />
-                  <span className="truncate">{opt.name}</span>
+                  <div
+                    className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full transition"
+                    style={{
+                      background: "#ddd8ce",
+                      boxShadow: active ? `0 0 0 2px ${opt.selectedBorder} inset` : undefined,
+                    }}
+                  >
+                    <div
+                      className="h-11 w-11 rounded-full"
+                      style={{
+                        background: opt.inner === "rainbow" ? RAINBOW : opt.inner,
+                        boxShadow: opt.innerRing ? `0 0 0 1.5px ${opt.innerRing} inset` : undefined,
+                      }}
+                    />
+                  </div>
+                  <span className="text-center text-[11px] font-medium" style={{ color: "#1a1a1a" }}>
+                    {opt.name}
+                  </span>
                 </button>
               );
             })}
           </div>
+        </div>
+
+        <div className="shrink-0 px-5 pb-6 pt-3" style={{ background: "#f6f1e7" }}>
+          <button
+            type="button"
+            onClick={confirm}
+            disabled={selected.length === 0}
+            className="w-full rounded-[14px] py-4 text-sm font-semibold text-white transition disabled:opacity-100"
+            style={{ background: selected.length ? "#1a1a1a" : "#c8c3b9" }}
+          >
+            Konfirmo
+          </button>
         </div>
       </DrawerContent>
     </Drawer>
