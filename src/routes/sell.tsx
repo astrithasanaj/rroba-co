@@ -390,6 +390,12 @@ function SellPage() {
           gender={gender}
           category={category}
         />
+        <ColorPickerSheet
+          open={colorSheetOpen}
+          onOpenChange={setColorSheetOpen}
+          value={color}
+          onChange={setColor}
+        />
       </div>
     </div>
   );
