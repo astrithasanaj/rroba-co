@@ -51,6 +51,7 @@ function SellPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [sizeSheetOpen, setSizeSheetOpen] = useState(false);
+  const [colorSheetOpen, setColorSheetOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
