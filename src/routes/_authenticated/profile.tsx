@@ -220,9 +220,6 @@ function ProfilePage() {
             <button onClick={() => navigate({ to: "/notifications" })} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Njoftimet">
               <Bell className="h-[18px] w-[18px]" strokeWidth={1.8} />
             </button>
-            <button onClick={() => setSortOpen(true)} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Filtro">
-              <SlidersHorizontal className="h-[18px] w-[18px]" strokeWidth={1.8} />
-            </button>
           </div>
           <h1 className="text-[15px] font-medium">{username}</h1>
           <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
