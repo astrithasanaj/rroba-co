@@ -85,6 +85,8 @@ function ProfilePage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [offersOpen, setOffersOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [heightOpen, setHeightOpen] = useState(false);
+
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [myListings, setMyListings] = useState<ListingView[]>([]);
