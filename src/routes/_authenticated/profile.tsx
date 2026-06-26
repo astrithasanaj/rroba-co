@@ -18,7 +18,7 @@ import {
   Plus,
   Ruler,
   Settings as SettingsIcon,
-  Share2,
+  
   Shirt,
   ShieldCheck,
   SlidersHorizontal,
@@ -33,6 +33,7 @@ import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
 import { useUserCollections } from "@/lib/user-collections";
+import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -173,10 +174,11 @@ function ProfilePage() {
   };
 
   const handleShare = async () => {
-    const url = window.location.origin + `/user/${user.id}`;
+    const url = `${window.location.origin}/user/${user.id}`;
+    const shareData = { url, title: displayName, text: "Shiko profilin tim në Rroba" };
     try {
-      if (navigator.share) await navigator.share({ url, title: displayName });
-      else { await navigator.clipboard.writeText(url); toast.success("Linku u kopjua"); }
+      if (navigator.share) await navigator.share(shareData);
+      else { await navigator.clipboard.writeText(url); toast.success("Lidhja u kopjua!"); }
     } catch {}
   };
 
@@ -224,7 +226,7 @@ function ProfilePage() {
           <h1 className="text-[15px] font-medium">{username}</h1>
           <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
             <button onClick={handleShare} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Shpërndaj">
-              <Share2 className="h-[18px] w-[18px]" strokeWidth={1.8} />
+              <IosShareIcon size={18} color="#f6f1e7" strokeWidth={1.6} />
             </button>
             <button onClick={() => setSettingsOpen(true)} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Cilësimet">
               <SettingsIcon className="h-[18px] w-[18px]" strokeWidth={1.8} />
