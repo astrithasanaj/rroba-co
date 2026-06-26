@@ -458,7 +458,17 @@ function ProfilePage() {
         onSignOut={handleSignOut}
         onOpenOffers={() => { setSettingsOpen(false); setOffersOpen(true); }}
       />
+
+      {/* Height picker sheet */}
+      <HeightSheet
+        open={heightOpen}
+        onOpenChange={setHeightOpen}
+        userId={user.id}
+        current={profile?.height_cm ?? null}
+        onSaved={loadAll}
+      />
     </MobileShell>
+
   );
 }
 
