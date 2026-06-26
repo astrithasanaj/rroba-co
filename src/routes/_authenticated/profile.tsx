@@ -465,11 +465,12 @@ function ProfilePage() {
 function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div className="text-center">
-      <p className="text-[18px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
-      <p className="text-[12px]" style={{ color: MUTED }}>{label}</p>
+      <p className="text-[22px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
+      <p className="mt-0.5 text-[12px] font-normal" style={{ color: MUTED }}>{label}</p>
     </div>
   );
 }
+
 
 function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {
   return (
