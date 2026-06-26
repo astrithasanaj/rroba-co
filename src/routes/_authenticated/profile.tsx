@@ -472,6 +472,83 @@ function ProfilePage() {
   );
 }
 
+function HeightSheet({
+  open,
+  onOpenChange,
+  userId,
+  current,
+  onSaved,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  userId: string;
+  current: number | null;
+  onSaved: () => void;
+}) {
+  const [value, setValue] = useState<number>(current ?? 175);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (open) setValue(current ?? 175);
+  }, [open, current]);
+
+  const options = useMemo(() => Array.from({ length: 220 - 140 + 1 }, (_, i) => 140 + i), []);
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("profiles").update({ height_cm: value }).eq("id", userId);
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    onOpenChange(false);
+    onSaved();
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CREAM }}>
+        <SheetHeader className="px-5 pt-5">
+          <SheetTitle style={{ color: INK }}>Gjatësia (cm)</SheetTitle>
+        </SheetHeader>
+        <div
+          className="mx-5 mt-4 overflow-y-auto rounded-2xl"
+          style={{ height: 220, border: `1px solid ${DIVIDER}`, scrollSnapType: "y mandatory" }}
+        >
+          {options.map((h) => {
+            const selected = h === value;
+            return (
+              <button
+                key={h}
+                onClick={() => setValue(h)}
+                className="flex w-full items-center justify-center py-2 text-[17px]"
+                style={{
+                  color: selected ? INK : MUTED,
+                  fontWeight: selected ? 700 : 400,
+                  backgroundColor: selected ? CARD : "transparent",
+                  scrollSnapAlign: "center",
+                }}
+              >
+                {h} cm
+              </button>
+            );
+          })}
+        </div>
+        <div className="px-5 pb-6 pt-4">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="h-12 w-full rounded-full text-[15px] font-bold text-white disabled:opacity-60"
+            style={{ backgroundColor: INK }}
+          >
+            {saving ? "Duke ruajtur..." : "Ruaj"}
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+
+
 function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div className="text-center">
