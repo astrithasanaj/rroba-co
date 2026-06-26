@@ -10,7 +10,7 @@ export function MobileShell({
 }) {
   return (
     <div className="min-h-screen bg-muted/40">
-      <div className="relative mx-auto min-h-screen w-full max-w-[480px] bg-background pb-[72px]">
+      <div className="relative mx-auto min-h-screen w-full max-w-[480px] bg-background pb-[90px]">
         {children}
         {!hideNav && <BottomNav />}
       </div>

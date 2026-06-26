@@ -213,7 +213,7 @@ function ProfilePage() {
 
   return (
     <MobileShell>
-      <div style={{ backgroundColor: CREAM, color: INK }} className="min-h-screen pb-[72px]">
+      <div style={{ backgroundColor: CREAM, color: INK }} className="min-h-screen pb-[90px]">
         {/* Header */}
         <header className="flex items-center justify-between px-4 pt-3 pb-2">
           <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
