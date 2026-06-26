@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { toast } from "sonner";
-import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
