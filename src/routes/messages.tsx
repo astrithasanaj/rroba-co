@@ -187,9 +187,9 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
   }, [threads, mode, tab]);
 
   const setArchived = async (t: ThreadView, archived: boolean) => {
-    const field = t.isBuyer ? "archived_by_buyer" : "archived_by_seller";
+    const patch = t.isBuyer ? { archived_by_buyer: archived } : { archived_by_seller: archived };
     setThreads((prev) => prev.map((x) => (x.id === t.id ? { ...x, archived } : x)));
-    const { error } = await supabase.from("conversations").update({ [field]: archived }).eq("id", t.id);
+    const { error } = await supabase.from("conversations").update(patch).eq("id", t.id);
     if (error) {
       toast.error("Diçka shkoi keq");
       load();
