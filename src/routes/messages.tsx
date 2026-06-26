@@ -538,8 +538,10 @@ function Thread({ id, me }: { id: string; me: string }) {
       setMsgs((msgRes.data ?? []) as MessageRow[]);
       setLoading(false);
       // mark read
-      const field = isBuyer ? "last_read_buyer_at" : "last_read_seller_at";
-      supabase.from("conversations").update({ [field]: new Date().toISOString() }).eq("id", id);
+      const readPatch = isBuyer
+        ? { last_read_buyer_at: new Date().toISOString() }
+        : { last_read_seller_at: new Date().toISOString() };
+      supabase.from("conversations").update(readPatch).eq("id", id);
     };
     load();
     const ch = supabase
