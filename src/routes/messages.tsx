@@ -1,13 +1,25 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Loader2, Send } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { signPaths } from "@/lib/listings";
+import { toast } from "sonner";
+
+const CREAM = "#f6f1e7";
+const CREAM_ALT = "#ede8de";
+const INK = "#1a1a1a";
+const MUTED = "#a89f94";
+const DIVIDER = "#ddd8ce";
+const CORAL = "#e8826a";
+
+type View = "list" | "archive" | "new";
 
 export const Route = createFileRoute("/messages")({
   validateSearch: (s: Record<string, unknown>) => ({
     thread: typeof s.thread === "string" ? s.thread : undefined,
+    view: (s.view === "archive" || s.view === "new" ? s.view : "list") as View,
+    tab: (s.tab === "buy" || s.tab === "sell" ? s.tab : "all") as "all" | "buy" | "sell",
   }),
   component: MessagesPage,
 });
@@ -18,6 +30,10 @@ type ThreadRow = {
   buyer_id: string;
   seller_id: string;
   last_message_at: string;
+  archived_by_buyer: boolean;
+  archived_by_seller: boolean;
+  last_read_buyer_at: string | null;
+  last_read_seller_at: string | null;
 };
 
 type ThreadView = {
@@ -25,14 +41,19 @@ type ThreadView = {
   otherId: string;
   otherName: string;
   otherAvatar: string;
+  listingId: string;
   listingTitle: string;
+  listingPrice: number | null;
   listingCover: string;
   lastPreview: string;
   lastAt: string;
+  unread: boolean;
+  isBuyer: boolean;
+  archived: boolean;
 };
 
 function MessagesPage() {
-  const { thread } = useSearch({ from: "/messages" });
+  const { thread, view, tab } = useSearch({ from: "/messages" });
   const navigate = useNavigate();
   const [me, setMe] = useState<string | null>(null);
 
@@ -46,128 +67,434 @@ function MessagesPage() {
   if (!me) {
     return (
       <MobileShell>
-        <div className="grid h-[60vh] place-items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <div className="grid h-[60vh] place-items-center" style={{ backgroundColor: CREAM }}>
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
         </div>
       </MobileShell>
     );
   }
 
-  return thread ? <Thread id={thread} me={me} /> : <ThreadList me={me} />;
+  if (thread) return <Thread id={thread} me={me} />;
+  if (view === "archive") return <ConversationList me={me} mode="archive" tab={tab} />;
+  if (view === "new") return <NewMessage me={me} />;
+  return <ConversationList me={me} mode="inbox" tab={tab} />;
 }
 
-function ThreadList({ me }: { me: string }) {
+function InboxIcon({ size = 18, color = CREAM }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M4 13l2-7h12l2 7M4 13v5a1 1 0 001 1h14a1 1 0 001-1v-5M4 13h5l1 2h4l1-2h5"
+        stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 3v6m0 0l-2-2m2 2l2-2" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function ComposeIcon({ size = 18, color = CREAM }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M14 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-7"
+        stroke={color} strokeWidth="1.7" strokeLinecap="round"/>
+      <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
+        stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
+  const navigate = useNavigate();
   const [threads, setThreads] = useState<ThreadView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
+  const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [swipeId, setSwipeId] = useState<string | null>(null);
+  const touchStartX = useRef(0);
+
+  const load = async () => {
+    const { data: convs } = await supabase
+      .from("conversations")
+      .select("*")
+      .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
+      .order("last_message_at", { ascending: false });
+    const rows = (convs ?? []) as ThreadRow[];
+    if (rows.length === 0) {
+      setThreads([]);
+      setLoading(false);
+      return;
+    }
+    const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
+    const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
+    const [profs, listings, lastMsgs] = await Promise.all([
+      supabase.from("profiles").select("id,name,avatar_url").in("id", otherIds),
+      supabase.from("listings").select("id,title,image_paths,price").in("id", listingIds),
+      supabase.from("messages").select("conversation_id,content,created_at,sender_id").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
+    ]);
+    const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
+    const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
+    const lastMap = new Map<string, { content: string; created_at: string; sender_id: string }>();
+    for (const m of lastMsgs.data ?? []) {
+      if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m);
+    }
+    const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
+    const urls = await signPaths(allCovers);
+
+    const views: ThreadView[] = rows.map((r) => {
+      const isBuyer = r.buyer_id === me;
+      const otherId = isBuyer ? r.seller_id : r.buyer_id;
+      const prof = profMap.get(otherId);
+      const listing = listingMap.get(r.listing_id);
+      const cover = listing?.image_paths?.[0] ?? "";
+      const last = lastMap.get(r.id);
+      const lastReadAt = isBuyer ? r.last_read_buyer_at : r.last_read_seller_at;
+      const unread = !!last && last.sender_id !== me && (!lastReadAt || new Date(last.created_at) > new Date(lastReadAt));
+      const archived = isBuyer ? r.archived_by_buyer : r.archived_by_seller;
+      return {
+        id: r.id,
+        otherId,
+        otherName: prof?.name || "Përdorues",
+        otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
+        listingId: r.listing_id,
+        listingTitle: listing?.title || "Artikull",
+        listingPrice: listing?.price ?? null,
+        listingCover: urls[cover] || "",
+        lastPreview: last?.content || "Bisedë e re",
+        lastAt: r.last_message_at,
+        unread,
+        isBuyer,
+        archived,
+      };
+    });
+    setThreads(views);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const { data: convs } = await supabase
-        .from("conversations")
-        .select("*")
-        .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
-        .order("last_message_at", { ascending: false });
-      const rows = (convs ?? []) as ThreadRow[];
-      if (rows.length === 0) {
-        if (active) {
-          setThreads([]);
-          setLoading(false);
-        }
-        return;
-      }
-      const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
-      const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
-      const [profs, listings, lastMsgs] = await Promise.all([
-        supabase.from("profiles").select("id,name,avatar_url").in("id", otherIds),
-        supabase.from("listings").select("id,title,image_paths").in("id", listingIds),
-        supabase.from("messages").select("conversation_id,content,created_at").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
-      ]);
-      const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
-      const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
-      const lastMap = new Map<string, string>();
-      for (const m of lastMsgs.data ?? []) {
-        if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m.content);
-      }
-      const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
-      const urls = await signPaths(allCovers);
-
-      const views: ThreadView[] = rows.map((r) => {
-        const otherId = r.buyer_id === me ? r.seller_id : r.buyer_id;
-        const prof = profMap.get(otherId);
-        const listing = listingMap.get(r.listing_id);
-        const cover = listing?.image_paths?.[0] ?? "";
-        return {
-          id: r.id,
-          otherId,
-          otherName: prof?.name || "Përdorues",
-          otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
-          listingTitle: listing?.title || "Artikull",
-          listingCover: urls[cover] || "",
-          lastPreview: lastMap.get(r.id) || "Bisedë e re",
-          lastAt: r.last_message_at,
-        };
-      });
-      if (active) {
-        setThreads(views);
-        setLoading(false);
-      }
-    };
     load();
     const ch = supabase
       .channel("messages-list")
       .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => load())
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => load())
       .subscribe();
-    return () => {
-      active = false;
-      supabase.removeChannel(ch);
-    };
+    return () => { supabase.removeChannel(ch); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me]);
+
+  const filtered = useMemo(() => {
+    let list = threads.filter((t) => (mode === "archive" ? t.archived : !t.archived));
+    if (tab === "buy") list = list.filter((t) => t.isBuyer);
+    else if (tab === "sell") list = list.filter((t) => !t.isBuyer);
+    return list;
+  }, [threads, mode, tab]);
+
+  const setArchived = async (t: ThreadView, archived: boolean) => {
+    const patch = t.isBuyer ? { archived_by_buyer: archived } : { archived_by_seller: archived };
+    setThreads((prev) => prev.map((x) => (x.id === t.id ? { ...x, archived } : x)));
+    const { error } = await supabase.from("conversations").update(patch).eq("id", t.id);
+    if (error) {
+      toast.error("Diçka shkoi keq");
+      load();
+    } else {
+      toast.success(archived ? "U arkivua" : "U çarkivua");
+    }
+  };
+
+  const deleteThread = async (t: ThreadView) => {
+    setThreads((prev) => prev.filter((x) => x.id !== t.id));
+    const { error } = await supabase.from("conversations").delete().eq("id", t.id);
+    if (error) { toast.error("Diçka shkoi keq"); load(); }
+    else toast.success("U fshi");
+  };
+
+  const startPress = (id: string, e: React.TouchEvent | React.MouseEvent) => {
+    const pt = "touches" in e ? e.touches[0] : (e as React.MouseEvent);
+    longPressRef.current = setTimeout(() => {
+      if (navigator.vibrate) navigator.vibrate(10);
+      setMenu({ id, x: pt.clientX, y: pt.clientY });
+    }, 500);
+  };
+  const endPress = () => {
+    if (longPressRef.current) clearTimeout(longPressRef.current);
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (id: string) => (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (dx < -60) setSwipeId(id);
+    else if (dx > 30) setSwipeId(null);
+  };
+
+  const title = mode === "archive" ? "Arkiva" : "Mesazhe";
+  const emptyMsg = mode === "archive" ? "Asnjë bisedë e arkivuar" : "Ende nuk ke biseda.";
 
   return (
     <MobileShell>
-      <header className="sticky top-0 z-30 bg-background/95 px-5 py-4 backdrop-blur">
-        <h1 className="font-display text-3xl">Mesazhet</h1>
-      </header>
-      {loading ? (
-        <div className="grid place-items-center py-10">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      ) : threads.length === 0 ? (
-        <div className="mx-5 mt-6 rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          Ende nuk ke biseda.
-        </div>
-      ) : (
-        <ul className="divide-y divide-border">
-          {threads.map((t) => (
-            <li key={t.id}>
-              <Link
-                to="/messages"
-                search={{ thread: t.id }}
-                className="flex items-center gap-3 px-5 py-4"
-              >
-                <div className="relative shrink-0">
-                  <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
-                  {t.listingCover && (
-                    <img src={t.listingCover} alt="" className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 border-background object-cover" />
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="truncate text-sm font-semibold">{t.otherName}</p>
-                    <span className="shrink-0 text-[11px] text-muted-foreground">
-                      {new Date(t.lastAt).toLocaleDateString()}
-                    </span>
+      <div style={{ backgroundColor: CREAM, minHeight: "100vh" }}>
+        <header className="sticky top-0 z-30 flex items-center justify-between px-5 pt-5 pb-3 backdrop-blur" style={{ backgroundColor: `${CREAM}f2` }}>
+          {mode === "archive" ? (
+            <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab } })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
+              <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
+            </button>
+          ) : <div className="w-10" />}
+          <h1 className="text-[22px] font-bold" style={{ color: INK }}>{title}</h1>
+          {mode === "inbox" ? (
+            <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: INK }}>
+              <button onClick={() => navigate({ to: "/messages", search: { view: "archive", tab } })} aria-label="Arkiva" className="grid h-8 w-8 place-items-center rounded-full transition-transform active:scale-90">
+                <InboxIcon />
+              </button>
+              <button onClick={() => navigate({ to: "/messages", search: { view: "new", tab } })} aria-label="Mesazh i ri" className="grid h-8 w-8 place-items-center rounded-full transition-transform active:scale-90">
+                <ComposeIcon />
+              </button>
+            </div>
+          ) : <div className="w-10" />}
+        </header>
+
+        {mode === "inbox" && (
+          <div className="px-5 pb-3">
+            <div className="relative flex rounded-full p-1" style={{ backgroundColor: CREAM_ALT }}>
+              {(["all", "buy", "sell"] as const).map((t) => {
+                const active = tab === t;
+                const label = t === "all" ? "Të gjitha" : t === "buy" ? "Blerje" : "Shitje";
+                return (
+                  <button
+                    key={t}
+                    onClick={() => navigate({ to: "/messages", search: { tab: t, view: "list" } })}
+                    className="relative flex-1 rounded-full py-2 text-sm font-medium transition-colors duration-200"
+                    style={{
+                      backgroundColor: active ? INK : "transparent",
+                      color: active ? "#fff" : MUTED,
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="grid place-items-center py-10"><Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} /></div>
+        ) : filtered.length === 0 ? (
+          <div className="mx-5 mt-10 rounded-2xl border border-dashed p-10 text-center text-sm" style={{ borderColor: DIVIDER, color: MUTED }}>
+            {emptyMsg}
+          </div>
+        ) : (
+          <ul>
+            {filtered.map((t) => (
+              <li key={t.id} className="relative overflow-hidden" style={{ borderBottom: `1px solid ${DIVIDER}` }}>
+                {/* swipe action */}
+                <button
+                  onClick={() => { setSwipeId(null); mode === "archive" ? setArchived(t, false) : setArchived(t, true); }}
+                  className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
+                  style={{ backgroundColor: CORAL, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
+                >
+                  {mode === "archive" ? "Zharkivo" : "Arkivo"}
+                </button>
+                <div
+                  className="relative flex items-center gap-3 px-5 py-3.5 transition-transform duration-200 ease-out active:scale-[0.98]"
+                  style={{
+                    backgroundColor: t.unread ? CREAM_ALT : CREAM,
+                    transform: swipeId === t.id ? "translateX(-100px)" : "translateX(0)",
+                  }}
+                  onTouchStart={(e) => { onTouchStart(e); startPress(t.id, e); }}
+                  onTouchEnd={(e) => { endPress(); onTouchEnd(t.id)(e); }}
+                  onTouchMove={endPress}
+                  onMouseDown={(e) => startPress(t.id, e)}
+                  onMouseUp={endPress}
+                  onMouseLeave={endPress}
+                  onContextMenu={(e) => { e.preventDefault(); setMenu({ id: t.id, x: e.clientX, y: e.clientY }); }}
+                  onClick={() => { if (swipeId === t.id) { setSwipeId(null); return; } navigate({ to: "/messages", search: { thread: t.id } }); }}
+                >
+                  <div className="relative shrink-0">
+                    <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
+                    {t.listingCover && (
+                      <img src={t.listingCover} alt="" className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 object-cover" style={{ borderColor: CREAM }} />
+                    )}
                   </div>
-                  <p className="truncate text-xs text-muted-foreground">Re: {t.listingTitle}</p>
-                  <p className="mt-0.5 truncate text-sm text-foreground/80">{t.lastPreview}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate text-[15px] font-semibold" style={{ color: INK }}>{t.otherName}</p>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="text-[11px]" style={{ color: MUTED }}>{formatTime(t.lastAt)}</span>
+                        {t.unread && <span className="h-2 w-2 rounded-full animate-pulse-soft" style={{ backgroundColor: CORAL }} />}
+                      </div>
+                    </div>
+                    <p className="truncate text-sm" style={{ color: t.unread ? INK : MUTED }}>{t.lastPreview}</p>
+                    <p className="truncate text-xs italic" style={{ color: MUTED }}>{t.listingTitle}</p>
+                  </div>
                 </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {menu && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setMenu(null)} />
+            <div
+              className="fixed z-50 overflow-hidden rounded-xl shadow-2xl animate-scale-in"
+              style={{
+                top: Math.min(menu.y, window.innerHeight - 140),
+                left: Math.min(menu.x, window.innerWidth - 200),
+                backgroundColor: CREAM,
+                border: `1px solid ${DIVIDER}`,
+                minWidth: 180,
+              }}
+            >
+              <button
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm"
+                style={{ color: INK }}
+                onClick={() => { const t = threads.find((x) => x.id === menu.id); if (t) setArchived(t, !t.archived); setMenu(null); }}
+              >
+                <Inbox className="h-4 w-4" />
+                {mode === "archive" ? "Zharkivo" : "Arkivo"}
+              </button>
+              <div style={{ height: 1, backgroundColor: DIVIDER }} />
+              <button
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm"
+                style={{ color: CORAL }}
+                onClick={() => { const t = threads.find((x) => x.id === menu.id); if (t) deleteThread(t); setMenu(null); }}
+              >
+                <Trash2 className="h-4 w-4" />
+                Fshij
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes pulse-soft { 0%,100% { opacity: 1 } 50% { opacity: .5 } }
+        .animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+      `}</style>
+    </MobileShell>
+  );
+}
+
+function formatTime(iso: string) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now.getTime() - d.getTime()) / 1000;
+  if (diff < 60) return "tani";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+  if (diff < 7 * 86400) return `${Math.floor(diff / 86400)}d`;
+  return d.toLocaleDateString();
+}
+
+type ProfileResult = { id: string; name: string | null; avatar_url: string | null; username?: string | null; city?: string | null };
+
+function NewMessage({ me }: { me: string }) {
+  const navigate = useNavigate();
+  const [q, setQ] = useState("");
+  const [results, setResults] = useState<ProfileResult[]>([]);
+  const [recent, setRecent] = useState<ProfileResult[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data: convs } = await supabase
+        .from("conversations")
+        .select("buyer_id,seller_id,last_message_at")
+        .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
+        .order("last_message_at", { ascending: false })
+        .limit(20);
+      const others = Array.from(new Set((convs ?? []).map((c) => (c.buyer_id === me ? c.seller_id : c.buyer_id)))).slice(0, 5);
+      if (others.length) {
+        const { data: profs } = await supabase.from("profiles").select("id,name,avatar_url").in("id", others);
+        setRecent((profs ?? []) as ProfileResult[]);
+      }
+    })();
+  }, [me]);
+
+  useEffect(() => {
+    if (!q.trim()) { setResults([]); return; }
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("id,name,avatar_url")
+        .neq("id", me)
+        .ilike("name", `%${q.trim()}%`)
+        .limit(20);
+      setResults((data ?? []) as ProfileResult[]);
+      setLoading(false);
+    }, 200);
+    return () => clearTimeout(handle);
+  }, [q, me]);
+
+  const startChat = async (otherId: string) => {
+    // Find any existing conversation between me and other
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .or(`and(buyer_id.eq.${me},seller_id.eq.${otherId}),and(buyer_id.eq.${otherId},seller_id.eq.${me})`)
+      .order("last_message_at", { ascending: false })
+      .limit(1);
+    if (existing && existing.length > 0) {
+      navigate({ to: "/messages", search: { thread: existing[0].id } });
+      return;
+    }
+    toast.error("Nis një bisedë nga faqja e produktit");
+  };
+
+  const list = q.trim() ? results : recent;
+
+  return (
+    <MobileShell hideNav>
+      <div style={{ backgroundColor: CREAM, minHeight: "100vh" }}>
+        <header className="sticky top-0 z-30 flex items-center gap-3 px-5 pt-5 pb-3" style={{ backgroundColor: `${CREAM}f2` }}>
+          <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
+            <X className="h-5 w-5" style={{ color: INK }} />
+          </button>
+          <h1 className="text-[18px] font-bold" style={{ color: INK }}>Mesazh i ri</h1>
+        </header>
+        <div className="px-5 pb-3">
+          <div className="flex items-center gap-2 rounded-full px-4 py-2.5" style={{ backgroundColor: CREAM_ALT }}>
+            <SearchIcon className="h-4 w-4" style={{ color: MUTED }} />
+            <input
+              autoFocus
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Kërko përdoruesin..."
+              className="flex-1 bg-transparent text-sm outline-none"
+              style={{ color: INK }}
+            />
+          </div>
+        </div>
+        {!q.trim() && recent.length > 0 && (
+          <p className="px-5 pb-2 pt-2 text-xs font-semibold uppercase tracking-wide" style={{ color: MUTED }}>Kontaktet e fundit</p>
+        )}
+        {loading ? (
+          <div className="grid place-items-center py-10"><Loader2 className="h-5 w-5 animate-spin" style={{ color: MUTED }} /></div>
+        ) : list.length === 0 ? (
+          <p className="px-5 py-10 text-center text-sm" style={{ color: MUTED }}>
+            {q.trim() ? "Asnjë përdorues u gjet" : "Ende nuk ke kontakte"}
+          </p>
+        ) : (
+          <ul>
+            {list.map((p) => (
+              <li key={p.id}>
+                <button
+                  onClick={() => startChat(p.id)}
+                  className="flex w-full items-center gap-3 px-5 py-3 text-left transition-transform active:scale-[0.98]"
+                  style={{ borderBottom: `1px solid ${DIVIDER}` }}
+                >
+                  <img
+                    src={p.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p.name || "U")}`}
+                    alt=""
+                    className="h-11 w-11 rounded-full object-cover"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold" style={{ color: INK }}>{p.name || "Përdorues"}</p>
+                    {p.city && <p className="truncate text-xs" style={{ color: MUTED }}>{p.city}</p>}
+                  </div>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </MobileShell>
   );
 }
@@ -176,7 +503,9 @@ type MessageRow = { id: string; sender_id: string; content: string; created_at: 
 
 function Thread({ id, me }: { id: string; me: string }) {
   const navigate = useNavigate();
-  const [info, setInfo] = useState<{ otherName: string; otherAvatar: string; listingTitle: string } | null>(null);
+  const [info, setInfo] = useState<{
+    otherName: string; otherAvatar: string; listingId: string; listingTitle: string; listingPrice: number | null; listingCover: string; isBuyer: boolean;
+  } | null>(null);
   const [msgs, setMsgs] = useState<MessageRow[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -186,45 +515,44 @@ function Thread({ id, me }: { id: string; me: string }) {
     let active = true;
     const load = async () => {
       const { data: conv } = await supabase.from("conversations").select("*").eq("id", id).maybeSingle();
-      if (!conv) {
-        if (active) setLoading(false);
-        return;
-      }
-      const otherId = conv.buyer_id === me ? conv.seller_id : conv.buyer_id;
+      if (!conv) { if (active) setLoading(false); return; }
+      const isBuyer = conv.buyer_id === me;
+      const otherId = isBuyer ? conv.seller_id : conv.buyer_id;
       const [prof, listing, msgRes] = await Promise.all([
         supabase.from("profiles").select("name,avatar_url").eq("id", otherId).maybeSingle(),
-        supabase.from("listings").select("title").eq("id", conv.listing_id).maybeSingle(),
+        supabase.from("listings").select("title,price,image_paths").eq("id", conv.listing_id).maybeSingle(),
         supabase.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: true }),
       ]);
+      const cover = listing.data?.image_paths?.[0] ?? "";
+      const urls = cover ? await signPaths([cover]) : {};
       if (!active) return;
       setInfo({
         otherName: prof.data?.name || "Përdorues",
         otherAvatar: prof.data?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof.data?.name || "U")}`,
+        listingId: conv.listing_id,
         listingTitle: listing.data?.title || "Artikull",
+        listingPrice: listing.data?.price ?? null,
+        listingCover: urls[cover] || "",
+        isBuyer,
       });
       setMsgs((msgRes.data ?? []) as MessageRow[]);
       setLoading(false);
+      // mark read
+      const readPatch = isBuyer
+        ? { last_read_buyer_at: new Date().toISOString() }
+        : { last_read_seller_at: new Date().toISOString() };
+      supabase.from("conversations").update(readPatch).eq("id", id);
     };
     load();
     const ch = supabase
       .channel(`thread-${id}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
-        (payload) => {
-          setMsgs((prev) => [...prev, payload.new as MessageRow]);
-        },
-      )
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
+        (payload) => setMsgs((prev) => [...prev, payload.new as MessageRow]))
       .subscribe();
-    return () => {
-      active = false;
-      supabase.removeChannel(ch);
-    };
+    return () => { active = false; supabase.removeChannel(ch); };
   }, [id, me]);
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [msgs]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs]);
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,67 +564,92 @@ function Thread({ id, me }: { id: string; me: string }) {
 
   return (
     <MobileShell hideNav>
-      <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur">
-        <button
-          onClick={() => navigate({ to: "/messages" })}
-          className="grid h-9 w-9 place-items-center rounded-full"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        {info && (
-          <>
-            <img src={info.otherAvatar} alt="" className="h-9 w-9 rounded-full object-cover" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold">{info.otherName}</p>
-              <p className="truncate text-[11px] text-muted-foreground">Re: {info.listingTitle}</p>
-            </div>
-          </>
-        )}
-      </header>
-
-      {loading ? (
-        <div className="grid place-items-center py-10">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2 px-4 py-4 pb-32">
-          {msgs.map((m) => (
-            <div
-              key={m.id}
-              className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${
-                m.sender_id === me
-                  ? "ml-auto bg-foreground text-background"
-                  : "mr-auto bg-secondary text-foreground"
-              }`}
-            >
-              {m.content}
-            </div>
-          ))}
-          <div ref={endRef} />
-        </div>
-      )}
-
-      <form
-        onSubmit={send}
-        className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-background/95 p-3 backdrop-blur"
-      >
-        <div className="flex items-center gap-2">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Shkruaj një mesazh..."
-            className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-foreground"
-          />
-          <button
-            type="submit"
-            disabled={!input.trim()}
-            className="grid h-10 w-10 place-items-center rounded-full bg-foreground text-background disabled:opacity-50"
-          >
-            <Send className="h-4 w-4" />
+      <div style={{ backgroundColor: CREAM, minHeight: "100vh" }}>
+        <header className="sticky top-0 z-30 flex items-center gap-3 px-4 py-3" style={{ backgroundColor: `${CREAM}f2`, borderBottom: `1px solid ${DIVIDER}` }}>
+          <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-9 w-9 place-items-center rounded-full">
+            <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
           </button>
-        </div>
-        <div className="h-[env(safe-area-inset-bottom)]" />
-      </form>
+          {info && (
+            <>
+              <img src={info.otherAvatar} alt="" className="h-9 w-9 rounded-full object-cover" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold" style={{ color: INK }}>{info.otherName}</p>
+              </div>
+              {info.listingCover && (
+                <Link to="/product/$id" params={{ id: info.listingId }}>
+                  <img src={info.listingCover} alt="" className="h-9 w-9 rounded-lg object-cover" />
+                </Link>
+              )}
+            </>
+          )}
+        </header>
+
+        {info && (
+          <Link
+            to="/product/$id"
+            params={{ id: info.listingId }}
+            className="mx-4 mt-3 flex items-center gap-3 rounded-xl p-2.5"
+            style={{ backgroundColor: CREAM_ALT }}
+          >
+            {info.listingCover && <img src={info.listingCover} alt="" className="h-12 w-12 rounded-lg object-cover" />}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold" style={{ color: INK }}>{info.listingTitle}</p>
+              {info.listingPrice != null && <p className="text-sm" style={{ color: MUTED }}>{info.listingPrice} €</p>}
+            </div>
+          </Link>
+        )}
+
+        {loading ? (
+          <div className="grid place-items-center py-10"><Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} /></div>
+        ) : (
+          <div className="flex flex-col gap-1 px-4 py-4 pb-32">
+            {msgs.map((m, i) => {
+              const mine = m.sender_id === me;
+              const showTime = i === msgs.length - 1 || new Date(msgs[i + 1].created_at).getTime() - new Date(m.created_at).getTime() > 5 * 60 * 1000;
+              return (
+                <div key={m.id} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
+                  <div
+                    className="max-w-[80%] px-3.5 py-2 text-sm"
+                    style={{
+                      backgroundColor: mine ? INK : CREAM_ALT,
+                      color: mine ? CREAM : INK,
+                      borderRadius: mine ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                    }}
+                  >
+                    {m.content}
+                  </div>
+                  {showTime && (
+                    <span className="mt-0.5 px-1 text-[10px]" style={{ color: MUTED }}>{formatTime(m.created_at)}</span>
+                  )}
+                </div>
+              );
+            })}
+            <div ref={endRef} />
+          </div>
+        )}
+
+        <form
+          onSubmit={send}
+          className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 p-3"
+          style={{ backgroundColor: CREAM, borderTop: `1px solid ${DIVIDER}` }}
+        >
+          <div className="flex items-center gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Shkruaj një mesazh..."
+              className="flex-1 rounded-full px-4 py-2.5 text-sm outline-none"
+              style={{ backgroundColor: CREAM_ALT, color: INK }}
+            />
+            {input.trim() && (
+              <button type="submit" className="grid h-10 w-10 place-items-center rounded-full transition-transform active:scale-90" style={{ backgroundColor: INK }}>
+                <Send className="h-4 w-4" style={{ color: CREAM }} />
+              </button>
+            )}
+          </div>
+          <div className="h-[env(safe-area-inset-bottom)]" />
+        </form>
+      </div>
     </MobileShell>
   );
 }

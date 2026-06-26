@@ -16,26 +16,38 @@ export type Database = {
     Tables: {
       conversations: {
         Row: {
+          archived_by_buyer: boolean
+          archived_by_seller: boolean
           buyer_id: string
           created_at: string
           id: string
           last_message_at: string
+          last_read_buyer_at: string | null
+          last_read_seller_at: string | null
           listing_id: string
           seller_id: string
         }
         Insert: {
+          archived_by_buyer?: boolean
+          archived_by_seller?: boolean
           buyer_id: string
           created_at?: string
           id?: string
           last_message_at?: string
+          last_read_buyer_at?: string | null
+          last_read_seller_at?: string | null
           listing_id: string
           seller_id: string
         }
         Update: {
+          archived_by_buyer?: boolean
+          archived_by_seller?: boolean
           buyer_id?: string
           created_at?: string
           id?: string
           last_message_at?: string
+          last_read_buyer_at?: string | null
+          last_read_seller_at?: string | null
           listing_id?: string
           seller_id?: string
         }
