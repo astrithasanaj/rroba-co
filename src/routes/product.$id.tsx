@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Share2, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
+import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
+import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
+import { toast } from "sonner";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
@@ -150,8 +152,19 @@ function ProductDetail() {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div className="flex gap-2">
-            <button className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur">
-              <Share2 className="h-4 w-4" />
+            <button
+              onClick={async () => {
+                const url = `${window.location.origin}/product/${listing.id}`;
+                const data = { url, title: listing.title, text: "Shiko këtë artikull në Rroba" };
+                try {
+                  if (navigator.share) await navigator.share(data);
+                  else { await navigator.clipboard.writeText(url); toast.success("Lidhja u kopjua!"); }
+                } catch {}
+              }}
+              aria-label="Shpërndaj"
+              className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
+            >
+              <IosShareIcon size={18} color="#1a1a1a" strokeWidth={1.6} />
             </button>
             <SaveButton listingId={listing.id} className="h-10 w-10" size={16} />
             <LikeButton listingId={listing.id} className="h-10 w-10" size={16} />
