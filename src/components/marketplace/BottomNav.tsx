@@ -8,9 +8,18 @@ const CORAL = "#e8826a";
 const BUBBLE = "rgba(255,255,255,0.08)";
 const INACTIVE = "rgba(246,241,231,0.55)";
 
+type IconProps = {
+  className?: string;
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+  fill?: string;
+  style?: React.CSSProperties;
+};
+
 type NavItem = {
   to: "/" | "/search" | "/sell" | "/messages" | "/profile";
-  icon: React.ComponentType<{ className?: string; size?: number; color?: string; strokeWidth?: number; fill?: string }>;
+  icon: React.ComponentType<IconProps>;
   label: string;
   center?: boolean;
   notify?: boolean;
@@ -24,9 +33,9 @@ const items: NavItem[] = [
   { to: "/profile", icon: User, label: "Profili" },
 ];
 
-function HomeIcon({ size = 24, color = INK, className }: { size?: number; color?: string; className?: string }) {
+function HomeIcon({ size = 24, color = INK, className, style }: IconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} style={style}>
       <path
         d="M12 2.5L2.5 10.5H5.5V20.5H10V14.5H14V20.5H18.5V10.5H21.5L12 2.5Z"
         fill={color}
