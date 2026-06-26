@@ -85,6 +85,8 @@ function ProfilePage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [offersOpen, setOffersOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [heightOpen, setHeightOpen] = useState(false);
+
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [myListings, setMyListings] = useState<ListingView[]>([]);
@@ -235,58 +237,73 @@ function ProfilePage() {
         </header>
 
         {/* Profile section */}
-        <section className="px-5 pt-3">
-          <div className="flex items-center gap-5">
-            <img src={avatar} alt="" className="h-[90px] w-[90px] shrink-0 rounded-full object-cover" style={{ boxShadow: `0 0 0 3px ${CREAM}, 0 0 0 4px ${DIVIDER}` }} />
-            <div className="flex flex-1 items-center justify-around">
-              <Stat value={streak} label="streak" />
-              <Stat value={followers} label="følgjarit" />
-              <Stat value={following} label="ndjek" />
+        <section className="px-4 pt-5">
+          <div className="flex items-center gap-4">
+            <img
+              src={avatar}
+              alt=""
+              className="h-[90px] w-[90px] shrink-0 rounded-full object-cover"
+              style={{ border: `2px solid ${DIVIDER}` }}
+            />
+            <div className="flex flex-1 flex-col">
+              <div className="flex items-center justify-around">
+                <Stat value={streak} label="streak" />
+                <Stat value={followers} label="Ndjekësit" />
+                <Stat value={following} label="Ndjek" />
+              </div>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => setBenefitsOpen(true)}
+                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[12px] px-3 text-[14px] font-bold"
+                  style={{ border: `1.5px solid ${INK}`, color: INK, backgroundColor: CREAM, height: 44 }}
+                >
+                  <Gem className="h-4 w-4" strokeWidth={1.8} /> Përfitimet
+                </button>
+                <button
+                  onClick={() => setRatingsOpen(true)}
+                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[12px] px-3 text-[14px] font-bold"
+                  style={{ border: `1.5px solid ${INK}`, color: INK, backgroundColor: CREAM, height: 44 }}
+                >
+                  {(profile?.rating_count ?? 0) > 0 ? (
+                    <>
+                      <Star className="h-4 w-4" fill="currentColor" strokeWidth={0} />
+                      {(profile?.rating_avg ?? 0).toFixed(1)}
+                    </>
+                  ) : (
+                    "Asnjë vlerësim"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-[20px] font-bold leading-tight" style={{ color: INK }}>{displayName}</p>
+              {profile?.city && (
+                <p className="text-[15px] leading-tight" style={{ color: MUTED }}>{profile.city}</p>
+              )}
+            </div>
             <button
-              onClick={() => setBenefitsOpen(true)}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[13px] font-semibold"
-              style={{ borderColor: INK, color: INK }}
+              onClick={() => setHeightOpen(true)}
+              className="inline-flex shrink-0 items-center gap-1 text-[13px]"
+              style={{ color: MUTED, fontStyle: profile?.height_cm ? "normal" : "italic" }}
             >
-              <Gem className="h-4 w-4" strokeWidth={1.8} /> Përfitimet
-            </button>
-            <button
-              onClick={() => setRatingsOpen(true)}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[13px] font-semibold"
-              style={{ borderColor: INK, color: INK }}
-            >
-              {(profile?.rating_count ?? 0) > 0 ? (
+              {profile?.height_cm ? (
                 <>
-                  <Star className="h-4 w-4" fill="currentColor" strokeWidth={0} />
-                  {(profile?.rating_avg ?? 0).toFixed(1)} ({profile?.rating_count})
+                  <Ruler className="h-3.5 w-3.5" /> {profile.height_cm} cm
                 </>
               ) : (
-                "Asnjë vlerësim"
+                "+ Shto gjatësinë"
               )}
             </button>
-          </div>
-
-          <div className="mt-4 flex items-end justify-between">
-            <div>
-              <p className="text-[20px] font-bold leading-tight" style={{ color: INK }}>{displayName}</p>
-              {profile?.city && (
-                <p className="mt-0.5 text-[13px]" style={{ color: MUTED }}>{profile.city}</p>
-              )}
-            </div>
-            {profile?.height_cm ? (
-              <p className="inline-flex items-center gap-1 text-[13px]" style={{ color: MUTED }}>
-                <Ruler className="h-3.5 w-3.5" /> {profile.height_cm} cm
-              </p>
-            ) : null}
           </div>
 
           {profile?.bio && (
             <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>{profile.bio}</p>
           )}
         </section>
+
 
         {/* Tabs */}
         <div className="mt-5" style={{ borderBottom: `1px solid ${DIVIDER}` }}>
@@ -441,18 +458,106 @@ function ProfilePage() {
         onSignOut={handleSignOut}
         onOpenOffers={() => { setSettingsOpen(false); setOffersOpen(true); }}
       />
+
+      {/* Height picker sheet */}
+      <HeightSheet
+        open={heightOpen}
+        onOpenChange={setHeightOpen}
+        userId={user.id}
+        current={profile?.height_cm ?? null}
+        onSaved={loadAll}
+      />
     </MobileShell>
+
   );
 }
+
+function HeightSheet({
+  open,
+  onOpenChange,
+  userId,
+  current,
+  onSaved,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  userId: string;
+  current: number | null;
+  onSaved: () => void;
+}) {
+  const [value, setValue] = useState<number>(current ?? 175);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (open) setValue(current ?? 175);
+  }, [open, current]);
+
+  const options = useMemo(() => Array.from({ length: 220 - 140 + 1 }, (_, i) => 140 + i), []);
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("profiles").update({ height_cm: value }).eq("id", userId);
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    onOpenChange(false);
+    onSaved();
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CREAM }}>
+        <SheetHeader className="px-5 pt-5">
+          <SheetTitle style={{ color: INK }}>Gjatësia (cm)</SheetTitle>
+        </SheetHeader>
+        <div
+          className="mx-5 mt-4 overflow-y-auto rounded-2xl"
+          style={{ height: 220, border: `1px solid ${DIVIDER}`, scrollSnapType: "y mandatory" }}
+        >
+          {options.map((h) => {
+            const selected = h === value;
+            return (
+              <button
+                key={h}
+                onClick={() => setValue(h)}
+                className="flex w-full items-center justify-center py-2 text-[17px]"
+                style={{
+                  color: selected ? INK : MUTED,
+                  fontWeight: selected ? 700 : 400,
+                  backgroundColor: selected ? CARD : "transparent",
+                  scrollSnapAlign: "center",
+                }}
+              >
+                {h} cm
+              </button>
+            );
+          })}
+        </div>
+        <div className="px-5 pb-6 pt-4">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="h-12 w-full rounded-full text-[15px] font-bold text-white disabled:opacity-60"
+            style={{ backgroundColor: INK }}
+          >
+            {saving ? "Duke ruajtur..." : "Ruaj"}
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+
 
 function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div className="text-center">
-      <p className="text-[18px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
-      <p className="text-[12px]" style={{ color: MUTED }}>{label}</p>
+      <p className="text-[22px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
+      <p className="mt-0.5 text-[12px] font-normal" style={{ color: MUTED }}>{label}</p>
     </div>
   );
 }
+
 
 function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {
   return (
