@@ -1131,7 +1131,8 @@ function FinalStep({
                 placeholder="45"
                 type="number"
                 inputMode="decimal"
-                className="w-full bg-transparent text-sm focus:outline-none"
+                min={0}
+                className="no-spinner w-full bg-transparent text-sm focus:outline-none"
                 style={{ color: INK }}
               />
             </Field>
