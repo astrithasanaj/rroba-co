@@ -1060,11 +1060,10 @@ function FinalStep({
             <button
               type="button"
               onClick={onOpenSize}
-              className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
+              className="flex w-full items-center justify-start rounded-2xl px-4 py-3.5 text-left text-sm"
               style={{ background: CARD, color: INK }}
             >
               <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh"}</span>
-              <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
             </button>
           </div>
           <div>
@@ -1072,7 +1071,7 @@ function FinalStep({
             <button
               type="button"
               onClick={onOpenColor}
-              className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
+              className="flex w-full items-center justify-start rounded-2xl px-4 py-3.5 text-left text-sm"
               style={{ background: CARD, color: INK }}
             >
               <span className="flex min-w-0 items-center gap-2">
@@ -1118,7 +1117,6 @@ function FinalStep({
                   </>
                 )}
               </span>
-              <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
             </button>
           </div>
         </div>
