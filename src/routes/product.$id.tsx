@@ -158,7 +158,6 @@ function ProductDetail() {
             <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
           </button>
         </div>
-        </div>
       </div>
 
 
