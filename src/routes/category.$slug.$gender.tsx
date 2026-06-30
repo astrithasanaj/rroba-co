@@ -79,7 +79,7 @@ function CategoryResultsPage() {
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
       if (subcategoryList.length > 0) {
         const orExpr = subcategoryList
-          .map((s) => `title.ilike.%${s.replace(/[,()]/g, "")}%`)
+          .map((s: string) => `title.ilike.%${s.replace(/[,()]/g, "")}%`)
           .join(",");
         query = query.or(orExpr);
       }
