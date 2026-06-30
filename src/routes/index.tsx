@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, ArrowRight, Loader2 } from "lucide-react";
+import { Bell, Loader2, Shirt, Mountain, Archive, Baby, Frame, Speaker, Scissors } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
-import { GenderToggle } from "@/components/marketplace/GenderToggle";
 import { ListingCard } from "@/components/marketplace/ListingCard";
+import { LikeButton } from "@/components/marketplace/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
@@ -11,10 +11,22 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type Gender = "Të gjitha" | "Femra" | "Meshkuj" | "Fëmijë";
+const PAGE_BG = "#f6f1e7";
+const CARD_BG = "#ede8de";
+const INK = "#1a1a1a";
+const MUTED = "#a89f94";
+
+const CATEGORIES = [
+  { key: "mode", label: "Modë & aksesorë", Icon: Shirt },
+  { key: "outdoor", label: "Outdoor & sport", Icon: Mountain },
+  { key: "interior", label: "Interiør & mobilje", Icon: Archive },
+  { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
+  { key: "art", label: "Art & dizajn", Icon: Frame },
+  { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },
+  { key: "hobi", label: "Hobi", Icon: Scissors },
+] as const;
 
 function HomePage() {
-  const [gender, setGender] = useState<Gender>("Të gjitha");
   const [listings, setListings] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,118 +57,188 @@ function HomePage() {
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    if (gender === "Të gjitha") return listings;
-    return listings.filter((l) => l.gender === gender);
-  }, [listings, gender]);
-
-  const newThisWeek = useMemo(() => filtered.slice(0, 6), [filtered]);
-  const trending = useMemo(() => filtered.slice(0, 6).reverse(), [filtered]);
+  const trending = useMemo(() => listings.slice(0, 5), [listings]);
+  const newThisWeek = useMemo(() => listings.slice(0, 10), [listings]);
+  const featured = trending[0];
+  const trendingRest = trending.slice(1, 5);
 
   return (
     <MobileShell>
-      <header className="sticky top-0 z-30 flex items-center justify-between bg-background/95 px-5 py-4 backdrop-blur">
-        <h1 className="font-display text-3xl tracking-tight">Rroba</h1>
-        <Link
-          to="/notifications"
-          className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
+      <div style={{ backgroundColor: PAGE_BG, minHeight: "100%" }}>
+        <header
+          className="sticky top-0 z-30 flex items-center justify-between px-5 py-4 backdrop-blur"
+          style={{ backgroundColor: `${PAGE_BG}f2` }}
         >
-          <Bell className="h-5 w-5" strokeWidth={1.7} />
-        </Link>
-      </header>
+          <h1
+            className="text-3xl italic"
+            style={{
+              color: INK,
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Rroba
+          </h1>
+          <Link
+            to="/notifications"
+            className="grid h-10 w-10 place-items-center rounded-full"
+            aria-label="Njoftime"
+          >
+            <Bell className="h-5 w-5" strokeWidth={1.7} style={{ color: INK }} />
+          </Link>
+        </header>
 
-      <div className="px-5">
-        <GenderToggle value={gender} onChange={setGender} />
-      </div>
-
-      <section className="mx-5 mt-5 overflow-hidden rounded-3xl bg-accent/40">
-        <div className="grid grid-cols-[1.1fr_1fr] items-stretch">
-          <div className="flex flex-col justify-between p-5">
-            <span className="w-fit rounded-full bg-background/70 px-2.5 py-1 text-[10px] font-medium tracking-wide">
-              Edicioni i javës
-            </span>
-            <div>
-              <h2 className="font-display text-3xl leading-[1.05]">
-                Gjej stilin tënd për më pak.
-              </h2>
+        {/* Categories */}
+        <section className="mt-2">
+          <h2 className="px-5 text-[16px] font-bold" style={{ color: INK }}>
+            Kategoritë
+          </h2>
+          <div
+            className="mt-3 flex gap-[10px] overflow-x-auto px-5 pb-1 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: "none", scrollSnapType: "x proximity" }}
+          >
+            {CATEGORIES.map(({ key, label, Icon }) => (
               <Link
+                key={key}
                 to="/search"
-                className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-2 text-xs font-semibold text-background"
+                search={{ category: key } as never}
+                className="flex flex-col items-start"
+                style={{ width: 84, scrollSnapAlign: "start", flexShrink: 0 }}
               >
-                Shfleto <ArrowRight className="h-3.5 w-3.5" />
+                <div
+                  className="grid place-items-center"
+                  style={{
+                    width: 84,
+                    height: 84,
+                    borderRadius: 14,
+                    backgroundColor: CARD_BG,
+                  }}
+                >
+                  <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
+                </div>
+                <span
+                  className="mt-1.5 text-left font-bold leading-tight"
+                  style={{ color: INK, fontSize: 11, width: 84 }}
+                >
+                  {label}
+                </span>
               </Link>
-            </div>
+            ))}
           </div>
-          <img
-            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80"
-            alt="Modë"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      </section>
+        </section>
 
-      {loading ? (
-        <div className="grid place-items-center py-16 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin" />
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="mx-5 mt-8 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Ende nuk ka artikuj. Bëhu i pari që publikon!
-        </div>
-      ) : (
-        <>
-          <Section title="E re këtë javë" subtitle="Sapo të publikuar" sectionKey="new">
-            <Grid listings={newThisWeek} />
-          </Section>
-          <Section title="Trending tani" subtitle="Çfarë po duan të gjithë" sectionKey="trending">
-            <Grid listings={trending} />
-          </Section>
-          <Section title={gender === "Të gjitha" ? "Të gjitha" : gender}>
-            <Grid listings={filtered} />
-          </Section>
-        </>
-      )}
+        {loading ? (
+          <div className="grid place-items-center py-16" style={{ color: MUTED }}>
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        ) : listings.length === 0 ? (
+          <div
+            className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
+            style={{ borderColor: "#ddd8ce", color: MUTED }}
+          >
+            Ende nuk ka artikuj. Bëhu i pari që publikon!
+          </div>
+        ) : (
+          <>
+            {/* Trending masonry */}
+            <section className="mt-7 px-5">
+              <SectionHeader title="Trending tani" />
+              {featured && (
+                <div className="mt-3 grid grid-cols-2 gap-2.5" style={{ gridAutoRows: "minmax(0,1fr)" }}>
+                  <Link
+                    to="/product/$id"
+                    params={{ id: featured.id }}
+                    className="relative col-span-1 row-span-2 overflow-hidden"
+                    style={{ borderRadius: 14, aspectRatio: "1 / 2.06" }}
+                  >
+                    {featured.coverUrl && (
+                      <img
+                        src={featured.coverUrl}
+                        alt={featured.title}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
+                    <div
+                      className="absolute inset-x-0 bottom-0 p-3"
+                      style={{
+                        background:
+                          "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0))",
+                      }}
+                    >
+                      <p className="line-clamp-1 text-sm font-semibold text-white">
+                        {featured.title}
+                      </p>
+                      <p className="text-sm font-bold text-white">€{featured.price}</p>
+                    </div>
+                    <LikeButton listingId={featured.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
+                  </Link>
+                  <div className="flex flex-col gap-2.5">
+                    {trendingRest.slice(0, 2).map((l) => (
+                      <SmallTile key={l.id} listing={l} />
+                    ))}
+                  </div>
+                  {trendingRest.slice(2, 4).map((l) => (
+                    <SmallTile key={l.id} listing={l} />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* New this week — horizontal scroll */}
+            <section className="mt-8">
+              <div className="px-5">
+                <SectionHeader title="E re këtë javë" />
+              </div>
+              <div
+                className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {newThisWeek.map((l) => (
+                  <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                    <ListingCard listing={l} />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <div className="h-24" />
+          </>
+        )}
+      </div>
     </MobileShell>
   );
 }
 
-function Section({
-  title,
-  subtitle,
-  sectionKey,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  sectionKey?: "new" | "trending";
-  children: React.ReactNode;
-}) {
+function SectionHeader({ title }: { title: string }) {
   return (
-    <section className="mt-8 px-5">
-      <div className="mb-3 flex items-end justify-between">
-        <div>
-          <h3 className="font-display text-2xl">{title}</h3>
-          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
-        </div>
-        <Link
-          to="/search"
-          search={sectionKey ? { section: sectionKey } : undefined}
-          className="text-xs font-medium text-muted-foreground"
-        >
-          Shiko të gjitha
-        </Link>
-      </div>
-      {children}
-    </section>
+    <div className="flex items-center justify-between">
+      <h3 className="text-[16px] font-bold" style={{ color: INK }}>
+        {title}
+      </h3>
+      <Link to="/search" className="text-xs font-medium" style={{ color: MUTED }}>
+        Shiko të gjitha
+      </Link>
+    </div>
   );
 }
 
-function Grid({ listings }: { listings: ListingView[] }) {
+function SmallTile({ listing }: { listing: ListingView }) {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {listings.map((l) => (
-        <ListingCard key={l.id} listing={l} />
-      ))}
-    </div>
+    <Link
+      to="/product/$id"
+      params={{ id: listing.id }}
+      className="relative block overflow-hidden"
+      style={{ borderRadius: 14, aspectRatio: "1 / 1", backgroundColor: CARD_BG }}
+    >
+      {listing.coverUrl && (
+        <img
+          src={listing.coverUrl}
+          alt={listing.title}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+      <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-7 w-7 shadow-sm" />
+    </Link>
   );
 }
