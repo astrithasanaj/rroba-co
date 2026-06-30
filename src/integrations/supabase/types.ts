@@ -130,6 +130,7 @@ export type Database = {
           size: string
           sold: boolean
           status: string
+          subcategory: string | null
           title: string
           updated_at: string
           user_id: string
@@ -150,6 +151,7 @@ export type Database = {
           size: string
           sold?: boolean
           status?: string
+          subcategory?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -170,6 +172,7 @@ export type Database = {
           size?: string
           sold?: boolean
           status?: string
+          subcategory?: string | null
           title?: string
           updated_at?: string
           user_id?: string
