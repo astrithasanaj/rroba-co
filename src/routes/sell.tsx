@@ -14,7 +14,7 @@ import {
   Mountain,
   Frame,
   Headphones,
-  Scissors,
+  
   X,
   Video,
   Footprints,
@@ -68,7 +68,7 @@ const CATEGORIES: { id: string; label: string; Icon: typeof Shirt }[] = [
   { id: "outdoor", label: "Outdoor & sport", Icon: Mountain },
   { id: "art", label: "Art & dizajn", Icon: Frame },
   { id: "electronics", label: "Elektronikë & zë", Icon: Headphones },
-  { id: "hobby", label: "Hobi", Icon: Scissors },
+  
 ];
 
 const GENDERS: { id: string; label: string; subtitle: string; Icon: typeof User }[] = [
