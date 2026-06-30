@@ -29,7 +29,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { SizePickerSheet } from "@/components/marketplace/SizePickerSheet";
+import {
+  SizePickerSheet,
+  resolveSizeKind,
+  isSizeRequired,
+  sizeKindHidden,
+} from "@/components/marketplace/SizePickerSheet";
 import { ColorPickerSheet, COLOR_OPTIONS } from "@/components/marketplace/ColorPickerSheet";
 
 export const Route = createFileRoute("/sell")({
@@ -123,6 +128,7 @@ function SellPage() {
   const [submitting, setSubmitting] = useState(false);
   const [sizeSheetOpen, setSizeSheetOpen] = useState(false);
   const [colorSheetOpen, setColorSheetOpen] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -170,7 +176,26 @@ function SellPage() {
       ? `${selectedCategoryLabel} / ${catGender} / ${catSub}`
       : "";
 
-  const step2Valid = !!fullCategoryLabel && !!condition && title.trim().length > 0;
+  const sizeKind = resolveSizeKind(selectedCategoryLabel, catGender, catSub);
+  const sizeHidden = sizeKindHidden(sizeKind);
+  const sizeRequired = isSizeRequired(sizeKind);
+
+  // Reset / auto-fill size whenever the category context changes
+  useEffect(() => {
+    setSizeError(false);
+    if (sizeKind === "accessory") {
+      setSize("Universal");
+    } else {
+      setSize("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sizeKind]);
+
+  const step2Valid =
+    !!fullCategoryLabel &&
+    !!condition &&
+    title.trim().length > 0 &&
+    (!sizeRequired || size.trim().length > 0);
 
   const priceNum = Number(price.replace(",", "."));
   const finalValid =
@@ -272,8 +297,19 @@ function SellPage() {
               setTitle={setTitle}
               description={description}
               setDescription={setDescription}
+              size={size}
+              sizeHidden={sizeHidden}
+              sizeRequired={sizeRequired}
+              sizeError={sizeError}
+              onOpenSize={() => setSizeSheetOpen(true)}
               canNext={step2Valid}
-              onNext={() => setView("final")}
+              onNext={() => {
+                if (sizeRequired && !size.trim()) {
+                  setSizeError(true);
+                  return;
+                }
+                setView("final");
+              }}
             />
           ) : (
             <FinalStep
@@ -367,9 +403,11 @@ function SellPage() {
           open={sizeSheetOpen}
           onOpenChange={setSizeSheetOpen}
           value={size}
-          onChange={setSize}
-          gender={catGender}
-          category={selectedCategoryLabel}
+          onChange={(v) => {
+            setSize(v);
+            setSizeError(false);
+          }}
+          kind={sizeKind}
         />
         <ColorPickerSheet
           open={colorSheetOpen}
@@ -555,6 +593,11 @@ function DetailsStep({
   setTitle,
   description,
   setDescription,
+  size,
+  sizeHidden,
+  sizeRequired,
+  sizeError,
+  onOpenSize,
   canNext,
   onNext,
 }: {
@@ -571,6 +614,11 @@ function DetailsStep({
   setTitle: (v: string) => void;
   description: string;
   setDescription: (v: string) => void;
+  size: string;
+  sizeHidden: boolean;
+  sizeRequired: boolean;
+  sizeError: boolean;
+  onOpenSize: () => void;
   canNext: boolean;
   onNext: () => void;
 }) {
@@ -706,6 +754,38 @@ function DetailsStep({
             );
           })}
         </div>
+
+        {!sizeHidden && (
+          <div className="mt-7">
+            <p
+              className="mb-2 text-[11px] font-semibold uppercase tracking-[0.15em]"
+              style={{ color: MUTED }}
+            >
+              Madhësia
+            </p>
+            <button
+              type="button"
+              onClick={onOpenSize}
+              className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
+              style={{
+                background: CARD,
+                color: INK,
+                boxShadow: sizeError ? "0 0 0 1.5px #e53935 inset" : undefined,
+              }}
+            >
+              <span style={{ color: size ? INK : MUTED }}>
+                {size || "Zgjidh madhësinë"}
+              </span>
+              <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
+            </button>
+            {sizeError && sizeRequired && (
+              <p className="mt-1.5 text-[12px] font-medium" style={{ color: "#e53935" }}>
+                Ju lutemi zgjidhni madhësinë
+              </p>
+            )}
+          </div>
+        )}
+
 
         <h3 className="mt-7 text-[17px] font-bold" style={{ color: INK }}>
           Përshkruaj artikullin
