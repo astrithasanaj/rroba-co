@@ -343,7 +343,7 @@ function ProfilePage() {
               to={tab === "mine" ? "/sell" : tab !== "wardrobe" ? "/" : undefined}
             />
           ) : (
-            <ListingsGrid listings={currentGrid} />
+            <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
           )}
         </section>
 
@@ -574,35 +574,36 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
   );
 }
 
-function ListingsGrid({ listings }: { listings: ListingView[] }) {
+function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
     <div className="grid grid-cols-2 gap-0">
-      {listings.map((l) => (
-        <Link
-          key={l.id}
-          to="/product/$id"
-          params={{ id: l.id }}
-          className="relative block aspect-[3/4] overflow-hidden"
-          style={{ backgroundColor: CARD }}
-        >
-          {l.coverUrl && (
-            <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
-          )}
-          {/* Brand watermark */}
-          <span className="pointer-events-none absolute left-2 top-2 text-[11px] italic text-white/95" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
-            Rroba
-          </span>
-          {/* Sold ribbon */}
-          {l.sold && <SoldRibbon />}
-          {/* Bottom overlay */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-8" style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0))" }}>
-            <p className="truncate text-[13px] font-bold text-white">{l.title}</p>
-            <p className="truncate text-[11px] text-white/85">
-              {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
-            </p>
-          </div>
-        </Link>
-      ))}
+      {listings.map((l) => {
+        const linkProps = manage
+          ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
+          : ({ to: "/product/$id", params: { id: l.id } } as const);
+        return (
+          <Link
+            key={l.id}
+            {...linkProps}
+            className="relative block aspect-[3/4] overflow-hidden"
+            style={{ backgroundColor: CARD }}
+          >
+            {l.coverUrl && (
+              <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
+            )}
+            <span className="pointer-events-none absolute left-2 top-2 text-[11px] italic text-white/95" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
+              Rroba
+            </span>
+            {l.sold && <SoldRibbon />}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-8" style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0))" }}>
+              <p className="truncate text-[13px] font-bold text-white">{l.title}</p>
+              <p className="truncate text-[11px] text-white/85">
+                {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
+              </p>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }
