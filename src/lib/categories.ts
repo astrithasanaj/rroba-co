@@ -39,3 +39,24 @@ export const CATEGORY_MAP: Record<string, CategoryDef> = {
 export function getCategory(slug: string): CategoryDef | undefined {
   return CATEGORY_MAP[slug];
 }
+
+export const SUBCATEGORY_OPTIONS: Record<GenderSlug, string[]> = {
+  femra: [
+    "Bluza", "Fustane", "T-shirt", "Këmisha", "Pantallona", "Funde",
+    "Xhaketa", "Pallto", "Triko", "Shorte", "Kostume banje", "Këpucë",
+    "Çanta", "Aksesorë",
+  ],
+  meshkuj: [
+    "Bluza", "T-shirt", "Këmisha", "Pantallona", "Xhaketa", "Pallto",
+    "Triko", "Shorte", "Kostume banje", "Këpucë", "Çanta", "Aksesorë",
+  ],
+  vajza: [
+    "Bluza", "T-shirt", "Pantallona", "Fustane", "Xhaketa", "Pallto",
+    "Triko", "Shorte", "Pizhame", "Këpucë", "Aksesorë",
+  ],
+  djem: [
+    "Bluza", "T-shirt", "Pantallona", "Xhaketa", "Pallto",
+    "Triko", "Shorte", "Pizhame", "Këpucë", "Aksesorë",
+  ],
+  all: [],
+};
