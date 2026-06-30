@@ -297,8 +297,19 @@ function SellPage() {
               setTitle={setTitle}
               description={description}
               setDescription={setDescription}
+              size={size}
+              sizeHidden={sizeHidden}
+              sizeRequired={sizeRequired}
+              sizeError={sizeError}
+              onOpenSize={() => setSizeSheetOpen(true)}
               canNext={step2Valid}
-              onNext={() => setView("final")}
+              onNext={() => {
+                if (sizeRequired && !size.trim()) {
+                  setSizeError(true);
+                  return;
+                }
+                setView("final");
+              }}
             />
           ) : (
             <FinalStep
