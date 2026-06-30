@@ -392,9 +392,11 @@ function SellPage() {
           open={sizeSheetOpen}
           onOpenChange={setSizeSheetOpen}
           value={size}
-          onChange={setSize}
-          gender={catGender}
-          category={selectedCategoryLabel}
+          onChange={(v) => {
+            setSize(v);
+            setSizeError(false);
+          }}
+          kind={sizeKind}
         />
         <ColorPickerSheet
           open={colorSheetOpen}
