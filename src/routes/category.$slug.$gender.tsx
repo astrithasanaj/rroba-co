@@ -77,6 +77,12 @@ function CategoryResultsPage() {
       if (filters.brand) query = query.ilike("brand", `%${filters.brand}%`);
       if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
+      if (subcategoryList.length > 0) {
+        const orExpr = subcategoryList
+          .map((s) => `title.ilike.%${s.replace(/[,()]/g, "")}%`)
+          .join(",");
+        query = query.or(orExpr);
+      }
       query = query.order("created_at", { ascending: false });
       const { data } = await query.limit(120);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
