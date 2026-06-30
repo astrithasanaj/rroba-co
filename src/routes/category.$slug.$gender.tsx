@@ -35,6 +35,11 @@ type Filters = {
 
 function CategoryResultsPage() {
   const { slug, gender } = useParams({ from: "/category/$slug/$gender" });
+  const search = Route.useSearch();
+  const subcategoryList = useMemo(
+    () => (search.subcategories ? search.subcategories.split(",").filter(Boolean) : []),
+    [search.subcategories],
+  );
   const navigate = useNavigate();
   const def = getCategory(slug);
   const [results, setResults] = useState<ListingView[]>([]);
