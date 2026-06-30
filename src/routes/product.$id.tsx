@@ -32,6 +32,8 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const { likes, saves, toggleLike, toggleSave } = useUserCollections();
   
 
   useEffect(() => {
