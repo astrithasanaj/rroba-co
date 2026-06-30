@@ -66,7 +66,7 @@ function HomePage() {
     <MobileShell>
       <div style={{ backgroundColor: PAGE_BG, minHeight: "100%" }}>
         <header
-          className="sticky top-0 z-30 flex items-center justify-between px-5 py-4 backdrop-blur"
+          className="sticky top-0 z-30 flex items-center justify-between px-[18px] py-4 backdrop-blur"
           style={{ backgroundColor: `${PAGE_BG}f2` }}
         >
           <h1
@@ -91,20 +91,17 @@ function HomePage() {
 
         {/* Categories */}
         <section className="mt-2">
-          <h2 className="px-5 text-[16px] font-bold" style={{ color: INK }}>
+          <h2 className="px-[18px] text-[16px] font-bold" style={{ color: INK }}>
             Kategoritë
           </h2>
-          <div
-            className="mt-3 flex gap-[10px] overflow-x-auto px-5 pb-1 [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: "none", scrollSnapType: "x proximity" }}
-          >
+          <div className="category-scroll mt-3 pb-1">
             {CATEGORIES.map(({ key, label, Icon }) => (
               <Link
                 key={key}
                 to="/search"
                 search={{ category: key } as never}
-                className="flex flex-col items-start"
-                style={{ width: 84, scrollSnapAlign: "start", flexShrink: 0 }}
+                className="flex flex-col items-center"
+                style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
               >
                 <div
                   className="grid place-items-center"
@@ -118,7 +115,7 @@ function HomePage() {
                   <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
                 </div>
                 <span
-                  className="mt-1.5 text-left font-bold leading-tight"
+                  className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
                   style={{ color: INK, fontSize: 11, width: 84 }}
                 >
                   {label}
