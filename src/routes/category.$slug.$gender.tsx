@@ -15,8 +15,13 @@ const CARD = "#ede8de";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 
+type SearchParams = { subcategories?: string };
+
 export const Route = createFileRoute("/category/$slug/$gender")({
   component: CategoryResultsPage,
+  validateSearch: (search: Record<string, unknown>): SearchParams => ({
+    subcategories: typeof search.subcategories === "string" ? search.subcategories : undefined,
+  }),
 });
 
 type Filters = {
