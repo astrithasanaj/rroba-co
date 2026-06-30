@@ -176,7 +176,26 @@ function SellPage() {
       ? `${selectedCategoryLabel} / ${catGender} / ${catSub}`
       : "";
 
-  const step2Valid = !!fullCategoryLabel && !!condition && title.trim().length > 0;
+  const sizeKind = resolveSizeKind(selectedCategoryLabel, catGender, catSub);
+  const sizeHidden = sizeKindHidden(sizeKind);
+  const sizeRequired = isSizeRequired(sizeKind);
+
+  // Reset / auto-fill size whenever the category context changes
+  useEffect(() => {
+    setSizeError(false);
+    if (sizeKind === "accessory") {
+      setSize("Universal");
+    } else {
+      setSize("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sizeKind]);
+
+  const step2Valid =
+    !!fullCategoryLabel &&
+    !!condition &&
+    title.trim().length > 0 &&
+    (!sizeRequired || size.trim().length > 0);
 
   const priceNum = Number(price.replace(",", "."));
   const finalValid =
