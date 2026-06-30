@@ -150,24 +150,14 @@ function ProductDetail() {
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <div className="flex gap-2">
-            <button
-              onClick={async () => {
-                const url = `${window.location.origin}/product/${listing.id}`;
-                const data = { url, title: listing.title, text: "Shiko këtë artikull në Rroba" };
-                try {
-                  if (navigator.share) await navigator.share(data);
-                  else { await navigator.clipboard.writeText(url); toast.success("Lidhja u kopjua!"); }
-                } catch {}
-              }}
-              aria-label="Shpërndaj"
-              className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
-            >
-              <IosShareIcon size={18} color="#1a1a1a" strokeWidth={1.6} />
-            </button>
-            <SaveButton listingId={listing.id} className="h-10 w-10" size={16} />
-            <LikeButton listingId={listing.id} className="h-10 w-10" size={16} />
-          </div>
+          <button
+            onClick={() => setMoreOpen(true)}
+            aria-label="Më shumë"
+            className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
+          >
+            <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
+          </button>
+        </div>
         </div>
       </div>
 
