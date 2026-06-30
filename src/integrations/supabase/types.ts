@@ -311,6 +311,7 @@ export type Database = {
           created_at: string
           height_cm: number | null
           id: string
+          is_admin: boolean
           name: string
           rating_avg: number
           rating_count: number
@@ -323,6 +324,7 @@ export type Database = {
           created_at?: string
           height_cm?: number | null
           id: string
+          is_admin?: boolean
           name?: string
           rating_avg?: number
           rating_count?: number
@@ -335,6 +337,7 @@ export type Database = {
           created_at?: string
           height_cm?: number | null
           id?: string
+          is_admin?: boolean
           name?: string
           rating_avg?: number
           rating_count?: number
@@ -372,15 +375,64 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          product_id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          product_id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          status?: Database["public"]["Enums"]["report_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          product_id?: string
+          reason?: Database["public"]["Enums"]["report_reason"]
+          reporter_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      report_reason:
+        | "scam"
+        | "counterfeit"
+        | "misleading"
+        | "inappropriate"
+        | "spam"
+        | "prohibited"
+        | "other"
+      report_status: "pending" | "reviewed" | "action_taken" | "dismissed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -507,6 +559,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      report_reason: [
+        "scam",
+        "counterfeit",
+        "misleading",
+        "inappropriate",
+        "spam",
+        "prohibited",
+        "other",
+      ],
+      report_status: ["pending", "reviewed", "action_taken", "dismissed"],
+    },
   },
 } as const
