@@ -97,8 +97,11 @@ function HomePage() {
           <div className="category-scroll mt-3 pb-1">
             {CATEGORIES.map(({ key, label, Icon }) => {
               const hasGender = key === "mode" || key === "femije";
+              const hasSubcategory = key === "outdoor" || key === "interior" || key === "art";
               const linkProps = hasGender
                 ? ({ to: "/category/$slug/choose-gender", params: { slug: key } } as const)
+                : hasSubcategory
+                ? ({ to: "/category/$slug/subcategory", params: { slug: key } } as const)
                 : ({ to: "/category/$slug/$gender", params: { slug: key, gender: "all" } } as const);
               return (
                 <Link

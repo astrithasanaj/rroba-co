@@ -22,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
 import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
@@ -92,6 +93,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const CategorySlugSubcategoryRoute = CategorySlugSubcategoryRouteImport.update({
+  id: '/category/$slug/subcategory',
+  path: '/category/$slug/subcategory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategorySlugChooseGenderRoute =
   CategorySlugChooseGenderRouteImport.update({
     id: '/category/$slug/choose-gender',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
+  '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesByTo {
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
+  '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesById {
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
+  '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRouteTypes {
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-new-report'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
+    | '/category/$slug/subcategory'
     | '/listing/$id/manage'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-new-report'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
+    | '/category/$slug/subcategory'
     | '/listing/$id/manage'
   id:
     | '__root__'
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-new-report'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
+    | '/category/$slug/subcategory'
     | '/_authenticated/listing/$id/manage'
   fileRoutesById: FileRoutesById
 }
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   ApiPublicNotifyNewReportRoute: typeof ApiPublicNotifyNewReportRoute
   CategorySlugGenderRoute: typeof CategorySlugGenderRoute
   CategorySlugChooseGenderRoute: typeof CategorySlugChooseGenderRoute
+  CategorySlugSubcategoryRoute: typeof CategorySlugSubcategoryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/category/$slug/subcategory': {
+      id: '/category/$slug/subcategory'
+      path: '/category/$slug/subcategory'
+      fullPath: '/category/$slug/subcategory'
+      preLoaderRoute: typeof CategorySlugSubcategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/category/$slug/choose-gender': {
       id: '/category/$slug/choose-gender'
       path: '/category/$slug/choose-gender'
@@ -422,6 +442,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicNotifyNewReportRoute: ApiPublicNotifyNewReportRoute,
   CategorySlugGenderRoute: CategorySlugGenderRoute,
   CategorySlugChooseGenderRoute: CategorySlugChooseGenderRoute,
+  CategorySlugSubcategoryRoute: CategorySlugSubcategoryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
