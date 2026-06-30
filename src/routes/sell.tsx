@@ -755,6 +755,38 @@ function DetailsStep({
           })}
         </div>
 
+        {!sizeHidden && (
+          <div className="mt-7">
+            <p
+              className="mb-2 text-[11px] font-semibold uppercase tracking-[0.15em]"
+              style={{ color: MUTED }}
+            >
+              Madhësia
+            </p>
+            <button
+              type="button"
+              onClick={onOpenSize}
+              className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
+              style={{
+                background: CARD,
+                color: INK,
+                boxShadow: sizeError ? "0 0 0 1.5px #e53935 inset" : undefined,
+              }}
+            >
+              <span style={{ color: size ? INK : MUTED }}>
+                {size || "Zgjidh madhësinë"}
+              </span>
+              <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
+            </button>
+            {sizeError && sizeRequired && (
+              <p className="mt-1.5 text-[12px] font-medium" style={{ color: "#e53935" }}>
+                Ju lutemi zgjidhni madhësinë
+              </p>
+            )}
+          </div>
+        )}
+
+
         <h3 className="mt-7 text-[17px] font-bold" style={{ color: INK }}>
           Përshkruaj artikullin
         </h3>
