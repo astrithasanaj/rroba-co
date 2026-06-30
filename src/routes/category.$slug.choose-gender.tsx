@@ -7,7 +7,7 @@ const BG = "#f6f1e7";
 const CARD = "#ede8de";
 const INK = "#1a1a1a";
 
-export const Route = createFileRoute("/category/$slug/gender")({
+export const Route = createFileRoute("/category/$slug/choose-gender")({
   component: GenderSelectPage,
 });
 

@@ -22,7 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
-import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.gender'
+import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 
@@ -90,11 +90,12 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
-  id: '/category/$slug/gender',
-  path: '/category/$slug/gender',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const CategorySlugChooseGenderRoute =
+  CategorySlugChooseGenderRouteImport.update({
+    id: '/category/$slug/choose-gender',
+    path: '/category/$slug/choose-gender',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
   id: '/category/$slug/$gender',
   path: '/category/$slug/$gender',
@@ -121,7 +122,7 @@ export interface FileRoutesByFullPath {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
-  '/category/$slug/gender': typeof CategorySlugGenderRoute
+  '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesByTo {
@@ -138,7 +139,7 @@ export interface FileRoutesByTo {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
-  '/category/$slug/gender': typeof CategorySlugGenderRoute
+  '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesById {
@@ -157,7 +158,7 @@ export interface FileRoutesById {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
-  '/category/$slug/gender': typeof CategorySlugGenderRoute
+  '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRouteTypes {
@@ -176,7 +177,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/category/$slug/$gender'
-    | '/category/$slug/gender'
+    | '/category/$slug/choose-gender'
     | '/listing/$id/manage'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -193,7 +194,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/category/$slug/$gender'
-    | '/category/$slug/gender'
+    | '/category/$slug/choose-gender'
     | '/listing/$id/manage'
   id:
     | '__root__'
@@ -211,7 +212,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/category/$slug/$gender'
-    | '/category/$slug/gender'
+    | '/category/$slug/choose-gender'
     | '/_authenticated/listing/$id/manage'
   fileRoutesById: FileRoutesById
 }
@@ -229,7 +230,7 @@ export interface RootRouteChildren {
   ProductIdRoute: typeof ProductIdRoute
   UserIdRoute: typeof UserIdRoute
   CategorySlugGenderRoute: typeof CategorySlugGenderRoute
-  CategorySlugGenderRoute: typeof CategorySlugGenderRoute
+  CategorySlugChooseGenderRoute: typeof CategorySlugChooseGenderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -325,11 +326,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/category/$slug/gender': {
-      id: '/category/$slug/gender'
-      path: '/category/$slug/gender'
-      fullPath: '/category/$slug/gender'
-      preLoaderRoute: typeof CategorySlugGenderRouteImport
+    '/category/$slug/choose-gender': {
+      id: '/category/$slug/choose-gender'
+      path: '/category/$slug/choose-gender'
+      fullPath: '/category/$slug/choose-gender'
+      preLoaderRoute: typeof CategorySlugChooseGenderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/category/$slug/$gender': {
@@ -376,7 +377,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductIdRoute: ProductIdRoute,
   UserIdRoute: UserIdRoute,
   CategorySlugGenderRoute: CategorySlugGenderRoute,
-  CategorySlugGenderRoute: CategorySlugGenderRoute,
+  CategorySlugChooseGenderRoute: CategorySlugChooseGenderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
