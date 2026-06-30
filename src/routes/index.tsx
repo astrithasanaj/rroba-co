@@ -100,7 +100,7 @@ function HomePage() {
                 key={key}
                 to="/search"
                 search={{ category: key } as never}
-                className="flex flex-col items-start"
+                className="flex flex-col items-center"
                 style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
               >
                 <div
@@ -115,7 +115,7 @@ function HomePage() {
                   <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
                 </div>
                 <span
-                  className="mt-1.5 text-left font-bold leading-tight"
+                  className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
                   style={{ color: INK, fontSize: 11, width: 84 }}
                 >
                   {label}
