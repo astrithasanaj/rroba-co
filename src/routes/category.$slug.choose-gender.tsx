@@ -7,12 +7,12 @@ const BG = "#f6f1e7";
 const CARD = "#ede8de";
 const INK = "#1a1a1a";
 
-export const Route = createFileRoute("/category/$slug/gender")({
+export const Route = createFileRoute("/category/$slug/choose-gender")({
   component: GenderSelectPage,
 });
 
 function GenderSelectPage() {
-  const { slug } = useParams({ from: "/category/$slug/gender" });
+  const { slug } = useParams({ from: "/category/$slug/choose-gender" });
   const navigate = useNavigate();
   const def = getCategory(slug);
 
