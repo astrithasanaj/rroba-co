@@ -22,6 +22,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.gender'
+import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 
 const SellRoute = SellRouteImport.update({
@@ -88,6 +90,16 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
+  id: '/category/$slug/gender',
+  path: '/category/$slug/gender',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
+  id: '/category/$slug/$gender',
+  path: '/category/$slug/$gender',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedListingIdManageRoute =
   AuthenticatedListingIdManageRouteImport.update({
     id: '/listing/$id/manage',
@@ -108,6 +120,8 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/category/$slug/$gender': typeof CategorySlugGenderRoute
+  '/category/$slug/gender': typeof CategorySlugGenderRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesByTo {
@@ -123,6 +137,8 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/category/$slug/$gender': typeof CategorySlugGenderRoute
+  '/category/$slug/gender': typeof CategorySlugGenderRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesById {
@@ -140,6 +156,8 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/category/$slug/$gender': typeof CategorySlugGenderRoute
+  '/category/$slug/gender': typeof CategorySlugGenderRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRouteTypes {
@@ -157,6 +175,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/product/$id'
     | '/user/$id'
+    | '/category/$slug/$gender'
+    | '/category/$slug/gender'
     | '/listing/$id/manage'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -172,6 +192,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/product/$id'
     | '/user/$id'
+    | '/category/$slug/$gender'
+    | '/category/$slug/gender'
     | '/listing/$id/manage'
   id:
     | '__root__'
@@ -188,6 +210,8 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/product/$id'
     | '/user/$id'
+    | '/category/$slug/$gender'
+    | '/category/$slug/gender'
     | '/_authenticated/listing/$id/manage'
   fileRoutesById: FileRoutesById
 }
@@ -204,6 +228,8 @@ export interface RootRouteChildren {
   SellRoute: typeof SellRoute
   ProductIdRoute: typeof ProductIdRoute
   UserIdRoute: typeof UserIdRoute
+  CategorySlugGenderRoute: typeof CategorySlugGenderRoute
+  CategorySlugGenderRoute: typeof CategorySlugGenderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -299,6 +325,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/category/$slug/gender': {
+      id: '/category/$slug/gender'
+      path: '/category/$slug/gender'
+      fullPath: '/category/$slug/gender'
+      preLoaderRoute: typeof CategorySlugGenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug/$gender': {
+      id: '/category/$slug/$gender'
+      path: '/category/$slug/$gender'
+      fullPath: '/category/$slug/$gender'
+      preLoaderRoute: typeof CategorySlugGenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/listing/$id/manage': {
       id: '/_authenticated/listing/$id/manage'
       path: '/listing/$id/manage'
@@ -335,6 +375,8 @@ const rootRouteChildren: RootRouteChildren = {
   SellRoute: SellRoute,
   ProductIdRoute: ProductIdRoute,
   UserIdRoute: UserIdRoute,
+  CategorySlugGenderRoute: CategorySlugGenderRoute,
+  CategorySlugGenderRoute: CategorySlugGenderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
