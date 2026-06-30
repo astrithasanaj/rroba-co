@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, Loader2, Shirt, Mountain, Archive, Baby, Frame, Speaker, Scissors } from "lucide-react";
+import { Bell, Loader2, Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { LikeButton } from "@/components/marketplace/LikeButton";
@@ -23,7 +23,6 @@ const CATEGORIES = [
   { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
   { key: "art", label: "Art & dizajn", Icon: Frame },
   { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },
-  { key: "hobi", label: "Hobi", Icon: Scissors },
 ] as const;
 
 function HomePage() {
