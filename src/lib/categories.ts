@@ -33,7 +33,7 @@ export const CATEGORY_MAP: Record<string, CategoryDef> = {
   interior: { slug: "interior", label: "Interiør & mobilje", categories: ["Interier"], hasGender: false },
   art: { slug: "art", label: "Art & dizajn", categories: ["Art"], hasGender: false },
   elektronik: { slug: "elektronik", label: "Elektronikë & zë", categories: ["Elektronikë"], hasGender: false },
-  hobi: { slug: "hobi", label: "Hobi", categories: ["Hobi"], hasGender: false },
+  
 };
 
 export function getCategory(slug: string): CategoryDef | undefined {

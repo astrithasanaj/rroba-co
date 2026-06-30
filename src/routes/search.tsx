@@ -12,7 +12,7 @@ import {
   Baby,
   Frame,
   Speaker,
-  Scissors,
+  
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -80,7 +80,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
   { label: "Fëmijë & bebe", value: "Fëmijë", Icon: Baby },
   { label: "Art & dizajn", value: "Art", Icon: Frame },
   { label: "Elektronikë & zë", value: "Elektronikë", Icon: Speaker },
-  { label: "Hobi", value: "Hobi", Icon: Scissors },
+  
 ];
 
 const RECENT_KEY = "rroba-recent-searches";
