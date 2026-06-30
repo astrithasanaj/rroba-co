@@ -95,33 +95,38 @@ function HomePage() {
             Kategoritë
           </h2>
           <div className="category-scroll mt-3 pb-1">
-            {CATEGORIES.map(({ key, label, Icon }) => (
-              <Link
-                key={key}
-                to="/search"
-                search={{ category: key } as never}
-                className="flex flex-col items-center"
-                style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
-              >
-                <div
-                  className="grid place-items-center"
-                  style={{
-                    width: 84,
-                    height: 84,
-                    borderRadius: 14,
-                    backgroundColor: CARD_BG,
-                  }}
+            {CATEGORIES.map(({ key, label, Icon }) => {
+              const hasGender = key === "mode" || key === "femije";
+              const linkProps = hasGender
+                ? ({ to: "/category/$slug/gender", params: { slug: key } } as const)
+                : ({ to: "/category/$slug/$gender", params: { slug: key, gender: "all" } } as const);
+              return (
+                <Link
+                  key={key}
+                  {...linkProps}
+                  className="flex flex-col items-center"
+                  style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
                 >
-                  <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
-                </div>
-                <span
-                  className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
-                  style={{ color: INK, fontSize: 11, width: 84 }}
-                >
-                  {label}
-                </span>
-              </Link>
-            ))}
+                  <div
+                    className="grid place-items-center"
+                    style={{
+                      width: 84,
+                      height: 84,
+                      borderRadius: 14,
+                      backgroundColor: CARD_BG,
+                    }}
+                  >
+                    <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
+                  </div>
+                  <span
+                    className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
+                    style={{ color: INK, fontSize: 11, width: 84 }}
+                  >
+                    {label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
