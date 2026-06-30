@@ -98,7 +98,7 @@ function HomePage() {
             {CATEGORIES.map(({ key, label, Icon }) => {
               const hasGender = key === "mode" || key === "femije";
               const linkProps = hasGender
-                ? ({ to: "/category/$slug/gender", params: { slug: key } } as const)
+                ? ({ to: "/category/$slug/choose-gender", params: { slug: key } } as const)
                 : ({ to: "/category/$slug/$gender", params: { slug: key, gender: "all" } } as const);
               return (
                 <Link

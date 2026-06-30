@@ -12,7 +12,7 @@ export const Route = createFileRoute("/category/$slug/choose-gender")({
 });
 
 function GenderSelectPage() {
-  const { slug } = useParams({ from: "/category/$slug/gender" });
+  const { slug } = useParams({ from: "/category/$slug/choose-gender" });
   const navigate = useNavigate();
   const def = getCategory(slug);
 
