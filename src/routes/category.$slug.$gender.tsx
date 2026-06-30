@@ -95,7 +95,7 @@ function CategoryResultsPage() {
     return () => {
       active = false;
     };
-  }, [def, genderOption, filters]);
+  }, [def, genderOption, filters, subcategoryList]);
 
   if (!def) {
     return (
