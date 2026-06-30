@@ -593,6 +593,11 @@ function DetailsStep({
   setTitle,
   description,
   setDescription,
+  size,
+  sizeHidden,
+  sizeRequired,
+  sizeError,
+  onOpenSize,
   canNext,
   onNext,
 }: {
@@ -609,6 +614,11 @@ function DetailsStep({
   setTitle: (v: string) => void;
   description: string;
   setDescription: (v: string) => void;
+  size: string;
+  sizeHidden: boolean;
+  sizeRequired: boolean;
+  sizeError: boolean;
+  onOpenSize: () => void;
   canNext: boolean;
   onNext: () => void;
 }) {
