@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
-import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
+import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
-import { LikeButton, SaveButton } from "@/components/marketplace/LikeButton";
+import { MoreSheet } from "@/components/marketplace/MoreSheet";
+import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
@@ -32,6 +32,8 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const { likes, saves, toggleLike, toggleSave } = useUserCollections();
   
 
   useEffect(() => {
@@ -150,24 +152,13 @@ function ProductDetail() {
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <div className="flex gap-2">
-            <button
-              onClick={async () => {
-                const url = `${window.location.origin}/product/${listing.id}`;
-                const data = { url, title: listing.title, text: "Shiko këtë artikull në Rroba" };
-                try {
-                  if (navigator.share) await navigator.share(data);
-                  else { await navigator.clipboard.writeText(url); toast.success("Lidhja u kopjua!"); }
-                } catch {}
-              }}
-              aria-label="Shpërndaj"
-              className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
-            >
-              <IosShareIcon size={18} color="#1a1a1a" strokeWidth={1.6} />
-            </button>
-            <SaveButton listingId={listing.id} className="h-10 w-10" size={16} />
-            <LikeButton listingId={listing.id} className="h-10 w-10" size={16} />
-          </div>
+          <button
+            onClick={() => setMoreOpen(true)}
+            aria-label="Më shumë"
+            className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
+          >
+            <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
+          </button>
         </div>
       </div>
 
@@ -240,21 +231,58 @@ function ProductDetail() {
         <div className="h-32" />
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-background/95 p-4 backdrop-blur">
-        <div className="flex gap-2">
+      <div
+        className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t px-5 py-3"
+        style={{ backgroundColor: "#f6f1e7", borderColor: "#ddd8ce" }}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-5">
+            <button
+              onClick={() => {
+                if (!me) return navigate({ to: "/auth" });
+                toggleLike(listing.id);
+              }}
+              aria-label="Pëlqe"
+              className="p-1"
+            >
+              <Heart
+                size={22}
+                strokeWidth={1.5}
+                color={likes.has(listing.id) ? "#e8826a" : "#1a1a1a"}
+                fill={likes.has(listing.id) ? "#e8826a" : "none"}
+              />
+            </button>
+            <button
+              onClick={() => {
+                if (!me) return navigate({ to: "/auth" });
+                toggleSave(listing.id);
+              }}
+              aria-label="Ruaj"
+              className="p-1"
+            >
+              <Bookmark
+                size={22}
+                strokeWidth={1.5}
+                color="#1a1a1a"
+                fill={saves.has(listing.id) ? "#1a1a1a" : "none"}
+              />
+            </button>
+            <button
+              onClick={sendMessage}
+              disabled={me === listing.user_id}
+              aria-label="Mesazh"
+              className="p-1 disabled:opacity-40"
+            >
+              <MessageCircle size={22} strokeWidth={1.5} color="#1a1a1a" />
+            </button>
+          </div>
           <button
             onClick={() => setOfferOpen(true)}
             disabled={listing.sold || me === listing.user_id}
-            className="flex-1 rounded-full border border-border bg-background px-4 py-3 text-sm font-semibold disabled:opacity-50"
+            className="rounded-full px-7 py-3 text-sm font-semibold disabled:opacity-50"
+            style={{ backgroundColor: "#e8826a", color: "#fff" }}
           >
-            Bëj ofertë
-          </button>
-          <button
-            onClick={sendMessage}
-            disabled={me === listing.user_id}
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-background disabled:opacity-50"
-          >
-            <MessageCircle className="h-4 w-4" /> Dërgo mesazh
+            {listing.sold ? "Shitur" : "Blej"}
           </button>
         </div>
         <div className="h-[env(safe-area-inset-bottom)]" />
@@ -267,6 +295,15 @@ function ProductDetail() {
         sellerId={listing.user_id}
         buyerId={me}
         listingPrice={listing.price}
+      />
+
+      <MoreSheet
+        open={moreOpen}
+        onOpenChange={setMoreOpen}
+        productId={listing.id}
+        productUrl={typeof window !== "undefined" ? `${window.location.origin}/product/${listing.id}` : ""}
+        productTitle={listing.title}
+        reporterId={me}
       />
     </MobileShell>
   );
