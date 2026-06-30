@@ -24,6 +24,7 @@ import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 
 const SellRoute = SellRouteImport.update({
@@ -101,6 +102,12 @@ const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
   path: '/category/$slug/$gender',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/admin/reports',
+    path: '/admin/reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedListingIdManageRoute =
   AuthenticatedListingIdManageRouteImport.update({
     id: '/listing/$id/manage',
@@ -121,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
@@ -138,6 +146,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/product/$id'
     | '/user/$id'
+    | '/admin/reports'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/listing/$id/manage'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/product/$id'
     | '/user/$id'
+    | '/admin/reports'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/listing/$id/manage'
@@ -211,6 +223,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/product/$id'
     | '/user/$id'
+    | '/_authenticated/admin/reports'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/_authenticated/listing/$id/manage'
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySlugGenderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/listing/$id/manage': {
       id: '/_authenticated/listing/$id/manage'
       path: '/listing/$id/manage'
@@ -352,11 +372,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,
 }
 
