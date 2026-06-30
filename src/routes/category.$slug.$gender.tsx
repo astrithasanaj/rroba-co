@@ -15,8 +15,13 @@ const CARD = "#ede8de";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 
+type SearchParams = { subcategories?: string };
+
 export const Route = createFileRoute("/category/$slug/$gender")({
   component: CategoryResultsPage,
+  validateSearch: (search: Record<string, unknown>): SearchParams => ({
+    subcategories: typeof search.subcategories === "string" ? search.subcategories : undefined,
+  }),
 });
 
 type Filters = {
@@ -30,6 +35,11 @@ type Filters = {
 
 function CategoryResultsPage() {
   const { slug, gender } = useParams({ from: "/category/$slug/$gender" });
+  const search = Route.useSearch();
+  const subcategoryList = useMemo(
+    () => (search.subcategories ? search.subcategories.split(",").filter(Boolean) : []),
+    [search.subcategories],
+  );
   const navigate = useNavigate();
   const def = getCategory(slug);
   const [results, setResults] = useState<ListingView[]>([]);
@@ -67,6 +77,12 @@ function CategoryResultsPage() {
       if (filters.brand) query = query.ilike("brand", `%${filters.brand}%`);
       if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
+      if (subcategoryList.length > 0) {
+        const orExpr = subcategoryList
+          .map((s: string) => `title.ilike.%${s.replace(/[,()]/g, "")}%`)
+          .join(",");
+        query = query.or(orExpr);
+      }
       query = query.order("created_at", { ascending: false });
       const { data } = await query.limit(120);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
@@ -79,7 +95,7 @@ function CategoryResultsPage() {
     return () => {
       active = false;
     };
-  }, [def, genderOption, filters]);
+  }, [def, genderOption, filters, subcategoryList]);
 
   if (!def) {
     return (
