@@ -29,7 +29,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { SizePickerSheet } from "@/components/marketplace/SizePickerSheet";
+import {
+  SizePickerSheet,
+  resolveSizeKind,
+  isSizeRequired,
+  sizeKindHidden,
+} from "@/components/marketplace/SizePickerSheet";
 import { ColorPickerSheet, COLOR_OPTIONS } from "@/components/marketplace/ColorPickerSheet";
 
 export const Route = createFileRoute("/sell")({
