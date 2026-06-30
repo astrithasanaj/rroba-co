@@ -343,7 +343,7 @@ function ProfilePage() {
               to={tab === "mine" ? "/sell" : tab !== "wardrobe" ? "/" : undefined}
             />
           ) : (
-            <ListingsGrid listings={currentGrid} />
+            <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
           )}
         </section>
 
