@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck } from "lucide-react";
-import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
+import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
-import { LikeButton, SaveButton } from "@/components/marketplace/LikeButton";
+import { MoreSheet } from "@/components/marketplace/MoreSheet";
+import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
