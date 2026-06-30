@@ -1,31 +1,21 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Camera,
   ChevronRight,
   Images,
   Loader2,
-  Pencil,
-  Search,
   Shirt,
   Baby,
   Sofa,
   Mountain,
   Frame,
   Headphones,
-  
   X,
-  Video,
   Footprints,
-  Glasses,
+  Gem,
   ShoppingBag,
-  Dumbbell,
-  Sparkles,
-  User,
-  Users,
-  UserCircle2,
-  Circle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,36 +56,68 @@ const CONDITIONS: { value: string; subtitle: string }[] = [
   { value: "Shumë përdorur", subtitle: "Shenja të qarta përdorimi" },
 ];
 
-const CATEGORIES: { id: string; label: string; Icon: typeof Shirt }[] = [
-  { id: "fashion", label: "Modë & aksesorë", Icon: Shirt },
-  { id: "kids", label: "Artikuj për fëmijë", Icon: Baby },
-  { id: "home", label: "Dekor & mobilje", Icon: Sofa },
-  { id: "outdoor", label: "Outdoor & sport", Icon: Mountain },
-  { id: "art", label: "Art & dizajn", Icon: Frame },
-  { id: "electronics", label: "Elektronikë & zë", Icon: Headphones },
-  
+type GenderMode = "adult" | "kids" | false;
+
+type Category = {
+  id: string;
+  label: string;
+  Icon: typeof Shirt;
+  genderMode: GenderMode;
+};
+
+const CATEGORIES: Category[] = [
+  { id: "Veshje", label: "Veshje", Icon: Shirt, genderMode: "adult" },
+  { id: "Këpucë", label: "Këpucë", Icon: Footprints, genderMode: "adult" },
+  { id: "Çanta", label: "Çanta", Icon: ShoppingBag, genderMode: "adult" },
+  { id: "Aksesorë", label: "Aksesorë", Icon: Gem, genderMode: "adult" },
+  { id: "Fëmijë & bebe", label: "Fëmijë & bebe", Icon: Baby, genderMode: "kids" },
+  { id: "Outdoor & sport", label: "Outdoor & sport", Icon: Mountain, genderMode: false },
+  { id: "Art & dizajn", label: "Art & dizajn", Icon: Frame, genderMode: false },
+  { id: "Elektronikë & zë", label: "Elektronikë & zë", Icon: Headphones, genderMode: false },
+  { id: "Interiør & mobilje", label: "Interiør & mobilje", Icon: Sofa, genderMode: false },
 ];
 
-const GENDERS: { id: string; label: string; subtitle: string; Icon: typeof User }[] = [
-  { id: "Femra", label: "Femra", subtitle: "Listo artikullin si për femra", Icon: User },
-  { id: "Meshkuj", label: "Meshkuj", subtitle: "Listo artikullin si për meshkuj", Icon: Users },
-  { id: "Uniseks", label: "Uniseks", subtitle: "Listo artikullin si uniseks", Icon: UserCircle2 },
-];
+const ADULT_GENDERS = ["Femra", "Meshkuj"] as const;
+const ADULT_EXTRA = "Uniseks";
+const KIDS_GENDERS = ["Vajza", "Djem"] as const;
+const KIDS_EXTRA = "Të dyja";
 
-const SUBCATEGORIES: { id: string; label: string; Icon: typeof Shirt }[] = [
-  { id: "Veshje", label: "Veshje", Icon: Shirt },
-  { id: "Çanta dhe tuta", label: "Çanta dhe tuta", Icon: ShoppingBag },
-  { id: "Këpucë", label: "Këpucë", Icon: Footprints },
-  { id: "Aksesorë", label: "Aksesorë", Icon: Glasses },
-  { id: "Fitness", label: "Fitness", Icon: Dumbbell },
-  { id: "Kozmetikë", label: "Kozmetikë", Icon: Sparkles },
-];
+function getSubcategories(category: string, gender: string): string[] {
+  switch (category) {
+    case "Veshje":
+      if (gender === "Femra")
+        return ["Bluza","Fustane","T-shirt","Këmisha","Pantallona","Funde","Xhaketa","Pallto","Triko","Shorte","Kostume banje","Pizhame"];
+      if (gender === "Meshkuj")
+        return ["Bluza","T-shirt","Këmisha","Pantallona","Xhaketa","Pallto","Triko","Shorte","Kostume banje","Pizhame"];
+      return ["Bluza","T-shirt","Pantallona","Xhaketa","Triko","Shorte","Pizhame"];
+    case "Këpucë":
+      if (gender === "Femra") return ["Të përditshme","Sportet","Me taka","Sandale","Çizme","Të tjera"];
+      if (gender === "Meshkuj") return ["Të përditshme","Sportet","Elegante","Sandale","Çizme","Të tjera"];
+      return ["Të përditshme","Sportet","Sandale","Çizme","Të tjera"];
+    case "Çanta":
+      return ["Çanta dore","Çanta shpine","Portofol","Çanta udhëtimi","Të tjera"];
+    case "Aksesorë":
+      return ["Kapele","Shall & doreza","Rripa","Syze","Bizhuteri","Ora","Të tjera"];
+    case "Fëmijë & bebe":
+      return ["Veshje","Këpucë","Lodra","Karrocë","Aksesorë bebeje","Të tjera"];
+    case "Outdoor & sport":
+      return ["Veshje sportive","Këpucë sportive","Bicikletë","Kampim","Ski & dëborë","Fitness","Të tjera"];
+    case "Art & dizajn":
+      return ["Pikturë","Print & poster","Fotografi","Skulpturë","Dekor","Të tjera"];
+    case "Elektronikë & zë":
+      return ["Telefona","Kompjuterë","Audio","Kamera","Aksesorë","Të tjera"];
+    case "Interiør & mobilje":
+      return ["Mobilje","Dekor","Ndriçim","Kuzhinë","Tekstil","Të tjera"];
+    default:
+      return [];
+  }
+}
 
 const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 
 type View = "media" | "details" | "final";
-type Picker = "category" | "gender" | "subcategory";
+type Picker = "gender" | "subcategory";
 
 function SellPage() {
   const navigate = useNavigate();
@@ -108,14 +130,13 @@ function SellPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
-  // Step 2 state
-  const [catCategory, setCatCategory] = useState<string>(""); // id
+  // Category state
+  const [catCategory, setCatCategory] = useState<string>("");
   const [catGender, setCatGender] = useState<string>("");
   const [catSub, setCatSub] = useState<string>("");
   const [condition, setCondition] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [searchCat, setSearchCat] = useState("");
 
   // Final step state
   const [brand, setBrand] = useState("");
@@ -155,7 +176,6 @@ function SellPage() {
     }
     if (added.length > 0) {
       setImages((p) => [...p, ...added]);
-      if (view === "media") setView("details");
     }
     if (fileRef.current) fileRef.current.value = "";
     if (cameraRef.current) cameraRef.current.value = "";
@@ -170,29 +190,30 @@ function SellPage() {
     });
   };
 
-  const selectedCategoryLabel = CATEGORIES.find((c) => c.id === catCategory)?.label ?? "";
-  const fullCategoryLabel =
-    catSub && selectedCategoryLabel && catGender
-      ? `${selectedCategoryLabel} / ${catGender} / ${catSub}`
-      : "";
+  const selectedCategory = useMemo(
+    () => CATEGORIES.find((c) => c.id === catCategory),
+    [catCategory],
+  );
 
-  const sizeKind = resolveSizeKind(selectedCategoryLabel, catGender, catSub);
+  const fullCategoryLabel = catCategory
+    ? [catCategory, catGender, catSub].filter(Boolean).join(" / ")
+    : "";
+
+  // For size resolution, map kids to "Fëmijë" path the size resolver expects
+  const sizeKind = resolveSizeKind(catCategory, catGender, catSub);
   const sizeHidden = sizeKindHidden(sizeKind);
   const sizeRequired = isSizeRequired(sizeKind);
 
-  // Reset / auto-fill size whenever the category context changes
   useEffect(() => {
     setSizeError(false);
-    if (sizeKind === "accessory") {
-      setSize("Universal");
-    } else {
-      setSize("");
-    }
+    if (sizeKind === "accessory") setSize("Universal");
+    else setSize("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sizeKind]);
 
   const step2Valid =
     !!fullCategoryLabel &&
+    !!catSub &&
     !!condition &&
     title.trim().length > 0 &&
     (!sizeRequired || size.trim().length > 0);
@@ -219,24 +240,27 @@ function SellPage() {
         if (error) throw new Error(error.message);
         uploaded.push(path);
       }
+      const insertPayload: Record<string, unknown> = {
+        user_id: userId,
+        title: title.trim(),
+        brand: brand.trim(),
+        category: catCategory,
+        subcategory: catSub,
+        size,
+        condition,
+        color: color.length ? color.join(", ") : "",
+        city,
+        gender: catGender,
+        price: priceNum,
+        description: description.trim(),
+        image_paths: uploaded,
+        delivery,
+        status: "active",
+      };
       const { data, error } = await supabase
         .from("listings")
-        .insert({
-          user_id: userId,
-          title: title.trim(),
-          brand: brand.trim(),
-          category: selectedCategoryLabel,
-          size,
-          condition,
-          color: color.length ? color.join(", ") : "",
-          city,
-          gender: catGender,
-          price: priceNum,
-          description: description.trim(),
-          image_paths: uploaded,
-          delivery,
-          status: "active",
-        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .insert(insertPayload as any)
         .select("id")
         .single();
       if (error) {
@@ -254,11 +278,29 @@ function SellPage() {
 
   const openPicker = (p: Picker) => setPickerStack((s) => [...s, p]);
   const popPicker = () => setPickerStack((s) => s.slice(0, -1));
-  const goToPicker = (p: Picker) => {
-    const idx = pickerStack.indexOf(p);
-    if (idx >= 0) setPickerStack(pickerStack.slice(0, idx + 1));
-  };
   const closePickers = () => setPickerStack([]);
+
+  const handlePickCategory = (cat: Category) => {
+    setCatCategory(cat.id);
+    setCatGender("");
+    setCatSub("");
+    if (cat.genderMode === false) {
+      openPicker("subcategory");
+    } else {
+      openPicker("gender");
+    }
+  };
+
+  const handlePickGender = (g: string) => {
+    setCatGender(g);
+    setPickerStack(["subcategory"]);
+  };
+
+  const handlePickSub = (s: string) => {
+    setCatSub(s);
+    closePickers();
+    setView("details");
+  };
 
   return (
     <div className="min-h-screen" style={{ background: CREAM }}>
@@ -266,12 +308,14 @@ function SellPage() {
         className="relative mx-auto min-h-screen w-full max-w-[480px] overflow-hidden"
         style={{ background: CREAM }}
       >
-        {/* Base view layers */}
         <Layer visible={view === "media"}>
-          <MediaStep
+          <MediaCategoryStep
+            images={images}
             onClose={() => navigate({ to: "/" })}
             onPickFiles={() => fileRef.current?.click()}
             onOpenCamera={() => cameraRef.current?.click()}
+            onRemoveImage={removeImage}
+            onPickCategory={handlePickCategory}
           />
         </Layer>
 
@@ -279,17 +323,16 @@ function SellPage() {
           {view === "details" ? (
             <DetailsStep
               images={images}
-              onCancel={() => {
-                setView("media");
-              }}
+              onCancel={() => setView("media")}
               onAddMore={() => fileRef.current?.click()}
               onRemoveImage={removeImage}
               fullCategoryLabel={fullCategoryLabel}
-              onOpenCategory={() => openPicker("category")}
-              onClearCategory={() => {
+              onEditCategory={() => {
+                // Reset and go back to step 1 to re-pick
                 setCatCategory("");
                 setCatGender("");
                 setCatSub("");
+                setView("media");
               }}
               condition={condition}
               setCondition={setCondition}
@@ -333,55 +376,32 @@ function SellPage() {
           )}
         </Layer>
 
-        {/* Picker overlays — stack */}
-        {(["category", "gender", "subcategory"] as Picker[]).map((p) => {
+        {(["gender", "subcategory"] as Picker[]).map((p) => {
           const idx = pickerStack.indexOf(p);
           const visible = idx >= 0;
           return (
             <Layer key={p} visible={visible} z={20 + (idx >= 0 ? idx : 0)}>
-              {p === "category" && (
-                <CategoryPicker
-                  search={searchCat}
-                  setSearch={setSearchCat}
-                  selectedCat={catCategory}
-                  selectedSub={catSub}
-                  onBack={popPicker}
-                  onPick={(id) => {
-                    setCatCategory(id);
-                    openPicker("gender");
-                  }}
-                />
-              )}
-              {p === "gender" && (
+              {p === "gender" && selectedCategory && (
                 <GenderPicker
-                  catLabel={selectedCategoryLabel}
-                  selected={catGender}
-                  onBack={popPicker}
-                  onCrumb={() => goToPicker("category")}
-                  onPick={(g) => {
-                    setCatGender(g);
-                    openPicker("subcategory");
+                  category={selectedCategory}
+                  onBack={() => {
+                    popPicker();
                   }}
+                  onPick={handlePickGender}
                 />
               )}
-              {p === "subcategory" && (
+              {p === "subcategory" && selectedCategory && (
                 <SubcategoryPicker
-                  catLabel={selectedCategoryLabel}
-                  genderLabel={catGender}
+                  category={selectedCategory}
+                  gender={catGender}
                   onBack={popPicker}
-                  onCrumbAll={() => goToPicker("category")}
-                  onCrumbGender={() => goToPicker("gender")}
-                  onPick={(s) => {
-                    setCatSub(s);
-                    closePickers();
-                  }}
+                  onPick={handlePickSub}
                 />
               )}
             </Layer>
           );
         })}
 
-        {/* Hidden inputs */}
         <input
           ref={fileRef}
           type="file"
@@ -446,7 +466,7 @@ function Layer({
   );
 }
 
-/* ============================== Shared bits ============================== */
+/* ============================== Shared header ============================== */
 
 function TopHeader({
   title,
@@ -460,7 +480,10 @@ function TopHeader({
   onBack?: () => void;
 }) {
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3" style={{ background: CREAM }}>
+    <header
+      className="sticky top-0 z-10 flex items-center justify-between px-4 py-3"
+      style={{ background: CREAM }}
+    >
       <div className="w-20">
         {onBack && (
           <button
@@ -493,91 +516,204 @@ function TopHeader({
   );
 }
 
-/* ============================== Step 1: Media ============================== */
+/* ============================== Step 1: Media + Category ============================== */
 
-function MediaStep({
+function MediaCategoryStep({
+  images,
   onClose,
   onPickFiles,
   onOpenCamera,
+  onRemoveImage,
+  onPickCategory,
 }: {
+  images: PendingImage[];
   onClose: () => void;
   onPickFiles: () => void;
   onOpenCamera: () => void;
+  onRemoveImage: (i: number) => void;
+  onPickCategory: (c: Category) => void;
 }) {
-  const examples = [
-    { label: "Ballore" },
-    { label: "Detaje" },
-    { label: "Marka dhe madhësia" },
-    { label: "Materiali" },
-    { label: "Video" },
-  ];
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
+    <div className="flex h-full flex-col overflow-y-auto pb-10">
       <TopHeader title="Shto artikull të ri" rightLabel="Mbyll" onRight={onClose} />
 
-      <div className="px-5 pt-3">
-        <h2 className="text-[26px] font-bold leading-tight" style={{ color: INK }}>
-          Shto foto dhe video
-        </h2>
-        <p className="mt-2 text-sm" style={{ color: MUTED }}>
-          Shto deri në 8 foto dhe një video
-        </p>
-
-        <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="px-5 pt-1">
+        {/* Compact upload buttons */}
+        <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={onPickFiles}
-            className="flex h-[160px] flex-col items-center justify-center gap-3 rounded-2xl"
+            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl"
             style={{ background: CARD, color: INK }}
           >
-            <Images className="h-7 w-7" strokeWidth={1.5} />
-            <span className="text-sm font-semibold">Ngarko media</span>
+            <Images className="h-5 w-5" strokeWidth={1.5} />
+            <span className="text-[12px] font-semibold">Ngarko media</span>
           </button>
           <button
             type="button"
             onClick={onOpenCamera}
-            className="flex h-[160px] flex-col items-center justify-center gap-3 rounded-2xl"
+            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl"
             style={{ background: CARD, color: INK }}
           >
-            <Camera className="h-7 w-7" strokeWidth={1.5} />
-            <span className="text-sm font-semibold">Hap kamerën</span>
+            <Camera className="h-5 w-5" strokeWidth={1.5} />
+            <span className="text-[12px] font-semibold">Hap kamerën</span>
           </button>
         </div>
 
-        <div className="mt-8">
-          <h3 className="text-[17px] font-bold" style={{ color: INK }}>
-            Një udhëzues i vogël për të filluar
-          </h3>
-          <p className="mt-1 text-sm" style={{ color: MUTED }}>
-            Bëje njoftimin tënd tërheqës me foto si këto
-          </p>
-
-          <div className="no-scrollbar mt-4 -mx-5 flex gap-3 overflow-x-auto px-5 pb-2">
-            {examples.map((e) => (
-              <div key={e.label} className="flex w-[80px] shrink-0 flex-col items-center gap-2">
-                <div
-                  className="grid h-[80px] w-[80px] place-items-center rounded-xl"
-                  style={{ background: CARD, color: MUTED }}
+        {images.length > 0 && (
+          <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5">
+            {images.map((img, i) => (
+              <div
+                key={img.previewUrl}
+                className="relative h-[64px] w-[64px] shrink-0 overflow-hidden rounded-xl"
+                style={{ background: CARD }}
+              >
+                <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => onRemoveImage(i)}
+                  className="absolute left-1 top-1 grid h-4 w-4 place-items-center rounded-full bg-black/60 text-white"
+                  aria-label="Fshij"
                 >
-                  {e.label === "Video" ? (
-                    <Video className="h-7 w-7" strokeWidth={1.5} />
-                  ) : (
-                    <Images className="h-7 w-7" strokeWidth={1.5} />
-                  )}
-                </div>
-                <span className="text-center text-[11px] leading-tight" style={{ color: INK }}>
-                  {e.label}
-                </span>
+                  <X className="h-2.5 w-2.5" />
+                </button>
               </div>
             ))}
           </div>
+        )}
+
+        {/* Heading */}
+        <h2
+          className="mt-7 text-[26px] font-bold italic leading-tight"
+          style={{ color: INK, fontFamily: "ui-serif, Georgia, 'Times New Roman', serif" }}
+        >
+          Çfarë po shet?
+        </h2>
+        <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+          Zgjidh kategorinë e duhur
+        </p>
+
+        {/* Category grid */}
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => onPickCategory(cat)}
+              className="flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98]"
+              style={{ background: CARD, color: INK }}
+            >
+              <cat.Icon className="h-7 w-7" strokeWidth={1.4} />
+              <span className="px-2 text-center text-[13px] font-bold leading-tight">
+                {cat.label}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-/* ============================== Step 2: Details ============================== */
+/* ============================== Step 2: Gender ============================== */
+
+function GenderPicker({
+  category,
+  onBack,
+  onPick,
+}: {
+  category: Category;
+  onBack: () => void;
+  onPick: (g: string) => void;
+}) {
+  const isKids = category.genderMode === "kids";
+  const primary = isKids ? KIDS_GENDERS : ADULT_GENDERS;
+  const extra = isKids ? KIDS_EXTRA : ADULT_EXTRA;
+
+  return (
+    <div className="flex h-full flex-col overflow-y-auto">
+      <TopHeader title={category.label} onBack={onBack} />
+      <div className="px-5 pb-10">
+        <h2 className="mt-2 text-[24px] font-bold" style={{ color: INK }}>
+          Për kend është?
+        </h2>
+
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {primary.map((g) => (
+            <button
+              key={g}
+              type="button"
+              onClick={() => onPick(g)}
+              className="flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98]"
+              style={{ background: CARD, color: INK }}
+            >
+              <span className="text-[28px]">{g === "Femra" || g === "Vajza" ? "♀" : "♂"}</span>
+              <span className="text-[14px] font-bold">{g}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 flex justify-center">
+          <button
+            type="button"
+            onClick={() => onPick(extra)}
+            className="rounded-full px-5 py-2.5 text-[13px] font-semibold"
+            style={{ background: CARD, color: INK }}
+          >
+            {extra}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================== Step 3: Subcategory chips ============================== */
+
+function SubcategoryPicker({
+  category,
+  gender,
+  onBack,
+  onPick,
+}: {
+  category: Category;
+  gender: string;
+  onBack: () => void;
+  onPick: (s: string) => void;
+}) {
+  const subs = getSubcategories(category.id, gender);
+  const crumb = gender ? `${category.label} / ${gender}` : category.label;
+
+  return (
+    <div className="flex h-full flex-col overflow-y-auto">
+      <TopHeader title={crumb} onBack={onBack} />
+      <div className="px-5 pb-10">
+        <h2 className="mt-2 text-[24px] font-bold" style={{ color: INK }}>
+          Çfarë saktësisht?
+        </h2>
+        <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+          Zgjidh një nënkategori
+        </p>
+
+        <div className="mt-5 grid grid-cols-3 gap-2.5">
+          {subs.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => onPick(s)}
+              className="rounded-full px-2 py-3 text-center text-[12px] font-semibold transition active:scale-[0.97]"
+              style={{ background: CARD, color: INK }}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================== Step 4: Details ============================== */
 
 function DetailsStep({
   images,
@@ -585,8 +721,7 @@ function DetailsStep({
   onAddMore,
   onRemoveImage,
   fullCategoryLabel,
-  onOpenCategory,
-  onClearCategory,
+  onEditCategory,
   condition,
   setCondition,
   title,
@@ -606,8 +741,7 @@ function DetailsStep({
   onAddMore: () => void;
   onRemoveImage: (i: number) => void;
   fullCategoryLabel: string;
-  onOpenCategory: () => void;
-  onClearCategory: () => void;
+  onEditCategory: () => void;
   condition: string;
   setCondition: (v: string) => void;
   title: string;
@@ -628,8 +762,27 @@ function DetailsStep({
       <TopHeader title="Shto artikull të ri" rightLabel="Anulo" onRight={onCancel} />
 
       <div className="flex-1 overflow-y-auto px-5 pb-32">
+        {/* Category breadcrumb pill */}
+        {fullCategoryLabel && (
+          <button
+            type="button"
+            onClick={onEditCategory}
+            className="mt-1 inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold"
+            style={{ background: CARD, color: INK }}
+          >
+            <span className="truncate">{fullCategoryLabel}</span>
+            <span
+              aria-label="Ndrysho"
+              className="grid h-4 w-4 shrink-0 place-items-center rounded-full"
+              style={{ background: INK, color: "#fff" }}
+            >
+              <X className="h-2.5 w-2.5" />
+            </span>
+          </button>
+        )}
+
         {/* Thumbnails row */}
-        <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
+        <div className="no-scrollbar -mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
           {Array.from({ length: slots }).map((_, i) => {
             const img = images[i];
             if (img) {
@@ -640,14 +793,6 @@ function DetailsStep({
                   style={{ background: CARD }}
                 >
                   <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
-                  {i === 0 && (
-                    <div
-                      className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded-full"
-                      style={{ background: "rgba(0,0,0,0.55)" }}
-                    >
-                      <Pencil className="h-3 w-3 text-white" />
-                    </div>
-                  )}
                   <button
                     type="button"
                     onClick={() => onRemoveImage(i)}
@@ -659,7 +804,6 @@ function DetailsStep({
                 </div>
               );
             }
-            const isVideoSlot = i === slots - 1 && images.length < slots - 1;
             return (
               <button
                 key={i}
@@ -668,65 +812,17 @@ function DetailsStep({
                 className="grid h-[100px] w-[100px] shrink-0 place-items-center rounded-2xl"
                 style={{ background: CARD, color: MUTED }}
               >
-                {isVideoSlot ? (
-                  <Video className="h-7 w-7" strokeWidth={1.5} />
-                ) : (
-                  <Images className="h-7 w-7" strokeWidth={1.5} />
-                )}
+                <Images className="h-7 w-7" strokeWidth={1.5} />
               </button>
             );
           })}
         </div>
 
-        <p className="mt-3 text-[12px] leading-snug" style={{ color: MUTED }}>
-          Po lejon ripërdorimin e fotove tuaja momentalisht.{" "}
-          <button type="button" className="underline" style={{ color: CORAL }}>
-            Lexo më shumë ose ndrysho
-          </button>
-        </p>
-
-        {/* Detajet */}
         <h2 className="mt-7 text-[22px] font-bold" style={{ color: INK }}>
           Detajet
         </h2>
 
-        <button
-          type="button"
-          onClick={onOpenCategory}
-          className="mt-3 flex w-full items-center gap-3 rounded-full px-4 py-3.5"
-          style={{ background: CARD, color: INK }}
-        >
-          <span
-            className="grid h-7 w-7 place-items-center rounded-md"
-            style={{ background: "transparent" }}
-          >
-            <GridIcon />
-          </span>
-          <span className="flex-1 text-left text-sm font-medium">Kategoria</span>
-          <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
-        </button>
-
-        {fullCategoryLabel && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span
-              className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium"
-              style={{ borderColor: CORAL, color: CORAL, background: "transparent" }}
-            >
-              {fullCategoryLabel}
-              <button
-                type="button"
-                onClick={onClearCategory}
-                aria-label="Hiq"
-                className="grid h-4 w-4 place-items-center rounded-full"
-                style={{ background: CORAL, color: "#fff" }}
-              >
-                <X className="h-2.5 w-2.5" />
-              </button>
-            </span>
-          </div>
-        )}
-
-        <h3 className="mt-7 text-[17px] font-bold" style={{ color: INK }}>
+        <h3 className="mt-5 text-[17px] font-bold" style={{ color: INK }}>
           Çfarë është gjendja e artikullit?
         </h3>
         <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
@@ -738,10 +834,7 @@ function DetailsStep({
                 type="button"
                 onClick={() => setCondition(c.value)}
                 className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                style={{
-                  background: active ? INK : CARD,
-                  color: active ? "#fff" : INK,
-                }}
+                style={{ background: active ? INK : CARD, color: active ? "#fff" : INK }}
               >
                 <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
                 <span
@@ -773,9 +866,7 @@ function DetailsStep({
                 boxShadow: sizeError ? "0 0 0 1.5px #e53935 inset" : undefined,
               }}
             >
-              <span style={{ color: size ? INK : MUTED }}>
-                {size || "Zgjidh madhësinë"}
-              </span>
+              <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh madhësinë"}</span>
               <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
             </button>
             {sizeError && sizeRequired && (
@@ -785,7 +876,6 @@ function DetailsStep({
             )}
           </div>
         )}
-
 
         <h3 className="mt-7 text-[17px] font-bold" style={{ color: INK }}>
           Përshkruaj artikullin
@@ -797,11 +887,7 @@ function DetailsStep({
           maxLength={120}
           className="mt-3 w-full rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
           style={
-            {
-              background: CARD,
-              color: INK,
-              ["--muted" as string]: MUTED,
-            } as React.CSSProperties
+            { background: CARD, color: INK, ["--muted" as string]: MUTED } as React.CSSProperties
           }
         />
         <textarea
@@ -812,16 +898,11 @@ function DetailsStep({
           rows={5}
           className="mt-3 w-full resize-none rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
           style={
-            {
-              background: CARD,
-              color: INK,
-              ["--muted" as string]: MUTED,
-            } as React.CSSProperties
+            { background: CARD, color: INK, ["--muted" as string]: MUTED } as React.CSSProperties
           }
         />
       </div>
 
-      {/* Sticky bottom */}
       <div
         className="sticky bottom-0 px-5 pb-6 pt-3"
         style={{ background: `linear-gradient(to top, ${CREAM} 70%, transparent)` }}
@@ -831,248 +912,10 @@ function DetailsStep({
           onClick={onNext}
           disabled={!canNext}
           className="w-full rounded-2xl py-4 text-sm font-bold transition"
-          style={{
-            background: canNext ? CORAL : DIVIDER,
-            color: canNext ? "#fff" : MUTED,
-          }}
+          style={{ background: canNext ? CORAL : DIVIDER, color: canNext ? "#fff" : MUTED }}
         >
           Tjetër
         </button>
-      </div>
-    </div>
-  );
-}
-
-function GridIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="2.5" y="2.5" width="6" height="6" rx="1.5" stroke={INK} strokeWidth="1.5" />
-      <rect x="11.5" y="2.5" width="6" height="6" rx="1.5" stroke={INK} strokeWidth="1.5" />
-      <rect x="2.5" y="11.5" width="6" height="6" rx="1.5" stroke={INK} strokeWidth="1.5" />
-      <rect x="11.5" y="11.5" width="6" height="6" rx="1.5" stroke={INK} strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-/* ============================== Step 3: Category ============================== */
-
-function CategoryPicker({
-  search,
-  setSearch,
-  selectedCat,
-  selectedSub,
-  onBack,
-  onPick,
-}: {
-  search: string;
-  setSearch: (s: string) => void;
-  selectedCat: string;
-  selectedSub: string;
-  onBack: () => void;
-  onPick: (id: string) => void;
-}) {
-  const filtered = CATEGORIES.filter((c) =>
-    c.label.toLowerCase().includes(search.trim().toLowerCase()),
-  );
-  const selectedItem = CATEGORIES.find((c) => c.id === selectedCat);
-
-  return (
-    <div className="flex h-full flex-col overflow-y-auto">
-      <TopHeader title="Zgjedh kategorinë" onBack={onBack} />
-
-      <div className="px-5 pb-10">
-        <div
-          className="flex items-center gap-2 rounded-full px-4 py-3"
-          style={{ background: CARD }}
-        >
-          <Search className="h-4 w-4" style={{ color: MUTED }} />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Kërko..."
-            className="flex-1 bg-transparent text-sm focus:outline-none"
-            style={{ color: INK }}
-          />
-        </div>
-
-        {selectedItem && (
-          <button
-            type="button"
-            onClick={() => onPick(selectedItem.id)}
-            className="mt-5 flex w-full items-center gap-3 rounded-2xl px-1 py-3 text-left"
-          >
-            <span
-              className="grid h-6 w-6 place-items-center rounded-full border-2"
-              style={{ borderColor: CORAL }}
-            >
-              <span className="h-3 w-3 rounded-full" style={{ background: CORAL }} />
-            </span>
-            <span className="flex-1">
-              <span className="block text-sm font-semibold" style={{ color: INK }}>
-                {selectedItem.label}
-              </span>
-              {selectedSub && (
-                <span className="block text-xs" style={{ color: MUTED }}>
-                  {selectedSub}
-                </span>
-              )}
-            </span>
-          </button>
-        )}
-
-        <h3 className="mt-6 text-[15px] font-bold" style={{ color: INK }}>
-          Të gjitha kategoritë
-        </h3>
-
-        <div className="mt-4 grid grid-cols-3 gap-x-3 gap-y-5">
-          {filtered.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onPick(id)}
-              className="flex flex-col items-center gap-2"
-            >
-              <span
-                className="grid h-[72px] w-[72px] place-items-center rounded-full"
-                style={{ background: CARD }}
-              >
-                <Icon className="h-7 w-7" strokeWidth={1.4} style={{ color: INK }} />
-              </span>
-              <span
-                className="text-center text-[11px] font-semibold leading-tight"
-                style={{ color: INK }}
-              >
-                {label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ============================== Step 4: Gender ============================== */
-
-function GenderPicker({
-  catLabel,
-  selected,
-  onBack,
-  onCrumb,
-  onPick,
-}: {
-  catLabel: string;
-  selected: string;
-  onBack: () => void;
-  onCrumb: () => void;
-  onPick: (g: string) => void;
-}) {
-  return (
-    <div className="flex h-full flex-col overflow-y-auto">
-      <TopHeader title="Zgjedh gjininë" onBack={onBack} />
-      <div className="px-5 pb-10">
-        <p className="text-xs" style={{ color: MUTED }}>
-          <button type="button" onClick={onCrumb} className="underline">
-            Të gjitha
-          </button>{" "}
-          <span style={{ color: INK }}>/ Gjinia</span>
-          {catLabel && <span style={{ color: MUTED }}> · {catLabel}</span>}
-        </p>
-
-        <div className="mt-4 divide-y" style={{ borderColor: DIVIDER }}>
-          {GENDERS.map(({ id, label, subtitle, Icon }) => {
-            const active = selected === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => onPick(id)}
-                className="flex w-full items-center gap-4 py-4 text-left"
-                style={{ borderColor: DIVIDER }}
-              >
-                <span
-                  className="grid h-[72px] w-[72px] place-items-center rounded-full"
-                  style={{
-                    background: CARD,
-                    boxShadow: active ? `0 0 0 2px ${CORAL}` : undefined,
-                  }}
-                >
-                  <Icon className="h-7 w-7" strokeWidth={1.4} style={{ color: INK }} />
-                </span>
-                <span className="flex-1">
-                  <span className="block text-[15px] font-semibold" style={{ color: INK }}>
-                    {label}
-                  </span>
-                  <span className="block text-xs" style={{ color: MUTED }}>
-                    {subtitle}
-                  </span>
-                </span>
-                <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ============================== Step 5: Subcategory ============================== */
-
-function SubcategoryPicker({
-  catLabel,
-  genderLabel,
-  onBack,
-  onCrumbAll,
-  onCrumbGender,
-  onPick,
-}: {
-  catLabel: string;
-  genderLabel: string;
-  onBack: () => void;
-  onCrumbAll: () => void;
-  onCrumbGender: () => void;
-  onPick: (s: string) => void;
-}) {
-  return (
-    <div className="flex h-full flex-col overflow-y-auto">
-      <TopHeader title="Zgjedh nënkategorinë" onBack={onBack} />
-      <div className="px-5 pb-10">
-        <p className="text-xs" style={{ color: MUTED }}>
-          <button type="button" onClick={onCrumbAll} className="underline">
-            Të gjitha
-          </button>{" "}
-          /{" "}
-          <button type="button" onClick={onCrumbGender} className="underline">
-            {genderLabel || "Gjinia"}
-          </button>{" "}
-          <span style={{ color: INK }}>/ {catLabel || "Kategori"}</span>
-        </p>
-
-        <div className="mt-3">
-          {SUBCATEGORIES.map(({ id, label, Icon }, idx) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onPick(id)}
-              className="flex w-full items-center gap-4 py-4 text-left"
-              style={{
-                borderTop: idx === 0 ? "none" : `1px solid ${DIVIDER}`,
-              }}
-            >
-              <span
-                className="grid h-[64px] w-[64px] place-items-center rounded-full"
-                style={{ background: CARD }}
-              >
-                <Icon className="h-6 w-6" strokeWidth={1.4} style={{ color: INK }} />
-              </span>
-              <span className="flex-1 text-[15px] font-semibold" style={{ color: INK }}>
-                {label}
-              </span>
-              <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -1247,10 +1090,7 @@ function FinalStep({
                 type="button"
                 onClick={() => toggleDelivery(d)}
                 className="rounded-full px-4 py-2 text-sm transition"
-                style={{
-                  background: active ? INK : CARD,
-                  color: active ? "#fff" : INK,
-                }}
+                style={{ background: active ? INK : CARD, color: active ? "#fff" : INK }}
               >
                 {d}
               </button>
@@ -1268,10 +1108,7 @@ function FinalStep({
           onClick={onPublish}
           disabled={!canPublish || submitting}
           className="inline-flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition"
-          style={{
-            background: canPublish ? CORAL : DIVIDER,
-            color: canPublish ? "#fff" : MUTED,
-          }}
+          style={{ background: canPublish ? CORAL : DIVIDER, color: canPublish ? "#fff" : MUTED }}
         >
           {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {submitting ? "Po publikon..." : "Publiko"}
@@ -1305,6 +1142,3 @@ function Field({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
-// Keep unused circle import referenced to avoid lint complaints if tree-shaken
-void Circle;
