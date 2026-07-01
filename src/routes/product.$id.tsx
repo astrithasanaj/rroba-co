@@ -1,15 +1,17 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
+import { ArrowLeft, MessageCircle, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
 import { MoreSheet } from "@/components/marketplace/MoreSheet";
+import { ProductPageSkeleton } from "@/components/marketplace/Skeletons";
 import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/product/$id")({
@@ -27,10 +29,11 @@ type Seller = {
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
   const navigate = useNavigate();
-  const [listing, setListing] = useState<ListingView | null>(null);
+  const cached = getCachedListing(id);
+  const [listing, setListing] = useState<ListingView | null>(cached);
   const [seller, setSeller] = useState<Seller | null>(null);
   const [similar, setSimilar] = useState<ListingView[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cached);
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -44,7 +47,7 @@ function ProductDetail() {
   useEffect(() => {
     let active = true;
     const load = async () => {
-      setLoading(true);
+      if (!cached) setLoading(true);
       const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
       if (!row) {
         setLoading(false);
@@ -109,15 +112,14 @@ function ProductDetail() {
     navigate({ to: "/messages", search: { thread: convId } });
   };
 
-  if (loading) {
+  if (loading && !listing) {
     return (
       <MobileShell hideNav>
-        <div className="grid h-screen place-items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
+        <ProductPageSkeleton />
       </MobileShell>
     );
   }
+
 
   if (!listing) {
     return (

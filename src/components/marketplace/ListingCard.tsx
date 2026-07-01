@@ -1,21 +1,31 @@
 import { Link } from "@tanstack/react-router";
 import type { ListingView } from "@/lib/listings";
 import { LikeButton } from "@/components/marketplace/LikeButton";
+import { prefetchListing, warmImage } from "@/lib/prefetch";
 
 export function ListingCard({
   listing,
   aspect = "3/4",
+  eager = false,
 }: {
   listing: ListingView;
   aspect?: "3/4" | "1/1" | "4/5";
+  eager?: boolean;
 }) {
   const aspectClass =
     aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
   const isSold = listing.sold || listing.status === "sold" || listing.status === "removed";
+  const prefetch = () => {
+    prefetchListing(listing.id);
+    warmImage(listing.coverUrl);
+  };
   return (
     <Link
       to="/product/$id"
       params={{ id: listing.id }}
+      onMouseEnter={prefetch}
+      onTouchStart={prefetch}
+      onFocus={prefetch}
       className="group block"
     >
       <div
@@ -26,7 +36,8 @@ export function ListingCard({
           <img
             src={listing.coverUrl}
             alt={listing.title}
-            loading="lazy"
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
             style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
           />
