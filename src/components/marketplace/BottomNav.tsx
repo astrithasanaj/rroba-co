@@ -126,7 +126,7 @@ export function BottomNav() {
               >
                 <Icon
                   size={iconSize}
-                  color={active && to === "/" ? CORAL : CREAM}
+                  color={CREAM}
                   style={{ transition: "color 150ms ease" }}
                 />
                 {notify && (
