@@ -28,6 +28,7 @@ import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
+import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
 
 const SellRoute = SellRouteImport.update({
   id: '/sell',
@@ -127,6 +128,12 @@ const AuthenticatedListingIdManageRoute =
     path: '/listing/$id/manage',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedListingIdEditRoute =
+  AuthenticatedListingIdEditRouteImport.update({
+    id: '/listing/$id/edit',
+    path: '/listing/$id/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
+  '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesByTo {
@@ -166,6 +174,7 @@ export interface FileRoutesByTo {
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
+  '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRoutesById {
@@ -188,6 +197,7 @@ export interface FileRoutesById {
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
+  '/_authenticated/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
 }
 export interface FileRouteTypes {
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
+    | '/listing/$id/edit'
     | '/listing/$id/manage'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
+    | '/listing/$id/edit'
     | '/listing/$id/manage'
   id:
     | '__root__'
@@ -251,6 +263,7 @@ export interface FileRouteTypes {
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
+    | '/_authenticated/listing/$id/edit'
     | '/_authenticated/listing/$id/manage'
   fileRoutesById: FileRoutesById
 }
@@ -408,18 +421,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedListingIdManageRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/listing/$id/edit': {
+      id: '/_authenticated/listing/$id/edit'
+      path: '/listing/$id/edit'
+      fullPath: '/listing/$id/edit'
+      preLoaderRoute: typeof AuthenticatedListingIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedListingIdEditRoute: typeof AuthenticatedListingIdEditRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+  AuthenticatedListingIdEditRoute: AuthenticatedListingIdEditRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,
 }
 
