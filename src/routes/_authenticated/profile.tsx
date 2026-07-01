@@ -194,7 +194,13 @@ function ProfilePage() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   };
 
-  const activeListings = useMemo(() => myListings.filter((l) => !l.sold).sort(sortFn), [myListings, sort]);
+  const mineListings = useMemo(() => {
+    if (sort === "new") return sortActiveFirst(myListings);
+    // For price sorts, still keep active-before-sold buckets
+    const active = myListings.filter((l) => !l.sold).sort(sortFn);
+    const sold = myListings.filter((l) => l.sold).sort(sortFn);
+    return [...active, ...sold];
+  }, [myListings, sort]);
   const wardrobeListings = useMemo(() => myListings.filter((l) => l.sold).sort(sortFn), [myListings, sort]);
   const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
   const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
