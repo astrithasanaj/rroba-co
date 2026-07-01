@@ -193,9 +193,28 @@ function CategoryResultsPage() {
       </div>
 
       <FiltersSheet open={showFilters} onOpenChange={setShowFilters} filters={filters} setFilters={setFilters} />
+
+      <CategoryPickerSheet
+        open={showCategoryPicker}
+        onOpenChange={setShowCategoryPicker}
+        value={emptySelection()}
+        onApply={(sel: CategorySelection) => {
+          try {
+            window.sessionStorage.setItem(
+              "rroba-cat-selection",
+              JSON.stringify({
+                categories: [...sel.categories],
+                subcategories: [...sel.subcategories],
+              }),
+            );
+          } catch { /* ignore */ }
+          navigate({ to: "/search" });
+        }}
+      />
     </MobileShell>
   );
 }
+
 
 function ResultCard({ listing }: { listing: ListingView }) {
   const isNew = useMemo(() => {
