@@ -232,11 +232,12 @@ function SellPage() {
     const uploaded: string[] = [];
     try {
       for (const img of images) {
-        const ext = ALLOWED[img.mime];
+        const compressed = await compressImage(img.file, PRODUCT_IMAGE_OPTIONS);
+        const ext = compressed.type === "image/webp" ? "webp" : "jpg";
         const path = `${userId}/${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage
           .from("photos")
-          .upload(path, img.file, { contentType: img.mime, upsert: false });
+          .upload(path, compressed, { contentType: compressed.type, upsert: false });
         if (error) throw new Error(error.message);
         uploaded.push(path);
       }
