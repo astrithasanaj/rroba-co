@@ -338,16 +338,7 @@ function ProfilePage() {
               <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
             </div>
           ) : currentGrid.length === 0 ? (
-            <EmptyMsg
-              text={
-                tab === "mine" ? "Ende nuk ke publikuar asnjë artikull." :
-                tab === "liked" ? "Asnjë artikull i pëlqyer ende." :
-                tab === "saved" ? "Asnjë artikull i ruajtur." :
-                "Garderoba është bosh — artikujt e shitur shfaqen këtu."
-              }
-              actionLabel={tab === "mine" ? "Publiko të parin" : tab !== "wardrobe" ? "Shfleto" : undefined}
-              to={tab === "mine" ? "/sell" : tab !== "wardrobe" ? "/" : undefined}
-            />
+            <TabEmptyState tab={tab} />
           ) : (
             <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
           )}
@@ -582,7 +573,7 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: DIVIDER }}>
+    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: CREAM }}>
       {listings.map((l) => {
         const linkProps = manage
           ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
@@ -662,6 +653,26 @@ function SoldRibbon() {
       }}
     >
       Shitur
+    </div>
+  );
+}
+
+function TabEmptyState({ tab }: { tab: Tab }) {
+  const Icon =
+    tab === "mine" ? Grid2x2 :
+    tab === "liked" ? Heart :
+    tab === "saved" ? Bookmark :
+    Shirt;
+  const subtitle =
+    tab === "mine" ? "Artikujt që liston do të shfaqen këtu" :
+    tab === "liked" ? "Artikujt që i pëlqen do të shfaqen këtu" :
+    tab === "saved" ? "Artikujt që i ruan do të shfaqen këtu" :
+    "Artikujt e shitur do të shfaqen këtu";
+  return (
+    <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
+      <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
+      <p className="mt-4 text-[15px] font-bold" style={{ color: INK }}>Asnjë artikull ende</p>
+      <p className="mt-1 text-[13px]" style={{ color: MUTED }}>{subtitle}</p>
     </div>
   );
 }
