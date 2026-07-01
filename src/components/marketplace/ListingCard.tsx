@@ -2,20 +2,28 @@ import { Link } from "@tanstack/react-router";
 import type { ListingView } from "@/lib/listings";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 
-export function ListingCard({ listing }: { listing: ListingView }) {
+export function ListingCard({
+  listing,
+  aspect = "3/4",
+}: {
+  listing: ListingView;
+  aspect?: "3/4" | "1/1" | "4/5";
+}) {
+  const aspectClass =
+    aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
   return (
     <Link
       to="/product/$id"
       params={{ id: listing.id }}
       className="group block"
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+      <div className={`relative ${aspectClass} overflow-hidden rounded-2xl bg-muted`}>
         {listing.coverUrl && (
           <img
             src={listing.coverUrl}
             alt={listing.title}
             loading="lazy"
-            className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+            className={`h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ${
               listing.sold ? "opacity-70 grayscale" : ""
             }`}
           />
