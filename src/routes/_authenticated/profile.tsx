@@ -137,7 +137,7 @@ function ProfilePage() {
     (async () => {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setLikedListings(hydrated);
+      if (!cancelled) setLikedListings(sortActiveFirst(hydrated));
     })();
     return () => { cancelled = true; };
   }, [likes]);
