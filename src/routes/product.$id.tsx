@@ -47,7 +47,7 @@ function ProductDetail() {
   useEffect(() => {
     let active = true;
     const load = async () => {
-      setLoading(true);
+      if (!cached) setLoading(true);
       const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
       if (!row) {
         setLoading(false);
