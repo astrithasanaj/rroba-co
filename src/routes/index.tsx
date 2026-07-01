@@ -132,9 +132,9 @@ function HomePage() {
         </section>
 
         {loading ? (
-          <div className="grid place-items-center py-16" style={{ color: MUTED }}>
-            <Loader2 className="h-6 w-6 animate-spin" />
-          </div>
+          <section className="mt-7 px-[18px]">
+            <ProductGridSkeleton count={6} />
+          </section>
         ) : listings.length === 0 ? (
           <div
             className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
@@ -148,11 +148,12 @@ function HomePage() {
             <section className="mt-7 px-[18px]">
               <SectionHeader title="Trending tani" />
               <div className="mt-3 grid grid-cols-2 gap-2">
-                {trending.map((l) => (
-                  <ListingCard key={l.id} listing={l} />
+                {trending.map((l, i) => (
+                  <ListingCard key={l.id} listing={l} eager={i < 4} />
                 ))}
               </div>
             </section>
+
 
 
             {/* New this week — horizontal scroll */}
