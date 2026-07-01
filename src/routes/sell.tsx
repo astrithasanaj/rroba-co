@@ -303,11 +303,15 @@ function SellPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: CREAM }}>
+    <div
+      className="fixed inset-0 flex justify-center"
+      style={{ background: CREAM, height: "100dvh", overflow: "hidden" }}
+    >
       <div
-        className="relative mx-auto min-h-screen w-full max-w-[480px] overflow-hidden"
-        style={{ background: CREAM }}
+        className="relative w-full max-w-[480px] overflow-hidden"
+        style={{ background: CREAM, height: "100dvh" }}
       >
+
         <Layer visible={view === "media"}>
           <MediaCategoryStep
             images={images}
