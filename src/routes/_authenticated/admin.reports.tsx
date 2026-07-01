@@ -10,8 +10,8 @@ export const Route = createFileRoute("/_authenticated/admin/reports")({
   beforeLoad: async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw redirect({ to: "/auth" });
-    const { data: prof } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
-    if (!prof?.is_admin) throw redirect({ to: "/" });
+    const { data: isAdmin } = await supabase.rpc("is_admin", { _uid: user.id });
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   component: () => (<SwipeBackWrapper><AdminReports /></SwipeBackWrapper>),
 });
