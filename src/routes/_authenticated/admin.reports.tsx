@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/_authenticated/admin/reports")({
   beforeLoad: async () => {
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/admin/reports")({
     const { data: prof } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
     if (!prof?.is_admin) throw redirect({ to: "/" });
   },
-  component: AdminReports,
+  component: () => (<SwipeBackWrapper><AdminReports /></SwipeBackWrapper>),
 });
 
 const REASON_LABELS: Record<string, string> = {

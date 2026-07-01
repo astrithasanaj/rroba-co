@@ -9,6 +9,7 @@ import { hydrateListings, type ListingRow, type ListingView, CITIES, CONDITIONS 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 const BG = "#f6f1e7";
 const CARD = "#ede8de";
@@ -18,7 +19,7 @@ const MUTED = "#a89f94";
 type SearchParams = { subcategories?: string };
 
 export const Route = createFileRoute("/category/$slug/$gender")({
-  component: CategoryResultsPage,
+  component: () => (<SwipeBackWrapper><CategoryResultsPage /></SwipeBackWrapper>),
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
     subcategories: typeof search.subcategories === "string" ? search.subcategories : undefined,
   }),

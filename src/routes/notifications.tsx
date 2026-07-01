@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/notifications")({
-  component: NotificationsPage,
+  component: () => (<SwipeBackWrapper><NotificationsPage /></SwipeBackWrapper>),
 });
 
 type Notif = {

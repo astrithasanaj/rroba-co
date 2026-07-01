@@ -11,6 +11,7 @@ import {
 import { ColorPickerSheet, COLOR_OPTIONS } from "@/components/marketplace/ColorPickerSheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -22,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/edit")({
-  component: EditListingPage,
+  component: () => (<SwipeBackWrapper><EditListingPage /></SwipeBackWrapper>),
 });
 
 const CREAM = "#f6f1e7";

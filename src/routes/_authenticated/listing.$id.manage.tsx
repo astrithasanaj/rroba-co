@@ -29,9 +29,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/manage")({
-  component: ManageListingPage,
+  component: () => (<SwipeBackWrapper><ManageListingPage /></SwipeBackWrapper>),
 });
 
 const CREAM = "#f6f1e7";

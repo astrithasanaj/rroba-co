@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, SUBCATEGORY_OPTIONS, type GenderSlug } from "@/lib/categories";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 const BG = "#f6f1e7";
 const CARD = "#ede8de";
@@ -12,7 +13,7 @@ const CORAL = "#e8826a";
 const DISABLED = "#ddd8ce";
 
 export const Route = createFileRoute("/category/$slug/choose-gender")({
-  component: GenderSelectPage,
+  component: () => (<SwipeBackWrapper><GenderSelectPage /></SwipeBackWrapper>),
 });
 
 function GenderSelectPage() {
