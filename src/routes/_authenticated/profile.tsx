@@ -31,6 +31,7 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, sortActiveFirst, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
