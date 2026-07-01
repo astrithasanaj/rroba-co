@@ -122,6 +122,21 @@ function SearchPage() {
   const [filters, setFilters] = useState<Filters>({});
   const [catSelection, setCatSelection] = useState<CategorySelection>(() => {
     const sel = emptySelection();
+    // Handoff from other pages via sessionStorage
+    if (typeof window !== "undefined") {
+      try {
+        const raw = window.sessionStorage.getItem("rroba-cat-selection");
+        if (raw) {
+          const parsed = JSON.parse(raw) as { categories?: string[]; subcategories?: string[] };
+          (parsed.categories ?? []).forEach((c) => sel.categories.add(c));
+          (parsed.subcategories ?? []).forEach((s) => sel.subcategories.add(s));
+          window.sessionStorage.removeItem("rroba-cat-selection");
+          return sel;
+        }
+      } catch {
+        /* ignore */
+      }
+    }
     // Support deep-link ?category=Veshje etc.
     if (initialCategory) {
       const node = CATEGORY_TAXONOMY.find((n) => n.categories.includes(initialCategory));
@@ -129,6 +144,7 @@ function SearchPage() {
     }
     return sel;
   });
+
   const [results, setResults] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecent());
