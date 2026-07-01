@@ -26,6 +26,7 @@ import {
   sizeKindHidden,
 } from "@/components/marketplace/SizePickerSheet";
 import { ColorPickerSheet, COLOR_OPTIONS } from "@/components/marketplace/ColorPickerSheet";
+import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
 
 export const Route = createFileRoute("/sell")({
   component: SellPage,
