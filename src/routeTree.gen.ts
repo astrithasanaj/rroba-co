@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as FavoritesRouteImport } from './routes/favorites'
@@ -43,11 +42,6 @@ const SearchRoute = SearchRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -141,7 +135,6 @@ export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
-  '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
@@ -162,7 +155,6 @@ export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
-  '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
@@ -185,7 +177,6 @@ export interface FileRoutesById {
   '/favorites': typeof FavoritesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
-  '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
@@ -208,7 +199,6 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/messages'
     | '/notifications'
-    | '/onboarding'
     | '/reset-password'
     | '/search'
     | '/sell'
@@ -229,7 +219,6 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/messages'
     | '/notifications'
-    | '/onboarding'
     | '/reset-password'
     | '/search'
     | '/sell'
@@ -251,7 +240,6 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/messages'
     | '/notifications'
-    | '/onboarding'
     | '/reset-password'
     | '/search'
     | '/sell'
@@ -274,7 +262,6 @@ export interface RootRouteChildren {
   FavoritesRoute: typeof FavoritesRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
-  OnboardingRoute: typeof OnboardingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SellRoute: typeof SellRoute
@@ -307,13 +294,6 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -455,7 +435,6 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritesRoute: FavoritesRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
-  OnboardingRoute: OnboardingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SellRoute: SellRoute,
