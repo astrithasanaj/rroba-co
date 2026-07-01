@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Loader2, SlidersHorizontal, PackageSearch } from "lucide-react";
+import { ChevronLeft, Loader2, SlidersHorizontal, PackageSearch, LayoutGrid } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
+import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
+
 
 const BG = "#f6f1e7";
 const CARD = "#ede8de";
@@ -46,7 +49,9 @@ function CategoryResultsPage() {
   const [results, setResults] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [filters, setFilters] = useState<Filters>({});
+
 
   const genderOption = useMemo(
     () => def?.genderOptions?.find((g) => g.slug === gender),
@@ -130,11 +135,21 @@ function CategoryResultsPage() {
           </h1>
         </header>
 
-        <div className="px-5">
+        <div className="px-5 flex items-center justify-between gap-2">
           <p className="text-xs" style={{ color: MUTED }}>
             {loading ? "Po ngarkohet..." : `${results.length} artikuj`}
           </p>
+          <button
+            type="button"
+            onClick={() => setShowCategoryPicker(true)}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
+            style={{ backgroundColor: CARD, color: INK }}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+            Kategoritë
+          </button>
         </div>
+
 
         <section className="mt-4 px-5">
           {loading ? (
@@ -178,9 +193,28 @@ function CategoryResultsPage() {
       </div>
 
       <FiltersSheet open={showFilters} onOpenChange={setShowFilters} filters={filters} setFilters={setFilters} />
+
+      <CategoryPickerSheet
+        open={showCategoryPicker}
+        onOpenChange={setShowCategoryPicker}
+        value={emptySelection()}
+        onApply={(sel: CategorySelection) => {
+          try {
+            window.sessionStorage.setItem(
+              "rroba-cat-selection",
+              JSON.stringify({
+                categories: [...sel.categories],
+                subcategories: [...sel.subcategories],
+              }),
+            );
+          } catch { /* ignore */ }
+          navigate({ to: "/search" });
+        }}
+      />
     </MobileShell>
   );
 }
+
 
 function ResultCard({ listing }: { listing: ListingView }) {
   const isNew = useMemo(() => {
