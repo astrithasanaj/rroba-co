@@ -29,10 +29,11 @@ type Seller = {
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
   const navigate = useNavigate();
-  const [listing, setListing] = useState<ListingView | null>(null);
+  const cached = getCachedListing(id);
+  const [listing, setListing] = useState<ListingView | null>(cached);
   const [seller, setSeller] = useState<Seller | null>(null);
   const [similar, setSimilar] = useState<ListingView[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cached);
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
