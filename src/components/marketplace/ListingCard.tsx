@@ -28,7 +28,7 @@ export function ListingCard({
             alt={listing.title}
             loading="lazy"
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-            style={isSold ? { filter: "brightness(0.85) saturate(0.7)" } : undefined}
+            style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
           />
         )}
 
