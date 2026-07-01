@@ -573,7 +573,7 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: DIVIDER }}>
+    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: CREAM }}>
       {listings.map((l) => {
         const linkProps = manage
           ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
