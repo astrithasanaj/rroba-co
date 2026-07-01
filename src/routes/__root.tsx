@@ -148,6 +148,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <UserCollectionsProvider>
+        <OnboardingGate />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <Toaster />
@@ -155,3 +156,42 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
+const ONBOARDING_EXEMPT = new Set([
+  "/onboarding",
+  "/auth",
+  "/reset-password",
+]);
+
+function OnboardingGate() {
+  const router = useRouter();
+  useEffect(() => {
+    let cancelled = false;
+    const check = async (uid: string) => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", uid)
+        .maybeSingle();
+      if (cancelled) return;
+      const completed = (data as { onboarding_completed?: boolean } | null)
+        ?.onboarding_completed;
+      const pathname = router.state.location.pathname;
+      if (completed === false && !ONBOARDING_EXEMPT.has(pathname)) {
+        router.navigate({ to: "/onboarding", replace: true });
+      }
+    };
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) check(data.user.id);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) check(session.user.id);
+    });
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, [router]);
+  return null;
+}
+
