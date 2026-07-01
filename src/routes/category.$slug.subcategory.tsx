@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, CATEGORY_SUBCATEGORIES } from "@/lib/categories";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 const BG = "#f6f1e7";
 const CARD = "#ede8de";
@@ -11,7 +12,7 @@ const INK = "#1a1a1a";
 const DISABLED = "#ddd8ce";
 
 export const Route = createFileRoute("/category/$slug/subcategory")({
-  component: SubcategorySelectPage,
+  component: () => (<SwipeBackWrapper><SubcategorySelectPage /></SwipeBackWrapper>),
 });
 
 function SubcategorySelectPage() {

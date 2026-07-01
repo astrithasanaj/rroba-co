@@ -10,9 +10,10 @@ import { MoreSheet } from "@/components/marketplace/MoreSheet";
 import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/product/$id")({
-  component: ProductDetail,
+  component: () => (<SwipeBackWrapper><ProductDetail /></SwipeBackWrapper>),
 });
 
 type Seller = {

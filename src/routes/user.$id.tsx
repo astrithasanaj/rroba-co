@@ -5,9 +5,10 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/user/$id")({
-  component: UserProfile,
+  component: () => (<SwipeBackWrapper><UserProfile /></SwipeBackWrapper>),
 });
 
 type Profile = {
