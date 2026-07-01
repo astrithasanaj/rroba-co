@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/edit")({
   component: () => (<SwipeBackWrapper><EditListingPage /></SwipeBackWrapper>),
