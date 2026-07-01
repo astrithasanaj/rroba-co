@@ -162,6 +162,31 @@ function ProductDetail() {
         </div>
       </div>
 
+      {listing.sold && (
+        <div
+          className="w-full px-5 py-3 text-center text-sm font-bold text-white"
+          style={{ backgroundColor: "#e8826a" }}
+        >
+          Ky artikull është shitur
+        </div>
+      )}
+        <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 pt-6">
+          <button
+            onClick={() => navigate({ to: "/" })}
+            className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setMoreOpen(true)}
+            aria-label="Më shumë"
+            className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
+          >
+            <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
+          </button>
+        </div>
+      </div>
+
 
       <div className="px-5 pt-5">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">
