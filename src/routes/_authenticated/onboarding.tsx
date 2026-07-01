@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   ssr: false,
@@ -335,11 +336,12 @@ function StepProfile({
     }
     setUploading(true);
     try {
-      const ext = ALLOWED_MIME[file.type];
+      const compressed = await compressImage(file, AVATAR_OPTIONS);
+      const ext = compressed.type === "image/webp" ? "webp" : "jpg";
       const path = `${userId}/avatar-${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage
         .from("photos")
-        .upload(path, file, { contentType: file.type, upsert: false });
+        .upload(path, compressed, { contentType: compressed.type, upsert: false });
       if (error) throw error;
       setAvatarUrl(path);
       const { data: signed } = await supabase.storage

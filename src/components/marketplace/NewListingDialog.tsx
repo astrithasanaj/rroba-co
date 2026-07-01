@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
 
 const MIN_IMAGES = 3;
 const MAX_IMAGES = 10;
@@ -176,11 +177,12 @@ export function NewListingDialog({
     const uploadedPaths: string[] = [];
     try {
       for (const img of images) {
-        const ext = ALLOWED_MIME[img.mime];
+        const compressed = await compressImage(img.file, PRODUCT_IMAGE_OPTIONS);
+        const ext = compressed.type === "image/webp" ? "webp" : "jpg";
         const path = `${userId}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from("photos")
-          .upload(path, img.file, { contentType: img.mime, upsert: false });
+          .upload(path, compressed, { contentType: compressed.type, upsert: false });
         if (upErr) throw new Error(upErr.message);
         uploadedPaths.push(path);
       }

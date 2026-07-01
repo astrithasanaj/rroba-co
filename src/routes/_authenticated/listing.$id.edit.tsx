@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/edit")({
   component: () => (<SwipeBackWrapper><EditListingPage /></SwipeBackWrapper>),
@@ -275,11 +276,12 @@ function EditListingPage() {
         if (ph.kind === "existing") {
           finalPaths.push(ph.path);
         } else {
-          const ext = ALLOWED[ph.mime];
+          const compressed = await compressImage(ph.file, PRODUCT_IMAGE_OPTIONS);
+          const ext = compressed.type === "image/webp" ? "webp" : "jpg";
           const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
           const { error } = await supabase.storage
             .from("photos")
-            .upload(path, ph.file, { contentType: ph.mime, upsert: false });
+            .upload(path, compressed, { contentType: compressed.type, upsert: false });
           if (error) throw new Error(error.message);
           finalPaths.push(path);
         }
