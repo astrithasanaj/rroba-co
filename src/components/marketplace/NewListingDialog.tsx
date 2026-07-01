@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
 
 const MIN_IMAGES = 3;
 const MAX_IMAGES = 10;
