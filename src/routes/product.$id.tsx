@@ -244,56 +244,69 @@ function ProductDetail() {
         className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t px-5 py-3"
         style={{ backgroundColor: "#f6f1e7", borderColor: "#ddd8ce" }}
       >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-5">
+        {listing.sold ? (
+          <button
+            onClick={() => {
+              const el = document.getElementById("similar-section");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="w-full rounded-full border py-3 text-sm font-semibold"
+            style={{ borderColor: "#1a1a1a", color: "#1a1a1a", backgroundColor: "transparent" }}
+          >
+            Shiko artikuj të ngjashëm
+          </button>
+        ) : (
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-5">
+              <button
+                onClick={() => {
+                  if (!me) return navigate({ to: "/auth" });
+                  toggleLike(listing.id);
+                }}
+                aria-label="Pëlqe"
+                className="p-1"
+              >
+                <Heart
+                  size={22}
+                  strokeWidth={1.5}
+                  color={likes.has(listing.id) ? "#e8826a" : "#1a1a1a"}
+                  fill={likes.has(listing.id) ? "#e8826a" : "none"}
+                />
+              </button>
+              <button
+                onClick={() => {
+                  if (!me) return navigate({ to: "/auth" });
+                  toggleSave(listing.id);
+                }}
+                aria-label="Ruaj"
+                className="p-1"
+              >
+                <Bookmark
+                  size={22}
+                  strokeWidth={1.5}
+                  color="#1a1a1a"
+                  fill={saves.has(listing.id) ? "#1a1a1a" : "none"}
+                />
+              </button>
+              <button
+                onClick={sendMessage}
+                disabled={me === listing.user_id}
+                aria-label="Mesazh"
+                className="p-1 disabled:opacity-40"
+              >
+                <MessageCircle size={22} strokeWidth={1.5} color="#1a1a1a" />
+              </button>
+            </div>
             <button
-              onClick={() => {
-                if (!me) return navigate({ to: "/auth" });
-                toggleLike(listing.id);
-              }}
-              aria-label="Pëlqe"
-              className="p-1"
-            >
-              <Heart
-                size={22}
-                strokeWidth={1.5}
-                color={likes.has(listing.id) ? "#e8826a" : "#1a1a1a"}
-                fill={likes.has(listing.id) ? "#e8826a" : "none"}
-              />
-            </button>
-            <button
-              onClick={() => {
-                if (!me) return navigate({ to: "/auth" });
-                toggleSave(listing.id);
-              }}
-              aria-label="Ruaj"
-              className="p-1"
-            >
-              <Bookmark
-                size={22}
-                strokeWidth={1.5}
-                color="#1a1a1a"
-                fill={saves.has(listing.id) ? "#1a1a1a" : "none"}
-              />
-            </button>
-            <button
-              onClick={sendMessage}
+              onClick={() => setOfferOpen(true)}
               disabled={me === listing.user_id}
-              aria-label="Mesazh"
-              className="p-1 disabled:opacity-40"
+              className="rounded-full px-7 py-3 text-sm font-semibold disabled:opacity-50"
+              style={{ backgroundColor: "#e8826a", color: "#fff" }}
             >
-              <MessageCircle size={22} strokeWidth={1.5} color="#1a1a1a" />
+              Blej
             </button>
           </div>
-          <button
-            onClick={() => setOfferOpen(true)}
-            disabled={listing.sold || me === listing.user_id}
-            className="rounded-full px-7 py-3 text-sm font-semibold disabled:opacity-50"
-            style={{ backgroundColor: "#e8826a", color: "#fff" }}
-          >
-            {listing.sold ? "Shitur" : "Blej"}
-          </button>
-        </div>
+        )}
         <div className="h-[env(safe-area-inset-bottom)]" />
       </div>
 
