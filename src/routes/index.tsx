@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Bell, Loader2, Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
-import { LikeButton } from "@/components/marketplace/LikeButton";
+
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
@@ -58,8 +58,6 @@ function HomePage() {
 
   const trending = useMemo(() => listings.slice(0, 5), [listings]);
   const newThisWeek = useMemo(() => listings.slice(0, 10), [listings]);
-  const featured = trending[0];
-  const trendingRest = trending.slice(1, 5);
 
   return (
     <MobileShell>
@@ -194,22 +192,3 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
-function SmallTile({ listing }: { listing: ListingView }) {
-  return (
-    <Link
-      to="/product/$id"
-      params={{ id: listing.id }}
-      className="relative block overflow-hidden"
-      style={{ borderRadius: 14, aspectRatio: "1 / 1", backgroundColor: CARD_BG }}
-    >
-      {listing.coverUrl && (
-        <img
-          src={listing.coverUrl}
-          alt={listing.title}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
-      <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-7 w-7 shadow-sm" />
-    </Link>
-  );
-}
