@@ -227,9 +227,14 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
   const emptyMsg = mode === "archive" ? "Asnjë bisedë e arkivuar" : "Ende nuk ke biseda.";
 
   return (
-    <MobileShell>
-      <div style={{ backgroundColor: CREAM, minHeight: "100vh" }}>
-        <header className="sticky top-0 z-30 flex items-center justify-between px-5 pt-5 pb-3 backdrop-blur" style={{ backgroundColor: `${CREAM}f2` }}>
+    <MobileShell fixed>
+      <div
+        style={{ backgroundColor: CREAM, height: "100dvh", display: "flex", flexDirection: "column", overflow: "hidden" }}
+      >
+        <header
+          className="flex items-center justify-between px-5 pt-5 pb-3"
+          style={{ backgroundColor: CREAM, flexShrink: 0 }}
+        >
           {mode === "archive" ? (
             <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab } })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
               <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
@@ -249,8 +254,22 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
         </header>
 
         {mode === "inbox" && (
-          <div className="px-5 pb-3">
-            <div className="relative flex rounded-full p-1" style={{ backgroundColor: CREAM_ALT }}>
+          <div className="px-5 pb-3" style={{ flexShrink: 0, height: 68 }}>
+            <div
+              className="relative flex rounded-full p-1"
+              style={{ backgroundColor: CREAM_ALT, height: 48 }}
+            >
+              {/* Sliding indicator — transform only, no reflow */}
+              <div
+                aria-hidden
+                className="absolute top-1 bottom-1 rounded-full transition-transform duration-200 ease-out"
+                style={{
+                  left: 4,
+                  width: "calc((100% - 8px) / 3)",
+                  backgroundColor: INK,
+                  transform: `translateX(${tab === "all" ? 0 : tab === "buy" ? 100 : 200}%)`,
+                }}
+              />
               {(["all", "buy", "sell"] as const).map((t) => {
                 const active = tab === t;
                 const label = t === "all" ? "Të gjitha" : t === "buy" ? "Blerje" : "Shitje";
@@ -258,10 +277,10 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                   <button
                     key={t}
                     onClick={() => navigate({ to: "/messages", search: { tab: t, view: "list" } })}
-                    className="relative flex-1 rounded-full py-2 text-sm font-medium transition-colors duration-200"
+                    className="relative z-10 flex-1 rounded-full text-sm font-medium transition-colors duration-200"
                     style={{
-                      backgroundColor: active ? INK : "transparent",
                       color: active ? "#fff" : MUTED,
+                      backgroundColor: "transparent",
                     }}
                   >
                     {label}
@@ -272,61 +291,90 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           </div>
         )}
 
-        {loading ? (
-          <div className="grid place-items-center py-10"><Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} /></div>
-        ) : filtered.length === 0 ? (
-          <div className="mx-5 mt-10 rounded-2xl border border-dashed p-10 text-center text-sm" style={{ borderColor: DIVIDER, color: MUTED }}>
-            {emptyMsg}
-          </div>
-        ) : (
-          <ul>
-            {filtered.map((t) => (
-              <li key={t.id} className="relative overflow-hidden" style={{ borderBottom: `1px solid ${DIVIDER}` }}>
-                {/* swipe action */}
-                <button
-                  onClick={() => { setSwipeId(null); mode === "archive" ? setArchived(t, false) : setArchived(t, true); }}
-                  className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
-                  style={{ backgroundColor: CORAL, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
+        <div
+          className="messages-list"
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            paddingBottom: 90,
+          }}
+        >
+          {loading ? (
+            <ul>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 px-5"
+                  style={{ height: 72, borderBottom: `1px solid ${DIVIDER}` }}
                 >
-                  {mode === "archive" ? "Zharkivo" : "Arkivo"}
-                </button>
-                <div
-                  className="relative flex items-center gap-3 px-5 py-3.5 transition-transform duration-200 ease-out active:scale-[0.98]"
-                  style={{
-                    backgroundColor: t.unread ? CREAM_ALT : CREAM,
-                    transform: swipeId === t.id ? "translateX(-100px)" : "translateX(0)",
-                  }}
-                  onTouchStart={(e) => { onTouchStart(e); startPress(t.id, e); }}
-                  onTouchEnd={(e) => { endPress(); onTouchEnd(t.id)(e); }}
-                  onTouchMove={endPress}
-                  onMouseDown={(e) => startPress(t.id, e)}
-                  onMouseUp={endPress}
-                  onMouseLeave={endPress}
-                  onContextMenu={(e) => { e.preventDefault(); setMenu({ id: t.id, x: e.clientX, y: e.clientY }); }}
-                  onClick={() => { if (swipeId === t.id) { setSwipeId(null); return; } navigate({ to: "/messages", search: { thread: t.id } }); }}
-                >
-                  <div className="relative shrink-0">
-                    <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
-                    {t.listingCover && (
-                      <img src={t.listingCover} alt="" className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 object-cover" style={{ borderColor: CREAM }} />
-                    )}
+                  <div
+                    className="h-12 w-12 shrink-0 rounded-full"
+                    style={{ backgroundColor: CREAM_ALT }}
+                  />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-1/2 rounded" style={{ backgroundColor: CREAM_ALT }} />
+                    <div className="h-3 w-3/4 rounded" style={{ backgroundColor: CREAM_ALT }} />
+                    <div className="h-2.5 w-1/3 rounded" style={{ backgroundColor: CREAM_ALT }} />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-[15px] font-semibold" style={{ color: INK }}>{t.otherName}</p>
-                      <div className="flex shrink-0 items-center gap-2">
-                        <span className="text-[11px]" style={{ color: MUTED }}>{formatTime(t.lastAt)}</span>
-                        {t.unread && <span className="h-2 w-2 rounded-full animate-pulse-soft" style={{ backgroundColor: CORAL }} />}
-                      </div>
+                </li>
+              ))}
+            </ul>
+          ) : filtered.length === 0 ? (
+            <div className="mx-5 mt-10 rounded-2xl border border-dashed p-10 text-center text-sm" style={{ borderColor: DIVIDER, color: MUTED }}>
+              {emptyMsg}
+            </div>
+          ) : (
+            <ul>
+              {filtered.map((t) => (
+                <li key={t.id} className="relative overflow-hidden" style={{ borderBottom: `1px solid ${DIVIDER}`, minHeight: 72 }}>
+                  {/* swipe action */}
+                  <button
+                    onClick={() => { setSwipeId(null); mode === "archive" ? setArchived(t, false) : setArchived(t, true); }}
+                    className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
+                    style={{ backgroundColor: CORAL, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
+                  >
+                    {mode === "archive" ? "Zharkivo" : "Arkivo"}
+                  </button>
+                  <div
+                    className="relative flex items-center gap-3 px-5 py-3.5 transition-transform duration-200 ease-out active:scale-[0.98]"
+                    style={{
+                      backgroundColor: t.unread ? CREAM_ALT : CREAM,
+                      transform: swipeId === t.id ? "translateX(-100px)" : "translateX(0)",
+                    }}
+                    onTouchStart={(e) => { onTouchStart(e); startPress(t.id, e); }}
+                    onTouchEnd={(e) => { endPress(); onTouchEnd(t.id)(e); }}
+                    onTouchMove={endPress}
+                    onMouseDown={(e) => startPress(t.id, e)}
+                    onMouseUp={endPress}
+                    onMouseLeave={endPress}
+                    onContextMenu={(e) => { e.preventDefault(); setMenu({ id: t.id, x: e.clientX, y: e.clientY }); }}
+                    onClick={() => { if (swipeId === t.id) { setSwipeId(null); return; } navigate({ to: "/messages", search: { thread: t.id } }); }}
+                  >
+                    <div className="relative shrink-0">
+                      <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
+                      {t.listingCover && (
+                        <img src={t.listingCover} alt="" className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 object-cover" style={{ borderColor: CREAM }} />
+                      )}
                     </div>
-                    <p className="truncate text-sm" style={{ color: t.unread ? INK : MUTED }}>{t.lastPreview}</p>
-                    <p className="truncate text-xs italic" style={{ color: MUTED }}>{t.listingTitle}</p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-[15px] font-semibold" style={{ color: INK }}>{t.otherName}</p>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span className="text-[11px]" style={{ color: MUTED }}>{formatTime(t.lastAt)}</span>
+                          {t.unread && <span className="h-2 w-2 rounded-full animate-pulse-soft" style={{ backgroundColor: CORAL }} />}
+                        </div>
+                      </div>
+                      <p className="truncate text-sm" style={{ color: t.unread ? INK : MUTED }}>{t.lastPreview}</p>
+                      <p className="truncate text-xs italic" style={{ color: MUTED }}>{t.listingTitle}</p>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         {menu && (
           <>
@@ -370,6 +418,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     </MobileShell>
   );
 }
+
 
 function formatTime(iso: string) {
   const d = new Date(iso);
