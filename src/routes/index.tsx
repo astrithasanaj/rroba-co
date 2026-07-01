@@ -145,49 +145,16 @@ function HomePage() {
           </div>
         ) : (
           <>
-            {/* Trending masonry */}
-            <section className="mt-7 px-5">
+            {/* Trending — uniform 2-column grid */}
+            <section className="mt-7 px-[18px]">
               <SectionHeader title="Trending tani" />
-              {featured && (
-                <div className="mt-3 grid grid-cols-2 gap-2.5" style={{ gridAutoRows: "minmax(0,1fr)" }}>
-                  <Link
-                    to="/product/$id"
-                    params={{ id: featured.id }}
-                    className="relative col-span-1 row-span-2 overflow-hidden"
-                    style={{ borderRadius: 14, aspectRatio: "1 / 2.06" }}
-                  >
-                    {featured.coverUrl && (
-                      <img
-                        src={featured.coverUrl}
-                        alt={featured.title}
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    )}
-                    <div
-                      className="absolute inset-x-0 bottom-0 p-3"
-                      style={{
-                        background:
-                          "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0))",
-                      }}
-                    >
-                      <p className="line-clamp-1 text-sm font-semibold text-white">
-                        {featured.title}
-                      </p>
-                      <p className="text-sm font-bold text-white">€{featured.price}</p>
-                    </div>
-                    <LikeButton listingId={featured.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
-                  </Link>
-                  <div className="flex flex-col gap-2.5">
-                    {trendingRest.slice(0, 2).map((l) => (
-                      <SmallTile key={l.id} listing={l} />
-                    ))}
-                  </div>
-                  {trendingRest.slice(2, 4).map((l) => (
-                    <SmallTile key={l.id} listing={l} />
-                  ))}
-                </div>
-              )}
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {trending.map((l) => (
+                  <ListingCard key={l.id} listing={l} />
+                ))}
+              </div>
             </section>
+
 
             {/* New this week — horizontal scroll */}
             <section className="mt-8">
