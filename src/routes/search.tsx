@@ -145,7 +145,7 @@ function SearchPage() {
     let active = true;
     const run = async () => {
       setLoading(true);
-      let query = supabase.from("listings").select("*").eq("sold", false);
+      let query = supabase.from("listings").select("*");
       if (q.trim()) {
         const term = `%${q.trim()}%`;
         query = query.or(
