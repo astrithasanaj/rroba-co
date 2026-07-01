@@ -657,6 +657,26 @@ function SoldRibbon() {
   );
 }
 
+function TabEmptyState({ tab }: { tab: Tab }) {
+  const Icon =
+    tab === "mine" ? Grid2x2 :
+    tab === "liked" ? Heart :
+    tab === "saved" ? Bookmark :
+    Shirt;
+  const subtitle =
+    tab === "mine" ? "Artikujt që liston do të shfaqen këtu" :
+    tab === "liked" ? "Artikujt që i pëlqen do të shfaqen këtu" :
+    tab === "saved" ? "Artikujt që i ruan do të shfaqen këtu" :
+    "Artikujt e shitur do të shfaqen këtu";
+  return (
+    <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
+      <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
+      <p className="mt-4 text-[15px] font-bold" style={{ color: INK }}>Asnjë artikull ende</p>
+      <p className="mt-1 text-[13px]" style={{ color: MUTED }}>{subtitle}</p>
+    </div>
+  );
+}
+
 function EmptyMsg({ text, actionLabel, to }: { text: string; actionLabel?: string; to?: string }) {
   return (
     <div className="mx-5 mt-8 rounded-2xl p-8 text-center" style={{ backgroundColor: CARD }}>
