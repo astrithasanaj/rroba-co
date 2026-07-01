@@ -788,7 +788,7 @@ function EditListingPage() {
                 Kthehu
               </AlertDialogCancel>
               <AlertDialogAction
-                onClick={() => navigate({ to: "/listing/$id/manage", params: { id } })}
+                onClick={() => window.history.back()}
                 className="rounded-full"
                 style={{ background: INK, color: "#fff" }}
               >
