@@ -338,16 +338,7 @@ function ProfilePage() {
               <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
             </div>
           ) : currentGrid.length === 0 ? (
-            <EmptyMsg
-              text={
-                tab === "mine" ? "Ende nuk ke publikuar asnjë artikull." :
-                tab === "liked" ? "Asnjë artikull i pëlqyer ende." :
-                tab === "saved" ? "Asnjë artikull i ruajtur." :
-                "Garderoba është bosh — artikujt e shitur shfaqen këtu."
-              }
-              actionLabel={tab === "mine" ? "Publiko të parin" : tab !== "wardrobe" ? "Shfleto" : undefined}
-              to={tab === "mine" ? "/sell" : tab !== "wardrobe" ? "/" : undefined}
-            />
+            <TabEmptyState tab={tab} />
           ) : (
             <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
           )}
