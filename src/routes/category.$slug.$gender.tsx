@@ -107,9 +107,7 @@ function CategoryResultsPage() {
     );
   }
 
-  const backTo = def.hasGender
-    ? () => navigate({ to: "/category/$slug/choose-gender", params: { slug } })
-    : () => navigate({ to: "/" });
+  const backTo = () => window.history.back();
 
   const activeCount = Object.values(filters).filter((v) => v && v.length > 0).length;
 

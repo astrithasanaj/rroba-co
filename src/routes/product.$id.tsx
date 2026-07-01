@@ -147,7 +147,7 @@ function ProductDetail() {
         <ImageGallery images={images} alt={listing.title} />
         <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 pt-6">
           <button
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => window.history.back()}
             className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
           >
             <ArrowLeft className="h-4 w-4" />

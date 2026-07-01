@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -45,14 +45,15 @@ function SubcategorySelectPage() {
     <MobileShell>
       <div style={{ backgroundColor: BG, minHeight: "100vh" }} className="pb-32">
         <header className="relative flex items-center justify-center px-5 pt-6 pb-2">
-          <Link
-            to="/"
+          <button
+            type="button"
+            onClick={() => window.history.back()}
             className="absolute left-5 top-6 grid h-10 w-10 place-items-center rounded-full"
             style={{ backgroundColor: CARD }}
             aria-label="Kthehu"
           >
             <ChevronLeft className="h-5 w-5" style={{ color: INK }} />
-          </Link>
+          </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
             {def.label}
           </h1>
