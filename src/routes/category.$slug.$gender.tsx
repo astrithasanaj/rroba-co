@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Loader2, SlidersHorizontal, PackageSearch } from "lucide-react";
+import { ChevronLeft, Loader2, SlidersHorizontal, PackageSearch, LayoutGrid } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
+import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
+
 
 const BG = "#f6f1e7";
 const CARD = "#ede8de";
