@@ -36,7 +36,7 @@ function HomePage() {
       const { data } = await supabase
         .from("listings")
         .select("*")
-        .eq("sold", false)
+        .order("sold", { ascending: true })
         .order("created_at", { ascending: false })
         .limit(60);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
