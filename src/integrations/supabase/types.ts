@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          granted_at: string
+          granted_by: string | null
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          granted_by?: string | null
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          granted_by?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           archived_by_buyer: boolean
@@ -314,7 +332,6 @@ export type Database = {
           created_at: string
           height_cm: number | null
           id: string
-          is_admin: boolean
           name: string
           rating_avg: number
           rating_count: number
@@ -327,7 +344,6 @@ export type Database = {
           created_at?: string
           height_cm?: number | null
           id: string
-          is_admin?: boolean
           name?: string
           rating_avg?: number
           rating_count?: number
@@ -340,7 +356,6 @@ export type Database = {
           created_at?: string
           height_cm?: number | null
           id?: string
-          is_admin?: boolean
           name?: string
           rating_avg?: number
           rating_count?: number
