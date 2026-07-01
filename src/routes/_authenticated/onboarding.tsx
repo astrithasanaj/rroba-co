@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   ssr: false,
