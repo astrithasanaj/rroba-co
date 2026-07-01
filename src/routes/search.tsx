@@ -469,7 +469,7 @@ function CreamListingCard({ listing }: { listing: ListingView }) {
       className="group block"
     >
       <div
-        className="relative aspect-[4/5] overflow-hidden rounded-2xl"
+        className="relative aspect-[3/4] overflow-hidden rounded-2xl"
         style={{ backgroundColor: CARD }}
       >
         {listing.coverUrl && (
@@ -477,7 +477,7 @@ function CreamListingCard({ listing }: { listing: ListingView }) {
             src={listing.coverUrl}
             alt={listing.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
         <LikeButton

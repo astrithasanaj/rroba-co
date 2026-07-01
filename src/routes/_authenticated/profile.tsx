@@ -585,11 +585,11 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
           <Link
             key={l.id}
             {...linkProps}
-            className="relative block aspect-[3/4] overflow-hidden"
+            className="relative block aspect-square overflow-hidden"
             style={{ backgroundColor: CARD }}
           >
             {l.coverUrl && (
-              <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
+              <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover object-top" loading="lazy" />
             )}
             <span className="pointer-events-none absolute left-2 top-2 text-[11px] italic text-white/95" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
               Rroba
