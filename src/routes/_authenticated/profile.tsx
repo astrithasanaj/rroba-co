@@ -912,13 +912,19 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     const file = e.target.files?.[0];
     if (!file || !profile) return;
     setUploading(true);
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const path = `avatars/${profile.id}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("photos").upload(path, file, { contentType: file.type, upsert: false });
-    if (error) { toast.error(error.message); setUploading(false); return; }
-    const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60 * 24 * 365);
-    if (signed?.signedUrl) setAvatarUrl(signed.signedUrl);
-    setUploading(false);
+    try {
+      const compressed = await compressImage(file, AVATAR_OPTIONS);
+      const ext = compressed.type === "image/webp" ? "webp" : "jpg";
+      const path = `avatars/${profile.id}/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("photos").upload(path, compressed, { contentType: compressed.type, upsert: false });
+      if (error) { toast.error(error.message); return; }
+      const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (signed?.signedUrl) setAvatarUrl(signed.signedUrl);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Ngarkimi dështoi");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const save = async () => {
