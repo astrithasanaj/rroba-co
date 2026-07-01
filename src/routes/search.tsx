@@ -12,12 +12,11 @@ import {
   Baby,
   Frame,
   Speaker,
-  
+  LayoutGrid,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  CATEGORIES,
   CITIES,
   CONDITIONS,
   GENDERS,
@@ -34,12 +33,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LikeButton } from "@/components/marketplace/LikeButton";
+import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
+import {
+  emptySelection,
+  selectedDbCategories,
+  selectedSubcategoryLabels,
+  selectionChips,
+  selectionCount,
+  CATEGORY_TAXONOMY,
+  type CategorySelection,
+} from "@/lib/category-taxonomy";
 
 const BG = "#f6f1e7";
 const CARD = "#ede8de";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";
+const CORAL = "#e8826a";
 
 type Search = {
   q?: string;
@@ -58,7 +68,6 @@ export const Route = createFileRoute("/search")({
 });
 
 type Filters = {
-  category?: string;
   size?: string;
   condition?: string;
   city?: string;
@@ -69,18 +78,17 @@ type Filters = {
 
 type CategoryCard = {
   label: string;
-  value: string;
+  key: string;
   Icon: typeof Shirt;
 };
 
 const CATEGORY_CARDS: CategoryCard[] = [
-  { label: "Modë & aksesorë", value: "Veshje", Icon: Shirt },
-  { label: "Outdoor & sport", value: "Outdoor", Icon: Mountain },
-  { label: "Interiør & mobilje", value: "Interier", Icon: Archive },
-  { label: "Fëmijë & bebe", value: "Fëmijë", Icon: Baby },
-  { label: "Art & dizajn", value: "Art", Icon: Frame },
-  { label: "Elektronikë & zë", value: "Elektronikë", Icon: Speaker },
-  
+  { label: "Modë & aksesorë", key: "mode", Icon: Shirt },
+  { label: "Outdoor & sport", key: "outdoor", Icon: Mountain },
+  { label: "Interiør & mobilje", key: "interior", Icon: Archive },
+  { label: "Fëmijë & bebe", key: "femije", Icon: Baby },
+  { label: "Art & dizajn", key: "art", Icon: Frame },
+  { label: "Elektronikë & zë", key: "elektronik", Icon: Speaker },
 ];
 
 const RECENT_KEY = "rroba-recent-searches";
@@ -110,8 +118,16 @@ function SearchPage() {
   const [q, setQ] = useState(initialQ ?? "");
   const [focused, setFocused] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<Filters>({
-    category: initialCategory,
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [filters, setFilters] = useState<Filters>({});
+  const [catSelection, setCatSelection] = useState<CategorySelection>(() => {
+    const sel = emptySelection();
+    // Support deep-link ?category=Veshje etc.
+    if (initialCategory) {
+      const node = CATEGORY_TAXONOMY.find((n) => n.categories.includes(initialCategory));
+      if (node) sel.categories.add(node.key);
+    }
+    return sel;
   });
   const [results, setResults] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(false);
@@ -122,19 +138,17 @@ function SearchPage() {
     setQ(initialQ ?? "");
   }, [initialQ]);
 
-  useEffect(() => {
-    if (initialCategory) {
-      setFilters((p) => ({ ...p, category: initialCategory }));
-    }
-  }, [initialCategory]);
-
   const activeCount = useMemo(
     () => Object.values(filters).filter((v) => v && v.length > 0).length,
     [filters],
   );
 
+  const catChips = useMemo(() => selectionChips(catSelection), [catSelection]);
+  const dbCategories = useMemo(() => selectedDbCategories(catSelection), [catSelection]);
+  const subLabels = useMemo(() => selectedSubcategoryLabels(catSelection), [catSelection]);
+
   const hasQuery = q.trim().length > 0;
-  const hasCategory = !!filters.category;
+  const hasCategory = selectionCount(catSelection) > 0;
   const showResults = hasQuery || hasCategory;
 
   useEffect(() => {
@@ -152,14 +166,22 @@ function SearchPage() {
           `title.ilike.${term},description.ilike.${term},brand.ilike.${term}`,
         );
       }
-      if (filters.category) query = query.eq("category", filters.category);
+      if (dbCategories.length > 0) query = query.in("category", dbCategories);
+      if (subLabels.length > 0) {
+        const orExpr = subLabels
+          .map((s) => `title.ilike.%${s.replace(/[,()]/g, "")}%`)
+          .join(",");
+        query = query.or(orExpr);
+      }
       if (filters.size) query = query.ilike("size", filters.size);
       if (filters.condition) query = query.eq("condition", filters.condition);
       if (filters.city) query = query.eq("city", filters.city);
       if (filters.gender) query = query.eq("gender", filters.gender);
       if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
-      query = query.order("sold", { ascending: true }).order("created_at", { ascending: section !== "trending" });
+      query = query
+        .order("sold", { ascending: true })
+        .order("created_at", { ascending: section !== "trending" });
       const { data } = await query.limit(60);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (active) {
@@ -172,7 +194,7 @@ function SearchPage() {
       active = false;
       clearTimeout(t);
     };
-  }, [q, filters, section, showResults]);
+  }, [q, filters, section, showResults, dbCategories, subLabels]);
 
   const commitRecent = (term: string) => {
     const t = term.trim();
@@ -197,9 +219,23 @@ function SearchPage() {
     saveRecent([]);
   };
 
-  const pickCategory = (value: string) => {
-    setFilters((p) => ({ ...p, category: value }));
-    navigate({ to: "/search", search: { category: value } });
+  const pickCategoryCard = (key: string) => {
+    const sel = emptySelection();
+    sel.categories.add(key);
+    setCatSelection(sel);
+    navigate({ to: "/search", search: {} });
+  };
+
+  const removeChip = (id: string) => {
+    setCatSelection((prev) => {
+      const next: CategorySelection = {
+        categories: new Set(prev.categories),
+        subcategories: new Set(prev.subcategories),
+      };
+      if (id.startsWith("cat:")) next.categories.delete(id.slice(4));
+      else if (id.startsWith("sub:")) next.subcategories.delete(id.slice(4));
+      return next;
+    });
   };
 
   return (
@@ -248,6 +284,49 @@ function SearchPage() {
               </button>
             )}
           </div>
+
+          {/* Kategoritë trigger */}
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowCategoryPicker(true)}
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
+              style={{ backgroundColor: CARD, color: INK }}
+            >
+              <LayoutGrid className="h-4 w-4" />
+              Kategoritë
+              {catChips.length > 0 && (
+                <span
+                  className="grid min-w-[20px] h-[20px] place-items-center rounded-full px-1.5 text-[10px] font-bold text-white"
+                  style={{ backgroundColor: CORAL }}
+                >
+                  {catChips.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Selected chip tags */}
+          {catChips.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {catChips.map((c) => (
+                <span
+                  key={c.id}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-white"
+                  style={{ backgroundColor: CORAL }}
+                >
+                  {c.label}
+                  <button
+                    type="button"
+                    onClick={() => removeChip(c.id)}
+                    aria-label="Hiq"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
         </header>
 
         {focused && !hasQuery ? (
@@ -261,22 +340,9 @@ function SearchPage() {
             onClear={clearRecent}
           />
         ) : showResults ? (
-          <ResultsSection
-            loading={loading}
-            results={results}
-            categoryLabel={
-              filters.category
-                ? CATEGORY_CARDS.find((c) => c.value === filters.category)?.label ??
-                  filters.category
-                : undefined
-            }
-            onClearCategory={() => {
-              setFilters((p) => ({ ...p, category: undefined }));
-              navigate({ to: "/search", search: {} });
-            }}
-          />
+          <ResultsSection loading={loading} results={results} />
         ) : (
-          <CategoriesSection onPick={pickCategory} />
+          <CategoriesSection onPick={pickCategoryCard} />
         )}
 
         {showResults && (
@@ -289,13 +355,23 @@ function SearchPage() {
             <SlidersHorizontal className="h-4 w-4" />
             <span className="text-sm font-semibold">Filtro</span>
             {activeCount > 0 && (
-              <span className="ml-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold" style={{ color: INK }}>
+              <span
+                className="ml-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold"
+                style={{ color: INK }}
+              >
                 {activeCount}
               </span>
             )}
           </button>
         )}
       </div>
+
+      <CategoryPickerSheet
+        open={showCategoryPicker}
+        onOpenChange={setShowCategoryPicker}
+        value={catSelection}
+        onApply={setCatSelection}
+      />
 
       <FiltersSheet
         open={showFilters}
@@ -307,18 +383,18 @@ function SearchPage() {
   );
 }
 
-function CategoriesSection({ onPick }: { onPick: (v: string) => void }) {
+function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
   return (
     <section className="mt-8 px-5">
       <h2 className="mb-4 text-[20px] font-bold" style={{ color: INK }}>
         Kategoritë
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        {CATEGORY_CARDS.map(({ label, value, Icon }) => (
+        {CATEGORY_CARDS.map(({ label, key, Icon }) => (
           <button
-            key={value}
+            key={key}
             type="button"
-            onClick={() => onPick(value)}
+            onClick={() => onPick(key)}
             className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left"
             style={{ backgroundColor: CARD }}
           >
@@ -413,29 +489,12 @@ function RecentSearches({
 function ResultsSection({
   loading,
   results,
-  categoryLabel,
-  onClearCategory,
 }: {
   loading: boolean;
   results: ListingView[];
-  categoryLabel?: string;
-  onClearCategory: () => void;
 }) {
   return (
     <section className="mt-6 px-5">
-      {categoryLabel && (
-        <div className="mb-3 flex items-center gap-2">
-          <span
-            className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium"
-            style={{ backgroundColor: INK, color: "#fff" }}
-          >
-            {categoryLabel}
-            <button type="button" onClick={onClearCategory} aria-label="Hiq">
-              <X className="h-3 w-3" />
-            </button>
-          </span>
-        </div>
-      )}
       <p className="mb-3 text-xs" style={{ color: MUTED }}>
         {loading ? "Po kërkon..." : `${results.length} rezultate`}
       </p>
@@ -529,12 +588,6 @@ function FiltersSheet({
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </SheetHeader>
         <div className="mt-4 space-y-5">
-          <FilterChips
-            label="Kategoria"
-            value={filters.category}
-            onChange={(v) => setFilters((p) => ({ ...p, category: v }))}
-            options={CATEGORIES.map((c) => c.value)}
-          />
           <FilterChips
             label="Gjendja"
             value={filters.condition}
