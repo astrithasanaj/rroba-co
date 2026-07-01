@@ -330,36 +330,48 @@ export type Database = {
           bio: string
           city: string
           created_at: string
+          display_name: string | null
           height_cm: number | null
           id: string
           name: string
+          onboarding_completed: boolean
+          preferences: Json
           rating_avg: number
           rating_count: number
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string
           city?: string
           created_at?: string
+          display_name?: string | null
           height_cm?: number | null
           id: string
           name?: string
+          onboarding_completed?: boolean
+          preferences?: Json
           rating_avg?: number
           rating_count?: number
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string
           city?: string
           created_at?: string
+          display_name?: string | null
           height_cm?: number | null
           id?: string
           name?: string
+          onboarding_completed?: boolean
+          preferences?: Json
           rating_avg?: number
           rating_count?: number
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }

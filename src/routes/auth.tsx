@@ -68,13 +68,19 @@ function AuthPage() {
     setAuthError("");
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: normalizedEmail,
           password,
-          options: { emailRedirectTo: window.location.origin + "/profile" },
+          options: { emailRedirectTo: window.location.origin + "/onboarding" },
         });
         if (error) throw error;
-        toast.success("Kontrollo emailin për të konfirmuar llogarinë");
+        if (data.session && data.user) {
+          // Auto-confirm enabled — go straight to onboarding
+          await router.invalidate();
+          navigate({ to: "/onboarding", replace: true });
+        } else {
+          toast.success("Kontrollo emailin për të konfirmuar llogarinë");
+        }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
