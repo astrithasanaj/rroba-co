@@ -336,11 +336,12 @@ function StepProfile({
     }
     setUploading(true);
     try {
-      const ext = ALLOWED_MIME[file.type];
+      const compressed = await compressImage(file, AVATAR_OPTIONS);
+      const ext = compressed.type === "image/webp" ? "webp" : "jpg";
       const path = `${userId}/avatar-${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage
         .from("photos")
-        .upload(path, file, { contentType: file.type, upsert: false });
+        .upload(path, compressed, { contentType: compressed.type, upsert: false });
       if (error) throw error;
       setAvatarUrl(path);
       const { data: signed } = await supabase.storage
