@@ -892,19 +892,21 @@ function OnboardingFlow() {
     };
     const heightNum = height ? parseInt(height, 10) : null;
     const uname = username.replace(/^@/, "").trim().toLowerCase();
+    const updatePayload: Record<string, unknown> = {
+      city: city ?? undefined,
+      name: displayName.trim(),
+      display_name: displayName.trim(),
+      username: uname || null,
+      avatar_url: avatarPath ?? undefined,
+      bio: bio.trim() || null,
+      height_cm: heightNum,
+      preferences,
+      onboarding_completed: true,
+    };
     const { error } = await supabase
       .from("profiles")
-      .update({
-        city,
-        name: displayName.trim(),
-        display_name: displayName.trim(),
-        username: uname || null,
-        avatar_url: avatarPath,
-        bio: bio.trim() || null,
-        height_cm: heightNum,
-        preferences,
-        onboarding_completed: true,
-      })
+      // Types not yet regenerated for the new columns; safe cast.
+      .update(updatePayload as never)
       .eq("id", userId);
     if (error) {
       toast.error(error.message);
