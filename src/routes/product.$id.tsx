@@ -227,7 +227,7 @@ function ProductDetail() {
         )}
 
         {similar.length > 0 && (
-          <section className="mt-8">
+          <section id="similar-section" className="mt-8">
             <h3 className="mb-3 font-display text-2xl">Artikuj të ngjashëm</h3>
             <div className="grid grid-cols-2 gap-3">
               {similar.map((p) => (
