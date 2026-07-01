@@ -149,7 +149,7 @@ function ProfilePage() {
     (async () => {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setSavedListings(hydrated);
+      if (!cancelled) setSavedListings(sortActiveFirst(hydrated));
     })();
     return () => { cancelled = true; };
   }, [saves]);
