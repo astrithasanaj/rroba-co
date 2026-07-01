@@ -135,11 +135,21 @@ function CategoryResultsPage() {
           </h1>
         </header>
 
-        <div className="px-5">
+        <div className="px-5 flex items-center justify-between gap-2">
           <p className="text-xs" style={{ color: MUTED }}>
             {loading ? "Po ngarkohet..." : `${results.length} artikuj`}
           </p>
+          <button
+            type="button"
+            onClick={() => setShowCategoryPicker(true)}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
+            style={{ backgroundColor: CARD, color: INK }}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+            Kategoritë
+          </button>
         </div>
+
 
         <section className="mt-4 px-5">
           {loading ? (
