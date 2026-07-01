@@ -79,7 +79,7 @@ function NotificationsPage() {
     <MobileShell>
       <header className="sticky top-0 z-30 flex items-center gap-3 bg-background/95 px-4 py-4 backdrop-blur">
         <button
-          onClick={() => navigate({ to: "/" })}
+          onClick={() => window.history.back()}
           className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary"
         >
           <ArrowLeft className="h-4 w-4" />
