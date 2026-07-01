@@ -49,7 +49,9 @@ function CategoryResultsPage() {
   const [results, setResults] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [filters, setFilters] = useState<Filters>({});
+
 
   const genderOption = useMemo(
     () => def?.genderOptions?.find((g) => g.slug === gender),
