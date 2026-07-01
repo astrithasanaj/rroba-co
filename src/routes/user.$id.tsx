@@ -119,7 +119,7 @@ function UserProfile() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {listings.map((l) => (
-              <ListingCard key={l.id} listing={l} />
+              <ListingCard key={l.id} listing={l} aspect="1/1" />
             ))}
           </div>
         )}

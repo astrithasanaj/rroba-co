@@ -564,6 +564,10 @@ function MediaCategoryStep({
           </button>
         </div>
 
+        <p className="mt-2 text-[11px] italic" style={{ color: MUTED }}>
+          Foto në formatin portret (4:3) funksionojnë më mirë
+        </p>
+
         {images.length > 0 && (
           <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5">
             {images.map((img, i) => (
