@@ -558,7 +558,10 @@ function Thread({ id, me }: { id: string; me: string }) {
   const [msgs, setMsgs] = useState<MessageRow[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const inputBarRef = useRef<HTMLFormElement>(null);
+  const didInitialScroll = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -586,7 +589,6 @@ function Thread({ id, me }: { id: string; me: string }) {
       });
       setMsgs((msgRes.data ?? []) as MessageRow[]);
       setLoading(false);
-      // mark read
       const readPatch = isBuyer
         ? { last_read_buyer_at: new Date().toISOString() }
         : { last_read_seller_at: new Date().toISOString() };
@@ -601,7 +603,40 @@ function Thread({ id, me }: { id: string; me: string }) {
     return () => { active = false; supabase.removeChannel(ch); };
   }, [id, me]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs]);
+  // Scroll to bottom: instant on first paint, smooth for new messages
+  useEffect(() => {
+    if (loading) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!didInitialScroll.current) {
+      el.scrollTop = el.scrollHeight;
+      didInitialScroll.current = true;
+    } else {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [msgs, loading]);
+
+  // Keyboard-aware input bar via visualViewport (iOS PWA)
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const bar = inputBarRef.current;
+    const onResize = () => {
+      if (!bar) return;
+      const offset = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop || 0));
+      bar.style.transform = `translateY(-${offset}px)`;
+      // Keep the latest message visible when keyboard opens
+      const el = scrollRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
+    };
+    vv.addEventListener("resize", onResize);
+    vv.addEventListener("scroll", onResize);
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      vv.removeEventListener("scroll", onResize);
+      if (bar) bar.style.transform = "";
+    };
+  }, []);
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -612,13 +647,29 @@ function Thread({ id, me }: { id: string; me: string }) {
   };
 
   return (
-    <MobileShell hideNav>
-      <div style={{ backgroundColor: CREAM, minHeight: "100vh" }}>
-        <header className="sticky top-0 z-30 flex items-center gap-3 px-4 py-3" style={{ backgroundColor: `${CREAM}f2`, borderBottom: `1px solid ${DIVIDER}` }}>
+    <MobileShell fixed hideNav>
+      <div
+        style={{
+          backgroundColor: CREAM,
+          height: "100dvh",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        <header
+          className="flex items-center gap-3 px-4 py-3"
+          style={{
+            backgroundColor: CREAM,
+            borderBottom: `1px solid ${DIVIDER}`,
+            flexShrink: 0,
+            paddingTop: "calc(env(safe-area-inset-top) + 12px)",
+          }}
+        >
           <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-9 w-9 place-items-center rounded-full">
             <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
           </button>
-          {info && (
+          {info ? (
             <>
               <img src={info.otherAvatar} alt="" className="h-9 w-9 rounded-full object-cover" />
               <div className="min-w-0 flex-1">
@@ -630,57 +681,103 @@ function Thread({ id, me }: { id: string; me: string }) {
                 </Link>
               )}
             </>
+          ) : (
+            <>
+              <div className="h-9 w-9 rounded-full" style={{ backgroundColor: CREAM_ALT }} />
+              <div className="min-w-0 flex-1">
+                <div className="h-3 w-24 rounded" style={{ backgroundColor: CREAM_ALT }} />
+              </div>
+              <div className="h-9 w-9 rounded-lg" style={{ backgroundColor: CREAM_ALT }} />
+            </>
           )}
         </header>
 
-        {info && (
-          <Link
-            to="/product/$id"
-            params={{ id: info.listingId }}
-            className="mx-4 mt-3 flex items-center gap-3 rounded-xl p-2.5"
-            style={{ backgroundColor: CREAM_ALT }}
-          >
-            {info.listingCover && <img src={info.listingCover} alt="" className="h-12 w-12 rounded-lg object-cover" />}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold" style={{ color: INK }}>{info.listingTitle}</p>
-              {info.listingPrice != null && <p className="text-sm" style={{ color: MUTED }}>{info.listingPrice} €</p>}
+        {/* Product banner — skeleton until ready so no layout shift */}
+        <div style={{ flexShrink: 0, padding: "12px 16px 0" }}>
+          {info ? (
+            <Link
+              to="/product/$id"
+              params={{ id: info.listingId }}
+              className="flex items-center gap-3 rounded-xl p-2.5"
+              style={{ backgroundColor: CREAM_ALT }}
+            >
+              {info.listingCover ? (
+                <img src={info.listingCover} alt="" className="h-12 w-12 rounded-lg object-cover" />
+              ) : (
+                <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: DIVIDER }} />
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold" style={{ color: INK }}>{info.listingTitle}</p>
+                {info.listingPrice != null && <p className="text-sm" style={{ color: MUTED }}>{info.listingPrice} €</p>}
+              </div>
+            </Link>
+          ) : (
+            <div
+              className="flex items-center gap-3 rounded-xl p-2.5"
+              style={{ backgroundColor: CREAM_ALT, height: 72 }}
+            >
+              <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: DIVIDER }} />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 w-2/3 rounded" style={{ backgroundColor: DIVIDER }} />
+                <div className="h-3 w-1/4 rounded" style={{ backgroundColor: DIVIDER }} />
+              </div>
             </div>
-          </Link>
-        )}
+          )}
+        </div>
 
-        {loading ? (
-          <div className="grid place-items-center py-10"><Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} /></div>
-        ) : (
-          <div className="flex flex-col gap-1 px-4 py-4 pb-32">
-            {msgs.map((m, i) => {
-              const mine = m.sender_id === me;
-              const showTime = i === msgs.length - 1 || new Date(msgs[i + 1].created_at).getTime() - new Date(m.created_at).getTime() > 5 * 60 * 1000;
-              return (
-                <div key={m.id} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
-                  <div
-                    className="max-w-[80%] px-3.5 py-2 text-sm"
-                    style={{
-                      backgroundColor: mine ? INK : CREAM_ALT,
-                      color: mine ? CREAM : INK,
-                      borderRadius: mine ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-                    }}
-                  >
-                    {m.content}
+        <div
+          ref={scrollRef}
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            padding: "12px 16px 16px",
+          }}
+        >
+          {loading ? (
+            <div className="grid flex-1 place-items-center"><Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} /></div>
+          ) : (
+            <div className="flex flex-col gap-1">
+              {msgs.map((m, i) => {
+                const mine = m.sender_id === me;
+                const showTime = i === msgs.length - 1 || new Date(msgs[i + 1].created_at).getTime() - new Date(m.created_at).getTime() > 5 * 60 * 1000;
+                return (
+                  <div key={m.id} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
+                    <div
+                      className="max-w-[80%] px-3.5 py-2 text-sm"
+                      style={{
+                        backgroundColor: mine ? INK : CREAM_ALT,
+                        color: mine ? CREAM : INK,
+                        borderRadius: mine ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                      }}
+                    >
+                      {m.content}
+                    </div>
+                    {showTime && (
+                      <span className="mt-0.5 px-1 text-[10px]" style={{ color: MUTED }}>{formatTime(m.created_at)}</span>
+                    )}
                   </div>
-                  {showTime && (
-                    <span className="mt-0.5 px-1 text-[10px]" style={{ color: MUTED }}>{formatTime(m.created_at)}</span>
-                  )}
-                </div>
-              );
-            })}
-            <div ref={endRef} />
-          </div>
-        )}
+                );
+              })}
+              <div ref={endRef} />
+            </div>
+          )}
+        </div>
 
         <form
+          ref={inputBarRef}
           onSubmit={send}
-          className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 p-3"
-          style={{ backgroundColor: CREAM, borderTop: `1px solid ${DIVIDER}` }}
+          style={{
+            flexShrink: 0,
+            backgroundColor: CREAM,
+            borderTop: `1px solid ${DIVIDER}`,
+            padding: "12px 12px calc(env(safe-area-inset-bottom) + 12px)",
+            willChange: "transform",
+          }}
         >
           <div className="flex items-center gap-2">
             <input
@@ -696,7 +793,6 @@ function Thread({ id, me }: { id: string; me: string }) {
               </button>
             )}
           </div>
-          <div className="h-[env(safe-area-inset-bottom)]" />
         </form>
       </div>
     </MobileShell>
