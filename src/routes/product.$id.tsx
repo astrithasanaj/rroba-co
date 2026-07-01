@@ -1,15 +1,17 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, MessageCircle, Loader2, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
+import { ArrowLeft, MessageCircle, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
 import { MoreSheet } from "@/components/marketplace/MoreSheet";
+import { ProductPageSkeleton } from "@/components/marketplace/Skeletons";
 import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/product/$id")({
