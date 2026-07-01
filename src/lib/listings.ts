@@ -21,6 +21,15 @@ export type ListingRow = {
 
 export type ListingView = ListingRow & { coverUrl: string; imageUrls: string[] };
 
+export function sortActiveFirst<T extends { sold?: boolean; status?: string; created_at?: string }>(rows: T[]): T[] {
+  return [...rows].sort((a, b) => {
+    const aSold = a.sold || a.status === "sold" || a.status === "removed" ? 1 : 0;
+    const bSold = b.sold || b.status === "sold" || b.status === "removed" ? 1 : 0;
+    if (aSold !== bSold) return aSold - bSold;
+    return (b.created_at ?? "").localeCompare(a.created_at ?? "");
+  });
+}
+
 const SIGN_TTL = 60 * 60;
 
 export async function signPaths(paths: string[]): Promise<Record<string, string>> {

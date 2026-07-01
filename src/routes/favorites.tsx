@@ -6,7 +6,7 @@ import { ListingCard } from "@/components/marketplace/ListingCard";
 import { EmptyState } from "@/components/marketplace/EmptyState";
 import { PrimaryButton } from "@/components/marketplace/PrimaryButton";
 import { supabase } from "@/integrations/supabase/client";
-import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { hydrateListings, sortActiveFirst, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/favorites")({
   component: Favorites,
@@ -37,7 +37,7 @@ function Favorites() {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (active) {
-        setItems(hydrated);
+        setItems(sortActiveFirst(hydrated));
         setLoading(false);
       }
     })();

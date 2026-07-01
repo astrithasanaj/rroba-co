@@ -31,7 +31,7 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
 import { supabase } from "@/integrations/supabase/client";
-import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
+import { hydrateListings, sortActiveFirst, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -105,7 +105,7 @@ function ProfilePage() {
     setLoading(true);
     const [prof, mine, offRec, offSent] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase.from("listings").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("listings").select("*").eq("user_id", user.id).order("sold", { ascending: true }).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
     ]);
@@ -137,7 +137,7 @@ function ProfilePage() {
     (async () => {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setLikedListings(hydrated);
+      if (!cancelled) setLikedListings(sortActiveFirst(hydrated));
     })();
     return () => { cancelled = true; };
   }, [likes]);
@@ -149,7 +149,7 @@ function ProfilePage() {
     (async () => {
       const { data } = await supabase.from("listings").select("*").in("id", ids);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setSavedListings(hydrated);
+      if (!cancelled) setSavedListings(sortActiveFirst(hydrated));
     })();
     return () => { cancelled = true; };
   }, [saves]);

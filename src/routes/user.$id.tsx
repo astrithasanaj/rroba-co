@@ -37,7 +37,7 @@ function UserProfile() {
           .from("listings")
           .select("*")
           .eq("user_id", id)
-          .eq("sold", false)
+          .order("sold", { ascending: true })
           .order("created_at", { ascending: false }),
       ]);
       const hydrated = await hydrateListings((l.data ?? []) as ListingRow[]);
