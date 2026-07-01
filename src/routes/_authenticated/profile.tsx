@@ -194,7 +194,13 @@ function ProfilePage() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   };
 
-  const activeListings = useMemo(() => myListings.filter((l) => !l.sold).sort(sortFn), [myListings, sort]);
+  const mineListings = useMemo(() => {
+    if (sort === "new") return sortActiveFirst(myListings);
+    // For price sorts, still keep active-before-sold buckets
+    const active = myListings.filter((l) => !l.sold).sort(sortFn);
+    const sold = myListings.filter((l) => l.sold).sort(sortFn);
+    return [...active, ...sold];
+  }, [myListings, sort]);
   const wardrobeListings = useMemo(() => myListings.filter((l) => l.sold).sort(sortFn), [myListings, sort]);
   const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
   const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
@@ -210,7 +216,7 @@ function ProfilePage() {
   ];
 
   const currentGrid =
-    tab === "mine" ? activeListings :
+    tab === "mine" ? mineListings :
     tab === "liked" ? sortedLiked :
     tab === "saved" ? sortedSaved :
     wardrobeListings;
@@ -576,11 +582,12 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-0">
+    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: DIVIDER }}>
       {listings.map((l) => {
         const linkProps = manage
           ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
           : ({ to: "/product/$id", params: { id: l.id } } as const);
+        const isSold = l.sold;
         return (
           <Link
             key={l.id}
@@ -589,16 +596,42 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             style={{ backgroundColor: CARD }}
           >
             {l.coverUrl && (
-              <img src={l.coverUrl} alt={l.title} className="h-full w-full object-cover object-top" loading="lazy" />
+              <img
+                src={l.coverUrl}
+                alt={l.title}
+                className="h-full w-full object-cover object-top"
+                loading="lazy"
+                style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
+              />
             )}
-            <span className="pointer-events-none absolute left-2 top-2 text-[11px] italic text-white/95" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
+            <span
+              className="pointer-events-none absolute left-2 top-2 italic"
+              style={{
+                fontFamily: 'Georgia, "Times New Roman", serif',
+                fontSize: 10,
+                color: "#ffffff",
+                opacity: 0.8,
+                textShadow: "0 1px 2px rgba(0,0,0,0.35)",
+              }}
+            >
               Rroba
             </span>
-            {l.sold && <SoldRibbon />}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-8" style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0))" }}>
-              <p className="truncate text-[13px] font-bold text-white">{l.title}</p>
-              <p className="truncate text-[11px] text-white/85">
+            {isSold && <SoldRibbon />}
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-10"
+              style={{ backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.65) 100%)" }}
+            >
+              <p
+                className="truncate text-[11px] text-white"
+                style={{ opacity: isSold ? 0.75 : 0.85 }}
+              >
                 {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
+              </p>
+              <p
+                className="truncate text-[13px] font-bold text-white"
+                style={{ opacity: isSold ? 0.75 : 1 }}
+              >
+                {l.title}
               </p>
             </div>
           </Link>
@@ -610,7 +643,24 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
 
 function SoldRibbon() {
   return (
-    <div className="pointer-events-none absolute -right-10 top-4 w-36 rotate-45 py-1 text-center text-[11px] font-bold tracking-wider text-white" style={{ backgroundColor: SOLD }}>
+    <div
+      className="pointer-events-none absolute"
+      style={{
+        top: 18,
+        right: -28,
+        width: 110,
+        background: SOLD,
+        color: "#ffffff",
+        fontSize: 12,
+        fontWeight: 700,
+        textAlign: "center",
+        padding: "5px 0",
+        transform: "rotate(45deg)",
+        zIndex: 3,
+        letterSpacing: "0.5px",
+        textTransform: "uppercase",
+      }}
+    >
       Shitur
     </div>
   );

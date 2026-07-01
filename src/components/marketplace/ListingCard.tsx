@@ -28,7 +28,7 @@ export function ListingCard({
             alt={listing.title}
             loading="lazy"
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-            style={isSold ? { filter: "brightness(0.85) saturate(0.7)" } : undefined}
+            style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
           />
         )}
 
@@ -69,18 +69,19 @@ export function ListingCard({
           <span
             style={{
               position: "absolute",
-              top: 14,
-              right: -22,
-              width: 80,
+              top: 18,
+              right: -28,
+              width: 110,
               background: "#e8826a",
-              color: "#fff",
-              fontSize: 11,
-              fontWeight: 600,
+              color: "#ffffff",
+              fontSize: 12,
+              fontWeight: 700,
               textAlign: "center",
-              padding: "4px 0",
+              padding: "5px 0",
               transform: "rotate(45deg)",
-              zIndex: 2,
+              zIndex: 3,
               letterSpacing: "0.5px",
+              textTransform: "uppercase",
             }}
           >
             Shitur
