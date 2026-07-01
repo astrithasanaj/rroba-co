@@ -248,7 +248,7 @@ function ManageListingPage() {
             title="Ndrysho"
             subtitle={`Ndryshuar për herë të fundit më ${lastEdited}`}
             chevron
-            onClick={() => navigate({ to: "/sell" })}
+            onClick={() => navigate({ to: "/listing/$id/edit", params: { id } })}
           />
           <Divider />
           <ActionRow
