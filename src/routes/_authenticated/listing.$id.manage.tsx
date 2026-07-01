@@ -175,7 +175,7 @@ function ManageListingPage() {
         {/* Header */}
         <header className="sticky top-0 z-30 flex items-center px-4 pt-4 pb-3" style={{ backgroundColor: CREAM }}>
           <button
-            onClick={() => navigate({ to: "/profile" })}
+            onClick={() => window.history.back()}
             className="grid h-10 w-10 place-items-center rounded-full"
             style={{ backgroundColor: CARD }}
             aria-label="Kthehu"
