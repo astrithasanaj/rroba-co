@@ -112,15 +112,14 @@ function ProductDetail() {
     navigate({ to: "/messages", search: { thread: convId } });
   };
 
-  if (loading) {
+  if (loading && !listing) {
     return (
       <MobileShell hideNav>
-        <div className="grid h-screen place-items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
+        <ProductPageSkeleton />
       </MobileShell>
     );
   }
+
 
   if (!listing) {
     return (
