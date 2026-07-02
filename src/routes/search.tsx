@@ -184,9 +184,14 @@ function SearchPage() {
       }
       if (dbCategories.length > 0) query = query.in("category", dbCategories);
       if (subLabels.length > 0) {
-        const orExpr = subLabels
-          .map((s) => `title.ilike.%${s.replace(/[,()]/g, "")}%`)
-          .join(",");
+        // Match against the stored subcategory column (single source of truth
+        // set by the sell form). Fall back to title ilike for legacy rows.
+        const orExpr = [
+          `subcategory.in.(${subLabels.map((s) => `"${s.replace(/"/g, "")}"`).join(",")})`,
+          ...subLabels.map(
+            (s) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`,
+          ),
+        ].join(",");
         query = query.or(orExpr);
       }
       if (filters.size) query = query.ilike("size", filters.size);
