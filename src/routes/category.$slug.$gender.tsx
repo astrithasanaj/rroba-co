@@ -92,7 +92,7 @@ function CategoryResultsPage() {
         ].join(",");
         query = query.or(orExpr);
       }
-      query = query.order("sold", { ascending: true }).order("created_at", { ascending: false });
+      query = query.order("created_at", { ascending: false });
       const { data } = await query.limit(120);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (active) {
