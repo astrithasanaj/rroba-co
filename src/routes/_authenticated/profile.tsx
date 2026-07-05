@@ -148,9 +148,9 @@ function ProfilePage() {
     if (ids.length === 0) { setSavedListings([]); return; }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("listings").select("*").in("id", ids);
+      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setSavedListings(sortActiveFirst(hydrated));
+      if (!cancelled) setSavedListings(hydrated);
     })();
     return () => { cancelled = true; };
   }, [saves]);
