@@ -136,9 +136,9 @@ function ProfilePage() {
     if (ids.length === 0) { setLikedListings([]); return; }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("listings").select("*").in("id", ids);
+      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setLikedListings(sortActiveFirst(hydrated));
+      if (!cancelled) setLikedListings(hydrated);
     })();
     return () => { cancelled = true; };
   }, [likes]);
