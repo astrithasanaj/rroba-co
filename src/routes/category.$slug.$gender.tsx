@@ -68,7 +68,7 @@ function CategoryResultsPage() {
     let active = true;
     const run = async () => {
       setLoading(true);
-      let query = supabase.from("listings").select("*");
+      let query = supabase.from("listings").select("*").eq("status", "active").eq("sold", false);
       if (def.categories.length === 1) {
         query = query.eq("category", def.categories[0]);
       } else {
