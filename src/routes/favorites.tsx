@@ -6,7 +6,7 @@ import { ListingCard } from "@/components/marketplace/ListingCard";
 import { EmptyState } from "@/components/marketplace/EmptyState";
 import { PrimaryButton } from "@/components/marketplace/PrimaryButton";
 import { supabase } from "@/integrations/supabase/client";
-import { hydrateListings, sortActiveFirst, type ListingRow, type ListingView } from "@/lib/listings";
+import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/favorites")({
