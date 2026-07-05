@@ -7,14 +7,16 @@ export function ListingCard({
   listing,
   aspect = "3/4",
   eager = false,
+  isOnProfileGrid = false,
 }: {
   listing: ListingView;
   aspect?: "3/4" | "1/1" | "4/5";
   eager?: boolean;
+  isOnProfileGrid?: boolean;
 }) {
   const aspectClass =
     aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
-  const isSold = listing.sold || listing.status === "sold" || listing.status === "removed";
+  const isSold = listing.sold || listing.status === "sold";
   const prefetch = () => {
     prefetchListing(listing.id);
     warmImage(listing.coverUrl);
@@ -39,7 +41,9 @@ export function ListingCard({
             loading={eager ? "eager" : "lazy"}
             decoding="async"
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-            style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
+            style={{
+              filter: isSold && isOnProfileGrid ? "brightness(0.82) saturate(0.65)" : "none",
+            }}
           />
         )}
 
@@ -76,7 +80,7 @@ export function ListingCard({
           />
         )}
 
-        {isSold && (
+        {isSold && isOnProfileGrid && (
           <span
             style={{
               position: "absolute",
@@ -85,7 +89,7 @@ export function ListingCard({
               width: 110,
               background: "#e8826a",
               color: "#ffffff",
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 700,
               textAlign: "center",
               padding: "5px 0",
@@ -103,13 +107,13 @@ export function ListingCard({
         <div className="flex items-start justify-between gap-2">
           <p
             className="line-clamp-1 text-sm font-medium"
-            style={isSold ? { color: "#a89f94" } : undefined}
+            style={isSold && isOnProfileGrid ? { color: "#a89f94" } : undefined}
           >
             {listing.title}
           </p>
           <p
             className="shrink-0 text-sm font-semibold"
-            style={isSold ? { color: "#a89f94" } : undefined}
+            style={isSold && isOnProfileGrid ? { color: "#a89f94" } : undefined}
           >
             €{listing.price}
           </p>

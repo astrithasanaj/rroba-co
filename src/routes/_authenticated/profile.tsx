@@ -32,7 +32,7 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
-import { hydrateListings, sortActiveFirst, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
+import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -106,12 +106,17 @@ function ProfilePage() {
     setLoading(true);
     const [prof, mine, offRec, offSent] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold", "expired", "pending_review"]).order("sold", { ascending: true }).order("created_at", { ascending: false }),
+      supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold"]).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
     ]);
     setProfile(prof.data as Profile | null);
-    setMyListings(await hydrateListings((mine.data ?? []) as ListingRow[]));
+    const hydratedMine = await hydrateListings((mine.data ?? []) as ListingRow[]);
+    const sortedMine = [
+      ...hydratedMine.filter((p) => p.status === "active"),
+      ...hydratedMine.filter((p) => p.status === "sold"),
+    ];
+    setMyListings(sortedMine);
 
     const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
     setOffersReceived((offRec.data ?? []) as OfferRow[]);
@@ -196,17 +201,15 @@ function ProfilePage() {
   };
 
   const mineListings = useMemo(() => {
-    if (sort === "new") return sortActiveFirst(myListings);
-    // For price sorts, still keep active-before-sold buckets
-    const active = myListings.filter((l) => !l.sold).sort(sortFn);
-    const sold = myListings.filter((l) => l.sold).sort(sortFn);
+    const active = myListings.filter((l) => l.status === "active").sort(sortFn);
+    const sold = myListings.filter((l) => l.status === "sold").sort(sortFn);
     return [...active, ...sold];
   }, [myListings, sort]);
-  const wardrobeListings = useMemo(() => myListings.filter((l) => l.sold).sort(sortFn), [myListings, sort]);
+  const wardrobeListings = useMemo(() => myListings.filter((l) => l.status === "sold").sort(sortFn), [myListings, sort]);
   const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
   const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
 
-  const salesCount = useMemo(() => myListings.filter((l) => l.sold).length, [myListings]);
+  const salesCount = useMemo(() => myListings.filter((l) => l.status === "sold").length, [myListings]);
   const tier = salesCount >= 20 ? "top" : salesCount >= 5 ? "trusted" : "starter";
 
   const tabs: { id: Tab; icon: typeof Grid2x2 }[] = [
@@ -579,7 +582,7 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
         const linkProps = manage
           ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
           : ({ to: "/product/$id", params: { id: l.id } } as const);
-        const isSold = l.sold;
+        const isSold = l.status === "sold" || l.sold;
         return (
           <Link
             key={l.id}
@@ -643,7 +646,7 @@ function SoldRibbon() {
         width: 110,
         background: SOLD,
         color: "#ffffff",
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: 700,
         textAlign: "center",
         padding: "5px 0",

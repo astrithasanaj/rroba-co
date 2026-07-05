@@ -38,7 +38,6 @@ function HomePage() {
         .from("listings")
         .select("*")
         .eq("status", "active")
-        .eq("sold", false)
         .order("created_at", { ascending: false })
         .limit(60);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
