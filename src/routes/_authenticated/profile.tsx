@@ -106,7 +106,7 @@ function ProfilePage() {
     setLoading(true);
     const [prof, mine, offRec, offSent] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase.from("listings").select("*").eq("user_id", user.id).order("sold", { ascending: true }).order("created_at", { ascending: false }),
+      supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold", "expired", "pending_review"]).order("sold", { ascending: true }).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
     ]);
