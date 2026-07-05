@@ -39,13 +39,16 @@ function UserProfile() {
           .select("*")
           .eq("user_id", id)
           .in("status", ["active", "sold"])
-          .order("sold", { ascending: true })
           .order("created_at", { ascending: false }),
       ]);
       const hydrated = await hydrateListings((l.data ?? []) as ListingRow[]);
+      const sorted = [
+        ...hydrated.filter((p) => p.status === "active"),
+        ...hydrated.filter((p) => p.status === "sold"),
+      ];
       if (!active) return;
       setProfile(p.data as Profile | null);
-      setListings(hydrated);
+      setListings(sorted);
       setLoading(false);
     })();
     return () => {
@@ -121,7 +124,7 @@ function UserProfile() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {listings.map((l) => (
-              <ListingCard key={l.id} listing={l} aspect="1/1" />
+              <ListingCard key={l.id} listing={l} aspect="1/1" isOnProfileGrid />
             ))}
           </div>
         )}
