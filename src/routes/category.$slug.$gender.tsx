@@ -68,7 +68,7 @@ function CategoryResultsPage() {
     let active = true;
     const run = async () => {
       setLoading(true);
-      let query = supabase.from("listings").select("*");
+      let query = supabase.from("listings").select("*").eq("status", "active").eq("sold", false);
       if (def.categories.length === 1) {
         query = query.eq("category", def.categories[0]);
       } else {
@@ -92,7 +92,7 @@ function CategoryResultsPage() {
         ].join(",");
         query = query.or(orExpr);
       }
-      query = query.order("sold", { ascending: true }).order("created_at", { ascending: false });
+      query = query.order("created_at", { ascending: false });
       const { data } = await query.limit(120);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (active) {

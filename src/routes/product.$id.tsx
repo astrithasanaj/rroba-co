@@ -53,6 +53,11 @@ function ProductDetail() {
         setLoading(false);
         return;
       }
+      if (["expired", "removed", "flagged"].includes((row as ListingRow).status)) {
+        toast.info("Ky artikull nuk është më i disponueshëm.");
+        navigate({ to: "/" });
+        return;
+      }
       const [hydrated] = await hydrateListings([row as ListingRow]);
       const { data: prof } = await supabase
         .from("profiles")
@@ -64,6 +69,7 @@ function ProductDetail() {
         .select("*")
         .eq("category", row.category)
         .neq("id", row.id)
+        .eq("status", "active")
         .eq("sold", false)
         .limit(6);
       const simHydrated = await hydrateListings((sim ?? []) as ListingRow[]);

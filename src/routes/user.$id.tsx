@@ -38,6 +38,7 @@ function UserProfile() {
           .from("listings")
           .select("*")
           .eq("user_id", id)
+          .in("status", ["active", "sold"])
           .order("sold", { ascending: true })
           .order("created_at", { ascending: false }),
       ]);

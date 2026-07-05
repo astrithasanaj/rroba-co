@@ -175,7 +175,7 @@ function SearchPage() {
     let active = true;
     const run = async () => {
       setLoading(true);
-      let query = supabase.from("listings").select("*");
+      let query = supabase.from("listings").select("*").eq("status", "active").eq("sold", false);
       if (q.trim()) {
         const term = `%${q.trim()}%`;
         query = query.or(
@@ -200,9 +200,7 @@ function SearchPage() {
       if (filters.gender) query = query.eq("gender", filters.gender);
       if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
-      query = query
-        .order("sold", { ascending: true })
-        .order("created_at", { ascending: section !== "trending" });
+      query = query.order("created_at", { ascending: section !== "trending" });
       const { data } = await query.limit(60);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (active) {

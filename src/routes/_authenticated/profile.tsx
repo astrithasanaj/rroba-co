@@ -106,7 +106,7 @@ function ProfilePage() {
     setLoading(true);
     const [prof, mine, offRec, offSent] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase.from("listings").select("*").eq("user_id", user.id).order("sold", { ascending: true }).order("created_at", { ascending: false }),
+      supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold", "expired", "pending_review"]).order("sold", { ascending: true }).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
     ]);
@@ -136,9 +136,9 @@ function ProfilePage() {
     if (ids.length === 0) { setLikedListings([]); return; }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("listings").select("*").in("id", ids);
+      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setLikedListings(sortActiveFirst(hydrated));
+      if (!cancelled) setLikedListings(hydrated);
     })();
     return () => { cancelled = true; };
   }, [likes]);
@@ -148,9 +148,9 @@ function ProfilePage() {
     if (ids.length === 0) { setSavedListings([]); return; }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("listings").select("*").in("id", ids);
+      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
-      if (!cancelled) setSavedListings(sortActiveFirst(hydrated));
+      if (!cancelled) setSavedListings(hydrated);
     })();
     return () => { cancelled = true; };
   }, [saves]);
