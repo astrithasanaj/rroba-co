@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { getListingLikeInfo } from "@/lib/likes.functions";
 
 export const Route = createFileRoute("/product/$id")({
   component: () => (<SwipeBackWrapper><ProductDetail /></SwipeBackWrapper>),
@@ -37,8 +38,12 @@ function ProductDetail() {
   const [me, setMe] = useState<string | null>(null);
   const [offerOpen, setOfferOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [descExpanded, setDescExpanded] = useState(false);
+  const [likeInfo, setLikeInfo] = useState<{ count: number; recentLiker: string | null }>({
+    count: 0,
+    recentLiker: null,
+  });
   const { likes, saves, toggleLike, toggleSave } = useUserCollections();
-  
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
@@ -71,7 +76,7 @@ function ProductDetail() {
         .neq("id", row.id)
         .eq("status", "active")
         .eq("sold", false)
-        .limit(6);
+        .limit(8);
       const simHydrated = await hydrateListings((sim ?? []) as ListingRow[]);
       if (!active) return;
       setListing(hydrated);
@@ -83,6 +88,12 @@ function ProductDetail() {
     return () => {
       active = false;
     };
+  }, [id]);
+
+  useEffect(() => {
+    getListingLikeInfo({ listingId: id })
+      .then((info) => setLikeInfo(info))
+      .catch(() => {});
   }, [id]);
 
   const sendMessage = async () => {
@@ -126,7 +137,6 @@ function ProductDetail() {
     );
   }
 
-
   if (!listing) {
     return (
       <MobileShell>
@@ -149,29 +159,74 @@ function ProductDetail() {
   ];
 
   const images = listing.imageUrls.length ? listing.imageUrls : [listing.coverUrl];
+  const isSold = listing.sold || listing.status === "sold";
+  const isOwn = me === listing.user_id;
+  const firstLine = listing.description.split("\n")[0].slice(0, 100);
+  const descriptionPreview = firstLine.length < listing.description.length ? `${firstLine}…` : firstLine;
 
   return (
     <MobileShell hideNav>
-      <div className="relative">
-        <ImageGallery images={images} alt={listing.title} />
-        <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 pt-6">
-          <button
-            onClick={() => window.history.back()}
-            className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => setMoreOpen(true)}
-            aria-label="Më shumë"
-            className="grid h-10 w-10 place-items-center rounded-full bg-background/90 backdrop-blur"
-          >
-            <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
-          </button>
+      {/* Fixed header */}
+      <div
+        className="fixed top-0 left-1/2 z-50 flex w-full max-w-[480px] -translate-x-1/2 items-center justify-between border-b px-4 py-3"
+        style={{ backgroundColor: "#f6f1e7", borderColor: "#ddd8ce" }}
+      >
+        <button
+          onClick={() => window.history.back()}
+          className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
+          style={{ borderColor: "#ddd8ce", backgroundColor: "rgba(246,241,231,0.85)" }}
+        >
+          <ArrowLeft className="h-4 w-4" color="#1a1a1a" />
+        </button>
+        <div className="min-w-0 flex-1 px-2 text-center">
+          <h1 className="truncate font-display text-base font-semibold" style={{ color: "#1a1a1a" }}>
+            {listing.title}
+          </h1>
+          <p className="text-sm font-semibold" style={{ color: "#e8826a" }}>€{listing.price}</p>
         </div>
+        <button
+          onClick={() => setMoreOpen(true)}
+          aria-label="Më shumë"
+          className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
+          style={{ borderColor: "#ddd8ce", backgroundColor: "rgba(246,241,231,0.85)" }}
+        >
+          <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
+        </button>
       </div>
 
-      {listing.sold && (
+      {/* Spacer for fixed header */}
+      <div className="h-16" />
+
+      {/* Seller info row */}
+      {seller && (
+        <div
+          className="flex items-center gap-3 border-b px-[18px] py-3"
+          style={{ borderColor: "#ddd8ce" }}
+        >
+          <img
+            src={
+              seller.avatar_url ||
+              `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
+            }
+            alt={seller.name}
+            className="h-9 w-9 shrink-0 rounded-full object-cover"
+          />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold" style={{ color: "#1a1a1a" }}>
+              {seller.name || "Përdorues"}
+            </p>
+            <p className="text-xs" style={{ color: "#a89f94" }}>
+              {listing.city || "—"}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Image gallery */}
+      <ImageGallery images={images} alt={listing.title} />
+
+      {/* Sold banner */}
+      {isSold && (
         <div
           className="w-full px-5 py-3 text-center text-sm font-bold text-white"
           style={{ backgroundColor: "#e8826a" }}
@@ -180,156 +235,157 @@ function ProductDetail() {
         </div>
       )}
 
-
-      <div className="px-5 pt-5">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          {listing.brand || "—"}
-        </p>
-        <div className="mt-1 flex items-start justify-between gap-3">
-          <h1 className="font-display text-3xl leading-tight">{listing.title}</h1>
-          <p className="shrink-0 font-display text-3xl">€{listing.price}</p>
-        </div>
-
-        <dl className="mt-5 grid grid-cols-2 gap-y-3 rounded-2xl bg-secondary/60 p-4 text-sm">
-          {meta.map(([k, v]) => (
-            <div key={k}>
-              <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
-              <dd className="mt-0.5">{v}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <p className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">
-          {listing.description}
-        </p>
-
-        {seller && (
-          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
-            <img
-              src={
-                seller.avatar_url ||
-                `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
-              }
-              alt={seller.name}
-              className="h-12 w-12 shrink-0 rounded-full object-cover"
-            />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1">
-                <p className="truncate text-sm font-semibold">{seller.name || "Përdorues"}</p>
-                <BadgeCheck className="h-4 w-4 text-accent" fill="currentColor" />
-              </div>
-              <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-0.5">
-                  <Star className="h-3 w-3" fill="currentColor" /> {seller.rating_avg.toFixed(1)}
-                </span>
-                <span>· {seller.rating_count} vlerësime</span>
-              </div>
-            </div>
-            <Link
-              to="/user/$id"
-              params={{ id: seller.id }}
-              className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary"
-            >
-              Shiko profilin
-            </Link>
-          </div>
-        )}
-
-        {similar.length > 0 && (
-          <section id="similar-section" className="mt-8">
-            <h3 className="mb-3 font-display text-2xl">Artikuj të ngjashëm</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {similar.map((p) => (
-                <ListingCard key={p.id} listing={p} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <div className="h-32" />
-      </div>
-
+      {/* Inline action bar */}
       <div
-        className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t px-5 py-3"
+        className="flex items-center justify-between border-b px-[18px] py-3"
         style={{ backgroundColor: "#f6f1e7", borderColor: "#ddd8ce" }}
       >
-        {listing.sold ? (
+        <div className="flex items-center gap-5">
           <button
             onClick={() => {
-              const el = document.getElementById("similar-section");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
+              if (!me) return navigate({ to: "/auth" });
+              toggleLike(listing.id);
             }}
-            className="w-full rounded-full border py-3 text-sm font-semibold"
-            style={{ borderColor: "#1a1a1a", color: "#1a1a1a", backgroundColor: "transparent" }}
+            aria-label="Pëlqe"
+            className="grid h-11 w-11 place-items-center"
           >
-            Shiko artikuj të ngjashëm
+            <Heart
+              size={24}
+              strokeWidth={1.5}
+              color={likes.has(listing.id) ? "#e8826a" : "#1a1a1a"}
+              fill={likes.has(listing.id) ? "#e8826a" : "none"}
+            />
           </button>
-        ) : (
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-5">
-              <button
-                onClick={() => {
-                  if (!me) return navigate({ to: "/auth" });
-                  toggleLike(listing.id);
-                }}
-                aria-label="Pëlqe"
-                className="p-1"
-              >
-                <Heart
-                  size={22}
-                  strokeWidth={1.5}
-                  color={likes.has(listing.id) ? "#e8826a" : "#1a1a1a"}
-                  fill={likes.has(listing.id) ? "#e8826a" : "none"}
-                />
-              </button>
-              <button
-                onClick={() => {
-                  if (!me) return navigate({ to: "/auth" });
-                  toggleSave(listing.id);
-                }}
-                aria-label="Ruaj"
-                className="p-1"
-              >
-                <Bookmark
-                  size={22}
-                  strokeWidth={1.5}
-                  color="#1a1a1a"
-                  fill={saves.has(listing.id) ? "#1a1a1a" : "none"}
-                />
-              </button>
-              <button
-                onClick={sendMessage}
-                disabled={me === listing.user_id}
-                aria-label="Mesazh"
-                className="p-1 disabled:opacity-40"
-              >
-                <MessageCircle size={22} strokeWidth={1.5} color="#1a1a1a" />
-              </button>
-            </div>
-            <button
-              onClick={() => {
-                if (!me) return navigate({ to: "/auth" });
-                if (me === listing.user_id) return;
-                navigate({ to: "/buy/$id", params: { id: listing.id } });
-              }}
-              disabled={me === listing.user_id}
-              className="text-base font-bold transition active:scale-95 disabled:opacity-50"
-              style={{
-                backgroundColor: "#e8826a",
-                color: "#fff",
-                width: 90,
-                height: 44,
-                borderRadius: 14,
-                boxShadow: "0 2px 8px rgba(232,130,106,0.4)",
-              }}
-            >
-              Bli
-            </button>
-
-          </div>
-        )}
-        <div className="h-[env(safe-area-inset-bottom)]" />
+          <button
+            onClick={() => {
+              if (!me) return navigate({ to: "/auth" });
+              toggleSave(listing.id);
+            }}
+            aria-label="Ruaj"
+            className="grid h-11 w-11 place-items-center"
+          >
+            <Bookmark
+              size={24}
+              strokeWidth={1.5}
+              color="#1a1a1a"
+              fill={saves.has(listing.id) ? "#1a1a1a" : "none"}
+            />
+          </button>
+          <button
+            onClick={sendMessage}
+            disabled={isOwn}
+            aria-label="Mesazh"
+            className="grid h-11 w-11 place-items-center disabled:opacity-40"
+          >
+            <MessageCircle size={24} strokeWidth={1.5} color="#1a1a1a" />
+          </button>
+        </div>
+        <button
+          onClick={() => {
+            if (!me) return navigate({ to: "/auth" });
+            if (isOwn) return;
+            navigate({ to: "/buy/$id", params: { id: listing.id } });
+          }}
+          disabled={isSold || isOwn}
+          className="px-4 text-base font-bold transition active:scale-95 disabled:opacity-50"
+          style={{
+            backgroundColor: "#e8826a",
+            color: "#fff",
+            minWidth: 90,
+            height: 44,
+            borderRadius: 14,
+            boxShadow: "0 2px 8px rgba(232,130,106,0.35)",
+          }}
+        >
+          {isSold ? "Shitur" : "Bli"}
+        </button>
       </div>
+
+      {/* Social proof line */}
+      {likeInfo.count > 0 && likeInfo.recentLiker && (
+        <p className="px-[18px] py-1 text-[13px]" style={{ color: "#1a1a1a" }}>
+          Likt nga <span className="font-semibold">{likeInfo.recentLiker}</span>
+          {likeInfo.count > 1 ? ` dhe ${likeInfo.count - 1} të tjerë` : ""}
+        </p>
+      )}
+
+      {/* Seller description preview */}
+      {listing.description && (
+        <>
+          <button
+            onClick={() => setDescExpanded((v) => !v)}
+            className="w-full px-[18px] pb-3 pt-1 text-left text-[13px]"
+            style={{ color: "#1a1a1a" }}
+          >
+            <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
+            {descriptionPreview}
+          </button>
+          {descExpanded && (
+            <p className="px-[18px] py-3 text-[13px]" style={{ color: "#1a1a1a" }}>
+              {listing.description}
+            </p>
+          )}
+        </>
+      )}
+
+      {/* Product details card */}
+      <dl className="mx-[18px] my-3 grid grid-cols-2 gap-y-3 rounded-2xl bg-secondary/60 p-4 text-sm">
+        {meta.map(([k, v]) => (
+          <div key={k}>
+            <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
+            <dd className="mt-0.5">{v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {/* Seller profile card */}
+      {seller && (
+        <div className="mx-[18px] my-3 flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
+          <img
+            src={
+              seller.avatar_url ||
+              `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
+            }
+            alt={seller.name}
+            className="h-12 w-12 shrink-0 rounded-full object-cover"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1">
+              <p className="truncate text-sm font-semibold">{seller.name || "Përdorues"}</p>
+              <BadgeCheck className="h-4 w-4 text-accent" fill="currentColor" />
+            </div>
+            <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-0.5">
+                <Star className="h-3 w-3" fill="currentColor" /> {seller.rating_avg.toFixed(1)}
+              </span>
+              <span>· {seller.rating_count} vlerësime</span>
+            </div>
+          </div>
+          <Link
+            to="/user/$id"
+            params={{ id: seller.id }}
+            className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+          >
+            Shiko profilin
+          </Link>
+        </div>
+      )}
+
+      {/* Similar items horizontal scroll */}
+      {similar.length > 0 && (
+        <section id="similar-section" className="mt-8">
+          <h3 className="mb-3 px-[18px] font-display text-2xl">Artikuj të ngjashëm</h3>
+          <div className="flex gap-3 overflow-x-auto px-[18px] pb-4 no-scrollbar snap-x snap-mandatory">
+            {similar.map((p) => (
+              <div key={p.id} className="w-[160px] min-w-[160px] snap-start">
+                <ListingCard listing={p} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div className="h-8" />
 
       <MakeOfferDialog
         open={offerOpen}
