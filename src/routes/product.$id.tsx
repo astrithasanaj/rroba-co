@@ -143,7 +143,7 @@ function ProductDetail() {
 
   if (loading && !listing) {
     return (
-      <MobileShell hideNav>
+      <MobileShell>
         <ProductPageSkeleton />
       </MobileShell>
     );
@@ -180,7 +180,7 @@ function ProductDetail() {
     firstLine.length < listing.description.length ? `${firstLine}…` : firstLine;
 
   return (
-    <MobileShell hideNav>
+    <MobileShell>
       {/* Fixed header */}
       <div
         className="fixed top-0 left-1/2 z-50 flex w-full max-w-[480px] -translate-x-1/2 items-center justify-between border-b px-4 py-3"
