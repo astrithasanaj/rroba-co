@@ -128,6 +128,12 @@
 }
 .category-scroll::-webkit-scrollbar { display: none; }
 
+/* Prevent iOS Safari from zooming when focusing text inputs (font-size < 16px triggers zoom) */
+input, textarea, select {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 @keyframes rroba-shimmer {
   0% { opacity: 1; }
   50% { opacity: 0.5; }

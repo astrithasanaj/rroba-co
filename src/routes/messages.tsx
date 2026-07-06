@@ -638,6 +638,19 @@ function Thread({ id, me }: { id: string; me: string }) {
     };
   }, []);
 
+  // Lock body scroll while the chat thread is mounted so the page can't shift behind the keyboard
+  useEffect(() => {
+    const { overflow, position, width } = document.body.style;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = overflow;
+      document.body.style.position = position;
+      document.body.style.width = width;
+    };
+  }, []);
+
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
@@ -784,8 +797,8 @@ function Thread({ id, me }: { id: string; me: string }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Shkruaj një mesazh..."
-              className="flex-1 rounded-full px-4 py-2.5 text-sm outline-none"
-              style={{ backgroundColor: CREAM_ALT, color: INK }}
+              className="flex-1 rounded-full px-4 outline-none"
+              style={{ backgroundColor: CREAM_ALT, color: INK, fontSize: 16, height: 44 }}
             />
             {input.trim() && (
               <button type="submit" className="grid h-10 w-10 place-items-center rounded-full transition-transform active:scale-90" style={{ backgroundColor: INK }}>
