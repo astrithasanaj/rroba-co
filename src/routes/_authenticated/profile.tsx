@@ -103,12 +103,16 @@ function ProfilePage() {
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [prof, mine, offRec, offSent] = await Promise.all([
+    const [prof, mine, offRec, offSent, fCount, gCount] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
       supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold"]).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", user.id),
+      supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", user.id),
     ]);
+    setFollowers(fCount.count ?? 0);
+    setFollowing(gCount.count ?? 0);
     setProfile(prof.data as Profile | null);
     const hydratedMine = await hydrateListings((mine.data ?? []) as ListingRow[]);
     const sortedMine = [
