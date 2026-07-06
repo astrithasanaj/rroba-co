@@ -307,13 +307,25 @@ function ProductDetail() {
               </button>
             </div>
             <button
-              onClick={() => setOfferOpen(true)}
+              onClick={() => {
+                if (!me) return navigate({ to: "/auth" });
+                if (me === listing.user_id) return;
+                navigate({ to: "/buy/$id", params: { id: listing.id } });
+              }}
               disabled={me === listing.user_id}
-              className="rounded-full px-7 py-3 text-sm font-semibold disabled:opacity-50"
-              style={{ backgroundColor: "#e8826a", color: "#fff" }}
+              className="text-base font-bold transition active:scale-95 disabled:opacity-50"
+              style={{
+                backgroundColor: "#e8826a",
+                color: "#fff",
+                width: 90,
+                height: 44,
+                borderRadius: 14,
+                boxShadow: "0 2px 8px rgba(232,130,106,0.4)",
+              }}
             >
-              Blej
+              Bli
             </button>
+
           </div>
         )}
         <div className="h-[env(safe-area-inset-bottom)]" />
