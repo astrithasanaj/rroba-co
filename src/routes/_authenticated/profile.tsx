@@ -98,18 +98,21 @@ function ProfilePage() {
   const [listingTitles, setListingTitles] = useState<Record<string, string>>({});
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
-  const [followers] = useState(0);
-  const [following] = useState(0);
-  const [streak] = useState(2);
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [prof, mine, offRec, offSent] = await Promise.all([
+    const [prof, mine, offRec, offSent, fCount, gCount] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
       supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold"]).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
       supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", user.id),
+      supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", user.id),
     ]);
+    setFollowers(fCount.count ?? 0);
+    setFollowing(gCount.count ?? 0);
     setProfile(prof.data as Profile | null);
     const hydratedMine = await hydrateListings((mine.data ?? []) as ListingRow[]);
     const sortedMine = [
@@ -257,9 +260,9 @@ function ProfilePage() {
             />
             <div className="flex flex-1 flex-col">
               <div className="flex items-center justify-around">
-                <Stat value={streak} label="streak" />
-                <Stat value={followers} label="Ndjekësit" />
-                <Stat value={following} label="Ndjek" />
+                <Stat value={myListings.filter((l) => l.status === "active").length} label="artikuj" />
+                <Stat value={followers} label="ndjekës" />
+                <Stat value={following} label="ndjek" />
               </div>
               <div className="mt-3 flex gap-2">
                 <button
