@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
-import { BottomNav } from "./BottomNav";
 
 export function MobileShell({
   children,
-  hideNav = false,
   fixed = false,
 }: {
   children: ReactNode;
@@ -15,27 +13,24 @@ export function MobileShell({
   if (fixed) {
     return (
       <div
-        className="bg-muted/40"
-        style={{ height: "100dvh", overflow: "hidden" }}
+        className="page-wrapper page-wrapper-fixed bg-muted/40"
       >
         <div
           className="relative mx-auto w-full max-w-[480px] bg-background"
-          style={{ height: "100dvh", overflow: "hidden" }}
+          style={{ height: "100%", overflow: "hidden" }}
         >
           {children}
-          {!hideNav && <BottomNav />}
         </div>
       </div>
     );
   }
   return (
-    <div className="bg-muted/40" style={{ minHeight: "100dvh" }}>
+    <div className="page-wrapper bg-muted/40">
       <div
-        className="relative mx-auto w-full max-w-[480px] bg-background pb-[90px]"
-        style={{ minHeight: "100dvh" }}
+        className="relative mx-auto w-full max-w-[480px] bg-background"
+        style={{ minHeight: "100%" }}
       >
         {children}
-        {!hideNav && <BottomNav />}
       </div>
     </div>
   );
