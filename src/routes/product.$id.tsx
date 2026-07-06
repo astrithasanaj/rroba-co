@@ -1,6 +1,14 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, MessageCircle, Star, BadgeCheck, MoreHorizontal, Heart, Bookmark } from "lucide-react";
+import {
+  ArrowLeft,
+  MessageCircle,
+  Star,
+  BadgeCheck,
+  MoreHorizontal,
+  Heart,
+  Bookmark,
+} from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
@@ -16,7 +24,11 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { getListingLikeInfo } from "@/lib/likes.functions";
 
 export const Route = createFileRoute("/product/$id")({
-  component: () => (<SwipeBackWrapper><ProductDetail /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <ProductDetail />
+    </SwipeBackWrapper>
+  ),
 });
 
 type Seller = {
@@ -142,7 +154,9 @@ function ProductDetail() {
       <MobileShell>
         <div className="p-10 text-center">
           <p>Artikulli nuk u gjet.</p>
-          <Link to="/" className="text-accent underline">Kthehu në kreu</Link>
+          <Link to="/" className="text-accent underline">
+            Kthehu në kreu
+          </Link>
         </div>
       </MobileShell>
     );
@@ -162,7 +176,8 @@ function ProductDetail() {
   const isSold = listing.sold || listing.status === "sold";
   const isOwn = me === listing.user_id;
   const firstLine = listing.description.split("\n")[0].slice(0, 100);
-  const descriptionPreview = firstLine.length < listing.description.length ? `${firstLine}…` : firstLine;
+  const descriptionPreview =
+    firstLine.length < listing.description.length ? `${firstLine}…` : firstLine;
 
   return (
     <MobileShell hideNav>
@@ -179,10 +194,15 @@ function ProductDetail() {
           <ArrowLeft className="h-4 w-4" color="#1a1a1a" />
         </button>
         <div className="min-w-0 flex-1 px-2 text-center">
-          <h1 className="truncate font-display text-base font-semibold" style={{ color: "#1a1a1a" }}>
+          <h1
+            className="truncate font-display text-base font-semibold"
+            style={{ color: "#1a1a1a" }}
+          >
             {listing.title}
           </h1>
-          <p className="text-sm font-semibold" style={{ color: "#e8826a" }}>€{listing.price}</p>
+          <p className="text-sm font-semibold" style={{ color: "#e8826a" }}>
+            €{listing.price}
+          </p>
         </div>
         <button
           onClick={() => setMoreOpen(true)}
@@ -400,7 +420,9 @@ function ProductDetail() {
         open={moreOpen}
         onOpenChange={setMoreOpen}
         productId={listing.id}
-        productUrl={typeof window !== "undefined" ? `${window.location.origin}/product/${listing.id}` : ""}
+        productUrl={
+          typeof window !== "undefined" ? `${window.location.origin}/product/${listing.id}` : ""
+        }
         productTitle={listing.title}
         reporterId={me}
       />
