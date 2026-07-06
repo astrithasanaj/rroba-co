@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const CREAM = "#f6f1e7";
 const CORAL = "#ff8a73";
@@ -65,6 +66,7 @@ const items: NavItem[] = [
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [shrunk, setShrunk] = useState(false);
+  const unreadCount = useUnreadMessages();
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -129,7 +131,7 @@ export function BottomNav() {
                   color={CREAM}
                   style={{ transition: "color 150ms ease" }}
                 />
-                {notify && (
+                {notify && unreadCount > 0 && (
                   <span
                     className="absolute right-2 top-1.5 h-[7px] w-[7px] rounded-full"
                     style={{ backgroundColor: CORAL, border: "2px solid rgba(30,28,26,0.9)" }}
