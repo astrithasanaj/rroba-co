@@ -382,27 +382,27 @@ function ConfirmSheet({
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center px-6"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[480px]"
+        className="w-full max-w-[340px]"
         style={{
           backgroundColor: CREAM,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          padding: "24px 20px 32px",
+          borderRadius: 22,
+          padding: "22px 20px 20px",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <p style={{ color: INK, fontWeight: 700, fontSize: 18, marginBottom: 10 }}>{title}</p>
+        <p style={{ color: INK, fontWeight: 700, fontSize: 17, marginBottom: 8 }}>{title}</p>
         <p
           style={{
             color: INK,
             fontSize: 14,
             lineHeight: 1.5,
-            marginBottom: 24,
+            marginBottom: 20,
           }}
         >
           {body}
@@ -414,8 +414,8 @@ function ConfirmSheet({
           style={{
             backgroundColor: CREAM,
             border: `1px solid ${DIVIDER}`,
-            borderRadius: 14,
-            height: 52,
+            borderRadius: 999,
+            height: 48,
             color: primaryColor,
             fontWeight: 700,
             fontSize: 15,
@@ -430,8 +430,8 @@ function ConfirmSheet({
           style={{
             backgroundColor: CARD,
             border: "none",
-            borderRadius: 14,
-            height: 52,
+            borderRadius: 999,
+            height: 48,
             color: INK,
             fontWeight: 700,
             fontSize: 15,
