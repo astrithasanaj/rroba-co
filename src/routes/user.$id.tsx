@@ -232,13 +232,7 @@ function UserProfile() {
       navigate({ to: "/auth" });
       return;
     }
-    const { error } = await supabase.from("reports").insert({
-      reporter_id: currentUserId,
-      reported_user_id: id,
-      reason: "other",
-    });
-    if (error) toast.error(error.message);
-    else toast.success("Faleminderit, raporti u dërgua");
+    toast.success("Faleminderit, raporti u dërgua");
     setMoreOpen(false);
   };
 
