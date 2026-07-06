@@ -638,6 +638,19 @@ function Thread({ id, me }: { id: string; me: string }) {
     };
   }, []);
 
+  // Lock body scroll while the chat thread is mounted so the page can't shift behind the keyboard
+  useEffect(() => {
+    const { overflow, position, width } = document.body.style;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = overflow;
+      document.body.style.position = position;
+      document.body.style.width = width;
+    };
+  }, []);
+
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
