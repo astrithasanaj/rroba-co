@@ -18,16 +18,6 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
@@ -128,15 +118,21 @@ function ManageListingPage() {
 
   const deleteListing = async () => {
     setWorking(true);
-    const { error } = await supabase.from("listings").delete().eq("id", id);
-    setWorking(false);
-    setConfirmDelete(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const paths = (listing?.image_paths ?? []) as string[];
+      if (paths.length) {
+        await supabase.storage.from("photos").remove(paths);
+      }
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Artikulli u fshi.");
+      setConfirmDelete(false);
+      navigate({ to: "/profile" });
+    } catch (e) {
+      toast.error("Diçka shkoi keq. Provo sërish.");
+    } finally {
+      setWorking(false);
     }
-    toast.success("Artikulli u fshi");
-    navigate({ to: "/profile" });
   };
 
   const share = async () => {
@@ -334,67 +330,117 @@ function ManageListingPage() {
       </Sheet>
 
       {/* Mark sold / active */}
-      <AlertDialog open={confirmSold} onOpenChange={setConfirmSold}>
-        <AlertDialogContent style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
-          <AlertDialogHeader>
-            <AlertDialogTitle style={{ color: INK }}>
-              {listing.sold ? "Ktheje këtë artikull si aktiv?" : "A e ke shitur këtë artikull?"}
-            </AlertDialogTitle>
-            <AlertDialogDescription style={{ color: MUTED }}>
-              {listing.sold
-                ? "Artikulli do të rishfaqet në feed dhe në profilin tënd si aktiv."
-                : "Artikulli do të shënohet si i shitur dhe nuk do të jetë më i blegishëm."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              className="rounded-full border-0"
-              style={{ backgroundColor: CARD, color: INK }}
-            >
-              Anulo
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={toggleSold}
-              disabled={working}
-              className="rounded-full"
-              style={{ backgroundColor: INK, color: CREAM }}
-            >
-              {listing.sold ? "Po, aktivizoje" : "Po, e shita"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmSheet
+        open={confirmSold}
+        onClose={() => (working ? null : setConfirmSold(false))}
+        title={listing.sold ? "Ktheje si aktiv" : "Shëno si të shitur"}
+        body={
+          listing.sold
+            ? "A dëshiron ta rikthesh këtë artikull si aktiv? Do të rishfaqet në feed dhe në profilin tënd."
+            : "A e ke shitur këtë artikull? Ai do të shënohet si i shitur në profilin tënd dhe nuk do të jetë më i dukshëm për blerësit."
+        }
+        primaryLabel={listing.sold ? "Po, aktivizoje" : "Po, e shita"}
+        primaryColor={INK}
+        onPrimary={toggleSold}
+        working={working}
+      />
 
       {/* Delete */}
-      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <AlertDialogContent style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
-          <AlertDialogHeader>
-            <AlertDialogTitle style={{ color: INK }}>
-              A je i sigurt që do ta fshish këtë artikull?
-            </AlertDialogTitle>
-            <AlertDialogDescription style={{ color: MUTED }}>
-              Ky veprim nuk mund të zhbëhet.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              className="rounded-full border-0"
-              style={{ backgroundColor: CARD, color: INK }}
-            >
-              Anulo
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={deleteListing}
-              disabled={working}
-              className="rounded-full"
-              style={{ backgroundColor: DANGER, color: "#ffffff" }}
-            >
-              Fshij
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmSheet
+        open={confirmDelete}
+        onClose={() => (working ? null : setConfirmDelete(false))}
+        title="Fshij artikullin"
+        body="A jeni i sigurt që dëshironi të fshini këtë artikull? Do të humbisni të gjitha ofertat dhe bisedat e lidhura me të. Shënojeni si të shitur për të shmangur këtë."
+        primaryLabel="Po, fshij artikullin tim"
+        primaryColor={DANGER}
+        onPrimary={deleteListing}
+        working={working}
+      />
     </MobileShell>
+  );
+}
+
+function ConfirmSheet({
+  open,
+  onClose,
+  title,
+  body,
+  primaryLabel,
+  primaryColor,
+  onPrimary,
+  working,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  body: string;
+  primaryLabel: string;
+  primaryColor: string;
+  onPrimary: () => void | Promise<void>;
+  working: boolean;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center"
+      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[480px]"
+        style={{
+          backgroundColor: CREAM,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          padding: "24px 20px 32px",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p style={{ color: INK, fontWeight: 700, fontSize: 18, marginBottom: 10 }}>{title}</p>
+        <p
+          style={{
+            color: INK,
+            fontSize: 14,
+            lineHeight: 1.5,
+            marginBottom: 24,
+          }}
+        >
+          {body}
+        </p>
+        <button
+          onClick={onPrimary}
+          disabled={working}
+          className="grid w-full place-items-center disabled:opacity-70"
+          style={{
+            backgroundColor: CREAM,
+            border: `1px solid ${DIVIDER}`,
+            borderRadius: 14,
+            height: 52,
+            color: primaryColor,
+            fontWeight: 700,
+            fontSize: 15,
+          }}
+        >
+          {working ? <Loader2 className="h-5 w-5 animate-spin" /> : primaryLabel}
+        </button>
+        <button
+          onClick={onClose}
+          disabled={working}
+          className="mt-[10px] grid w-full place-items-center disabled:opacity-60"
+          style={{
+            backgroundColor: CARD,
+            border: "none",
+            borderRadius: 14,
+            height: 52,
+            color: INK,
+            fontWeight: 700,
+            fontSize: 15,
+          }}
+        >
+          Jo, anulo
+        </button>
+      </div>
+    </div>
   );
 }
 
