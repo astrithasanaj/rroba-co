@@ -18,8 +18,12 @@ import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as AuthSignupRouteImport } from './routes/auth.signup'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
@@ -75,6 +79,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRoute,
+} as any)
 const UserIdRoute = UserIdRouteImport.update({
   id: '/user/$id',
   path: '/user/$id',
@@ -84,6 +93,21 @@ const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
@@ -143,7 +167,7 @@ const AuthenticatedListingIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/favorites': typeof FavoritesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
@@ -152,8 +176,12 @@ export interface FileRoutesByFullPath {
   '/sell': typeof SellRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/auth/': typeof AuthIndexRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
@@ -165,7 +193,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
   '/favorites': typeof FavoritesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
@@ -174,8 +201,12 @@ export interface FileRoutesByTo {
   '/sell': typeof SellRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/auth': typeof AuthIndexRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
@@ -189,7 +220,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/favorites': typeof FavoritesRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
@@ -198,8 +229,12 @@ export interface FileRoutesById {
   '/sell': typeof SellRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
+  '/auth/': typeof AuthIndexRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
@@ -222,8 +257,12 @@ export interface FileRouteTypes {
     | '/sell'
     | '/onboarding'
     | '/profile'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/signup'
     | '/product/$id'
     | '/user/$id'
+    | '/auth/'
     | '/admin/reports'
     | '/buy/$id'
     | '/api/public/notify-new-report'
@@ -235,7 +274,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
     | '/favorites'
     | '/messages'
     | '/notifications'
@@ -244,8 +282,12 @@ export interface FileRouteTypes {
     | '/sell'
     | '/onboarding'
     | '/profile'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/signup'
     | '/product/$id'
     | '/user/$id'
+    | '/auth'
     | '/admin/reports'
     | '/buy/$id'
     | '/api/public/notify-new-report'
@@ -267,8 +309,12 @@ export interface FileRouteTypes {
     | '/sell'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/signup'
     | '/product/$id'
     | '/user/$id'
+    | '/auth/'
     | '/_authenticated/admin/reports'
     | '/_authenticated/buy/$id'
     | '/api/public/notify-new-report'
@@ -282,7 +328,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   FavoritesRoute: typeof FavoritesRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -362,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/user/$id': {
       id: '/user/$id'
       path: '/user/$id'
@@ -375,6 +428,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/product/$id'
       preLoaderRoute: typeof ProductIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
@@ -470,10 +544,26 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthSignupRoute: AuthSignupRoute,
+  AuthIndexRoute: AuthIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   FavoritesRoute: FavoritesRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
