@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const CREAM = "#f6f1e7";
@@ -65,27 +64,7 @@ const items: NavItem[] = [
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [shrunk, setShrunk] = useState(false);
-  const unreadCount = useUnreadMessages();
-
-  useEffect(() => {
-    let lastY = window.scrollY;
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        const y = window.scrollY;
-        if (y < 20) setShrunk(false);
-        else if (y > lastY + 8) setShrunk(true);
-        else if (y < lastY - 8) setShrunk(false);
-        lastY = y;
-        ticking = false;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const hasUnread = useUnreadMessages();
 
   return (
     <nav
@@ -93,22 +72,23 @@ export function BottomNav() {
       style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
     >
       <div
-        className="flex items-center justify-between rounded-full transition-all duration-200 ease-out"
+        className="flex items-center justify-between rounded-full"
         style={{
           backgroundColor: PILL_BG,
           backdropFilter: "blur(20px) saturate(180%)",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
           boxShadow: "0 6px 24px rgba(0,0,0,0.25)",
           borderRadius: 999,
-          height: shrunk ? 56 : 66,
-          padding: shrunk ? "6px 8px" : "8px 10px",
+          height: 66,
+          padding: "8px 10px",
           width: "100%",
           maxWidth: 420,
+          boxSizing: "border-box",
+          flexShrink: 0,
         }}
       >
         {items.map(({ to, icon: Icon, label, notify }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
-          const iconSize = shrunk ? 22 : 26;
           return (
             <Link
               key={to}
@@ -118,20 +98,18 @@ export function BottomNav() {
               style={{ height: "100%" }}
             >
               <div
-                className="relative grid place-items-center transition-all duration-200"
+                className="relative grid place-items-center"
                 style={{
-                  width: active ? 64 : 48,
-                  height: shrunk ? 42 : 50,
+                  width: 48,
+                  height: 50,
                   borderRadius: 999,
                   backgroundColor: active ? BUBBLE : "transparent",
+                  transition: "background-color 150ms ease",
+                  flexShrink: 0,
                 }}
               >
-                <Icon
-                  size={iconSize}
-                  color={CREAM}
-                  style={{ transition: "color 150ms ease" }}
-                />
-                {notify && unreadCount > 0 && (
+                <Icon size={26} color={CREAM} />
+                {notify && hasUnread && (
                   <span
                     className="absolute right-2 top-1.5 h-[7px] w-[7px] rounded-full"
                     style={{ backgroundColor: CORAL, border: "2px solid rgba(30,28,26,0.9)" }}

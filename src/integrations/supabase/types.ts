@@ -224,6 +224,7 @@ export type Database = {
           conversation_id: string
           created_at: string
           id: string
+          read: boolean
           sender_id: string
         }
         Insert: {
@@ -231,6 +232,7 @@ export type Database = {
           conversation_id: string
           created_at?: string
           id?: string
+          read?: boolean
           sender_id: string
         }
         Update: {
@@ -238,6 +240,7 @@ export type Database = {
           conversation_id?: string
           created_at?: string
           id?: string
+          read?: boolean
           sender_id?: string
         }
         Relationships: [

@@ -593,6 +593,13 @@ function Thread({ id, me }: { id: string; me: string }) {
         ? { last_read_buyer_at: new Date().toISOString() }
         : { last_read_seller_at: new Date().toISOString() };
       supabase.from("conversations").update(readPatch).eq("id", id);
+      supabase
+        .from("messages")
+        .update({ read: true })
+        .eq("conversation_id", id)
+        .neq("sender_id", me)
+        .eq("read", false)
+        .then(() => {});
     };
     load();
     const ch = supabase
