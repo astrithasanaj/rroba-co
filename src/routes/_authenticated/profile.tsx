@@ -98,9 +98,8 @@ function ProfilePage() {
   const [listingTitles, setListingTitles] = useState<Record<string, string>>({});
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
-  const [followers] = useState(0);
-  const [following] = useState(0);
-  const [streak] = useState(2);
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
