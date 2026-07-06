@@ -2,9 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User } from "lucide-react";
 
 const CREAM = "#f6f1e7";
-const CORAL = "#ff8a73";
-const BUBBLE = "rgba(255,255,255,0.12)";
-const PILL_BG = "rgba(30,28,26,0.72)";
+const MUTED = "#a89f94";
 
 type IconProps = {
   className?: string;
@@ -19,10 +17,9 @@ type NavItem = {
   icon: React.ComponentType<IconProps>;
   label: string;
   center?: boolean;
-  notify?: boolean;
 };
 
-function HomeIcon({ size = 26, color = CREAM, style }: IconProps) {
+function HomeIcon({ size = 20, color = "currentColor", style }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill={color} style={style}>
       <path d="M12 3.2L3 11.2c-.3.3-.1.8.3.8H5v7.5c0 .4.3.7.7.7H9.5c.4 0 .7-.3.7-.7v-4.3c0-.4.3-.8.8-.8h2c.4 0 .8.3.8.8v4.3c0 .4.3.7.7.7h3.8c.4 0 .7-.3.7-.7V12h1.7c.4 0 .6-.5.3-.8L12 3.2z" />
@@ -30,7 +27,7 @@ function HomeIcon({ size = 26, color = CREAM, style }: IconProps) {
   );
 }
 
-function PlusSquareIcon({ size = 26, color = CREAM, style }: IconProps) {
+function PlusSquareIcon({ size = 20, color = "currentColor", style }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={style}>
       <rect x="3.5" y="3.5" width="17" height="17" rx="3.5" stroke={color} strokeWidth="1.6" />
@@ -39,7 +36,7 @@ function PlusSquareIcon({ size = 26, color = CREAM, style }: IconProps) {
   );
 }
 
-function MessageIcon({ size = 26, color = CREAM, style }: IconProps) {
+function MessageIcon({ size = 20, color = "currentColor", style }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={style}>
       <path
@@ -57,7 +54,7 @@ const items: NavItem[] = [
   { to: "/", icon: HomeIcon, label: "Kreu" },
   { to: "/search", icon: Search, label: "Kërko" },
   { to: "/sell", icon: PlusSquareIcon, label: "Shit", center: true },
-  { to: "/messages", icon: MessageIcon, label: "Mesazhe", notify: true },
+  { to: "/messages", icon: MessageIcon, label: "Mesazhe" },
   { to: "/profile", icon: User, label: "Profili" },
 ];
 
@@ -66,52 +63,23 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 flex justify-center px-4"
-      style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
+      className="nav-bar bottom-nav"
+      aria-label="Navigimi kryesor"
     >
-      <div
-        className="flex items-center justify-between rounded-full"
-        style={{
-          backgroundColor: PILL_BG,
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          boxShadow: "0 6px 24px rgba(0,0,0,0.25)",
-          borderRadius: 999,
-          height: 66,
-          padding: "8px 10px",
-          width: "100%",
-          maxWidth: 420,
-          boxSizing: "border-box",
-          flexShrink: 0,
-        }}
-      >
-        {items.map(({ to, icon: Icon, label }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
-          return (
-            <Link
-              key={to}
-              to={to}
-              aria-label={label}
-              className="relative flex flex-1 items-center justify-center transition-transform duration-100 ease-out active:scale-[0.9]"
-              style={{ height: "100%" }}
-            >
-              <div
-                className="relative grid place-items-center"
-                style={{
-                  width: 48,
-                  height: 50,
-                  borderRadius: 999,
-                  backgroundColor: active ? BUBBLE : "transparent",
-                  transition: "background-color 150ms ease",
-                  flexShrink: 0,
-                }}
-              >
-                <Icon size={26} color={CREAM} />
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+      {items.map(({ to, icon: Icon, label, center }) => {
+        const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+        return (
+          <Link
+            key={to}
+            to={to}
+            aria-label={label}
+            className={center ? "nav-item nav-sell-btn" : "nav-item"}
+            style={{ color: active ? CREAM : MUTED }}
+          >
+            <Icon size={20} />
+          </Link>
+        );
+      })}
     </nav>
   );
 }
