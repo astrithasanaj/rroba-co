@@ -16,7 +16,9 @@ export type ListingRow = {
   color: string;
   city: string;
   gender: string;
+  delivery?: string[];
   created_at: string;
+
 };
 
 export type ListingView = ListingRow & { coverUrl: string; imageUrls: string[] };
