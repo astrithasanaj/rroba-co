@@ -7,11 +7,13 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { BottomNav } from "@/components/marketplace/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { UserCollectionsProvider } from "@/lib/user-collections";
 
@@ -97,6 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -119,6 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <div id="nav-bar-root" />
         <Scripts />
       </body>
     </html>
@@ -128,6 +132,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const [navRoot, setNavRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setNavRoot(document.getElementById("nav-bar-root"));
+  }, []);
 
   useEffect(() => {
     const {
@@ -148,10 +157,20 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <UserCollectionsProvider>
-        <OnboardingGate />
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100dvh",
+            overflow: "hidden",
+          }}
+        >
+          <OnboardingGate />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </div>
         <Toaster />
+        {navRoot ? createPortal(<BottomNav />, navRoot) : null}
       </UserCollectionsProvider>
     </QueryClientProvider>
   );

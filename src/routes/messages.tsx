@@ -230,7 +230,17 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     <MobileShell fixed>
       <div
         className="messages-page"
-        style={{ backgroundColor: CREAM, height: "100dvh", display: "flex", flexDirection: "column", overflow: "hidden" }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          backgroundColor: CREAM,
+        }}
       >
         <header
           className="flex items-center justify-between px-5 pt-5 pb-3"
@@ -514,8 +524,21 @@ function NewMessage({ me }: { me: string }) {
   const list = q.trim() ? results : recent;
 
   return (
-    <MobileShell hideNav>
-      <div className="messages-page" style={{ backgroundColor: CREAM, minHeight: "100vh" }}>
+    <MobileShell fixed>
+      <div
+        className="messages-page"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          backgroundColor: CREAM,
+        }}
+      >
         <header className="sticky top-0 z-30 flex items-center gap-3 px-5 pt-5 pb-3" style={{ backgroundColor: `${CREAM}f2` }}>
           <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
             <X className="h-5 w-5" style={{ color: INK }} />
@@ -669,19 +692,6 @@ function Thread({ id, me }: { id: string; me: string }) {
     };
   }, []);
 
-  // Lock body scroll while the chat thread is mounted so the page can't shift behind the keyboard
-  useEffect(() => {
-    const { overflow, position, width } = document.body.style;
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
-    return () => {
-      document.body.style.overflow = overflow;
-      document.body.style.position = position;
-      document.body.style.width = width;
-    };
-  }, []);
-
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
@@ -691,15 +701,19 @@ function Thread({ id, me }: { id: string; me: string }) {
   };
 
   return (
-    <MobileShell fixed hideNav>
+    <MobileShell fixed>
       <div
         className="chat-page"
         style={{
-          backgroundColor: CREAM,
-          height: "100dvh",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          backgroundColor: CREAM,
         }}
       >
         <header
