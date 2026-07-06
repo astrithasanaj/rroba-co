@@ -348,15 +348,15 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
-          bio: string
-          city: string
+          bio: string | null
+          city: string | null
           created_at: string
           display_name: string | null
           height_cm: number | null
           id: string
-          name: string
+          name: string | null
           onboarding_completed: boolean
-          preferences: Json
+          preferences: Json | null
           rating_avg: number
           rating_count: number
           updated_at: string
@@ -364,15 +364,15 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
-          bio?: string
-          city?: string
+          bio?: string | null
+          city?: string | null
           created_at?: string
           display_name?: string | null
           height_cm?: number | null
           id: string
-          name?: string
+          name?: string | null
           onboarding_completed?: boolean
-          preferences?: Json
+          preferences?: Json | null
           rating_avg?: number
           rating_count?: number
           updated_at?: string
@@ -380,15 +380,15 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
-          bio?: string
-          city?: string
+          bio?: string | null
+          city?: string | null
           created_at?: string
           display_name?: string | null
           height_cm?: number | null
           id?: string
-          name?: string
+          name?: string | null
           onboarding_completed?: boolean
-          preferences?: Json
+          preferences?: Json | null
           rating_avg?: number
           rating_count?: number
           updated_at?: string
