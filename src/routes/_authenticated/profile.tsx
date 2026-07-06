@@ -256,9 +256,9 @@ function ProfilePage() {
             />
             <div className="flex flex-1 flex-col">
               <div className="flex items-center justify-around">
-                <Stat value={streak} label="streak" />
-                <Stat value={followers} label="Ndjekësit" />
-                <Stat value={following} label="Ndjek" />
+                <Stat value={myListings.filter((l) => l.status === "active").length} label="artikuj" />
+                <Stat value={followers} label="ndjekës" />
+                <Stat value={following} label="ndjek" />
               </div>
               <div className="mt-3 flex gap-2">
                 <button
