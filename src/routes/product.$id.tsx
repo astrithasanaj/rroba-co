@@ -91,7 +91,7 @@ function ProductDetail() {
   }, [id]);
 
   useEffect(() => {
-    getListingLikeInfo({ listingId: id })
+    getListingLikeInfo({ data: { listingId: id } })
       .then((info) => setLikeInfo(info))
       .catch(() => {});
   }, [id]);
