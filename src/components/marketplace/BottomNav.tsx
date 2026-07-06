@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User } from "lucide-react";
-import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const CREAM = "#f6f1e7";
 const CORAL = "#ff8a73";
@@ -64,7 +63,6 @@ const items: NavItem[] = [
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hasUnread = useUnreadMessages();
 
   return (
     <nav
@@ -87,7 +85,7 @@ export function BottomNav() {
           flexShrink: 0,
         }}
       >
-        {items.map(({ to, icon: Icon, label, notify }) => {
+        {items.map(({ to, icon: Icon, label }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
           return (
             <Link
@@ -109,12 +107,6 @@ export function BottomNav() {
                 }}
               >
                 <Icon size={26} color={CREAM} />
-                {notify && hasUnread && (
-                  <span
-                    className="absolute right-2 top-1.5 h-[7px] w-[7px] rounded-full"
-                    style={{ backgroundColor: CORAL, border: "2px solid rgba(30,28,26,0.9)" }}
-                  />
-                )}
               </div>
             </Link>
           );

@@ -359,15 +359,38 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="truncate text-[15px] font-semibold" style={{ color: INK }}>{t.otherName}</p>
-                        <div className="flex shrink-0 items-center gap-2">
-                          <span className="text-[11px]" style={{ color: MUTED }}>{formatTime(t.lastAt)}</span>
-                          {t.unread && <span className="h-2 w-2 rounded-full animate-pulse-soft" style={{ backgroundColor: CORAL }} />}
-                        </div>
-                      </div>
-                      <p className="truncate text-sm" style={{ color: t.unread ? INK : MUTED }}>{t.lastPreview}</p>
-                      <p className="truncate text-xs italic" style={{ color: MUTED }}>{t.listingTitle}</p>
+                      <p
+                        className="truncate text-[15px]"
+                        style={{ color: INK, fontWeight: t.unread ? 700 : 500 }}
+                      >
+                        {t.otherName}
+                      </p>
+                      <p
+                        className="truncate text-sm"
+                        style={{
+                          color: t.unread ? INK : MUTED,
+                          fontWeight: t.unread ? 500 : 400,
+                          fontStyle: t.unread ? "normal" : "italic",
+                          marginTop: 2,
+                        }}
+                      >
+                        {t.lastPreview}
+                      </p>
+                      <p className="truncate text-xs" style={{ color: MUTED, marginTop: 2 }}>{t.listingTitle}</p>
+                    </div>
+                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                      <span className="text-[12px]" style={{ color: MUTED }}>{formatTime(t.lastAt)}</span>
+                      {t.unread && (
+                        <span
+                          style={{
+                            width: 10,
+                            height: 10,
+                            backgroundColor: CORAL,
+                            borderRadius: "50%",
+                            display: "block",
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                 </li>
@@ -423,12 +446,12 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
 function formatTime(iso: string) {
   const d = new Date(iso);
   const now = new Date();
-  const diff = (now.getTime() - d.getTime()) / 1000;
-  if (diff < 60) return "tani";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  if (diff < 7 * 86400) return `${Math.floor(diff / 86400)}d`;
-  return d.toLocaleDateString();
+  const startOfDay = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diffDays = Math.floor((startOfDay(now) - startOfDay(d)) / (1000 * 60 * 60 * 24));
+  if (diffDays <= 0) return d.toLocaleTimeString("sq-AL", { hour: "2-digit", minute: "2-digit" });
+  if (diffDays === 1) return "Dje";
+  if (diffDays < 7) return d.toLocaleDateString("sq-AL", { weekday: "long" });
+  return d.toLocaleDateString("sq-AL", { day: "numeric", month: "short" });
 }
 
 type ProfileResult = { id: string; name: string | null; avatar_url: string | null; username?: string | null; city?: string | null };
