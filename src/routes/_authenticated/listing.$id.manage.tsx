@@ -118,15 +118,21 @@ function ManageListingPage() {
 
   const deleteListing = async () => {
     setWorking(true);
-    const { error } = await supabase.from("listings").delete().eq("id", id);
-    setWorking(false);
-    setConfirmDelete(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const paths = (listing?.image_paths ?? []) as string[];
+      if (paths.length) {
+        await supabase.storage.from("photos").remove(paths);
+      }
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Artikulli u fshi.");
+      setConfirmDelete(false);
+      navigate({ to: "/profile" });
+    } catch (e) {
+      toast.error("Diçka shkoi keq. Provo sërish.");
+    } finally {
+      setWorking(false);
     }
-    toast.success("Artikulli u fshi");
-    navigate({ to: "/profile" });
   };
 
   const share = async () => {
