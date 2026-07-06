@@ -235,7 +235,7 @@ function UserProfile() {
     const { error } = await supabase.from("reports").insert({
       reporter_id: currentUserId,
       reported_user_id: id,
-      reason: "profile_report",
+      reason: "other",
     });
     if (error) toast.error(error.message);
     else toast.success("Faleminderit, raporti u dërgua");
