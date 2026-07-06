@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, User } from "lucide-react";
-import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const CREAM = "#f6f1e7";
 const CORAL = "#ff8a73";
