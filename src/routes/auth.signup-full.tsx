@@ -491,15 +491,15 @@ function SignupFullPage() {
                   </span>
                 </div>
                 <div className="flex gap-1">
-                  {[0, 1, 2, 3].map((i) => {
+                  {[0, 1, 2, 3, 4].map((i) => {
                     const filled = i < strength.score;
                     const color =
-                      strength.score <= 1
+                      strength.isCommon || strength.score <= 2
                         ? "#e53935"
-                        : strength.score <= 2
-                          ? "#e8826a"
-                          : strength.score === 3
-                            ? "#f9a825"
+                        : strength.score === 3
+                          ? "#f9a825"
+                          : strength.score === 4
+                            ? "#e8826a"
                             : "#43a047";
                     return (
                       <div
@@ -516,6 +516,7 @@ function SignupFullPage() {
                     { key: "uppercase", label: "Të paktën 1 shkronjë e madhe (A-Z)" },
                     { key: "lowercase", label: "Të paktën 1 shkronjë e vogël (a-z)" },
                     { key: "number", label: "Të paktën 1 numër (0-9)" },
+                    { key: "notCommon", label: "Nuk është fjalëkalim i zakonshëm" },
                   ].map((item) => {
                     const ok = strength.checks[item.key as keyof typeof strength.checks];
                     return (
