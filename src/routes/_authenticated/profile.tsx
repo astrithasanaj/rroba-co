@@ -1110,20 +1110,6 @@ function SettingsMain({
   onLogout: () => void;
   onDeleteAccount: () => void;
 }) {
-  const rateApp = () => {
-    window.open("https://apps.apple.com/", "_blank", "noopener,noreferrer");
-  };
-  const shareApp = async () => {
-    const url = typeof window !== "undefined" ? window.location.origin : "https://rroba-style-discover.lovable.app";
-    const data = { title: "Rroba", text: "Blej, shit dhe zbulo stil të ri.", url };
-    try {
-      if (navigator.share) await navigator.share(data);
-      else {
-        await navigator.clipboard?.writeText(url);
-        toast.success("Linku u kopjua");
-      }
-    } catch { /* dismissed */ }
-  };
 
   return (
     <div>
