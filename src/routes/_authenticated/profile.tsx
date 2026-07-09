@@ -55,6 +55,7 @@ type Profile = {
   rating_avg: number;
   rating_count: number;
   height_cm: number | null;
+  created_at?: string;
 };
 
 type OfferRow = {
