@@ -5,8 +5,6 @@ import {
   Bell,
   Bookmark,
   Check,
-  ChevronLeft,
-  ChevronRight,
   Gem,
   Grid2x2,
   Heart,
@@ -18,7 +16,6 @@ import {
   Plus,
   Ruler,
   Settings as SettingsIcon,
-  
   Shirt,
   ShieldCheck,
   SlidersHorizontal,
@@ -35,7 +32,7 @@ import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
