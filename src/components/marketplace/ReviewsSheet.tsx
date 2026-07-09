@@ -433,12 +433,6 @@ export function ReviewsSheet({
           <div style={{ padding: 20 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerëso shitësin</div>
-              <button
-                onClick={() => setRateOpen(false)}
-                style={{ background: "transparent", border: 0, color: INK, cursor: "pointer" }}
-              >
-                <X size={20} />
-              </button>
             </div>
             <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 20 }}>
               {[1, 2, 3, 4, 5].map((n) => (
