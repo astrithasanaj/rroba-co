@@ -21,7 +21,6 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Star,
-  Tag,
   User as UserIcon,
   X,
 } from "lucide-react";
@@ -623,7 +622,6 @@ function ProfilePage() {
         email={user.email ?? ""}
         onSaved={loadAll}
         onSignOut={handleSignOut}
-        onOpenOffers={() => { setSettingsOpen(false); setOffersOpen(true); }}
       />
 
       {/* Height picker sheet */}
@@ -939,7 +937,7 @@ type SettingsView =
   | "faq" | "support" | "privacy" | "terms";
 
 function SettingsSheet({
-  open, onOpenChange, profile, email, onSaved, onSignOut, onOpenOffers,
+  open, onOpenChange, profile, email, onSaved, onSignOut,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -947,7 +945,6 @@ function SettingsSheet({
   email: string;
   onSaved: () => void;
   onSignOut: () => void;
-  onOpenOffers: () => void;
 }) {
   const [view, setView] = useState<SettingsView>("main");
   const [confirmLogout, setConfirmLogout] = useState(false);
@@ -1022,7 +1019,6 @@ function SettingsSheet({
           {view === "main" && (
             <SettingsMain
               onNavigate={setView}
-              onOpenOffers={onOpenOffers}
               onLogout={() => setConfirmLogout(true)}
               onDeleteAccount={() => setDeleteOpen(true)}
             />
@@ -1103,10 +1099,9 @@ function SectionDivider() {
 }
 
 function SettingsMain({
-  onNavigate, onOpenOffers, onLogout, onDeleteAccount,
+  onNavigate, onLogout, onDeleteAccount,
 }: {
   onNavigate: (v: SettingsView) => void;
-  onOpenOffers: () => void;
   onLogout: () => void;
   onDeleteAccount: () => void;
 }) {
@@ -1116,7 +1111,6 @@ function SettingsMain({
       <SectionHeader>Konto</SectionHeader>
       <div>
         <Row icon="ti-user" title="Ndrysho profilin" subtitle="Emri, bio, foto, qyteti" onClick={() => onNavigate("profile")} />
-        <Row icon="ti-tag" title="Ofertat" subtitle="Shih ofertat e marra dhe të dërguara" onClick={onOpenOffers} />
         <Row icon="ti-bell" title="Njoftimet" subtitle="Menaxho njoftimet push dhe email" onClick={() => onNavigate("notifications")} />
         <Row icon="ti-adjustments-horizontal" title="Preferencat" subtitle="Kategoritë dhe madhësitë e preferuara" onClick={() => onNavigate("preferences")} isLast />
       </div>
