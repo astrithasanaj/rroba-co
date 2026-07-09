@@ -253,7 +253,7 @@ function ManageListingPage() {
             title="Promovo"
             subtitle="Rrit shanset për të shitur duke promovuar artikullin tënd!"
             chevron
-            onClick={() => toast.info("Promovimi vjen së shpejti")}
+            onClick={() => navigate({ to: "/listing/$id/promote", params: { id } })}
           />
           <Divider />
           <ActionRow
