@@ -934,7 +934,9 @@ function OffersList({
   );
 }
 
-type SettingsView = "main" | "profile" | "notifications" | "preferences" | "faq" | "support";
+type SettingsView =
+  | "main" | "profile" | "notifications" | "preferences"
+  | "faq" | "support" | "privacy" | "terms";
 
 function SettingsSheet({
   open, onOpenChange, profile, email, onSaved, onSignOut, onOpenOffers,
@@ -959,31 +961,55 @@ function SettingsSheet({
     preferences: "Preferencat",
     faq: "Pyetjet e shpeshta",
     support: "Mbështetje",
+    privacy: "Privatësia",
+    terms: "Kushtet e shërbimit",
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        side="bottom"
-        className="h-[92vh] overflow-y-auto border-0 p-0"
+        side="right"
+        className="w-full !max-w-full h-full overflow-y-auto border-0 p-0 sm:!max-w-full"
         style={{ backgroundColor: CREAM, color: INK }}
       >
         {/* Header */}
-        <SheetHeader className="sticky top-0 z-10 flex-row items-center gap-2 border-0 px-2 py-3" style={{ backgroundColor: CREAM }}>
+        <SheetHeader
+          className="sticky top-0 z-10 flex-row items-center border-0 px-4"
+          style={{ backgroundColor: CREAM, height: 56 }}
+        >
           {view !== "main" ? (
-            <button onClick={() => setView("main")} aria-label="Mbrapa" className="grid h-9 w-9 place-items-center rounded-full" style={{ color: INK }}>
-              <ChevronLeft className="h-6 w-6" strokeWidth={2} />
+            <button
+              onClick={() => setView("main")}
+              aria-label="Mbrapa"
+              className="grid h-9 w-9 place-items-center"
+              style={{ color: INK, background: "transparent" }}
+            >
+              <ChevronLeft className="h-5 w-5" strokeWidth={2} />
             </button>
           ) : <span className="h-9 w-9" />}
-          <SheetTitle className="flex-1 text-center text-[17px] font-bold" style={{ color: INK }}>
+          <SheetTitle
+            className="flex-1 text-center italic"
+            style={{
+              color: INK,
+              fontFamily: "var(--font-display)",
+              fontSize: 18,
+              fontWeight: 400,
+              letterSpacing: 0,
+            }}
+          >
             {titles[view]}
           </SheetTitle>
-          <button onClick={() => onOpenChange(false)} aria-label="Mbyll" className="grid h-9 w-9 place-items-center rounded-full" style={{ color: INK }}>
-            <X className="h-5 w-5" strokeWidth={2} />
+          <button
+            onClick={() => onOpenChange(false)}
+            aria-label="Mbyll"
+            className="grid h-9 w-9 place-items-center"
+            style={{ color: INK, background: "transparent", fontSize: 20 }}
+          >
+            <X className="h-5 w-5" strokeWidth={1.8} />
           </button>
         </SheetHeader>
 
-        <div className="px-0 pb-10">
+        <div className="px-0 pb-6">
           {view === "main" && (
             <SettingsMain
               onNavigate={setView}
@@ -1000,6 +1026,8 @@ function SettingsSheet({
           {view === "preferences" && <PreferencesView />}
           {view === "faq" && <FaqView />}
           {view === "support" && <SupportView />}
+          {view === "privacy" && <PrivacyView />}
+          {view === "terms" && <TermsView />}
         </div>
 
         <LogoutConfirm
@@ -1014,42 +1042,41 @@ function SettingsSheet({
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="px-5 pb-2 pt-6 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: MUTED, backgroundColor: CREAM }}>
+    <div
+      className="uppercase"
+      style={{
+        color: MUTED,
+        backgroundColor: CREAM,
+        fontSize: 11,
+        fontWeight: 500,
+        letterSpacing: "0.8px",
+        padding: "20px 20px 8px",
+      }}
+    >
       {children}
     </div>
   );
 }
 
 function Row({
-  icon: Icon, title, subtitle, onClick, danger,
+  icon, title, subtitle, onClick, isLast,
 }: {
-  icon?: typeof UserIcon;
+  icon: string;
   title: string;
   subtitle?: string;
   onClick?: () => void;
-  danger?: boolean;
+  isLast?: boolean;
 }) {
   return (
-    <button
-      onClick={onClick}
-      className="flex w-full items-center gap-3 px-5 py-4 text-left"
-      style={{ backgroundColor: CREAM }}
-    >
-      {Icon && <Icon className="h-5 w-5 shrink-0" strokeWidth={1.9} style={{ color: danger ? SOLD : INK }} />}
-      <div className="flex-1">
-        <div className="text-[15px] font-semibold" style={{ color: danger ? SOLD : INK }}>{title}</div>
-        {subtitle && <div className="mt-0.5 text-[13px]" style={{ color: MUTED }}>{subtitle}</div>}
+    <button onClick={onClick} className="settings-row" style={{ borderBottom: isLast ? "none" : `1px solid ${DIVIDER}` }}>
+      <i className={`ti ${icon} settings-icon`} aria-hidden />
+      <div className="settings-text">
+        <div className="settings-title">{title}</div>
+        {subtitle && <div className="settings-subtitle">{subtitle}</div>}
       </div>
-      {!danger && <ChevronRight className="h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MUTED }} />}
+      <i className="ti ti-chevron-right settings-chevron" aria-hidden />
     </button>
   );
-}
-
-function RowDivider() {
-  return <div className="ml-[52px]" style={{ height: 1, backgroundColor: DIVIDER }} />;
-}
-function SectionDivider() {
-  return <div style={{ height: 2, backgroundColor: DIVIDER }} />;
 }
 
 function SettingsMain({
@@ -1059,29 +1086,112 @@ function SettingsMain({
   onOpenOffers: () => void;
   onLogout: () => void;
 }) {
+  const rateApp = () => {
+    window.open("https://apps.apple.com/", "_blank", "noopener,noreferrer");
+  };
+  const shareApp = async () => {
+    const url = typeof window !== "undefined" ? window.location.origin : "https://rroba-style-discover.lovable.app";
+    const data = { title: "Rroba", text: "Blej, shit dhe zbulo stil të ri.", url };
+    try {
+      if (navigator.share) await navigator.share(data);
+      else {
+        await navigator.clipboard?.writeText(url);
+        toast.success("Linku u kopjua");
+      }
+    } catch { /* dismissed */ }
+  };
+
   return (
     <div>
       <SectionHeader>Konto</SectionHeader>
-      <Row icon={UserIcon} title="Ndrysho profilin" subtitle="Emri, bio, foto, qyteti" onClick={() => onNavigate("profile")} />
-      <RowDivider />
-      <Row icon={Tag} title="Ofertat" subtitle="Shih ofertat e marra dhe të dërguara" onClick={onOpenOffers} />
-      <RowDivider />
-      <Row icon={Bell} title="Njoftimet" subtitle="Menaxho njoftimet push dhe email" onClick={() => onNavigate("notifications")} />
-      <RowDivider />
-      <Row icon={SlidersHorizontal} title="Preferencat" subtitle="Kategoritë dhe madhësitë e preferuara" onClick={() => onNavigate("preferences")} />
+      <div>
+        <Row icon="ti-user" title="Ndrysho profilin" subtitle="Emri, bio, foto, qyteti" onClick={() => onNavigate("profile")} />
+        <Row icon="ti-tag" title="Ofertat" subtitle="Shih ofertat e marra dhe të dërguara" onClick={onOpenOffers} />
+        <Row icon="ti-bell" title="Njoftimet" subtitle="Menaxho njoftimet push dhe email" onClick={() => onNavigate("notifications")} />
+        <Row icon="ti-adjustments-horizontal" title="Preferencat" subtitle="Kategoritë dhe madhësitë e preferuara" onClick={() => onNavigate("preferences")} isLast />
+      </div>
 
-      <SectionDivider />
       <SectionHeader>Ndihmë</SectionHeader>
-      <Row icon={HelpCircle} title="Pyetjet e shpeshta" onClick={() => onNavigate("faq")} />
-      <RowDivider />
-      <Row icon={MessageSquare} title="Kontakto mbështetjen" onClick={() => onNavigate("support")} />
+      <div>
+        <Row icon="ti-help-circle" title="Pyetjet e shpeshta" onClick={() => onNavigate("faq")} />
+        <Row icon="ti-message" title="Kontakto mbështetjen" onClick={() => onNavigate("support")} isLast />
+      </div>
 
-      <SectionDivider />
       <SectionHeader>Tjetër</SectionHeader>
-      <Row icon={ShieldCheck} title="Privatësia" subtitle="Politikat dhe të dhënat e tua" />
-      <RowDivider />
-      <Row icon={LogOut} title="Dil" onClick={onLogout} danger />
+      <div>
+        <Row icon="ti-shield" title="Privatësia" subtitle="Politikat dhe të dhënat e tua" onClick={() => onNavigate("privacy")} />
+        <Row icon="ti-file-text" title="Kushtet e shërbimit" onClick={() => onNavigate("terms")} />
+        <Row icon="ti-star" title="Vlerëso aplikacionin" onClick={rateApp} />
+        <Row icon="ti-share" title="Ndaj aplikacionin" onClick={shareApp} isLast />
+      </div>
+
+      {/* Logout */}
+      <button
+        onClick={onLogout}
+        className="settings-row"
+        style={{
+          borderTop: `1px solid ${DIVIDER}`,
+          borderBottom: "none",
+          justifyContent: "center",
+          marginTop: 32,
+          padding: "18px 20px",
+        }}
+      >
+        <span style={{ fontSize: 14, fontWeight: 500, color: SOLD }}>Dilni nga llogaria</span>
+      </button>
+
+      {/* Version */}
+      <div
+        style={{
+          textAlign: "center",
+          padding: "16px 0 24px",
+          fontSize: 11,
+          color: "#c8c3b9",
+          letterSpacing: "0.3px",
+        }}
+      >
+        Rroba v1.0.0
+      </div>
     </div>
+  );
+}
+
+function LegalPage({ title, paragraphs }: { title: string; paragraphs: string[] }) {
+  return (
+    <div className="px-5 pt-2 pb-6">
+      <h2 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 22, color: INK, marginBottom: 12 }}>{title}</h2>
+      <div className="space-y-3">
+        {paragraphs.map((p, i) => (
+          <p key={i} style={{ fontSize: 14, lineHeight: 1.55, color: INK }}>{p}</p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PrivacyView() {
+  return (
+    <LegalPage
+      title="Privatësia"
+      paragraphs={[
+        "Ne respektojmë privatësinë tënde. Të dhënat që mbledhim përdoren vetëm për të ofruar shërbimin Rroba dhe për të përmirësuar përvojën tënde.",
+        "Emri, email-i dhe fotoja e profilit shfaqen publikisht kur listoni artikuj. Adresa dhe informacionet e pagesës mbahen private.",
+        "Ti mund të kërkosh fshirjen e llogarisë dhe të dhënave në çdo kohë përmes seksionit të mbështetjes.",
+      ]}
+    />
+  );
+}
+
+function TermsView() {
+  return (
+    <LegalPage
+      title="Kushtet e shërbimit"
+      paragraphs={[
+        "Duke përdorur Rroba, ti pranon këto kushte. Përdoruesit janë përgjegjës për saktësinë e informacionit të artikujve dhe për transaksionet e tyre.",
+        "Ndalohen artikujt e falsifikuar, të vjedhur ose të papërshtatshëm. Rroba rezervon të drejtën të heqë artikuj që shkelin këto kushte.",
+        "Pagesat, kthimet dhe mosmarrëveshjet trajtohen sipas politikave tona. Për pyetje, kontakto mbështetjen.",
+      ]}
+    />
   );
 }
 
