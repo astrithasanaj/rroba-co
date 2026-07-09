@@ -5,6 +5,7 @@ import {
   Bell,
   Bookmark,
   Check,
+  ChevronRight,
   Gem,
   Grid2x2,
   Heart,
