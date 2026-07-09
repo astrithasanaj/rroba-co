@@ -36,6 +36,7 @@ import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
+import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
 
@@ -177,6 +178,12 @@ const AuthenticatedListingIdPromoteRoute =
     path: '/listing/$id/promote',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedListingIdPremiumRoute =
+  AuthenticatedListingIdPremiumRouteImport.update({
+    id: '/listing/$id/premium',
+    path: '/listing/$id/premium',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedListingIdManageRoute =
   AuthenticatedListingIdManageRouteImport.update({
     id: '/listing/$id/manage',
@@ -218,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
   '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRoutesByTo {
@@ -247,6 +255,7 @@ export interface FileRoutesByTo {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
   '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRoutesById {
@@ -279,6 +288,7 @@ export interface FileRoutesById {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/_authenticated/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/_authenticated/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
   '/_authenticated/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRouteTypes {
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
+    | '/listing/$id/premium'
     | '/listing/$id/promote'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
+    | '/listing/$id/premium'
     | '/listing/$id/promote'
   id:
     | '__root__'
@@ -371,6 +383,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/_authenticated/listing/$id/edit'
     | '/_authenticated/listing/$id/manage'
+    | '/_authenticated/listing/$id/premium'
     | '/_authenticated/listing/$id/promote'
   fileRoutesById: FileRoutesById
 }
@@ -584,6 +597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedListingIdPromoteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/listing/$id/premium': {
+      id: '/_authenticated/listing/$id/premium'
+      path: '/listing/$id/premium'
+      fullPath: '/listing/$id/premium'
+      preLoaderRoute: typeof AuthenticatedListingIdPremiumRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/listing/$id/manage': {
       id: '/_authenticated/listing/$id/manage'
       path: '/listing/$id/manage'
@@ -609,6 +629,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBuyIdRoute: typeof AuthenticatedBuyIdRoute
   AuthenticatedListingIdEditRoute: typeof AuthenticatedListingIdEditRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
+  AuthenticatedListingIdPremiumRoute: typeof AuthenticatedListingIdPremiumRoute
   AuthenticatedListingIdPromoteRoute: typeof AuthenticatedListingIdPromoteRoute
 }
 
@@ -620,6 +641,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBuyIdRoute: AuthenticatedBuyIdRoute,
   AuthenticatedListingIdEditRoute: AuthenticatedListingIdEditRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,
+  AuthenticatedListingIdPremiumRoute: AuthenticatedListingIdPremiumRoute,
   AuthenticatedListingIdPromoteRoute: AuthenticatedListingIdPromoteRoute,
 }
 
