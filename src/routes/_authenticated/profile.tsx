@@ -1163,6 +1163,34 @@ function SettingsMain({
         <span style={{ fontSize: 14, fontWeight: 500, color: SOLD }}>Dilni nga llogaria</span>
       </button>
 
+      {/* Delete account */}
+      <div style={{ height: 1, backgroundColor: DIVIDER, margin: "24px 20px 0" }} />
+      <button
+        onClick={onDeleteAccount}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          padding: "16px 20px",
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          textAlign: "left",
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        <i className="ti ti-trash" style={{ fontSize: 20, color: "#e53935", width: 22 }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "#e53935", lineHeight: 1.3 }}>
+            Fshij llogarinë
+          </div>
+          <div style={{ fontSize: 12, color: MUTED, marginTop: 2, lineHeight: 1.3 }}>
+            Fshi përgjithmonë të gjitha të dhënat tuaja
+          </div>
+        </div>
+      </button>
+
       {/* Version */}
       <div
         style={{
