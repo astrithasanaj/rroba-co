@@ -72,7 +72,7 @@ export const blockUser = createServerFn({ method: "POST" })
     await supabaseAdmin
       .from("listings")
       .update({ status: "removed" })
-      .eq("seller_id", data.userId);
+      .eq("user_id", data.userId);
 
     // Revoke sessions (does not delete the account)
     try {
