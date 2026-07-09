@@ -50,13 +50,11 @@ const CORAL = "#e8826a";
 
 function Stat({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="flex flex-col items-center">
-      <span className="text-[22px] font-bold leading-none" style={{ color: INK }}>
-        {value}
-      </span>
-      <span className="mt-1 text-[12px]" style={{ color: MUTED }}>
+    <div style={{ textAlign: "center" }}>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
         {label}
-      </span>
+      </p>
     </div>
   );
 }
