@@ -182,6 +182,50 @@ input, textarea, select {
   background-color: #ede8de;
 }
 
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  width: 100%;
+  text-align: left;
+  background: #f6f1e7;
+  border-bottom: 1px solid #ddd8ce;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 80ms ease;
+}
+.settings-row:active { background: #ede8de; }
+
+.settings-icon {
+  font-size: 20px;
+  color: #1a1a1a;
+  width: 22px;
+  flex-shrink: 0;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.settings-text { flex: 1; min-width: 0; }
+.settings-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+.settings-subtitle {
+  font-size: 12px;
+  color: #a89f94;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.settings-chevron {
+  font-size: 14px;
+  color: #c8c3b9;
+  flex-shrink: 0;
+}
+
+
 
 
 
