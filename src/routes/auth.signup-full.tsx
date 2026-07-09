@@ -459,24 +459,15 @@ function SignupFullPage() {
     } catch (err) {
       const msg = err instanceof Error ? err.message.toLowerCase() : "";
       if (msg.includes("already") || msg.includes("registered")) {
-        setStep1Err({ email: "Ky email është tashmë i regjistruar." });
-        setStep(1);
-      } else if (
-        msg.includes("weak") ||
-        msg.includes("easy to guess") ||
-        msg.includes("pwned") ||
-        msg.includes("compromised")
-      ) {
-        setGlobalErr(
-          "Fjalëkalimi është shumë i zakonshëm dhe i lehtë për t'u gjetur. Kthehu në hapin e parë dhe zgjidh një fjalëkalim më të fortë.",
-        );
+        setGlobalErr("Ky email është tashmë i regjistruar.");
       } else {
-        setGlobalErr(err instanceof Error ? err.message : "Regjistrimi dështoi");
+        setGlobalErr("Diçka shkoi keq. Provo sërish ose kontakto mbështetjen.");
       }
     } finally {
       setLoading(false);
     }
   };
+
 
   const back = () => {
     if (step === 1) window.history.back();
