@@ -1044,6 +1044,12 @@ function SettingsSheet({
           onOpenChange={setConfirmLogout}
           onConfirm={() => { setConfirmLogout(false); onSignOut(); }}
         />
+
+        <DeleteAccountFlow
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          email={email}
+        />
       </SheetContent>
     </Sheet>
   );
