@@ -100,6 +100,33 @@ export type Database = {
         }
         Relationships: []
       }
+      gdpr_deletion_log: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       listing_likes: {
         Row: {
           created_at: string
