@@ -230,56 +230,144 @@ function ProfilePage() {
 
   return (
     <MobileShell>
-      <div style={{ backgroundColor: CREAM, color: INK }} className="min-h-screen pb-[90px]">
+      <div
+        style={{
+          backgroundColor: CREAM,
+          color: INK,
+          WebkitFontSmoothing: "antialiased",
+          WebkitTapHighlightColor: "transparent",
+        }}
+        className="min-h-screen pb-[90px]"
+      >
         {/* Header */}
-        <header className="flex items-center justify-between px-4 pt-3 pb-2">
-          <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
-            <button onClick={() => navigate({ to: "/notifications" })} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Njoftimet">
-              <Bell className="h-[18px] w-[18px]" strokeWidth={1.8} />
+        <header
+          className="flex items-center justify-between"
+          style={{ padding: "10px 16px 6px", backgroundColor: CREAM }}
+        >
+          <div
+            className="flex items-center"
+            style={{ backgroundColor: CARD, borderRadius: 20, padding: "7px 12px", gap: 8 }}
+          >
+            <button
+              onClick={() => navigate({ to: "/notifications" })}
+              className="profile-btn grid place-items-center"
+              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              aria-label="Njoftimet"
+            >
+              <Bell style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+            </button>
+            <button
+              onClick={() => setSortOpen(true)}
+              className="profile-btn grid place-items-center"
+              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              aria-label="Filtro"
+            >
+              <SlidersHorizontal style={{ width: 15, height: 15 }} strokeWidth={1.8} />
             </button>
           </div>
-          <h1 className="text-[15px] font-medium">{username}</h1>
-          <div className="flex items-center gap-1 rounded-full p-1" style={{ backgroundColor: INK }}>
-            <button onClick={handleShare} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Shpërndaj">
-              <IosShareIcon size={18} color="#f6f1e7" strokeWidth={1.6} />
+          <h1
+            style={{
+              fontSize: 14,
+              fontWeight: 500,
+              letterSpacing: "0.1px",
+              color: INK,
+            }}
+          >
+            {username}
+          </h1>
+          <div
+            className="flex items-center"
+            style={{ backgroundColor: CARD, borderRadius: 20, padding: "7px 12px", gap: 8 }}
+          >
+            <button
+              onClick={handleShare}
+              className="profile-btn grid place-items-center"
+              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              aria-label="Shpërndaj"
+            >
+              <IosShareIcon size={15} color={INK} strokeWidth={1.6} />
             </button>
-            <button onClick={() => setSettingsOpen(true)} className="grid h-9 w-9 place-items-center rounded-full text-white" aria-label="Cilësimet">
-              <SettingsIcon className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="profile-btn grid place-items-center"
+              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              aria-label="Cilësimet"
+            >
+              <SettingsIcon style={{ width: 15, height: 15 }} strokeWidth={1.8} />
             </button>
           </div>
         </header>
 
         {/* Profile section */}
-        <section className="px-4 pt-5">
-          <div className="flex items-center gap-4">
+        <section>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}>
             <img
               src={avatar}
               alt=""
-              className="h-[90px] w-[90px] shrink-0 rounded-full object-cover"
-              style={{ border: `2px solid ${DIVIDER}` }}
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: `2px solid ${DIVIDER}`,
+                flexShrink: 0,
+              }}
             />
-            <div className="flex flex-1 flex-col">
-              <div className="flex items-center justify-around">
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={myListings.filter((l) => l.status === "active").length} label="artikuj" />
                 <Stat value={followers} label="ndjekës" />
                 <Stat value={following} label="ndjek" />
               </div>
-              <div className="mt-3 flex gap-2">
+              <div style={{ display: "flex", gap: 7 }}>
                 <button
                   onClick={() => setBenefitsOpen(true)}
-                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[12px] px-3 text-[14px] font-bold"
-                  style={{ border: `1.5px solid ${INK}`, color: INK, backgroundColor: CREAM, height: 44 }}
+                  className="profile-btn"
+                  style={{
+                    flex: 1,
+                    height: 34,
+                    borderRadius: 10,
+                    border: "1px solid #c8c3b9",
+                    backgroundColor: CREAM,
+                    color: INK,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    letterSpacing: "0.2px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 4,
+                  }}
                 >
-                  <Gem className="h-4 w-4" strokeWidth={1.8} /> Përfitimet
+                  <Gem style={{ width: 12, height: 12 }} strokeWidth={1.8} />
+                  Përfitimet
                 </button>
                 <button
                   onClick={() => setRatingsOpen(true)}
-                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[12px] px-3 text-[14px] font-bold"
-                  style={{ border: `1.5px solid ${INK}`, color: INK, backgroundColor: CREAM, height: 44 }}
+                  className="profile-btn"
+                  style={{
+                    flex: 1,
+                    height: 34,
+                    borderRadius: 10,
+                    border: "1px solid #c8c3b9",
+                    backgroundColor: CREAM,
+                    color: INK,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    letterSpacing: "0.2px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 4,
+                  }}
                 >
                   {(profile?.rating_count ?? 0) > 0 ? (
                     <>
-                      <Star className="h-4 w-4" fill="currentColor" strokeWidth={0} />
+                      <Star style={{ width: 12, height: 12 }} fill="currentColor" strokeWidth={0} />
                       {(profile?.rating_avg ?? 0).toFixed(1)}
                     </>
                   ) : (
@@ -290,37 +378,69 @@ function ProfilePage() {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="truncate text-[20px] font-bold leading-tight" style={{ color: INK }}>{displayName}</p>
-              {profile?.city && (
-                <p className="text-[15px] leading-tight" style={{ color: MUTED }}>{profile.city}</p>
-              )}
-            </div>
-            <button
-              onClick={() => setHeightOpen(true)}
-              className="inline-flex shrink-0 items-center gap-1 text-[13px]"
-              style={{ color: MUTED, fontStyle: profile?.height_cm ? "normal" : "italic" }}
+          <div style={{ padding: "0 16px 14px" }}>
+            <p
+              style={{
+                fontSize: 17,
+                fontWeight: 600,
+                letterSpacing: "-0.2px",
+                color: INK,
+                lineHeight: 1.2,
+              }}
             >
-              {profile?.height_cm ? (
-                <>
-                  <Ruler className="h-3.5 w-3.5" /> {profile.height_cm} cm
-                </>
-              ) : (
-                "+ Shto gjatësinë"
-              )}
-            </button>
+              {displayName}
+            </p>
+            <div
+              style={{
+                marginTop: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
+            >
+              <span style={{ fontSize: 13, fontWeight: 400, color: MUTED }}>
+                {profile?.city || ""}
+              </span>
+              <button
+                onClick={() => setHeightOpen(true)}
+                className="profile-btn"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 3,
+                  fontSize: 12,
+                  color: MUTED,
+                  fontStyle: profile?.height_cm ? "normal" : "italic",
+                }}
+              >
+                {profile?.height_cm ? (
+                  <>
+                    <Ruler style={{ width: 13, height: 13 }} strokeWidth={1.8} />
+                    {profile.height_cm} cm
+                  </>
+                ) : (
+                  "+ Shto gjatësinë"
+                )}
+              </button>
+            </div>
+            {profile?.bio && (
+              <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>
+                {profile.bio}
+              </p>
+            )}
           </div>
-
-          {profile?.bio && (
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>{profile.bio}</p>
-          )}
         </section>
 
+        {/* Divider */}
+        <div style={{ height: 1, backgroundColor: DIVIDER, width: "100%" }} />
 
         {/* Tabs */}
-        <div className="mt-5" style={{ borderBottom: `1px solid ${DIVIDER}` }}>
-          <div className="grid grid-cols-4">
+        <div>
+          <div className="grid grid-cols-4" style={{ backgroundColor: CREAM }}>
             {tabs.map((t) => {
               const Icon = t.icon;
               const active = tab === t.id;
@@ -328,10 +448,24 @@ function ProfilePage() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className="relative flex items-center justify-center py-3"
+                  className="profile-btn relative flex items-center justify-center"
+                  style={{ height: 40, background: "transparent", border: "none" }}
                 >
-                  <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.2 : 1.7} style={{ color: active ? INK : MUTED }} />
-                  {active && <span className="absolute inset-x-8 -bottom-px h-[2px]" style={{ backgroundColor: INK }} />}
+                  <Icon
+                    style={{ width: 20, height: 20, color: active ? INK : "#c8c3b9" }}
+                    strokeWidth={active ? 2 : 1.7}
+                  />
+                  {active && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        bottom: 0,
+                        width: 20,
+                        height: 2,
+                        backgroundColor: INK,
+                      }}
+                    />
+                  )}
                 </button>
               );
             })}
@@ -353,13 +487,42 @@ function ProfilePage() {
 
         {/* Floating sort button */}
         {currentGrid.length > 0 && (
-          <button
-            onClick={() => setSortOpen(true)}
-            className="fixed bottom-20 left-1/2 z-30 -translate-x-1/2 inline-flex items-center gap-2 rounded-full px-5 py-3 text-[13px] font-semibold text-white shadow-lg"
-            style={{ backgroundColor: INK }}
+          <div
+            style={{
+              position: "fixed",
+              bottom: 90,
+              left: 0,
+              right: 0,
+              display: "flex",
+              justifyContent: "center",
+              padding: "10px 0 8px",
+              zIndex: 30,
+              pointerEvents: "none",
+            }}
           >
-            Rendit <ArrowDownUp className="h-4 w-4" />
-          </button>
+            <button
+              onClick={() => setSortOpen(true)}
+              className="profile-btn"
+              style={{
+                pointerEvents: "auto",
+                backgroundColor: INK,
+                color: CREAM,
+                height: 36,
+                borderRadius: 24,
+                padding: "0 18px",
+                fontSize: 13,
+                fontWeight: 500,
+                letterSpacing: "0.2px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                border: "none",
+              }}
+            >
+              <ArrowDownUp style={{ width: 14, height: 14 }} strokeWidth={2} />
+              Rendit
+            </button>
+          </div>
         )}
       </div>
 
@@ -555,9 +718,11 @@ function HeightSheet({
 
 function Stat({ value, label }: { value: number; label: string }) {
   return (
-    <div className="text-center">
-      <p className="text-[22px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
-      <p className="mt-0.5 text-[12px] font-normal" style={{ color: MUTED }}>{label}</p>
+    <div style={{ textAlign: "center" }}>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
+        {label}
+      </p>
     </div>
   );
 }
@@ -580,7 +745,10 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: CREAM }}>
+    <div
+      className="grid grid-cols-2"
+      style={{ gap: 1.5, backgroundColor: "#e8e3d9" }}
+    >
       {listings.map((l) => {
         const linkProps = manage
           ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
@@ -591,24 +759,31 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             key={l.id}
             {...linkProps}
             className="relative block aspect-square overflow-hidden"
-            style={{ backgroundColor: CARD }}
+            style={{ backgroundColor: CARD, borderRadius: 0 }}
           >
             {l.coverUrl && (
               <img
                 src={l.coverUrl}
                 alt={l.title}
-                className="h-full w-full object-cover object-top"
+                className="h-full w-full"
                 loading="lazy"
-                style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
+                }}
               />
             )}
             <span
-              className="pointer-events-none absolute left-2 top-2 italic"
+              className="pointer-events-none absolute italic"
               style={{
-                fontFamily: 'Georgia, "Times New Roman", serif',
-                fontSize: 10,
+                top: 0,
+                left: 0,
+                padding: "6px 7px",
+                fontFamily: "var(--font-voice), Georgia, serif",
+                fontSize: 9,
                 color: "#ffffff",
-                opacity: 0.8,
+                opacity: 0.75,
                 textShadow: "0 1px 2px rgba(0,0,0,0.35)",
               }}
             >
@@ -616,20 +791,33 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             </span>
             {isSold && <SoldRibbon />}
             <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-10"
-              style={{ backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.65) 100%)" }}
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                padding: "10px 8px 8px",
+                backgroundImage: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.58) 100%)",
+              }}
             >
               <p
-                className="truncate text-[11px] text-white"
-                style={{ opacity: isSold ? 0.75 : 0.85 }}
-              >
-                {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
-              </p>
-              <p
-                className="truncate text-[13px] font-bold text-white"
-                style={{ opacity: isSold ? 0.75 : 1 }}
+                className="truncate"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#ffffff",
+                  letterSpacing: "0.1px",
+                  opacity: isSold ? 0.85 : 1,
+                }}
               >
                 {l.title}
+              </p>
+              <p
+                className="truncate"
+                style={{
+                  fontSize: 10,
+                  color: "rgba(255,255,255,0.82)",
+                  marginTop: 2,
+                }}
+              >
+                {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
               </p>
             </div>
           </Link>
@@ -644,18 +832,18 @@ function SoldRibbon() {
     <div
       className="pointer-events-none absolute"
       style={{
-        top: 18,
-        right: -28,
-        width: 110,
+        top: 13,
+        right: -23,
+        width: 82,
         background: SOLD,
         color: "#ffffff",
-        fontSize: 11,
+        fontSize: 9,
         fontWeight: 700,
         textAlign: "center",
-        padding: "5px 0",
+        padding: "4px 0",
         transform: "rotate(45deg)",
         zIndex: 3,
-        letterSpacing: "0.5px",
+        letterSpacing: "0.8px",
         textTransform: "uppercase",
       }}
     >

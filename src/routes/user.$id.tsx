@@ -50,13 +50,11 @@ const CORAL = "#e8826a";
 
 function Stat({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="flex flex-col items-center">
-      <span className="text-[22px] font-bold leading-none" style={{ color: INK }}>
-        {value}
-      </span>
-      <span className="mt-1 text-[12px]" style={{ color: MUTED }}>
+    <div style={{ textAlign: "center" }}>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
         {label}
-      </span>
+      </p>
     </div>
   );
 }
@@ -264,101 +262,168 @@ function UserProfile() {
 
   return (
     <MobileShell>
-      <div style={{ backgroundColor: CREAM, color: INK }} className="min-h-screen pb-[110px]">
+      <div
+        style={{
+          backgroundColor: CREAM,
+          color: INK,
+          WebkitFontSmoothing: "antialiased",
+          WebkitTapHighlightColor: "transparent",
+        }}
+        className="min-h-screen pb-[110px]"
+      >
         {/* Header */}
         <header
-          className="sticky top-0 z-30 flex items-center justify-between px-4 py-3"
-          style={{ backgroundColor: CREAM }}
+          className="sticky top-0 z-30 flex items-center justify-between"
+          style={{ padding: "10px 16px 6px", backgroundColor: CREAM }}
         >
           <button
             onClick={() => window.history.back()}
-            className="grid h-10 w-10 place-items-center rounded-full"
-            style={{ backgroundColor: CARD, color: INK }}
+            className="profile-btn grid place-items-center"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "9999px",
+              backgroundColor: CARD,
+              color: INK,
+              border: "none",
+            }}
             aria-label="Kthehu"
           >
-            <ArrowLeft className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            <ArrowLeft style={{ width: 18, height: 18 }} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[15px] font-bold" style={{ color: INK }}>
+          <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
           </h1>
           <button
             onClick={() => setMoreOpen(true)}
-            className="grid h-10 w-10 place-items-center rounded-full"
-            style={{ backgroundColor: CARD, color: INK }}
+            className="profile-btn grid place-items-center"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "9999px",
+              backgroundColor: CARD,
+              color: INK,
+              border: "none",
+            }}
             aria-label="Më shumë"
           >
-            <MoreHorizontal className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            <MoreHorizontal style={{ width: 18, height: 18 }} strokeWidth={1.8} />
           </button>
         </header>
 
         {/* Profile */}
-        <section className="px-5 pt-4">
-          <div className="flex items-center gap-5">
-            <div className="relative shrink-0">
+        <section>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}>
+            <div style={{ position: "relative", flexShrink: 0 }}>
               <img
                 src={avatar}
                 alt=""
-                className="h-[90px] w-[90px] rounded-full object-cover"
-                style={{ border: `1px solid ${DIVIDER}` }}
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: `2px solid ${DIVIDER}`,
+                }}
               />
               {hasSale && (
                 <span
-                  className="absolute bottom-0 right-0 grid h-5 w-5 place-items-center rounded-full"
-                  style={{ backgroundColor: CORAL, border: `2px solid ${CREAM}` }}
+                  className="absolute grid place-items-center"
+                  style={{
+                    bottom: 0,
+                    right: 0,
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    backgroundColor: CORAL,
+                    border: `2px solid ${CREAM}`,
+                  }}
                   aria-label="Shitës aktiv"
                 >
-                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                  <Check style={{ width: 10, height: 10, color: "#fff" }} strokeWidth={3} />
                 </span>
               )}
             </div>
-            <div className="flex flex-1 items-center justify-around">
-              <Stat value={activeCount} label="artikuj" />
-              <Stat value={followers} label="ndjekës" />
-              <Stat value={followingCount} label="ndjek" />
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-around" }}>
+                <Stat value={activeCount} label="artikuj" />
+                <Stat value={followers} label="ndjekës" />
+                <Stat value={followingCount} label="ndjek" />
+              </div>
+              <div style={{ display: "flex", gap: 7 }}>
+                {!isOwn && (
+                  <button
+                    onClick={toggleFollow}
+                    className="profile-btn"
+                    style={{
+                      flex: 1,
+                      height: 34,
+                      borderRadius: 10,
+                      border: isFollowing ? "1px solid #c8c3b9" : "none",
+                      backgroundColor: isFollowing ? CREAM : INK,
+                      color: isFollowing ? INK : "#ffffff",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      letterSpacing: "0.2px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 4,
+                    }}
+                  >
+                    {isFollowing ? (
+                      <>
+                        Duke ndjekur <Check style={{ width: 12, height: 12 }} strokeWidth={2.2} />
+                      </>
+                    ) : (
+                      "Ndiq"
+                    )}
+                  </button>
+                )}
+                <button
+                  onClick={() => setReviewsOpen(true)}
+                  className="profile-btn"
+                  style={{
+                    flex: 1,
+                    height: 34,
+                    borderRadius: 10,
+                    border: "1px solid #c8c3b9",
+                    backgroundColor: CREAM,
+                    color: INK,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    letterSpacing: "0.2px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 4,
+                  }}
+                >
+                  <Star style={{ width: 12, height: 12 }} fill={CORAL} stroke={CORAL} strokeWidth={1.5} />
+                  {ratingBtnText}
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Follow + rating */}
-          <div className="mt-4 flex gap-2">
-            {!isOwn && (
-              <button
-                onClick={toggleFollow}
-                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[12px] text-[14px] font-bold transition active:scale-[0.98]"
-                style={{
-                  height: 44,
-                  backgroundColor: isFollowing ? CARD : INK,
-                  color: isFollowing ? INK : "#ffffff",
-                  border: isFollowing ? `1.5px solid ${INK}` : "none",
-                }}
-              >
-                {isFollowing ? (
-                  <>
-                    Duke ndjekur <Check className="h-4 w-4" strokeWidth={2.2} />
-                  </>
-                ) : (
-                  "Ndiq"
-                )}
-              </button>
-            )}
-            <button
-              onClick={() => setReviewsOpen(true)}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[12px] text-[14px] font-bold"
-              style={{ height: 44, backgroundColor: CARD, color: INK }}
+          <div style={{ padding: "0 16px 14px" }}>
+            <p
+              style={{
+                fontSize: 17,
+                fontWeight: 600,
+                letterSpacing: "-0.2px",
+                color: INK,
+                lineHeight: 1.2,
+              }}
             >
-              <Star className="h-4 w-4" fill={CORAL} stroke={CORAL} strokeWidth={1.5} />
-              {ratingBtnText}
-            </button>
-          </div>
-
-          {/* Name + member since */}
-          <div className="mt-4">
-            <p className="text-[20px] font-bold leading-tight" style={{ color: INK }}>
               {displayName}
             </p>
             {memberSince && (
-              <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
-                {memberSince}
-              </p>
+              <p style={{ marginTop: 4, fontSize: 13, color: MUTED }}>{memberSince}</p>
             )}
             {profile.bio && (
               <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>
@@ -368,19 +433,35 @@ function UserProfile() {
           </div>
         </section>
 
+        {/* Divider */}
+        <div style={{ height: 1, backgroundColor: DIVIDER, width: "100%" }} />
+
         {/* Tabs */}
-        <div className="mt-6" style={{ borderBottom: `1px solid ${DIVIDER}` }}>
-          <div className="grid grid-cols-2">
-            <button className="relative flex items-center justify-center py-3" aria-label="Rrjeti">
+        <div>
+          <div className="grid grid-cols-2" style={{ backgroundColor: CREAM }}>
+            <button
+              className="profile-btn relative flex items-center justify-center"
+              style={{ height: 40, background: "transparent", border: "none" }}
+              aria-label="Rrjeti"
+            >
               <GridIcon color={INK} />
-              <span className="absolute inset-x-8 -bottom-px h-[2px]" style={{ backgroundColor: INK }} />
+              <span
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  width: 20,
+                  height: 2,
+                  backgroundColor: INK,
+                }}
+              />
             </button>
             <button
               onClick={() => setSortOpen(true)}
-              className="flex items-center justify-center py-3"
+              className="profile-btn flex items-center justify-center"
+              style={{ height: 40, background: "transparent", border: "none" }}
               aria-label="Rendit"
             >
-              <ArrowDownUp className="h-[20px] w-[20px]" strokeWidth={1.8} style={{ color: MUTED }} />
+              <ArrowDownUp style={{ width: 20, height: 20, color: "#c8c3b9" }} strokeWidth={1.7} />
             </button>
           </div>
         </div>
@@ -391,7 +472,7 @@ function UserProfile() {
             Asnjë artikull për tu shfaqur.
           </div>
         ) : (
-          <div className="grid grid-cols-2" style={{ gap: 1, backgroundColor: CREAM }}>
+          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#e8e3d9" }}>
             {sorted.map((l) => (
               <div key={l.id} className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }}>
                 <ListingCard listing={l} aspect="1/1" isOnProfileGrid />
@@ -402,13 +483,42 @@ function UserProfile() {
 
         {/* Floating sort */}
         {sorted.length > 0 && (
-          <button
-            onClick={() => setSortOpen(true)}
-            className="fixed bottom-20 left-1/2 z-30 -translate-x-1/2 inline-flex items-center gap-2 rounded-full px-5 py-3 text-[13px] font-semibold text-white shadow-lg"
-            style={{ backgroundColor: INK }}
+          <div
+            style={{
+              position: "fixed",
+              bottom: 90,
+              left: 0,
+              right: 0,
+              display: "flex",
+              justifyContent: "center",
+              padding: "10px 0 8px",
+              zIndex: 30,
+              pointerEvents: "none",
+            }}
           >
-            Sorto <ArrowDownUp className="h-4 w-4" />
-          </button>
+            <button
+              onClick={() => setSortOpen(true)}
+              className="profile-btn"
+              style={{
+                pointerEvents: "auto",
+                backgroundColor: INK,
+                color: CREAM,
+                height: 36,
+                borderRadius: 24,
+                padding: "0 18px",
+                fontSize: 13,
+                fontWeight: 500,
+                letterSpacing: "0.2px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                border: "none",
+              }}
+            >
+              <ArrowDownUp style={{ width: 14, height: 14 }} strokeWidth={2} />
+              Sorto
+            </button>
+          </div>
         )}
       </div>
 

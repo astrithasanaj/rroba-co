@@ -172,5 +172,16 @@ input, textarea, select {
   100% { opacity: 1; }
 }
 
+.profile-btn {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms ease, transform 80ms ease;
+}
+.profile-btn:active {
+  transform: scale(0.97);
+  background-color: #ede8de;
+}
+
+
 
 
