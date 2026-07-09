@@ -92,7 +92,7 @@ function LoginPage() {
         return;
       }
       await router.invalidate();
-      if (prof?.onboarding_completed) {
+      if ((prof as any)?.onboarding_completed) {
         navigate({ to: "/", replace: true });
       } else {
         navigate({ to: "/onboarding", replace: true });
