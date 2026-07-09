@@ -1459,20 +1459,37 @@ function SupportView() {
 function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpenChange: (v: boolean) => void; onConfirm: () => void }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[60] grid place-items-center p-6" style={{ backgroundColor: "rgba(26,26,26,0.45)" }} onClick={() => onOpenChange(false)}>
-      <div className="w-full max-w-sm rounded-2xl p-6" style={{ backgroundColor: CREAM, color: INK }} onClick={(e) => e.stopPropagation()}>
-        <div className="text-[17px] font-bold" style={{ color: INK }}>Dil nga llogaria?</div>
-        <div className="mt-2 text-[14px]" style={{ color: INK }}>A je i sigurt që dëshiron të dalësh?</div>
-        <div className="mt-5 flex gap-2">
-          <button onClick={() => onOpenChange(false)} className="flex-1 rounded-full py-3 text-[14px] font-semibold" style={{ backgroundColor: CARD, color: INK }}>
-            Anulo
+    <div
+      className="fixed inset-0 z-[60] flex items-end justify-center"
+      style={{ backgroundColor: "rgba(26,26,26,0.45)" }}
+      onClick={() => onOpenChange(false)}
+    >
+      <div
+        className="w-full rounded-t-3xl px-5 pt-6 pb-8"
+        style={{ backgroundColor: CREAM, color: INK, maxWidth: 520 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ fontSize: 17, fontWeight: 700, color: INK, textAlign: "center" }}>A jeni i sigurt?</div>
+        <div style={{ fontSize: 13, color: MUTED, textAlign: "center", marginTop: 6 }}>
+          Do të dilni nga llogaria juaj.
+        </div>
+        <div className="mt-6 flex flex-col gap-2">
+          <button
+            onClick={onConfirm}
+            style={{ backgroundColor: INK, color: "#ffffff", height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
+          >
+            Po, dilni
           </button>
-          <button onClick={onConfirm} className="flex-1 rounded-full py-3 text-[14px] font-semibold" style={{ backgroundColor: SOLD, color: "#ffffff" }}>
-            Dil
+          <button
+            onClick={() => onOpenChange(false)}
+            style={{ backgroundColor: "#ede8de", color: INK, height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
+          >
+            Anulo
           </button>
         </div>
       </div>
     </div>
   );
 }
+
 
