@@ -35,6 +35,7 @@ import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/publi
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
+import { Route as AuthenticatedAdminPromotionsRouteImport } from './routes/_authenticated/admin.promotions'
 import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
 import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
@@ -172,6 +173,12 @@ const AuthenticatedAdminReportsRoute =
     path: '/admin/reports',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminPromotionsRoute =
+  AuthenticatedAdminPromotionsRouteImport.update({
+    id: '/admin/promotions',
+    path: '/admin/promotions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedListingIdPromoteRoute =
   AuthenticatedListingIdPromoteRouteImport.update({
     id: '/listing/$id/promote',
@@ -216,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
+  '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
@@ -246,6 +254,7 @@ export interface FileRoutesByTo {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth': typeof AuthIndexRoute
+  '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
@@ -279,6 +288,7 @@ export interface FileRoutesById {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
+  '/_authenticated/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/auth/'
+    | '/admin/promotions'
     | '/admin/reports'
     | '/admin/users'
     | '/buy/$id'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/auth'
+    | '/admin/promotions'
     | '/admin/reports'
     | '/admin/users'
     | '/buy/$id'
@@ -374,6 +386,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/auth/'
+    | '/_authenticated/admin/promotions'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
@@ -590,6 +603,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/promotions': {
+      id: '/_authenticated/admin/promotions'
+      path: '/admin/promotions'
+      fullPath: '/admin/promotions'
+      preLoaderRoute: typeof AuthenticatedAdminPromotionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/listing/$id/promote': {
       id: '/_authenticated/listing/$id/promote'
       path: '/listing/$id/promote'
@@ -624,6 +644,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedAdminPromotionsRoute: typeof AuthenticatedAdminPromotionsRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedBuyIdRoute: typeof AuthenticatedBuyIdRoute
@@ -636,6 +657,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedAdminPromotionsRoute: AuthenticatedAdminPromotionsRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedBuyIdRoute: AuthenticatedBuyIdRoute,

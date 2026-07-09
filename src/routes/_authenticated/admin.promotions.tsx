@@ -144,7 +144,6 @@ function AdminPromotions() {
   };
 
   const refuse = async (id: string) => {
-    if (!confirm) return;
     const row = rows.find((r) => r.id === id);
     const { error } = await supabase.from("promotions").update({ status: "refused" }).eq("id", id);
     if (error) return toast.error(error.message);
