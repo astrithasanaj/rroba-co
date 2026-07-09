@@ -49,17 +49,44 @@ const CITIES = [
 type Gender = "female" | "male" | "unspecified";
 
 type StrengthResult = {
-  checks: { length: boolean; uppercase: boolean; lowercase: boolean; number: boolean };
+  checks: {
+    length: boolean;
+    uppercase: boolean;
+    lowercase: boolean;
+    number: boolean;
+    notCommon: boolean;
+  };
   score: number;
+  isCommon: boolean;
   level: "weak" | "medium" | "good" | "strong";
 };
 
+const COMMON_PASSWORDS = [
+  "password", "password1", "password123", "password1!",
+  "12345678", "123456789", "1234567890",
+  "qwerty", "qwerty123", "qwertyuiop",
+  "abc12345", "iloveyou", "admin123", "admin1234",
+  "letmein", "welcome1", "welcome123",
+  "monkey123", "dragon", "master",
+  "sunshine", "princess", "football",
+  "shadow", "superman", "batman",
+  "michael", "jessica", "jennifer",
+  "111111111", "000000000", "aaaaaaaaa",
+  "asdfghjkl", "zxcvbnm",
+];
+
 function checkPasswordStrength(password: string): StrengthResult {
+  const lower = password.toLowerCase();
+  const isCommon =
+    password.length > 0 &&
+    COMMON_PASSWORDS.some((c) => lower === c || lower.includes(c));
+
   const checks = {
     length: password.length >= 8,
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /[0-9]/.test(password),
+    notCommon: !isCommon,
   };
 
   const passed = Object.values(checks).filter(Boolean).length;
@@ -67,7 +94,15 @@ function checkPasswordStrength(password: string): StrengthResult {
   return {
     checks,
     score: passed,
-    level: passed <= 1 ? "weak" : passed <= 2 ? "medium" : passed === 3 ? "good" : "strong",
+    isCommon,
+    level:
+      isCommon || passed <= 2
+        ? "weak"
+        : passed === 3
+          ? "medium"
+          : passed === 4
+            ? "good"
+            : "strong",
   };
 }
 
@@ -375,6 +410,15 @@ function SignupFullPage() {
       if (msg.includes("already") || msg.includes("registered")) {
         setStep1Err({ email: "Ky email është tashmë i regjistruar." });
         setStep(1);
+      } else if (
+        msg.includes("weak") ||
+        msg.includes("easy to guess") ||
+        msg.includes("pwned") ||
+        msg.includes("compromised")
+      ) {
+        setGlobalErr(
+          "Fjalëkalimi është shumë i zakonshëm dhe i lehtë për t'u gjetur. Kthehu në hapin e parë dhe zgjidh një fjalëkalim më të fortë.",
+        );
       } else {
         setGlobalErr(err instanceof Error ? err.message : "Regjistrimi dështoi");
       }
@@ -456,15 +500,15 @@ function SignupFullPage() {
                   </span>
                 </div>
                 <div className="flex gap-1">
-                  {[0, 1, 2, 3].map((i) => {
+                  {[0, 1, 2, 3, 4].map((i) => {
                     const filled = i < strength.score;
                     const color =
-                      strength.score <= 1
+                      strength.isCommon || strength.score <= 2
                         ? "#e53935"
-                        : strength.score <= 2
-                          ? "#e8826a"
-                          : strength.score === 3
-                            ? "#f9a825"
+                        : strength.score === 3
+                          ? "#f9a825"
+                          : strength.score === 4
+                            ? "#e8826a"
                             : "#43a047";
                     return (
                       <div
@@ -481,6 +525,7 @@ function SignupFullPage() {
                     { key: "uppercase", label: "Të paktën 1 shkronjë e madhe (A-Z)" },
                     { key: "lowercase", label: "Të paktën 1 shkronjë e vogël (a-z)" },
                     { key: "number", label: "Të paktën 1 numër (0-9)" },
+                    { key: "notCommon", label: "Nuk është fjalëkalim i zakonshëm" },
                   ].map((item) => {
                     const ok = strength.checks[item.key as keyof typeof strength.checks];
                     return (
@@ -768,9 +813,38 @@ function SignupFullPage() {
               </span>
             </label>
 
-            {globalErr && (
-              <p className="px-1 text-xs" style={{ color: ERR }}>
-                {globalErr}
+            {globalErr && globalErr.toLowerCase().includes("fjalëkalim") && (
+              <div
+                className="rounded-xl px-3 py-3"
+                style={{ background: "#fdecea", color: "#b71c1c" }}
+              >
+                <p className="text-[13px] leading-snug">⚠️ {globalErr}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGlobalErr("");
+                    setPassword("");
+                    setConfirm("");
+                    setStep(1);
+                  }}
+                  className="mt-3 w-full text-[14px] font-semibold transition active:scale-[0.98]"
+                  style={{
+                    background: INK,
+                    color: CREAM,
+                    height: 44,
+                    borderRadius: 10,
+                  }}
+                >
+                  ← Ndrysho fjalëkalimin
+                </button>
+              </div>
+            )}
+            {globalErr && !globalErr.toLowerCase().includes("fjalëkalim") && (
+              <p
+                className="rounded-xl px-3 py-2 text-[13px]"
+                style={{ background: "#fdecea", color: "#b71c1c" }}
+              >
+                ⚠️ {globalErr}
               </p>
             )}
 
