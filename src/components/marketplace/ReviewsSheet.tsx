@@ -194,9 +194,9 @@ export function ReviewsSheet({
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
-          side="bottom"
+          side="right"
           hideClose
-          className="h-[100dvh] p-0 border-0"
+          className="h-[100dvh] w-full !max-w-none p-0 border-0"
           style={{
             backgroundColor: CREAM,
             WebkitFontSmoothing: "antialiased",
