@@ -21,7 +21,7 @@ export type ListingRow = {
 
 };
 
-export type ListingView = ListingRow & { coverUrl: string; imageUrls: string[] };
+export type ListingView = ListingRow & { coverUrl: string; imageUrls: string[]; is_promoted?: boolean };
 
 export function sortActiveFirst<T extends { sold?: boolean; status?: string; created_at?: string }>(rows: T[]): T[] {
   return [...rows].sort((a, b) => {
