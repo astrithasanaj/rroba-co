@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { UserPlus, LogIn } from "lucide-react";
+import { UserPlus, LogIn, AlertTriangle } from "lucide-react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/")({
   ssr: false,
+  validateSearch: z.object({ error: z.string().optional() }),
   component: AuthLanding,
 });
 
@@ -15,6 +17,7 @@ const MUTED = "#a89f94";
 
 function AuthLanding() {
   const navigate = useNavigate();
+  const { error: authError } = Route.useSearch();
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) navigate({ to: "/", replace: true });
