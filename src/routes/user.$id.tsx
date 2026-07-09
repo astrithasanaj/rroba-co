@@ -577,12 +577,14 @@ function UserProfile() {
       </Sheet>
 
       {/* Reviews */}
-      <RatingsDialog
+      <ReviewsSheet
         open={reviewsOpen}
         onOpenChange={setReviewsOpen}
         sellerId={id}
         currentUserId={currentUserId}
         sellerName={displayName}
+        sellerUsername={username}
+        sellerCreatedAt={profile.created_at}
       />
 
       {/* Suppress unused var lint for likesTotal (surfaced via popular sort but unused otherwise) */}
