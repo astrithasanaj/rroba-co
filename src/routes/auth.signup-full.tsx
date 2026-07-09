@@ -332,7 +332,9 @@ function SignupFullPage() {
     lastName.trim() &&
     email.trim() &&
     strength.level === "strong" &&
-    password === confirm;
+    password === confirm &&
+    supabasePasswordError === null &&
+    !isCheckingPassword;
 
 
   const step2Filled = phone.trim().length >= 6;
