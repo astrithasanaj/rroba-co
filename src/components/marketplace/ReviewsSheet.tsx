@@ -195,6 +195,7 @@ export function ReviewsSheet({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
+          hideClose
           className="h-[100dvh] p-0 border-0"
           style={{
             backgroundColor: CREAM,
@@ -429,7 +430,7 @@ export function ReviewsSheet({
 
       {/* Rate sheet */}
       <Sheet open={rateOpen} onOpenChange={setRateOpen}>
-        <SheetContent side="bottom" className="p-0 border-0" style={{ backgroundColor: CREAM }}>
+        <SheetContent side="bottom" hideClose className="p-0 border-0" style={{ backgroundColor: CREAM }}>
           <div style={{ padding: 20 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerëso shitësin</div>
