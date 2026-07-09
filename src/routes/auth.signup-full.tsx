@@ -217,6 +217,55 @@ function SignupFullPage() {
     confirm?: string;
   }>({});
   const strength = useMemo(() => checkPasswordStrength(password), [password]);
+  const [supabasePasswordError, setSupabasePasswordError] = useState<string | null>(null);
+  const [isCheckingPassword, setIsCheckingPassword] = useState(false);
+
+  useEffect(() => {
+    if (strength.level !== "strong" || password !== confirm) {
+      setSupabasePasswordError(null);
+      setIsCheckingPassword(false);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setIsCheckingPassword(true);
+      try {
+        const testEmail = `test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@validation-check.invalid`;
+        const { error } = await supabase.auth.signUp({
+          email: testEmail,
+          password,
+        });
+        if (cancelled) return;
+        if (error) {
+          const msg = error.message.toLowerCase();
+          if (
+            msg.includes("weak") ||
+            msg.includes("easy to guess") ||
+            msg.includes("pwned") ||
+            msg.includes("compromised") ||
+            (msg.includes("password") && !msg.includes("email"))
+          ) {
+            setSupabasePasswordError(
+              "Fjalëkalimi është shumë i zakonshëm. Provo një kombinim të ndryshëm.",
+            );
+          } else {
+            setSupabasePasswordError(null);
+          }
+        } else {
+          setSupabasePasswordError(null);
+        }
+      } catch {
+        if (!cancelled) setSupabasePasswordError(null);
+      } finally {
+        if (!cancelled) setIsCheckingPassword(false);
+      }
+    }, 800);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [password, confirm, strength.level]);
 
 
   // Step 2
@@ -283,7 +332,9 @@ function SignupFullPage() {
     lastName.trim() &&
     email.trim() &&
     strength.level === "strong" &&
-    password === confirm;
+    password === confirm &&
+    supabasePasswordError === null &&
+    !isCheckingPassword;
 
 
   const step2Filled = phone.trim().length >= 6;
@@ -408,24 +459,15 @@ function SignupFullPage() {
     } catch (err) {
       const msg = err instanceof Error ? err.message.toLowerCase() : "";
       if (msg.includes("already") || msg.includes("registered")) {
-        setStep1Err({ email: "Ky email është tashmë i regjistruar." });
-        setStep(1);
-      } else if (
-        msg.includes("weak") ||
-        msg.includes("easy to guess") ||
-        msg.includes("pwned") ||
-        msg.includes("compromised")
-      ) {
-        setGlobalErr(
-          "Fjalëkalimi është shumë i zakonshëm dhe i lehtë për t'u gjetur. Kthehu në hapin e parë dhe zgjidh një fjalëkalim më të fortë.",
-        );
+        setGlobalErr("Ky email është tashmë i regjistruar.");
       } else {
-        setGlobalErr(err instanceof Error ? err.message : "Regjistrimi dështoi");
+        setGlobalErr("Diçka shkoi keq. Provo sërish ose kontakto mbështetjen.");
       }
     } finally {
       setLoading(false);
     }
   };
+
 
   const back = () => {
     if (step === 1) window.history.back();
@@ -568,13 +610,52 @@ function SignupFullPage() {
             <p className="px-1 text-[12px]" style={{ color: MUTED }}>
               Emri dhe mbiemri do të shfaqen në profilin tuaj publik.
             </p>
+            {strength.level === "strong" && password === confirm && confirm.length > 0 && (
+              <div
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-[12.5px]"
+                style={{
+                  background: isCheckingPassword
+                    ? CARD
+                    : supabasePasswordError
+                      ? "#fdecea"
+                      : "#e8f5e9",
+                  color: isCheckingPassword
+                    ? MUTED
+                    : supabasePasswordError
+                      ? "#b71c1c"
+                      : "#2e7d32",
+                }}
+              >
+                {isCheckingPassword ? (
+                  <>
+                    <span
+                      style={{
+                        width: 12,
+                        height: 12,
+                        border: `2px solid ${MUTED}`,
+                        borderTopColor: "transparent",
+                        borderRadius: "50%",
+                        display: "inline-block",
+                        animation: "signupSpin 700ms linear infinite",
+                      }}
+                    />
+                    <span>Duke kontrolluar fjalëkalimin...</span>
+                  </>
+                ) : supabasePasswordError ? (
+                  <span>⚠️ {supabasePasswordError}</span>
+                ) : (
+                  <span>Fjalëkalimi u pranua ✓</span>
+                )}
+              </div>
+            )}
+            <style>{`@keyframes signupSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
             <button
               type="submit"
               disabled={!step1Filled}
               className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
               style={{ background: INK, color: "#fff", height: 52, borderRadius: 14 }}
             >
-              Vazhdo →
+              {isCheckingPassword ? "Duke kontrolluar..." : "Vazhdo →"}
             </button>
             <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
               Ke tashmë llogari?{" "}
@@ -813,33 +894,7 @@ function SignupFullPage() {
               </span>
             </label>
 
-            {globalErr && globalErr.toLowerCase().includes("fjalëkalim") && (
-              <div
-                className="rounded-xl px-3 py-3"
-                style={{ background: "#fdecea", color: "#b71c1c" }}
-              >
-                <p className="text-[13px] leading-snug">⚠️ {globalErr}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGlobalErr("");
-                    setPassword("");
-                    setConfirm("");
-                    setStep(1);
-                  }}
-                  className="mt-3 w-full text-[14px] font-semibold transition active:scale-[0.98]"
-                  style={{
-                    background: INK,
-                    color: CREAM,
-                    height: 44,
-                    borderRadius: 10,
-                  }}
-                >
-                  ← Ndrysho fjalëkalimin
-                </button>
-              </div>
-            )}
-            {globalErr && !globalErr.toLowerCase().includes("fjalëkalim") && (
+            {globalErr && (
               <p
                 className="rounded-xl px-3 py-2 text-[13px]"
                 style={{ background: "#fdecea", color: "#b71c1c" }}
