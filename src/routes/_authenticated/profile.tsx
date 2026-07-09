@@ -950,6 +950,7 @@ function SettingsSheet({
 }) {
   const [view, setView] = useState<SettingsView>("main");
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => { if (open) setView("main"); }, [open]);
 
