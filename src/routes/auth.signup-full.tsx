@@ -410,6 +410,15 @@ function SignupFullPage() {
       if (msg.includes("already") || msg.includes("registered")) {
         setStep1Err({ email: "Ky email është tashmë i regjistruar." });
         setStep(1);
+      } else if (
+        msg.includes("weak") ||
+        msg.includes("easy to guess") ||
+        msg.includes("pwned") ||
+        msg.includes("compromised")
+      ) {
+        setGlobalErr(
+          "Fjalëkalimi është shumë i zakonshëm dhe i lehtë për t'u gjetur. Kthehu në hapin e parë dhe zgjidh një fjalëkalim më të fortë.",
+        );
       } else {
         setGlobalErr(err instanceof Error ? err.message : "Regjistrimi dështoi");
       }
