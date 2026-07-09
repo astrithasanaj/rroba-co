@@ -21,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as AuthSignupFullRouteImport } from './routes/auth.signup-full'
 import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
@@ -93,6 +94,11 @@ const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupFullRoute = AuthSignupFullRouteImport.update({
+  id: '/signup-full',
+  path: '/signup-full',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/signup',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth': typeof AuthIndexRoute
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/signup'
+    | '/auth/signup-full'
     | '/product/$id'
     | '/user/$id'
     | '/auth/'
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/signup'
+    | '/auth/signup-full'
     | '/product/$id'
     | '/user/$id'
     | '/auth'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/signup'
+    | '/auth/signup-full'
     | '/product/$id'
     | '/user/$id'
     | '/auth/'
@@ -428,6 +440,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/product/$id'
       preLoaderRoute: typeof ProductIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup-full': {
+      id: '/auth/signup-full'
+      path: '/signup-full'
+      fullPath: '/auth/signup-full'
+      preLoaderRoute: typeof AuthSignupFullRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/signup': {
       id: '/auth/signup'
@@ -548,6 +567,7 @@ interface AuthRouteChildren {
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  AuthSignupFullRoute: typeof AuthSignupFullRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
 
@@ -555,6 +575,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthSignupRoute: AuthSignupRoute,
+  AuthSignupFullRoute: AuthSignupFullRoute,
   AuthIndexRoute: AuthIndexRoute,
 }
 
