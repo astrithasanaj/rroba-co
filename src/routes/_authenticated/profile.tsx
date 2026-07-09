@@ -1130,9 +1130,7 @@ function SettingsMain({
       <SectionHeader>Tjetër</SectionHeader>
       <div>
         <Row icon="ti-shield" title="Privatësia" subtitle="Politikat dhe të dhënat e tua" onClick={() => onNavigate("privacy")} />
-        <Row icon="ti-file-text" title="Kushtet e shërbimit" onClick={() => onNavigate("terms")} />
-        <Row icon="ti-star" title="Vlerëso aplikacionin" onClick={rateApp} />
-        <Row icon="ti-share" title="Ndaj aplikacionin" onClick={shareApp} isLast />
+        <Row icon="ti-file-text" title="Kushtet e shërbimit" onClick={() => onNavigate("terms")} isLast />
       </div>
 
       {/* Logout */}
