@@ -552,33 +552,59 @@ function ProfilePage() {
         </SheetContent>
       </Sheet>
 
-      {/* Benefits sheet */}
+      {/* Benefits sheet — full-page slide-in from right */}
       <Sheet open={benefitsOpen} onOpenChange={setBenefitsOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CREAM }}>
-          <div className="mx-auto mt-3 h-1.5 w-12 rounded-full" style={{ backgroundColor: DIVIDER }} />
-          <div className="px-5 pb-8 pt-4">
-            <h2 className="mb-1 text-[18px] font-bold" style={{ color: INK }}>Përfitimet e shitësit</h2>
-            <p className="mb-4 text-[13px]" style={{ color: MUTED }}>Sa më shumë shet, aq më shumë përfitime.</p>
-            <div className="space-y-2.5">
-              <TierCard
-                emoji="🥉" title="Fillestar" range="0–4 shitje"
-                body="Akses bazë në listim dhe shitje."
-                active={tier === "starter"}
-              />
-              <TierCard
-                emoji="🥈" title="I besueshëm" range="5–19 shitje"
-                body="Prioritet në kërkim dhe shenjë e verifikuar."
-                active={tier === "trusted"}
-              />
-              <TierCard
-                emoji="🥇" title="Top shitës" range="20+ shitje"
-                body="Promovim falas, shenjë e artë dhe shfaqje në kryefaqe."
-                active={tier === "top"}
-              />
+        <SheetContent
+          side="right"
+          hideClose
+          className="h-[100dvh] w-full !max-w-none p-0 border-0"
+          style={{ backgroundColor: CREAM, WebkitFontSmoothing: "antialiased", overscrollBehavior: "contain" }}
+        >
+          {/* Header — matches Vlerësimet */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "14px 16px 12px",
+              borderBottom: `1px solid ${DIVIDER}`,
+              backgroundColor: CREAM,
+            }}
+          >
+            <div style={{ width: 72 }} />
+            <div style={{ textAlign: "center", flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Përfitimet</div>
+              <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>e shitësit</div>
             </div>
+            <button
+              onClick={() => setBenefitsOpen(false)}
+              style={{
+                background: CARD,
+                color: INK,
+                borderRadius: 20,
+                padding: "8px 16px",
+                fontSize: 13,
+                fontWeight: 600,
+                border: 0,
+                WebkitTapHighlightColor: "transparent",
+                cursor: "pointer",
+              }}
+            >
+              Mbyll
+            </button>
+          </div>
+
+          <div style={{ overflowY: "auto", height: "calc(100dvh - 60px)", paddingBottom: 40 }}>
+            <p style={{ fontSize: 13, color: MUTED, textAlign: "center", padding: "16px 24px 20px", lineHeight: 1.5, margin: 0 }}>
+              Sa më shumë shet, aq më shumë përfitime.
+            </p>
+            <TierCard emoji="🥉" title="Fillestar" range="0–4 shitje" body="Akses bazë në listim dhe shitje." active={tier === "starter"} />
+            <TierCard emoji="🥈" title="I besueshëm" range="5–19 shitje" body="Prioritet në kërkim dhe shenjë e verifikuar." active={tier === "trusted"} />
+            <TierCard emoji="🥇" title="Top shitës" range="20+ shitje" body="Promovim falas, shenjë e artë dhe shfaqje në kryefaqe." active={tier === "top"} />
           </div>
         </SheetContent>
       </Sheet>
+
 
       {/* Reviews dialog */}
       <ReviewsSheet
