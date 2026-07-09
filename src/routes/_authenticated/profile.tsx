@@ -1023,6 +1023,7 @@ function SettingsSheet({
               onNavigate={setView}
               onOpenOffers={onOpenOffers}
               onLogout={() => setConfirmLogout(true)}
+              onDeleteAccount={() => setDeleteOpen(true)}
             />
           )}
           {view === "profile" && (
