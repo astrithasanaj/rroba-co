@@ -1,0 +1,705 @@
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+export const Route = createFileRoute("/auth/signup-full")({
+  ssr: false,
+  component: SignupFullPage,
+});
+
+const CREAM = "#f6f1e7";
+const CARD = "#ede8de";
+const INK = "#1a1a1a";
+const MUTED = "#a89f94";
+const CORAL = "#e8826a";
+const DIVIDER = "#ddd8ce";
+const ERR = "#e53935";
+
+const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
+  { code: "+383", flag: "🇽🇰", name: "Kosovo" },
+  { code: "+355", flag: "🇦🇱", name: "Shqipëri" },
+  { code: "+389", flag: "🇲🇰", name: "Maqedoni e V." },
+  { code: "+47", flag: "🇳🇴", name: "Norvegji" },
+  { code: "+46", flag: "🇸🇪", name: "Suedi" },
+  { code: "+45", flag: "🇩🇰", name: "Danimarkë" },
+  { code: "+49", flag: "🇩🇪", name: "Gjermani" },
+  { code: "+41", flag: "🇨🇭", name: "Zvicër" },
+  { code: "+43", flag: "🇦🇹", name: "Austri" },
+  { code: "+39", flag: "🇮🇹", name: "Itali" },
+  { code: "+33", flag: "🇫🇷", name: "Francë" },
+  { code: "+44", flag: "🇬🇧", name: "Britani" },
+  { code: "+1", flag: "🇺🇸", name: "SHBA" },
+];
+
+const CITIES = [
+  "Prishtinë",
+  "Prizren",
+  "Pejë",
+  "Gjilan",
+  "Ferizaj",
+  "Mitrovicë",
+  "Tiranë",
+  "Durrës",
+  "Vlorë",
+  "Shkodër",
+  "Tjetër",
+];
+
+type Gender = "female" | "male" | "unspecified";
+
+function Field({
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  error,
+  right,
+  autoComplete,
+  inputMode,
+  disabled,
+}: {
+  type?: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  error?: boolean;
+  right?: React.ReactNode;
+  autoComplete?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  disabled?: boolean;
+}) {
+  return (
+    <div className="relative">
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        disabled={disabled}
+        autoCapitalize={
+          type === "email" || type === "password" || inputMode === "tel" ? "none" : "words"
+        }
+        autoCorrect="off"
+        className="w-full text-[15px] outline-none disabled:opacity-60"
+        style={{
+          background: CARD,
+          color: INK,
+          height: 52,
+          borderRadius: 12,
+          padding: right ? "0 44px 0 16px" : "0 16px",
+          outline: error ? `2px solid ${ERR}` : undefined,
+        }}
+      />
+      {right ? <div className="absolute right-3 top-1/2 -translate-y-1/2">{right}</div> : null}
+    </div>
+  );
+}
+
+function Header({
+  step,
+  onBack,
+  title,
+}: {
+  step: 1 | 2 | 3;
+  onBack: () => void;
+  title: string;
+}) {
+  return (
+    <>
+      <button
+        onClick={onBack}
+        aria-label="Kthehu"
+        className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full"
+        style={{ color: INK }}
+      >
+        <ArrowLeft size={22} />
+      </button>
+      <div className="mt-4">
+        <h1
+          className="italic"
+          style={{
+            fontFamily: '"Instrument Serif", serif',
+            fontSize: 30,
+            color: INK,
+            fontWeight: 400,
+          }}
+        >
+          {title}
+        </h1>
+        <p className="mt-1 text-sm" style={{ color: MUTED }}>
+          Hapi {step} nga 3
+        </p>
+      </div>
+    </>
+  );
+}
+
+function SignupFullPage() {
+  const navigate = useNavigate();
+  const router = useRouter();
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [loading, setLoading] = useState(false);
+  const [globalErr, setGlobalErr] = useState("");
+
+  // Step 1
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [showP, setShowP] = useState(false);
+  const [showC, setShowC] = useState(false);
+  const [step1Err, setStep1Err] = useState<{
+    email?: string;
+    password?: string;
+    confirm?: string;
+  }>({});
+
+  // Step 2
+  const [countryCode, setCountryCode] = useState("+383");
+  const [phone, setPhone] = useState("");
+  const [phoneErr, setPhoneErr] = useState("");
+
+  // Step 3
+  const [dob, setDob] = useState("");
+  const [city, setCity] = useState("");
+  const [gender, setGender] = useState<Gender | "">("");
+  const [username, setUsername] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState<
+    "idle" | "checking" | "ok" | "taken" | "invalid"
+  >("idle");
+  const [terms, setTerms] = useState(false);
+  const [ageErr, setAgeErr] = useState("");
+
+  const maxDob = useMemo(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 16);
+    return d.toISOString().slice(0, 10);
+  }, []);
+
+  // Real-time username availability
+  const usernameDebounce = useRef<number | null>(null);
+  useEffect(() => {
+    if (!username) {
+      setUsernameStatus("idle");
+      return;
+    }
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+      setUsernameStatus("invalid");
+      return;
+    }
+    setUsernameStatus("checking");
+    if (usernameDebounce.current) window.clearTimeout(usernameDebounce.current);
+    usernameDebounce.current = window.setTimeout(async () => {
+      const { data, error } = await supabase.rpc("is_username_available" as any, {
+        _username: username,
+      });
+      if (error) {
+        setUsernameStatus("idle");
+        return;
+      }
+      setUsernameStatus(data ? "ok" : "taken");
+    }, 350);
+    return () => {
+      if (usernameDebounce.current) window.clearTimeout(usernameDebounce.current);
+    };
+  }, [username]);
+
+  const validateStep1 = () => {
+    const e: typeof step1Err = {};
+    if (!email.trim()) e.email = "Emaili është i detyrueshëm";
+    if (password.length < 8) e.password = "Fjalëkalimi duhet të ketë të paktën 8 karaktere";
+    if (password !== confirm) e.confirm = "Fjalëkalimet nuk përputhen";
+    setStep1Err(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const step1Filled =
+    firstName.trim() &&
+    lastName.trim() &&
+    email.trim() &&
+    password.length >= 8 &&
+    confirm.length >= 8;
+
+  const step2Filled = phone.trim().length >= 6;
+
+  const validateAge = (d: string) => {
+    if (!d) return false;
+    const dob = new Date(d);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age -= 1;
+    return age >= 16;
+  };
+
+  const step3Filled =
+    dob &&
+    city &&
+    gender &&
+    username &&
+    usernameStatus === "ok" &&
+    terms &&
+    validateAge(dob);
+
+  const nextFromStep1 = () => {
+    if (!validateStep1() || !step1Filled) return;
+    setGlobalErr("");
+    setStep(2);
+  };
+
+  const nextFromStep2 = async () => {
+    setPhoneErr("");
+    setGlobalErr("");
+    if (!step2Filled) return;
+    const fullPhone = countryCode + phone.replace(/\s+/g, "");
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.rpc("is_signup_blocked" as any, {
+        _email: email.trim().toLowerCase(),
+        _phone: fullPhone,
+      });
+      if (error) throw error;
+      if (data) {
+        setGlobalErr(
+          "Ky account është bllokuar. Nëse mendoni se kjo është gabim, kontaktoni support@rroba.app",
+        );
+        return;
+      }
+      setStep(3);
+    } catch (err) {
+      setGlobalErr(err instanceof Error ? err.message : "Gabim");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submit = async () => {
+    setGlobalErr("");
+    setAgeErr("");
+    if (!validateAge(dob)) {
+      setAgeErr("Duhet të jesh të paktën 16 vjeç për t'u regjistruar.");
+      return;
+    }
+    if (!terms || usernameStatus !== "ok") return;
+    setLoading(true);
+    const fullPhone = countryCode + phone.replace(/\s+/g, "");
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: {
+          emailRedirectTo: window.location.origin + "/onboarding",
+          data: {
+            full_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+            first_name: firstName.trim(),
+            last_name: lastName.trim(),
+          },
+        },
+      });
+      if (error) throw error;
+      if (!data.user) throw new Error("Regjistrimi dështoi");
+
+      // Update profile with all collected data
+      const nameFull = `${firstName.trim()} ${lastName.trim()}`.trim();
+      const genderMap: Record<Gender, string> = {
+        female: "Femër",
+        male: "Mashkull",
+        unspecified: "Preferoj të mos specifikoj",
+      };
+      const patch: Record<string, unknown> = {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        name: nameFull,
+        display_name: nameFull,
+        username,
+        phone: fullPhone,
+        phone_verified: false,
+        date_of_birth: dob,
+        city,
+        gender: genderMap[gender as Gender],
+        signup_device:
+          typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : "unknown",
+        terms_accepted_at: new Date().toISOString(),
+      };
+
+      if (data.session) {
+        // Session exists (email confirmation disabled) — update via RLS
+        const { error: upErr } = await supabase
+          .from("profiles")
+          .update(patch as any)
+          .eq("id", data.user.id);
+        if (upErr) console.error(upErr);
+        await router.invalidate();
+        navigate({ to: "/onboarding", replace: true });
+      } else {
+        // No session — profile will be updated after confirmation/login
+        setGlobalErr("Kontrollo emailin për të konfirmuar llogarinë.");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message.toLowerCase() : "";
+      if (msg.includes("already") || msg.includes("registered")) {
+        setStep1Err({ email: "Ky email është tashmë i regjistruar." });
+        setStep(1);
+      } else {
+        setGlobalErr(err instanceof Error ? err.message : "Regjistrimi dështoi");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const back = () => {
+    if (step === 1) window.history.back();
+    else setStep((s) => (s === 3 ? 2 : 1));
+  };
+
+  return (
+    <div className="min-h-screen w-full" style={{ background: CREAM }}>
+      <div className="mx-auto w-full max-w-[420px] px-6 pb-10 pt-4">
+        <Header
+          step={step}
+          onBack={back}
+          title={step === 1 ? "Krijo llogarinë" : step === 2 ? "Numri i telefonit" : "Detajet e profilit"}
+        />
+
+        {/* Step 1 */}
+        {step === 1 && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              nextFromStep1();
+            }}
+            className="mt-8 space-y-3"
+          >
+            <Field value={firstName} onChange={setFirstName} placeholder="Emri" autoComplete="given-name" />
+            <Field value={lastName} onChange={setLastName} placeholder="Mbiemri" autoComplete="family-name" />
+            <Field
+              type="email"
+              value={email}
+              onChange={(v) => {
+                setEmail(v);
+                setStep1Err((s) => ({ ...s, email: undefined }));
+              }}
+              placeholder="Email"
+              autoComplete="email"
+              error={!!step1Err.email}
+            />
+            {step1Err.email && (
+              <p className="px-1 text-xs" style={{ color: ERR }}>
+                {step1Err.email}
+              </p>
+            )}
+            <Field
+              type={showP ? "text" : "password"}
+              value={password}
+              onChange={(v) => {
+                setPassword(v);
+                setStep1Err((s) => ({ ...s, password: undefined, confirm: undefined }));
+              }}
+              placeholder="Fjalëkalimi (min 8)"
+              autoComplete="new-password"
+              error={!!step1Err.password}
+              right={
+                <button type="button" onClick={() => setShowP((v) => !v)} style={{ color: MUTED }}>
+                  {showP ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              }
+            />
+            {step1Err.password && (
+              <p className="px-1 text-xs" style={{ color: ERR }}>
+                {step1Err.password}
+              </p>
+            )}
+            <Field
+              type={showC ? "text" : "password"}
+              value={confirm}
+              onChange={(v) => {
+                setConfirm(v);
+                setStep1Err((s) => ({ ...s, confirm: undefined }));
+              }}
+              placeholder="Konfirmo fjalëkalimin"
+              autoComplete="new-password"
+              error={!!step1Err.confirm}
+              right={
+                <button type="button" onClick={() => setShowC((v) => !v)} style={{ color: MUTED }}>
+                  {showC ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              }
+            />
+            {step1Err.confirm && (
+              <p className="px-1 text-xs" style={{ color: ERR }}>
+                {step1Err.confirm}
+              </p>
+            )}
+            <p className="px-1 text-[12px]" style={{ color: MUTED }}>
+              Emri dhe mbiemri do të shfaqen në profilin tuaj publik.
+            </p>
+            <button
+              type="submit"
+              disabled={!step1Filled}
+              className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
+              style={{ background: INK, color: "#fff", height: 52, borderRadius: 14 }}
+            >
+              Vazhdo →
+            </button>
+            <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
+              Ke tashmë llogari?{" "}
+              <Link to="/auth/login" className="font-semibold" style={{ color: CORAL }}>
+                Hyr
+              </Link>
+            </p>
+          </form>
+        )}
+
+        {/* Step 2 */}
+        {step === 2 && (
+          <div className="mt-8 space-y-3">
+            <div className="flex gap-2">
+              <div className="relative">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="appearance-none text-[15px] outline-none"
+                  style={{
+                    background: CARD,
+                    color: INK,
+                    height: 52,
+                    borderRadius: 12,
+                    padding: "0 32px 0 12px",
+                    minWidth: 110,
+                  }}
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.flag} {c.code}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1">
+                <Field
+                  value={phone}
+                  onChange={(v) => {
+                    setPhone(v.replace(/[^\d\s]/g, ""));
+                    setPhoneErr("");
+                  }}
+                  placeholder="4X XXX XXX"
+                  inputMode="tel"
+                  autoComplete="tel-national"
+                  error={!!phoneErr}
+                />
+              </div>
+            </div>
+            {phoneErr && (
+              <p className="px-1 text-xs" style={{ color: ERR }}>
+                {phoneErr}
+              </p>
+            )}
+            <p className="px-1 text-[12px]" style={{ color: MUTED }}>
+              Numri i telefonit do të lidhet me llogarinë tuaj për siguri shtesë.
+            </p>
+            {globalErr && (
+              <p className="px-1 text-xs" style={{ color: ERR }}>
+                {globalErr}
+              </p>
+            )}
+            <button
+              onClick={nextFromStep2}
+              disabled={!step2Filled || loading}
+              className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
+              style={{ background: INK, color: "#fff", height: 52, borderRadius: 14 }}
+            >
+              {loading ? "Duke kontrolluar..." : "Vazhdo →"}
+            </button>
+          </div>
+        )}
+
+        {/* Step 3 */}
+        {step === 3 && (
+          <div className="mt-8 space-y-4">
+            <div>
+              <label className="mb-1 block px-1 text-[13px]" style={{ color: MUTED }}>
+                Data e lindjes
+              </label>
+              <input
+                type="date"
+                value={dob}
+                max={maxDob}
+                onChange={(e) => {
+                  setDob(e.target.value);
+                  setAgeErr("");
+                }}
+                className="w-full text-[15px] outline-none"
+                style={{
+                  background: CARD,
+                  color: INK,
+                  height: 52,
+                  borderRadius: 12,
+                  padding: "0 16px",
+                }}
+              />
+              {ageErr && (
+                <p className="mt-1 px-1 text-xs" style={{ color: ERR }}>
+                  {ageErr}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-1 block px-1 text-[13px]" style={{ color: MUTED }}>
+                Qyteti
+              </label>
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full appearance-none text-[15px] outline-none"
+                style={{
+                  background: CARD,
+                  color: city ? INK : MUTED,
+                  height: 52,
+                  borderRadius: 12,
+                  padding: "0 16px",
+                }}
+              >
+                <option value="">Zgjidh qytetin</option>
+                {CITIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block px-1 text-[13px]" style={{ color: MUTED }}>
+                Gjinia
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    { v: "female", l: "Femër" },
+                    { v: "male", l: "Mashkull" },
+                    { v: "unspecified", l: "Preferoj të mos specifikoj" },
+                  ] as { v: Gender; l: string }[]
+                ).map((g) => (
+                  <button
+                    key={g.v}
+                    type="button"
+                    onClick={() => setGender(g.v)}
+                    className="text-[14px] transition active:scale-95"
+                    style={{
+                      background: gender === g.v ? INK : CARD,
+                      color: gender === g.v ? "#fff" : INK,
+                      height: 40,
+                      borderRadius: 20,
+                      padding: "0 16px",
+                    }}
+                  >
+                    {g.l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block px-1 text-[13px]" style={{ color: MUTED }}>
+                Emri i shfaqur (@handle)
+              </label>
+              <div className="relative">
+                <input
+                  value={username}
+                  onChange={(e) =>
+                    setUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase())
+                  }
+                  placeholder="username"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  className="w-full text-[15px] outline-none"
+                  style={{
+                    background: CARD,
+                    color: INK,
+                    height: 52,
+                    borderRadius: 12,
+                    padding: "0 44px 0 32px",
+                  }}
+                />
+                <span
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[15px]"
+                  style={{ color: MUTED }}
+                >
+                  @
+                </span>
+                <div
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs"
+                  style={{
+                    color:
+                      usernameStatus === "ok"
+                        ? "#2e7d32"
+                        : usernameStatus === "taken" || usernameStatus === "invalid"
+                          ? ERR
+                          : MUTED,
+                  }}
+                >
+                  {usernameStatus === "checking"
+                    ? "..."
+                    : usernameStatus === "ok"
+                      ? "✓"
+                      : usernameStatus === "taken"
+                        ? "e zënë"
+                        : usernameStatus === "invalid"
+                          ? "3–20 shkr."
+                          : ""}
+                </div>
+              </div>
+            </div>
+
+            <label className="flex items-start gap-3 px-1 pt-2">
+              <button
+                type="button"
+                onClick={() => setTerms((v) => !v)}
+                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center"
+                style={{
+                  background: terms ? INK : "transparent",
+                  border: `1.5px solid ${terms ? INK : DIVIDER}`,
+                  borderRadius: 5,
+                }}
+              >
+                {terms && <Check size={14} color="#fff" />}
+              </button>
+              <span className="text-[13px]" style={{ color: INK }}>
+                Pranoj{" "}
+                <a href="#" className="underline">
+                  kushtet e shërbimit
+                </a>{" "}
+                dhe{" "}
+                <a href="#" className="underline">
+                  politikën e privatësisë
+                </a>{" "}
+                së Rroba.
+              </span>
+            </label>
+
+            {globalErr && (
+              <p className="px-1 text-xs" style={{ color: ERR }}>
+                {globalErr}
+              </p>
+            )}
+
+            <button
+              onClick={submit}
+              disabled={!step3Filled || loading}
+              className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
+              style={{ background: CORAL, color: "#fff", height: 54, borderRadius: 14 }}
+            >
+              {loading ? "Duke krijuar..." : "Krijo llogarinë →"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

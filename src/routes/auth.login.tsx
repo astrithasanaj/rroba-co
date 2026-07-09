@@ -83,11 +83,16 @@ function LoginPage() {
       if (!data.session) throw new Error("no session");
       const { data: prof } = await supabase
         .from("profiles")
-        .select("onboarding_completed")
+        .select("onboarding_completed, is_blocked" as any)
         .eq("id", data.user!.id)
         .maybeSingle();
+      if ((prof as any)?.is_blocked) {
+        await supabase.auth.signOut();
+        navigate({ to: "/blocked", replace: true });
+        return;
+      }
       await router.invalidate();
-      if (prof?.onboarding_completed) {
+      if ((prof as any)?.onboarding_completed) {
         navigate({ to: "/", replace: true });
       } else {
         navigate({ to: "/onboarding", replace: true });
@@ -205,7 +210,7 @@ function LoginPage() {
 
           <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
             Nuk ke llogari?{" "}
-            <Link to="/auth/signup" className="font-semibold" style={{ color: CORAL }}>
+            <Link to="/auth/signup-full" className="font-semibold" style={{ color: CORAL }}>
               Regjistrohu
             </Link>
           </p>

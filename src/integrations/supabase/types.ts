@@ -32,6 +32,36 @@ export type Database = {
         }
         Relationships: []
       }
+      blocked_identifiers: {
+        Row: {
+          blocked_at: string
+          blocked_by: string | null
+          id: string
+          notes: string | null
+          reason: string | null
+          type: string
+          value: string
+        }
+        Insert: {
+          blocked_at?: string
+          blocked_by?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          type: string
+          value: string
+        }
+        Update: {
+          blocked_at?: string
+          blocked_by?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          type?: string
+          value?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           archived_by_buyer: boolean
@@ -379,48 +409,84 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          blocked_at: string | null
+          blocked_reason: string | null
           city: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string | null
+          first_name: string | null
+          gender: string | null
           height_cm: number | null
           id: string
+          is_blocked: boolean
+          last_name: string | null
           name: string | null
           onboarding_completed: boolean
+          phone: string | null
+          phone_verified: boolean
           preferences: Json | null
           rating_avg: number
           rating_count: number
+          signup_device: string | null
+          signup_ip: string | null
+          terms_accepted_at: string | null
           updated_at: string
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          blocked_at?: string | null
+          blocked_reason?: string | null
           city?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          first_name?: string | null
+          gender?: string | null
           height_cm?: number | null
           id: string
+          is_blocked?: boolean
+          last_name?: string | null
           name?: string | null
           onboarding_completed?: boolean
+          phone?: string | null
+          phone_verified?: boolean
           preferences?: Json | null
           rating_avg?: number
           rating_count?: number
+          signup_device?: string | null
+          signup_ip?: string | null
+          terms_accepted_at?: string | null
           updated_at?: string
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          blocked_at?: string | null
+          blocked_reason?: string | null
           city?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          first_name?: string | null
+          gender?: string | null
           height_cm?: number | null
           id?: string
+          is_blocked?: boolean
+          last_name?: string | null
           name?: string | null
           onboarding_completed?: boolean
+          phone?: string | null
+          phone_verified?: boolean
           preferences?: Json | null
           rating_avg?: number
           rating_count?: number
+          signup_device?: string | null
+          signup_ip?: string | null
+          terms_accepted_at?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -503,6 +569,11 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: { _uid: string }; Returns: boolean }
+      is_signup_blocked: {
+        Args: { _email: string; _phone: string }
+        Returns: boolean
+      }
+      is_username_available: { Args: { _username: string }; Returns: boolean }
     }
     Enums: {
       report_reason:
