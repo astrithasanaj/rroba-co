@@ -894,33 +894,7 @@ function SignupFullPage() {
               </span>
             </label>
 
-            {globalErr && globalErr.toLowerCase().includes("fjalëkalim") && (
-              <div
-                className="rounded-xl px-3 py-3"
-                style={{ background: "#fdecea", color: "#b71c1c" }}
-              >
-                <p className="text-[13px] leading-snug">⚠️ {globalErr}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGlobalErr("");
-                    setPassword("");
-                    setConfirm("");
-                    setStep(1);
-                  }}
-                  className="mt-3 w-full text-[14px] font-semibold transition active:scale-[0.98]"
-                  style={{
-                    background: INK,
-                    color: CREAM,
-                    height: 44,
-                    borderRadius: 10,
-                  }}
-                >
-                  ← Ndrysho fjalëkalimin
-                </button>
-              </div>
-            )}
-            {globalErr && !globalErr.toLowerCase().includes("fjalëkalim") && (
+            {globalErr && (
               <p
                 className="rounded-xl px-3 py-2 text-[13px]"
                 style={{ background: "#fdecea", color: "#b71c1c" }}
