@@ -44,7 +44,7 @@ function AuthLanding() {
 
         <div className="mx-auto mt-auto flex w-full max-w-[320px] flex-col gap-3 pt-16">
           <Link
-            to="/auth/signup"
+            to="/auth/signup-full"
             className="flex h-[54px] w-full items-center justify-center gap-2 text-[15px] font-bold transition active:scale-[0.98]"
             style={{ background: INK, color: "#fff", borderRadius: 14 }}
           >
