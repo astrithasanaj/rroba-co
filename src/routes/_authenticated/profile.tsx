@@ -581,12 +581,14 @@ function ProfilePage() {
       </Sheet>
 
       {/* Reviews dialog */}
-      <RatingsDialog
+      <ReviewsSheet
         open={ratingsOpen}
         onOpenChange={setRatingsOpen}
         sellerId={user.id}
         currentUserId={user.id}
         sellerName={displayName}
+        sellerUsername={username}
+        sellerCreatedAt={profile?.created_at}
       />
 
       {/* Offers sheet */}
