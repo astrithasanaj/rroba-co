@@ -217,6 +217,55 @@ function SignupFullPage() {
     confirm?: string;
   }>({});
   const strength = useMemo(() => checkPasswordStrength(password), [password]);
+  const [supabasePasswordError, setSupabasePasswordError] = useState<string | null>(null);
+  const [isCheckingPassword, setIsCheckingPassword] = useState(false);
+
+  useEffect(() => {
+    if (strength.level !== "strong" || password !== confirm) {
+      setSupabasePasswordError(null);
+      setIsCheckingPassword(false);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setIsCheckingPassword(true);
+      try {
+        const testEmail = `test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@validation-check.invalid`;
+        const { error } = await supabase.auth.signUp({
+          email: testEmail,
+          password,
+        });
+        if (cancelled) return;
+        if (error) {
+          const msg = error.message.toLowerCase();
+          if (
+            msg.includes("weak") ||
+            msg.includes("easy to guess") ||
+            msg.includes("pwned") ||
+            msg.includes("compromised") ||
+            (msg.includes("password") && !msg.includes("email"))
+          ) {
+            setSupabasePasswordError(
+              "Fjalëkalimi është shumë i zakonshëm. Provo një kombinim të ndryshëm.",
+            );
+          } else {
+            setSupabasePasswordError(null);
+          }
+        } else {
+          setSupabasePasswordError(null);
+        }
+      } catch {
+        if (!cancelled) setSupabasePasswordError(null);
+      } finally {
+        if (!cancelled) setIsCheckingPassword(false);
+      }
+    }, 800);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [password, confirm, strength.level]);
 
 
   // Step 2
