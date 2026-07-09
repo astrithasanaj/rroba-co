@@ -759,17 +759,36 @@ function Stat({ value, label }: { value: number; label: string }) {
 function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {
   return (
     <div
-      className="rounded-2xl p-4"
-      style={{ backgroundColor: active ? INK : CARD, color: active ? "white" : INK }}
+      style={{
+        background: active ? INK : CARD,
+        borderRadius: 16,
+        padding: 18,
+        margin: "0 16px 10px",
+      }}
     >
-      <div className="flex items-center justify-between">
-        <p className="text-[15px] font-bold">{emoji} {title}</p>
-        <p className="text-[12px] opacity-80">{range}</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: active ? CREAM : INK }}>
+          {emoji} {title}
+        </span>
+        <span
+          style={{
+            fontSize: 12,
+            color: active ? CREAM : MUTED,
+            background: active ? "rgba(255,255,255,0.12)" : CREAM,
+            padding: "4px 10px",
+            borderRadius: 10,
+          }}
+        >
+          {range}
+        </span>
       </div>
-      <p className="mt-1 text-[13px] opacity-90">{body}</p>
+      <p style={{ fontSize: 13, color: active ? "rgba(255,255,255,0.65)" : MUTED, lineHeight: 1.5, margin: 0 }}>
+        {body}
+      </p>
     </div>
   );
 }
+
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
