@@ -237,7 +237,7 @@ function SignupFullPage() {
   const validateStep1 = () => {
     const e: typeof step1Err = {};
     if (!email.trim()) e.email = "Emaili është i detyrueshëm";
-    if (password.length < 8) e.password = "Fjalëkalimi duhet të ketë të paktën 8 karaktere";
+    if (strength.level !== "strong") e.password = "Fjalëkalimi duhet të përmbushë të gjitha kriteret";
     if (password !== confirm) e.confirm = "Fjalëkalimet nuk përputhen";
     setStep1Err(e);
     return Object.keys(e).length === 0;
@@ -247,8 +247,9 @@ function SignupFullPage() {
     firstName.trim() &&
     lastName.trim() &&
     email.trim() &&
-    password.length >= 8 &&
-    confirm.length >= 8;
+    strength.level === "strong" &&
+    password === confirm;
+
 
   const step2Filled = phone.trim().length >= 6;
 
