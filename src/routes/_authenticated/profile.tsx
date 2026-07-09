@@ -28,7 +28,8 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteMyAccount } from "@/lib/delete-account.functions";
 import { MobileShell } from "@/components/marketplace/MobileShell";
-import { RatingsDialog, StarRow } from "@/components/marketplace/RatingsDialog";
+import { StarRow } from "@/components/marketplace/RatingsDialog";
+import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
@@ -55,6 +56,7 @@ type Profile = {
   rating_avg: number;
   rating_count: number;
   height_cm: number | null;
+  created_at?: string;
 };
 
 type OfferRow = {
@@ -579,12 +581,14 @@ function ProfilePage() {
       </Sheet>
 
       {/* Reviews dialog */}
-      <RatingsDialog
+      <ReviewsSheet
         open={ratingsOpen}
         onOpenChange={setRatingsOpen}
         sellerId={user.id}
         currentUserId={user.id}
         sellerName={displayName}
+        sellerUsername={username}
+        sellerCreatedAt={profile?.created_at}
       />
 
       {/* Offers sheet */}

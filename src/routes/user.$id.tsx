@@ -18,7 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { RatingsDialog } from "@/components/marketplace/RatingsDialog";
+import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 export const Route = createFileRoute("/user/$id")({
   component: () => (
@@ -577,12 +577,14 @@ function UserProfile() {
       </Sheet>
 
       {/* Reviews */}
-      <RatingsDialog
+      <ReviewsSheet
         open={reviewsOpen}
         onOpenChange={setReviewsOpen}
         sellerId={id}
         currentUserId={currentUserId}
         sellerName={displayName}
+        sellerUsername={username}
+        sellerCreatedAt={profile.created_at}
       />
 
       {/* Suppress unused var lint for likesTotal (surfaced via popular sort but unused otherwise) */}
