@@ -35,6 +35,7 @@ import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/publi
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
+import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
 
@@ -170,6 +171,12 @@ const AuthenticatedAdminReportsRoute =
     path: '/admin/reports',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedListingIdPromoteRoute =
+  AuthenticatedListingIdPromoteRouteImport.update({
+    id: '/listing/$id/promote',
+    path: '/listing/$id/promote',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedListingIdManageRoute =
   AuthenticatedListingIdManageRouteImport.update({
     id: '/listing/$id/manage',
@@ -211,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -239,6 +247,7 @@ export interface FileRoutesByTo {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -270,6 +279,7 @@ export interface FileRoutesById {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/_authenticated/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/_authenticated/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
+    | '/listing/$id/promote'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
+    | '/listing/$id/promote'
   id:
     | '__root__'
     | '/'
@@ -359,6 +371,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/_authenticated/listing/$id/edit'
     | '/_authenticated/listing/$id/manage'
+    | '/_authenticated/listing/$id/promote'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/listing/$id/promote': {
+      id: '/_authenticated/listing/$id/promote'
+      path: '/listing/$id/promote'
+      fullPath: '/listing/$id/promote'
+      preLoaderRoute: typeof AuthenticatedListingIdPromoteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/listing/$id/manage': {
       id: '/_authenticated/listing/$id/manage'
       path: '/listing/$id/manage'
@@ -589,6 +609,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBuyIdRoute: typeof AuthenticatedBuyIdRoute
   AuthenticatedListingIdEditRoute: typeof AuthenticatedListingIdEditRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
+  AuthenticatedListingIdPromoteRoute: typeof AuthenticatedListingIdPromoteRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -599,6 +620,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBuyIdRoute: AuthenticatedBuyIdRoute,
   AuthenticatedListingIdEditRoute: AuthenticatedListingIdEditRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,
+  AuthenticatedListingIdPromoteRoute: AuthenticatedListingIdPromoteRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
