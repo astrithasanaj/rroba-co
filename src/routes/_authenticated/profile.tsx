@@ -745,7 +745,10 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: CREAM }}>
+    <div
+      className="grid grid-cols-2"
+      style={{ gap: 1.5, backgroundColor: "#e8e3d9" }}
+    >
       {listings.map((l) => {
         const linkProps = manage
           ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
@@ -756,24 +759,31 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             key={l.id}
             {...linkProps}
             className="relative block aspect-square overflow-hidden"
-            style={{ backgroundColor: CARD }}
+            style={{ backgroundColor: CARD, borderRadius: 0 }}
           >
             {l.coverUrl && (
               <img
                 src={l.coverUrl}
                 alt={l.title}
-                className="h-full w-full object-cover object-top"
+                className="h-full w-full"
                 loading="lazy"
-                style={isSold ? { filter: "brightness(0.82) saturate(0.65)" } : undefined}
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
+                }}
               />
             )}
             <span
-              className="pointer-events-none absolute left-2 top-2 italic"
+              className="pointer-events-none absolute italic"
               style={{
-                fontFamily: 'Georgia, "Times New Roman", serif',
-                fontSize: 10,
+                top: 0,
+                left: 0,
+                padding: "6px 7px",
+                fontFamily: "var(--font-voice), Georgia, serif",
+                fontSize: 9,
                 color: "#ffffff",
-                opacity: 0.8,
+                opacity: 0.75,
                 textShadow: "0 1px 2px rgba(0,0,0,0.35)",
               }}
             >
@@ -781,20 +791,33 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             </span>
             {isSold && <SoldRibbon />}
             <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5 pt-10"
-              style={{ backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.65) 100%)" }}
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                padding: "10px 8px 8px",
+                backgroundImage: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.58) 100%)",
+              }}
             >
               <p
-                className="truncate text-[11px] text-white"
-                style={{ opacity: isSold ? 0.75 : 0.85 }}
-              >
-                {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
-              </p>
-              <p
-                className="truncate text-[13px] font-bold text-white"
-                style={{ opacity: isSold ? 0.75 : 1 }}
+                className="truncate"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#ffffff",
+                  letterSpacing: "0.1px",
+                  opacity: isSold ? 0.85 : 1,
+                }}
               >
                 {l.title}
+              </p>
+              <p
+                className="truncate"
+                style={{
+                  fontSize: 10,
+                  color: "rgba(255,255,255,0.82)",
+                  marginTop: 2,
+                }}
+              >
+                {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
               </p>
             </div>
           </Link>
@@ -809,18 +832,18 @@ function SoldRibbon() {
     <div
       className="pointer-events-none absolute"
       style={{
-        top: 18,
-        right: -28,
-        width: 110,
+        top: 13,
+        right: -23,
+        width: 82,
         background: SOLD,
         color: "#ffffff",
-        fontSize: 11,
+        fontSize: 9,
         fontWeight: 700,
         textAlign: "center",
-        padding: "5px 0",
+        padding: "4px 0",
         transform: "rotate(45deg)",
         zIndex: 3,
-        letterSpacing: "0.5px",
+        letterSpacing: "0.8px",
         textTransform: "uppercase",
       }}
     >
