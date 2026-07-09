@@ -102,6 +102,25 @@ export function ListingCard({
             Shitur
           </span>
         )}
+
+        {listing.is_promoted && (
+          <span
+            className="pointer-events-none select-none"
+            style={{
+              position: "absolute",
+              bottom: 8,
+              left: 10,
+              fontSize: 10,
+              fontStyle: "italic",
+              color: "rgba(255,255,255,0.72)",
+              letterSpacing: "0.2px",
+              textShadow: "0 1px 2px rgba(0,0,0,0.35)",
+              zIndex: 2,
+            }}
+          >
+            Sponsorizuar
+          </span>
+        )}
       </div>
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">
