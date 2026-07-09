@@ -1102,11 +1102,12 @@ function SectionDivider() {
 }
 
 function SettingsMain({
-  onNavigate, onOpenOffers, onLogout,
+  onNavigate, onOpenOffers, onLogout, onDeleteAccount,
 }: {
   onNavigate: (v: SettingsView) => void;
   onOpenOffers: () => void;
   onLogout: () => void;
+  onDeleteAccount: () => void;
 }) {
   const rateApp = () => {
     window.open("https://apps.apple.com/", "_blank", "noopener,noreferrer");
