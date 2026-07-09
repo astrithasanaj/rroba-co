@@ -718,9 +718,11 @@ function HeightSheet({
 
 function Stat({ value, label }: { value: number; label: string }) {
   return (
-    <div className="text-center">
-      <p className="text-[22px] font-bold leading-tight" style={{ color: INK }}>{value}</p>
-      <p className="mt-0.5 text-[12px] font-normal" style={{ color: MUTED }}>{label}</p>
+    <div style={{ textAlign: "center" }}>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
+        {label}
+      </p>
     </div>
   );
 }
