@@ -315,11 +315,12 @@ function SignupFullPage() {
     setLoading(true);
     const fullPhone = countryCode + phone.replace(/\s+/g, "");
     try {
+      const emailLc = email.trim().toLowerCase();
       const { data, error } = await supabase.auth.signUp({
-        email: email.trim().toLowerCase(),
+        email: emailLc,
         password,
         options: {
-          emailRedirectTo: window.location.origin + "/onboarding",
+          emailRedirectTo: window.location.origin + "/auth/callback",
           data: {
             full_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
             first_name: firstName.trim(),
@@ -330,7 +331,6 @@ function SignupFullPage() {
       if (error) throw error;
       if (!data.user) throw new Error("Regjistrimi dështoi");
 
-      // Update profile with all collected data
       const nameFull = `${firstName.trim()} ${lastName.trim()}`.trim();
       const genderMap: Record<Gender, string> = {
         female: "Femër",
@@ -354,7 +354,6 @@ function SignupFullPage() {
       };
 
       if (data.session) {
-        // Session exists (email confirmation disabled) — update via RLS
         const { error: upErr } = await supabase
           .from("profiles")
           .update(patch as any)
@@ -363,8 +362,13 @@ function SignupFullPage() {
         await router.invalidate();
         navigate({ to: "/onboarding", replace: true });
       } else {
-        // No session — profile will be updated after confirmation/login
-        setGlobalErr("Kontrollo emailin për të konfirmuar llogarinë.");
+        try {
+          localStorage.setItem("rroba_pending_profile", JSON.stringify(patch));
+          localStorage.setItem("rroba_pending_email", emailLc);
+        } catch {
+          /* ignore */
+        }
+        navigate({ to: "/auth/confirm-email", search: { email: emailLc } as any, replace: true });
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message.toLowerCase() : "";
