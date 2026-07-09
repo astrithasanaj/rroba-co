@@ -33,6 +33,7 @@ import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
@@ -158,6 +159,11 @@ const AuthenticatedBuyIdRoute = AuthenticatedBuyIdRouteImport.update({
   path: '/buy/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminReportsRoute =
   AuthenticatedAdminReportsRouteImport.update({
     id: '/admin/reports',
@@ -197,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/user/$id': typeof UserIdRoute
   '/auth': typeof AuthIndexRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/user/$id'
     | '/auth/'
     | '/admin/reports'
+    | '/admin/users'
     | '/buy/$id'
     | '/api/public/notify-new-report'
     | '/category/$slug/$gender'
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/user/$id'
     | '/auth'
     | '/admin/reports'
+    | '/admin/users'
     | '/buy/$id'
     | '/api/public/notify-new-report'
     | '/category/$slug/$gender'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/user/$id'
     | '/auth/'
     | '/_authenticated/admin/reports'
+    | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
     | '/api/public/notify-new-report'
     | '/category/$slug/$gender'
@@ -538,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBuyIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/reports': {
       id: '/_authenticated/admin/reports'
       path: '/admin/reports'
@@ -566,6 +585,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedBuyIdRoute: typeof AuthenticatedBuyIdRoute
   AuthenticatedListingIdEditRoute: typeof AuthenticatedListingIdEditRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
@@ -575,6 +595,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedBuyIdRoute: AuthenticatedBuyIdRoute,
   AuthenticatedListingIdEditRoute: AuthenticatedListingIdEditRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,

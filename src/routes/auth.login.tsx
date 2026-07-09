@@ -83,9 +83,14 @@ function LoginPage() {
       if (!data.session) throw new Error("no session");
       const { data: prof } = await supabase
         .from("profiles")
-        .select("onboarding_completed")
+        .select("onboarding_completed, is_blocked" as any)
         .eq("id", data.user!.id)
         .maybeSingle();
+      if ((prof as any)?.is_blocked) {
+        await supabase.auth.signOut();
+        navigate({ to: "/blocked", replace: true });
+        return;
+      }
       await router.invalidate();
       if (prof?.onboarding_completed) {
         navigate({ to: "/", replace: true });
