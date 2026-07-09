@@ -34,15 +34,41 @@ function HomePage() {
     let active = true;
     const load = async () => {
       setLoading(true);
-      const { data } = await supabase
+
+      // Step 1: active feed_top promoted listings
+      const nowIso = new Date().toISOString();
+      const { data: promos } = await supabase
+        .from("promotions")
+        .select("listing_id, listings(*)")
+        .eq("type", "feed_top")
+        .eq("status", "active")
+        .eq("payment_confirmed", true)
+        .gt("ends_at", nowIso);
+
+      const promotedRows = ((promos ?? []) as Array<{ listings: ListingRow | null }>)
+        .map((p) => p.listings)
+        .filter((r): r is ListingRow => !!r && r.status === "active");
+      const promotedIds = promotedRows.map((r) => r.id);
+
+      // Step 2: regular listings excluding promoted
+      let query = supabase
         .from("listings")
         .select("*")
         .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(60);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+      if (promotedIds.length > 0) {
+        query = query.not("id", "in", `(${promotedIds.join(",")})`);
+      }
+      const { data: regular } = await query;
+
+      const merged: ListingRow[] = [...promotedRows, ...((regular ?? []) as ListingRow[])];
+      const hydrated = await hydrateListings(merged);
+      const promotedSet = new Set(promotedIds);
+      const withFlag = hydrated.map((l) => ({ ...l, is_promoted: promotedSet.has(l.id) }));
+
       if (active) {
-        setListings(hydrated);
+        setListings(withFlag);
         setLoading(false);
       }
     };
@@ -50,6 +76,7 @@ function HomePage() {
     const ch = supabase
       .channel("home-feed")
       .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "promotions" }, () => load())
       .subscribe();
     return () => {
       active = false;
