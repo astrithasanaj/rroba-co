@@ -48,6 +48,30 @@ const CITIES = [
 
 type Gender = "female" | "male" | "unspecified";
 
+type StrengthResult = {
+  checks: { length: boolean; uppercase: boolean; lowercase: boolean; number: boolean };
+  score: number;
+  level: "weak" | "medium" | "good" | "strong";
+};
+
+function checkPasswordStrength(password: string): StrengthResult {
+  const checks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+  };
+
+  const passed = Object.values(checks).filter(Boolean).length;
+
+  return {
+    checks,
+    score: passed,
+    level: passed <= 1 ? "weak" : passed <= 2 ? "medium" : passed === 3 ? "good" : "strong",
+  };
+}
+
+
 function Field({
   type = "text",
   value,
@@ -157,6 +181,8 @@ function SignupFullPage() {
     password?: string;
     confirm?: string;
   }>({});
+  const strength = useMemo(() => checkPasswordStrength(password), [password]);
+
 
   // Step 2
   const [countryCode, setCountryCode] = useState("+383");
@@ -211,7 +237,7 @@ function SignupFullPage() {
   const validateStep1 = () => {
     const e: typeof step1Err = {};
     if (!email.trim()) e.email = "Emaili është i detyrueshëm";
-    if (password.length < 8) e.password = "Fjalëkalimi duhet të ketë të paktën 8 karaktere";
+    if (strength.level !== "strong") e.password = "Fjalëkalimi duhet të përmbushë të gjitha kriteret";
     if (password !== confirm) e.confirm = "Fjalëkalimet nuk përputhen";
     setStep1Err(e);
     return Object.keys(e).length === 0;
@@ -221,8 +247,9 @@ function SignupFullPage() {
     firstName.trim() &&
     lastName.trim() &&
     email.trim() &&
-    password.length >= 8 &&
-    confirm.length >= 8;
+    strength.level === "strong" &&
+    password === confirm;
+
 
   const step2Filled = phone.trim().length >= 6;
 
@@ -414,6 +441,60 @@ function SignupFullPage() {
                 {step1Err.password}
               </p>
             )}
+            {password.length > 0 && (
+              <div className="space-y-2 px-1 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-medium" style={{ color: INK }}>
+                    {strength.level === "weak" && "Fjalëkalim shumë i dobët"}
+                    {strength.level === "medium" && "Fjalëkalim i mesëm"}
+                    {strength.level === "good" && "Fjalëkalim i mirë"}
+                    {strength.level === "strong" && "Fjalëkalim i fortë ✓"}
+                  </span>
+                </div>
+                <div className="flex gap-1">
+                  {[0, 1, 2, 3].map((i) => {
+                    const filled = i < strength.score;
+                    const color =
+                      strength.score <= 1
+                        ? "#e53935"
+                        : strength.score <= 2
+                          ? "#e8826a"
+                          : strength.score === 3
+                            ? "#f9a825"
+                            : "#43a047";
+                    return (
+                      <div
+                        key={i}
+                        className="h-1.5 flex-1 rounded-full transition-all"
+                        style={{ background: filled ? color : DIVIDER }}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="space-y-1 pt-1">
+                  {[
+                    { key: "length", label: "Të paktën 8 karaktere" },
+                    { key: "uppercase", label: "Të paktën 1 shkronjë e madhe (A-Z)" },
+                    { key: "lowercase", label: "Të paktën 1 shkronjë e vogël (a-z)" },
+                    { key: "number", label: "Të paktën 1 numër (0-9)" },
+                  ].map((item) => {
+                    const ok = strength.checks[item.key as keyof typeof strength.checks];
+                    return (
+                      <div key={item.key} className="flex items-center gap-2 text-[12px]" style={{ color: ok ? "#2e7d32" : MUTED }}>
+                        <span
+                          className="flex h-4 w-4 items-center justify-center rounded-full text-[10px]"
+                          style={{ background: ok ? "#43a047" : "transparent", color: ok ? "#fff" : MUTED, border: ok ? "none" : `1px solid ${DIVIDER}` }}
+                        >
+                          {ok ? "✓" : ""}
+                        </span>
+                        {item.label}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <Field
               type={showC ? "text" : "password"}
               value={confirm}
