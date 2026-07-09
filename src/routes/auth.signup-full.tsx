@@ -619,13 +619,52 @@ function SignupFullPage() {
             <p className="px-1 text-[12px]" style={{ color: MUTED }}>
               Emri dhe mbiemri do të shfaqen në profilin tuaj publik.
             </p>
+            {strength.level === "strong" && password === confirm && confirm.length > 0 && (
+              <div
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-[12.5px]"
+                style={{
+                  background: isCheckingPassword
+                    ? CARD
+                    : supabasePasswordError
+                      ? "#fdecea"
+                      : "#e8f5e9",
+                  color: isCheckingPassword
+                    ? MUTED
+                    : supabasePasswordError
+                      ? "#b71c1c"
+                      : "#2e7d32",
+                }}
+              >
+                {isCheckingPassword ? (
+                  <>
+                    <span
+                      style={{
+                        width: 12,
+                        height: 12,
+                        border: `2px solid ${MUTED}`,
+                        borderTopColor: "transparent",
+                        borderRadius: "50%",
+                        display: "inline-block",
+                        animation: "signupSpin 700ms linear infinite",
+                      }}
+                    />
+                    <span>Duke kontrolluar fjalëkalimin...</span>
+                  </>
+                ) : supabasePasswordError ? (
+                  <span>⚠️ {supabasePasswordError}</span>
+                ) : (
+                  <span>Fjalëkalimi u pranua ✓</span>
+                )}
+              </div>
+            )}
+            <style>{`@keyframes signupSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
             <button
               type="submit"
               disabled={!step1Filled}
               className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
               style={{ background: INK, color: "#fff", height: 52, borderRadius: 14 }}
             >
-              Vazhdo →
+              {isCheckingPassword ? "Duke kontrolluar..." : "Vazhdo →"}
             </button>
             <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
               Ke tashmë llogari?{" "}
