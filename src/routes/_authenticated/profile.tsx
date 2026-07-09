@@ -5,8 +5,6 @@ import {
   Bell,
   Bookmark,
   Check,
-  ChevronLeft,
-  ChevronRight,
   Gem,
   Grid2x2,
   Heart,
@@ -18,7 +16,6 @@ import {
   Plus,
   Ruler,
   Settings as SettingsIcon,
-  
   Shirt,
   ShieldCheck,
   SlidersHorizontal,
@@ -969,45 +966,53 @@ function SettingsSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        hideClose
         className="w-full !max-w-full h-full overflow-y-auto border-0 p-0 sm:!max-w-full"
         style={{ backgroundColor: CREAM, color: INK }}
       >
         {/* Header */}
-        <SheetHeader
-          className="sticky top-0 z-10 flex-row items-center border-0 px-4"
-          style={{ backgroundColor: CREAM, height: 56 }}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "14px 16px 12px",
+            backgroundColor: CREAM,
+          }}
         >
-          {view !== "main" ? (
-            <button
-              onClick={() => setView("main")}
-              aria-label="Mbrapa"
-              className="grid h-9 w-9 place-items-center"
-              style={{ color: INK, background: "transparent" }}
-            >
-              <ChevronLeft className="h-5 w-5" strokeWidth={2} />
-            </button>
-          ) : <span className="h-9 w-9" />}
-          <SheetTitle
-            className="flex-1 text-center italic"
+          <button
+            onClick={() => (view !== "main" ? setView("main") : onOpenChange(false))}
+            aria-label="Mbrapa"
             style={{
-              color: INK,
+              background: CARD,
+              border: "none",
+              borderRadius: "50%",
+              width: 36,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+              flexShrink: 0,
+            }}
+          >
+            <i className="ti ti-chevron-left" style={{ fontSize: 18, color: INK }} />
+          </button>
+          <SheetTitle
+            className="italic"
+            style={{
               fontFamily: "var(--font-display)",
-              fontSize: 18,
-              fontWeight: 400,
-              letterSpacing: 0,
+              fontSize: 17,
+              fontWeight: 500,
+              color: INK,
+              letterSpacing: "0.1px",
             }}
           >
             {titles[view]}
           </SheetTitle>
-          <button
-            onClick={() => onOpenChange(false)}
-            aria-label="Mbyll"
-            className="grid h-9 w-9 place-items-center"
-            style={{ color: INK, background: "transparent", fontSize: 20 }}
-          >
-            <X className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-        </SheetHeader>
+          <div style={{ width: 36 }} />
+        </div>
 
         <div className="px-0 pb-6">
           {view === "main" && (
