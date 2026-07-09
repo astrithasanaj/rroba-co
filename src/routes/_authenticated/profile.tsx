@@ -969,6 +969,7 @@ function SettingsSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        hideClose
         className="w-full !max-w-full h-full overflow-y-auto border-0 p-0 sm:!max-w-full"
         style={{ backgroundColor: CREAM, color: INK }}
       >
