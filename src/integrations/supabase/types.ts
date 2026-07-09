@@ -492,6 +492,71 @@ export type Database = {
         }
         Relationships: []
       }
+      promotions: {
+        Row: {
+          confirmed_by: string | null
+          created_at: string
+          duration_days: number
+          ends_at: string
+          id: string
+          listing_id: string
+          payment_confirmed: boolean
+          payment_confirmed_at: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          price_eur: number
+          seller_id: string
+          starts_at: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          confirmed_by?: string | null
+          created_at?: string
+          duration_days: number
+          ends_at: string
+          id?: string
+          listing_id: string
+          payment_confirmed?: boolean
+          payment_confirmed_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          price_eur: number
+          seller_id: string
+          starts_at?: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          confirmed_by?: string | null
+          created_at?: string
+          duration_days?: number
+          ends_at?: string
+          id?: string
+          listing_id?: string
+          payment_confirmed?: boolean
+          payment_confirmed_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          price_eur?: number
+          seller_id?: string
+          starts_at?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotions_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ratings: {
         Row: {
           comment: string

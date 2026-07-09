@@ -35,6 +35,9 @@ import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/publi
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
+import { Route as AuthenticatedAdminPromotionsRouteImport } from './routes/_authenticated/admin.promotions'
+import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
+import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
 
@@ -170,6 +173,24 @@ const AuthenticatedAdminReportsRoute =
     path: '/admin/reports',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminPromotionsRoute =
+  AuthenticatedAdminPromotionsRouteImport.update({
+    id: '/admin/promotions',
+    path: '/admin/promotions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedListingIdPromoteRoute =
+  AuthenticatedListingIdPromoteRouteImport.update({
+    id: '/listing/$id/promote',
+    path: '/listing/$id/promote',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedListingIdPremiumRoute =
+  AuthenticatedListingIdPremiumRouteImport.update({
+    id: '/listing/$id/premium',
+    path: '/listing/$id/premium',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedListingIdManageRoute =
   AuthenticatedListingIdManageRouteImport.update({
     id: '/listing/$id/manage',
@@ -202,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
+  '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
@@ -211,6 +233,8 @@ export interface FileRoutesByFullPath {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
+  '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -230,6 +254,7 @@ export interface FileRoutesByTo {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth': typeof AuthIndexRoute
+  '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
@@ -239,6 +264,8 @@ export interface FileRoutesByTo {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
+  '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -261,6 +288,7 @@ export interface FileRoutesById {
   '/product/$id': typeof ProductIdRoute
   '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
+  '/_authenticated/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
@@ -270,6 +298,8 @@ export interface FileRoutesById {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/_authenticated/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
+  '/_authenticated/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
+  '/_authenticated/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -292,6 +322,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/auth/'
+    | '/admin/promotions'
     | '/admin/reports'
     | '/admin/users'
     | '/buy/$id'
@@ -301,6 +332,8 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
+    | '/listing/$id/premium'
+    | '/listing/$id/promote'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -320,6 +353,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/auth'
+    | '/admin/promotions'
     | '/admin/reports'
     | '/admin/users'
     | '/buy/$id'
@@ -329,6 +363,8 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
+    | '/listing/$id/premium'
+    | '/listing/$id/promote'
   id:
     | '__root__'
     | '/'
@@ -350,6 +386,7 @@ export interface FileRouteTypes {
     | '/product/$id'
     | '/user/$id'
     | '/auth/'
+    | '/_authenticated/admin/promotions'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
@@ -359,6 +396,8 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/_authenticated/listing/$id/edit'
     | '/_authenticated/listing/$id/manage'
+    | '/_authenticated/listing/$id/premium'
+    | '/_authenticated/listing/$id/promote'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -564,6 +603,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/promotions': {
+      id: '/_authenticated/admin/promotions'
+      path: '/admin/promotions'
+      fullPath: '/admin/promotions'
+      preLoaderRoute: typeof AuthenticatedAdminPromotionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/listing/$id/promote': {
+      id: '/_authenticated/listing/$id/promote'
+      path: '/listing/$id/promote'
+      fullPath: '/listing/$id/promote'
+      preLoaderRoute: typeof AuthenticatedListingIdPromoteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/listing/$id/premium': {
+      id: '/_authenticated/listing/$id/premium'
+      path: '/listing/$id/premium'
+      fullPath: '/listing/$id/premium'
+      preLoaderRoute: typeof AuthenticatedListingIdPremiumRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/listing/$id/manage': {
       id: '/_authenticated/listing/$id/manage'
       path: '/listing/$id/manage'
@@ -584,21 +644,27 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedAdminPromotionsRoute: typeof AuthenticatedAdminPromotionsRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedBuyIdRoute: typeof AuthenticatedBuyIdRoute
   AuthenticatedListingIdEditRoute: typeof AuthenticatedListingIdEditRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
+  AuthenticatedListingIdPremiumRoute: typeof AuthenticatedListingIdPremiumRoute
+  AuthenticatedListingIdPromoteRoute: typeof AuthenticatedListingIdPromoteRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedAdminPromotionsRoute: AuthenticatedAdminPromotionsRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedBuyIdRoute: AuthenticatedBuyIdRoute,
   AuthenticatedListingIdEditRoute: AuthenticatedListingIdEditRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,
+  AuthenticatedListingIdPremiumRoute: AuthenticatedListingIdPremiumRoute,
+  AuthenticatedListingIdPromoteRoute: AuthenticatedListingIdPromoteRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
