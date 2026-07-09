@@ -181,6 +181,8 @@ function SignupFullPage() {
     password?: string;
     confirm?: string;
   }>({});
+  const strength = useMemo(() => checkPasswordStrength(password), [password]);
+
 
   // Step 2
   const [countryCode, setCountryCode] = useState("+383");
