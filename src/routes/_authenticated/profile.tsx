@@ -1416,35 +1416,63 @@ function PreferencesView() {
 }
 
 const FAQS = [
-  { q: "Si mund të shes një artikull?", a: "Shko te tab-i 'Shit', ngarko deri në 10 foto, plotëso detajet dhe publikojeni. Artikulli yt do të shfaqet menjëherë në feed." },
-  { q: "Si funksionojnë ofertat?", a: "Blerësit mund të dërgojnë një ofertë më të ulët se çmimi. Ti mund ta pranosh, refuzosh ose të kundërpërgjigjesh me një çmim tjetër." },
-  { q: "Si paguhem për një shitje?", a: "Pasi blerësi konfirmon marrjen, pagesa lëshohet në llogarinë tënde brenda 2 ditëve të punës." },
-  { q: "Çfarë ndodh nëse artikulli nuk arrin?", a: "Na kontakto nga 'Mbështetje' brenda 7 ditëve dhe ne do të hetojmë rastin dhe do të rimbursojmë nëse është e nevojshme." },
-  { q: "Si mund ta fshij llogarinë time?", a: "Na shkruaj nga 'Mbështetje' me kërkesën tënde dhe llogaria do të fshihet brenda 30 ditëve." },
+  { q: "Si mund të shes një artikull?", a: "Shko te butonin \"+\" në fund të ekranit, ngarko deri në 10 foto, plotëso detajet (kategoria, madhësia, çmimi, gjendja) dhe publiko. Artikulli yt do të shfaqet menjëherë në feed." },
+  { q: "Si funksionojnë ofertat?", a: "Blerësit mund të dërgojnë një ofertë më të ulët se çmimi. Ti mund ta pranosh, refuzosh ose të kundërpërgjigjesh me një çmim tjetër nëpërmjet mesazheve." },
+  { q: "Si bëhet pagesa?", a: "Blerësi dhe shitësi takohen personalisht dhe pagesa bëhet me para në dorë. Rroba nuk përpunon pagesa — çdo transaksion ndodh drejtpërdrejt midis palëve." },
+  { q: "Si organizohet takimi?", a: "Pasi blerësi shfaq interes, komunikoni nëpërmjet mesazheve në aplikacion dhe vendosni vendin dhe orën e takimit. Rekomandojmë takime në vende publike dhe të sigurta." },
+  { q: "Çfarë ndodh nëse artikulli nuk është siç përshkruhet?", a: "Na kontakto nga \"Mbështetje\" brenda 7 ditëve nga takimi dhe ne do të hetojmë rastin." },
+  { q: "A është e sigurt të takohem me blerës/shitës të panjohur?", a: "Rekomandojmë gjithmonë takime në vende publike si qendra tregtare, kafene ose zona të frekuentuara. Mos u takoni kurrë në vende të izoluara." },
+  { q: "Si të raportoj një përdorues problematik?", a: "Shko te profili i përdoruesit ose njoftimi, trokit \"⋯\" dhe zgjidh \"Raporto\". Ekipi ynë do të shqyrtojë rastin brenda 24 orëve." },
+  { q: "Si funksionon sistemi i vlerësimeve?", a: "Pas çdo shitjeje të konfirmuar, blerësi mund të lërë një vlerësim me yje (1-5) dhe koment për shitësin. Vlerësimet ndihmojnë komunitetin të blejë me besim." },
+  { q: "A mund të anuloj një shitje?", a: "Po, mund të anulosh një shitje para takimit duke e njoftuar blerësin nëpërmjet mesazheve. Rekomandojmë komunikim të hapur dhe të respektosh blerësin." },
+  { q: "Sa kohë mbetet aktiv një njoftim?", a: "Njoftimet mbeten aktive 60 ditë (90 ditë për Designer/Premium dhe 45 ditë për Elektronikë). Pas kësaj, mund ta rinovosh falas deri në 3 herë." },
 ];
 
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
+function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
   return (
-    <div style={{ backgroundColor: CREAM }}>
-      <button onClick={() => setOpen((v) => !v)} className="flex w-full items-center gap-3 px-5 py-4 text-left">
-        <div className="flex-1 text-[15px] font-bold" style={{ color: INK }}>{q}</div>
-        {open
-          ? <Minus className="h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MUTED }} />
-          : <Plus className="h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MUTED }} />}
+    <div style={{ backgroundColor: open ? "#ede8de" : CREAM, borderRadius: open ? "0 0 10px 10px" : 0, transition: "background-color 160ms ease" }}>
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center gap-3 text-left"
+        style={{ padding: "16px 20px", WebkitTapHighlightColor: "transparent" }}
+      >
+        <div className="flex-1 text-[14px] font-bold" style={{ color: "#1a1a1a" }}>{q}</div>
+        <ChevronRight
+          className="h-4 w-4 shrink-0"
+          strokeWidth={2}
+          style={{
+            color: "#c8c3b9",
+            transform: open ? "rotate(90deg)" : "rotate(0deg)",
+            transition: "transform 200ms ease",
+          }}
+        />
       </button>
-      {open && <div className="px-5 pb-4 text-[14px] leading-relaxed" style={{ color: MUTED }}>{a}</div>}
+      <div
+        style={{
+          maxHeight: open ? 400 : 0,
+          overflow: "hidden",
+          transition: "max-height 200ms ease",
+        }}
+      >
+        <div style={{ padding: "0 20px 16px", fontSize: 13, color: "#a89f94", lineHeight: 1.6 }}>{a}</div>
+      </div>
     </div>
   );
 }
 
 function FaqView() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
   return (
     <div className="pt-2">
       {FAQS.map((f, i) => (
         <div key={f.q}>
-          <FaqItem {...f} />
-          {i < FAQS.length - 1 && <RowDivider />}
+          <FaqItem
+            q={f.q}
+            a={f.a}
+            open={openIdx === i}
+            onToggle={() => setOpenIdx((cur) => (cur === i ? null : i))}
+          />
+          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: "#ddd8ce" }} />}
         </div>
       ))}
     </div>
