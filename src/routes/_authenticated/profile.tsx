@@ -1079,6 +1079,13 @@ function Row({
   );
 }
 
+function RowDivider() {
+  return <div style={{ height: 1, backgroundColor: DIVIDER, marginLeft: 20, marginRight: 20 }} />;
+}
+function SectionDivider() {
+  return <div style={{ height: 1, backgroundColor: DIVIDER }} />;
+}
+
 function SettingsMain({
   onNavigate, onOpenOffers, onLogout,
 }: {
