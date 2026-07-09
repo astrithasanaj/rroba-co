@@ -31,6 +31,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
 import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
+import { Route as ApiPublicNotifyPendingPromotionRouteImport } from './routes/api/public/notify-pending-promotion'
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -151,6 +152,12 @@ const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
   path: '/category/$slug/$gender',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNotifyPendingPromotionRoute =
+  ApiPublicNotifyPendingPromotionRouteImport.update({
+    id: '/api/public/notify-pending-promotion',
+    path: '/api/public/notify-pending-promotion',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicNotifyNewReportRoute =
   ApiPublicNotifyNewReportRouteImport.update({
     id: '/api/public/notify-new-report',
@@ -228,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
+  '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
@@ -259,6 +267,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
+  '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
@@ -293,6 +302,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
+  '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/buy/$id'
     | '/api/public/notify-new-report'
+    | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
@@ -358,6 +369,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/buy/$id'
     | '/api/public/notify-new-report'
+    | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
@@ -391,6 +403,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
     | '/api/public/notify-new-report'
+    | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
@@ -414,6 +427,7 @@ export interface RootRouteChildren {
   ProductIdRoute: typeof ProductIdRoute
   UserIdRoute: typeof UserIdRoute
   ApiPublicNotifyNewReportRoute: typeof ApiPublicNotifyNewReportRoute
+  ApiPublicNotifyPendingPromotionRoute: typeof ApiPublicNotifyPendingPromotionRoute
   CategorySlugGenderRoute: typeof CategorySlugGenderRoute
   CategorySlugChooseGenderRoute: typeof CategorySlugChooseGenderRoute
   CategorySlugSubcategoryRoute: typeof CategorySlugSubcategoryRoute
@@ -575,6 +589,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySlugGenderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/notify-pending-promotion': {
+      id: '/api/public/notify-pending-promotion'
+      path: '/api/public/notify-pending-promotion'
+      fullPath: '/api/public/notify-pending-promotion'
+      preLoaderRoute: typeof ApiPublicNotifyPendingPromotionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/notify-new-report': {
       id: '/api/public/notify-new-report'
       path: '/api/public/notify-new-report'
@@ -702,6 +723,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductIdRoute: ProductIdRoute,
   UserIdRoute: UserIdRoute,
   ApiPublicNotifyNewReportRoute: ApiPublicNotifyNewReportRoute,
+  ApiPublicNotifyPendingPromotionRoute: ApiPublicNotifyPendingPromotionRoute,
   CategorySlugGenderRoute: CategorySlugGenderRoute,
   CategorySlugChooseGenderRoute: CategorySlugChooseGenderRoute,
   CategorySlugSubcategoryRoute: CategorySlugSubcategoryRoute,
