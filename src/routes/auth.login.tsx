@@ -210,8 +210,6 @@ function LoginPage() {
 
           <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
             Nuk ke llogari?{" "}
-          <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
-            Nuk ke llogari?{" "}
             <Link to="/auth/signup-full" className="font-semibold" style={{ color: CORAL }}>
               Regjistrohu
             </Link>
