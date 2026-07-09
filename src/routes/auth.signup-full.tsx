@@ -48,6 +48,30 @@ const CITIES = [
 
 type Gender = "female" | "male" | "unspecified";
 
+type StrengthResult = {
+  checks: { length: boolean; uppercase: boolean; lowercase: boolean; number: boolean };
+  score: number;
+  level: "weak" | "medium" | "good" | "strong";
+};
+
+function checkPasswordStrength(password: string): StrengthResult {
+  const checks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+  };
+
+  const passed = Object.values(checks).filter(Boolean).length;
+
+  return {
+    checks,
+    score: passed,
+    level: passed <= 1 ? "weak" : passed <= 2 ? "medium" : passed === 3 ? "good" : "strong",
+  };
+}
+
+
 function Field({
   type = "text",
   value,
