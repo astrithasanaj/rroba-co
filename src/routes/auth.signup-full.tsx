@@ -341,7 +341,7 @@ function SignupFullPage() {
 
   const step3Filled =
     dob &&
-    city &&
+    cityId &&
     gender &&
     username &&
     usernameStatus === "ok" &&
@@ -423,6 +423,7 @@ function SignupFullPage() {
         phone_verified: false,
         date_of_birth: dob,
         city,
+        city_id: cityId,
         gender: genderMap[gender as Gender],
         signup_device:
           typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : "unknown",
