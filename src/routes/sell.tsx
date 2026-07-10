@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { CityPicker } from "@/components/marketplace/CityPicker";
 import {
   SizePickerSheet,
   resolveSizeKind,
@@ -946,8 +947,8 @@ function FinalStep({
   color,
   price,
   setPrice,
-  city,
-  setCity,
+  cityId,
+  onCityChange,
   delivery,
   setDelivery,
   onOpenSize,
@@ -963,8 +964,8 @@ function FinalStep({
   color: string[];
   price: string;
   setPrice: (v: string) => void;
-  city: string;
-  setCity: (v: string) => void;
+  cityId: string | null;
+  onCityChange: (id: string, name: string) => void;
   delivery: string[];
   setDelivery: (v: string[]) => void;
   onOpenSize: () => void;
