@@ -179,23 +179,6 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
             </h1>
           </div>
 
-          {/* Tabs */}
-          <div
-            style={{
-              display: "flex",
-              padding: "0 16px",
-              gap: 24,
-              borderBottom: `1px solid ${DIVIDER}`,
-              backgroundColor: CREAM,
-            }}
-          >
-            <Tab active={mode === "followers"} to="/user/$id/followers" userId={userId}>
-              Ndjekës
-            </Tab>
-            <Tab active={mode === "following"} to="/user/$id/following" userId={userId}>
-              Duke ndjekur
-            </Tab>
-          </div>
 
           {/* List */}
           <div style={{ flex: 1, overflowY: "auto" }} onScroll={onScroll}>
