@@ -30,6 +30,7 @@ import { deleteMyAccount } from "@/lib/delete-account.functions";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { StarRow } from "@/components/marketplace/RatingsDialog";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
+import { FollowListSheet } from "@/components/marketplace/FollowListSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
