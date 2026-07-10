@@ -56,7 +56,7 @@ function Stat({
 }: {
   value: number | string;
   label: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }) {
   const content = (
     <>
@@ -70,7 +70,10 @@ function Stat({
     return (
       <button
         type="button"
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e);
+        }}
         className="active:opacity-70"
         style={{
           textAlign: "center",
