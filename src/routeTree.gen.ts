@@ -20,7 +20,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
-import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as AuthSignupFullRouteImport } from './routes/auth.signup-full'
 import { Route as AuthSignupRouteImport } from './routes/auth.signup'
@@ -30,8 +29,9 @@ import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-emai
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as UserIdFollowingRouteImport } from './routes/user.$id_.following'
-import { Route as UserIdFollowersRouteImport } from './routes/user.$id_.followers'
+import { Route as UserIdIndexRouteImport } from './routes/user.$id.index'
+import { Route as UserIdFollowingRouteImport } from './routes/user.$id.following'
+import { Route as UserIdFollowersRouteImport } from './routes/user.$id.followers'
 import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
 import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
@@ -100,11 +100,6 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthRoute,
 } as any)
-const UserIdRoute = UserIdRouteImport.update({
-  id: '/user/$id',
-  path: '/user/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -150,13 +145,18 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const UserIdIndexRoute = UserIdIndexRouteImport.update({
+  id: '/user/$id/',
+  path: '/user/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UserIdFollowingRoute = UserIdFollowingRouteImport.update({
-  id: '/user/$id_/following',
+  id: '/user/$id/following',
   path: '/user/$id/following',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UserIdFollowersRoute = UserIdFollowersRouteImport.update({
-  id: '/user/$id_/followers',
+  id: '/user/$id/followers',
   path: '/user/$id/followers',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -254,7 +254,6 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
-  '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
   '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -267,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/user/$id/followers': typeof UserIdFollowersRoute
   '/user/$id/following': typeof UserIdFollowingRoute
+  '/user/$id/': typeof UserIdIndexRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
@@ -290,7 +290,6 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
-  '/user/$id': typeof UserIdRoute
   '/auth': typeof AuthIndexRoute
   '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -303,6 +302,7 @@ export interface FileRoutesByTo {
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
   '/user/$id/followers': typeof UserIdFollowersRoute
   '/user/$id/following': typeof UserIdFollowingRoute
+  '/user/$id': typeof UserIdIndexRoute
   '/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
@@ -329,7 +329,6 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
-  '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -340,8 +339,9 @@ export interface FileRoutesById {
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
-  '/user/$id_/followers': typeof UserIdFollowersRoute
-  '/user/$id_/following': typeof UserIdFollowingRoute
+  '/user/$id/followers': typeof UserIdFollowersRoute
+  '/user/$id/following': typeof UserIdFollowingRoute
+  '/user/$id/': typeof UserIdIndexRoute
   '/_authenticated/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/_authenticated/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
@@ -368,7 +368,6 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/signup-full'
     | '/product/$id'
-    | '/user/$id'
     | '/auth/'
     | '/admin/promotions'
     | '/admin/reports'
@@ -381,6 +380,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/user/$id/followers'
     | '/user/$id/following'
+    | '/user/$id/'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
     | '/listing/$id/premium'
@@ -404,7 +404,6 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/signup-full'
     | '/product/$id'
-    | '/user/$id'
     | '/auth'
     | '/admin/promotions'
     | '/admin/reports'
@@ -417,6 +416,7 @@ export interface FileRouteTypes {
     | '/category/$slug/subcategory'
     | '/user/$id/followers'
     | '/user/$id/following'
+    | '/user/$id'
     | '/listing/$id/edit'
     | '/listing/$id/manage'
     | '/listing/$id/premium'
@@ -442,7 +442,6 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/signup-full'
     | '/product/$id'
-    | '/user/$id'
     | '/auth/'
     | '/_authenticated/admin/promotions'
     | '/_authenticated/admin/reports'
@@ -453,8 +452,9 @@ export interface FileRouteTypes {
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
-    | '/user/$id_/followers'
-    | '/user/$id_/following'
+    | '/user/$id/followers'
+    | '/user/$id/following'
+    | '/user/$id/'
     | '/_authenticated/listing/$id/edit'
     | '/_authenticated/listing/$id/manage'
     | '/_authenticated/listing/$id/premium'
@@ -473,7 +473,6 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SellRoute: typeof SellRoute
   ProductIdRoute: typeof ProductIdRoute
-  UserIdRoute: typeof UserIdRoute
   ApiPublicNotifyNewReportRoute: typeof ApiPublicNotifyNewReportRoute
   ApiPublicNotifyPendingPromotionRoute: typeof ApiPublicNotifyPendingPromotionRoute
   CategorySlugGenderRoute: typeof CategorySlugGenderRoute
@@ -481,6 +480,7 @@ export interface RootRouteChildren {
   CategorySlugSubcategoryRoute: typeof CategorySlugSubcategoryRoute
   UserIdFollowersRoute: typeof UserIdFollowersRoute
   UserIdFollowingRoute: typeof UserIdFollowingRoute
+  UserIdIndexRoute: typeof UserIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -562,13 +562,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/user/$id': {
-      id: '/user/$id'
-      path: '/user/$id'
-      fullPath: '/user/$id'
-      preLoaderRoute: typeof UserIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -632,15 +625,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/user/$id_/following': {
-      id: '/user/$id_/following'
+    '/user/$id/': {
+      id: '/user/$id/'
+      path: '/user/$id'
+      fullPath: '/user/$id/'
+      preLoaderRoute: typeof UserIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$id/following': {
+      id: '/user/$id/following'
       path: '/user/$id/following'
       fullPath: '/user/$id/following'
       preLoaderRoute: typeof UserIdFollowingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/$id_/followers': {
-      id: '/user/$id_/followers'
+    '/user/$id/followers': {
+      id: '/user/$id/followers'
       path: '/user/$id/followers'
       fullPath: '/user/$id/followers'
       preLoaderRoute: typeof UserIdFollowersRouteImport
@@ -803,7 +803,6 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SellRoute: SellRoute,
   ProductIdRoute: ProductIdRoute,
-  UserIdRoute: UserIdRoute,
   ApiPublicNotifyNewReportRoute: ApiPublicNotifyNewReportRoute,
   ApiPublicNotifyPendingPromotionRoute: ApiPublicNotifyPendingPromotionRoute,
   CategorySlugGenderRoute: CategorySlugGenderRoute,
@@ -811,6 +810,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategorySlugSubcategoryRoute: CategorySlugSubcategoryRoute,
   UserIdFollowersRoute: UserIdFollowersRoute,
   UserIdFollowingRoute: UserIdFollowingRoute,
+  UserIdIndexRoute: UserIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
