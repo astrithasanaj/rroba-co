@@ -265,6 +265,7 @@ function SignupFullPage() {
   // Step 3
   const [dob, setDob] = useState("");
   const [city, setCity] = useState("");
+  const [cityId, setCityId] = useState<string | null>(null);
   const [gender, setGender] = useState<Gender | "">("");
   const [username, setUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState<
