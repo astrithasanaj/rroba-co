@@ -322,8 +322,17 @@ function ProfilePage() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={myListings.filter((l) => l.status === "active").length} label="artikuj" />
-                <Stat value={followers} label="ndjekës" onClick={() => setFollowSheet("followers")} />
-                <Stat value={following} label="ndjek" onClick={() => setFollowSheet("following")} />
+                <Stat
+                  value={followers}
+                  label="ndjekës"
+                  onClick={() => navigate({ to: "/user/$id/followers", params: { id: user.id } })}
+                />
+                <Stat
+                  value={following}
+                  label="ndjek"
+                  onClick={() => navigate({ to: "/user/$id/following", params: { id: user.id } })}
+                />
+
 
               </div>
               <div style={{ display: "flex", gap: 7 }}>
