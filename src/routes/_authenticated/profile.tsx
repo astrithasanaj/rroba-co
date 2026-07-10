@@ -668,13 +668,6 @@ function ProfilePage() {
         current={profile?.height_cm ?? null}
         onSaved={loadAll}
       />
-      <FollowListSheet
-        open={followSheet !== null}
-        onOpenChange={(v: boolean) => !v && setFollowSheet(null)}
-        userId={user.id}
-        mode={followSheet ?? "followers"}
-        currentUserId={user.id}
-      />
     </MobileShell>
 
 
