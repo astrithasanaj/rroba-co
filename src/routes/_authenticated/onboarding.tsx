@@ -1007,7 +1007,9 @@ function OnboardingFlow() {
   }, [
     ready,
     step,
-    city,
+    cityId,
+    cityName,
+    cityFromDb,
     userId,
     authName,
     displayName,
