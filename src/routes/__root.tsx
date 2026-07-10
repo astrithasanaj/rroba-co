@@ -175,7 +175,7 @@ function RootComponent() {
           <Outlet />
         </div>
         <Toaster />
-        {navRoot ? createPortal(<BottomNav />, navRoot) : null}
+        {navRoot && !hideBottomNav ? createPortal(<BottomNav />, navRoot) : null}
       </UserCollectionsProvider>
     </QueryClientProvider>
   );
