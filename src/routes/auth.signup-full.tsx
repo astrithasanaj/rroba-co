@@ -192,6 +192,28 @@ function SignupFullPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [globalErr, setGlobalErr] = useState("");
+  const [appleErr, setAppleErr] = useState("");
+  const [appleLoading, setAppleLoading] = useState(false);
+
+  const handleApple = async () => {
+    setAppleErr("");
+    setAppleLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: `${window.location.origin}/auth/callback`,
+      });
+      if (result.error) {
+        setAppleErr("Diçka shkoi keq me hyrjen përmes Apple. Provo përsëri.");
+        setAppleLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      navigate({ to: "/auth/callback", replace: true });
+    } catch {
+      setAppleErr("Diçka shkoi keq me hyrjen përmes Apple. Provo përsëri.");
+      setAppleLoading(false);
+    }
+  };
 
   // Step 1
   const [firstName, setFirstName] = useState("");
