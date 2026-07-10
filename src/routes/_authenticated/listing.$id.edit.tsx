@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, Loader2, Pencil, X, Grid3x3, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { CityPicker } from "@/components/marketplace/CityPicker";
 import {
   SizePickerSheet,
   resolveSizeKind,
@@ -98,7 +99,7 @@ function getSubcategories(category: string, gender: string): string[] {
   }
 }
 
-const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
+// City list moved to DB — see CityPicker/useCities
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 
 type ExistingPhoto = { kind: "existing"; path: string; url: string };
@@ -131,6 +132,7 @@ function EditListingPage() {
   const [color, setColor] = useState<string[]>([]);
   const [price, setPrice] = useState("");
   const [city, setCity] = useState("");
+  const [cityId, setCityId] = useState<string | null>(null);
   const [delivery, setDelivery] = useState<string[]>([]);
 
   const [sizeSheet, setSizeSheet] = useState(false);
@@ -172,6 +174,7 @@ function EditListingPage() {
       );
       setPrice(String(row.price ?? ""));
       setCity(row.city ?? "");
+      setCityId(((row as unknown) as { city_id?: string | null }).city_id ?? null);
       // Drop "Posta" if previously saved
       setDelivery(((row.delivery ?? []) as string[]).filter((d) => d !== "Posta"));
       setLoading(false);
@@ -299,6 +302,7 @@ function EditListingPage() {
           condition: condition || "I mirë",
           color: color.join(", "),
           city,
+          city_id: cityId,
           price: priceNum,
           description: description.trim(),
           image_paths: finalPaths,
