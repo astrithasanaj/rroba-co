@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Users } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
@@ -179,23 +179,6 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
             </h1>
           </div>
 
-          {/* Tabs */}
-          <div
-            style={{
-              display: "flex",
-              padding: "0 16px",
-              gap: 24,
-              borderBottom: `1px solid ${DIVIDER}`,
-              backgroundColor: CREAM,
-            }}
-          >
-            <Tab active={mode === "followers"} to="/user/$id_/followers" userId={userId}>
-              Ndjekës
-            </Tab>
-            <Tab active={mode === "following"} to="/user/$id_/following" userId={userId}>
-              Duke ndjekur
-            </Tab>
-          </div>
 
           {/* List */}
           <div style={{ flex: 1, overflowY: "auto" }} onScroll={onScroll}>
@@ -343,32 +326,3 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
   );
 }
 
-function Tab({
-  active,
-  to,
-  userId,
-  children,
-}: {
-  active: boolean;
-  to: "/user/$id_/followers" | "/user/$id_/following";
-  userId: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      to={to}
-      params={{ id: userId }}
-      replace
-      style={{
-        padding: "12px 0",
-        fontSize: 14,
-        fontWeight: active ? 600 : 500,
-        color: active ? INK : MUTED,
-        borderBottom: `2px solid ${active ? INK : "transparent"}`,
-        marginBottom: -1,
-      }}
-    >
-      {children}
-    </Link>
-  );
-}

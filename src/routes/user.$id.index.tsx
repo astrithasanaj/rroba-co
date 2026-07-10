@@ -21,7 +21,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 
-export const Route = createFileRoute("/user/$id")({
+export const Route = createFileRoute("/user/$id/")({
   component: () => (
     <SwipeBackWrapper>
       <UserProfile />
@@ -93,7 +93,7 @@ function Stat({
 
 
 function UserProfile() {
-  const { id } = useParams({ from: "/user/$id" });
+  const { id } = useParams({ from: "/user/$id/" });
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [listings, setListings] = useState<ListingView[]>([]);
@@ -384,12 +384,12 @@ function UserProfile() {
                 <Stat
                   value={followers}
                   label="ndjekës"
-                  onClick={() => navigate({ to: "/user/$id_/followers", params: { id } })}
+                  onClick={() => navigate({ to: "/user/$id/followers", params: { id } })}
                 />
                 <Stat
                   value={followingCount}
                   label="ndjek"
-                  onClick={() => navigate({ to: "/user/$id_/following", params: { id } })}
+                  onClick={() => navigate({ to: "/user/$id/following", params: { id } })}
                 />
               </div>
 
