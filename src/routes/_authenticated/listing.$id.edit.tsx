@@ -290,7 +290,7 @@ function EditListingPage() {
         }
       }
 
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from("listings")
         .update({
           title: title.trim(),
@@ -311,8 +311,12 @@ function EditListingPage() {
           updated_at: new Date().toISOString(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any)
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .select("id")
+        .maybeSingle();
       if (error) throw new Error(error.message);
+      if (!updated) throw new Error("Nuk u lejua të ruash këtë artikull.");
 
       // Clean up removed storage objects (best-effort)
       if (removedPaths.length) {
