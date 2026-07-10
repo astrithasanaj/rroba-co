@@ -703,6 +703,7 @@ function SignupFullPage() {
               </Link>
             </p>
           </form>
+          </>
         )}
 
         {/* Step 2 */}
