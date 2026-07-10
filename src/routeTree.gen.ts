@@ -30,8 +30,8 @@ import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-emai
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as UserIdFollowingRouteImport } from './routes/user.$id.following'
-import { Route as UserIdFollowersRouteImport } from './routes/user.$id.followers'
+import { Route as UserIdFollowingRouteImport } from './routes/user.$id_.following'
+import { Route as UserIdFollowersRouteImport } from './routes/user.$id_.followers'
 import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
 import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
@@ -151,14 +151,14 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const UserIdFollowingRoute = UserIdFollowingRouteImport.update({
-  id: '/following',
-  path: '/following',
-  getParentRoute: () => UserIdRoute,
+  id: '/user/$id_/following',
+  path: '/user/$id/following',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const UserIdFollowersRoute = UserIdFollowersRouteImport.update({
-  id: '/followers',
-  path: '/followers',
-  getParentRoute: () => UserIdRoute,
+  id: '/user/$id_/followers',
+  path: '/user/$id/followers',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CategorySlugSubcategoryRoute = CategorySlugSubcategoryRouteImport.update({
   id: '/category/$slug/subcategory',
@@ -254,7 +254,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
-  '/user/$id': typeof UserIdRouteWithChildren
+  '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
   '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -290,7 +290,7 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
-  '/user/$id': typeof UserIdRouteWithChildren
+  '/user/$id': typeof UserIdRoute
   '/auth': typeof AuthIndexRoute
   '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -329,7 +329,7 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
-  '/user/$id': typeof UserIdRouteWithChildren
+  '/user/$id': typeof UserIdRoute
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -340,8 +340,8 @@ export interface FileRoutesById {
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
   '/category/$slug/choose-gender': typeof CategorySlugChooseGenderRoute
   '/category/$slug/subcategory': typeof CategorySlugSubcategoryRoute
-  '/user/$id/followers': typeof UserIdFollowersRoute
-  '/user/$id/following': typeof UserIdFollowingRoute
+  '/user/$id_/followers': typeof UserIdFollowersRoute
+  '/user/$id_/following': typeof UserIdFollowingRoute
   '/_authenticated/listing/$id/edit': typeof AuthenticatedListingIdEditRoute
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/_authenticated/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
@@ -453,8 +453,8 @@ export interface FileRouteTypes {
     | '/category/$slug/$gender'
     | '/category/$slug/choose-gender'
     | '/category/$slug/subcategory'
-    | '/user/$id/followers'
-    | '/user/$id/following'
+    | '/user/$id_/followers'
+    | '/user/$id_/following'
     | '/_authenticated/listing/$id/edit'
     | '/_authenticated/listing/$id/manage'
     | '/_authenticated/listing/$id/premium'
@@ -473,12 +473,14 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SellRoute: typeof SellRoute
   ProductIdRoute: typeof ProductIdRoute
-  UserIdRoute: typeof UserIdRouteWithChildren
+  UserIdRoute: typeof UserIdRoute
   ApiPublicNotifyNewReportRoute: typeof ApiPublicNotifyNewReportRoute
   ApiPublicNotifyPendingPromotionRoute: typeof ApiPublicNotifyPendingPromotionRoute
   CategorySlugGenderRoute: typeof CategorySlugGenderRoute
   CategorySlugChooseGenderRoute: typeof CategorySlugChooseGenderRoute
   CategorySlugSubcategoryRoute: typeof CategorySlugSubcategoryRoute
+  UserIdFollowersRoute: typeof UserIdFollowersRoute
+  UserIdFollowingRoute: typeof UserIdFollowingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -630,19 +632,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/user/$id/following': {
-      id: '/user/$id/following'
-      path: '/following'
+    '/user/$id_/following': {
+      id: '/user/$id_/following'
+      path: '/user/$id/following'
       fullPath: '/user/$id/following'
       preLoaderRoute: typeof UserIdFollowingRouteImport
-      parentRoute: typeof UserIdRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/user/$id/followers': {
-      id: '/user/$id/followers'
-      path: '/followers'
+    '/user/$id_/followers': {
+      id: '/user/$id_/followers'
+      path: '/user/$id/followers'
       fullPath: '/user/$id/followers'
       preLoaderRoute: typeof UserIdFollowersRouteImport
-      parentRoute: typeof UserIdRoute
+      parentRoute: typeof rootRouteImport
     }
     '/category/$slug/subcategory': {
       id: '/category/$slug/subcategory'
@@ -789,19 +791,6 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface UserIdRouteChildren {
-  UserIdFollowersRoute: typeof UserIdFollowersRoute
-  UserIdFollowingRoute: typeof UserIdFollowingRoute
-}
-
-const UserIdRouteChildren: UserIdRouteChildren = {
-  UserIdFollowersRoute: UserIdFollowersRoute,
-  UserIdFollowingRoute: UserIdFollowingRoute,
-}
-
-const UserIdRouteWithChildren =
-  UserIdRoute._addFileChildren(UserIdRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -814,12 +803,14 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SellRoute: SellRoute,
   ProductIdRoute: ProductIdRoute,
-  UserIdRoute: UserIdRouteWithChildren,
+  UserIdRoute: UserIdRoute,
   ApiPublicNotifyNewReportRoute: ApiPublicNotifyNewReportRoute,
   ApiPublicNotifyPendingPromotionRoute: ApiPublicNotifyPendingPromotionRoute,
   CategorySlugGenderRoute: CategorySlugGenderRoute,
   CategorySlugChooseGenderRoute: CategorySlugChooseGenderRoute,
   CategorySlugSubcategoryRoute: CategorySlugSubcategoryRoute,
+  UserIdFollowersRoute: UserIdFollowersRoute,
+  UserIdFollowingRoute: UserIdFollowingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

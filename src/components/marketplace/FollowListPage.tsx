@@ -189,10 +189,10 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
               backgroundColor: CREAM,
             }}
           >
-            <Tab active={mode === "followers"} to="/user/$id/followers" userId={userId}>
+            <Tab active={mode === "followers"} to="/user/$id_/followers" userId={userId}>
               Ndjekës
             </Tab>
-            <Tab active={mode === "following"} to="/user/$id/following" userId={userId}>
+            <Tab active={mode === "following"} to="/user/$id_/following" userId={userId}>
               Duke ndjekur
             </Tab>
           </div>
@@ -350,7 +350,7 @@ function Tab({
   children,
 }: {
   active: boolean;
-  to: "/user/$id/followers" | "/user/$id/following";
+  to: "/user/$id_/followers" | "/user/$id_/following";
   userId: string;
   children: React.ReactNode;
 }) {

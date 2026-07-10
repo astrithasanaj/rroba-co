@@ -56,7 +56,7 @@ function Stat({
 }: {
   value: number | string;
   label: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }) {
   const content = (
     <>
@@ -70,7 +70,10 @@ function Stat({
     return (
       <button
         type="button"
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e);
+        }}
         className="active:opacity-70"
         style={{
           textAlign: "center",
@@ -381,12 +384,12 @@ function UserProfile() {
                 <Stat
                   value={followers}
                   label="ndjekës"
-                  onClick={() => navigate({ to: "/user/$id/followers", params: { id } })}
+                  onClick={() => navigate({ to: "/user/$id_/followers", params: { id } })}
                 />
                 <Stat
                   value={followingCount}
                   label="ndjek"
-                  onClick={() => navigate({ to: "/user/$id/following", params: { id } })}
+                  onClick={() => navigate({ to: "/user/$id_/following", params: { id } })}
                 />
               </div>
 
