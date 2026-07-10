@@ -6,6 +6,6 @@ export const Route = createFileRoute("/user/$id_/following")({
 });
 
 function FollowingRoute() {
-  const { id } = useParams({ from: "/user/$id/following" });
+  const { id } = useParams({ from: "/user/$id_/following" });
   return <FollowListPage userId={id} mode="following" />;
 }
