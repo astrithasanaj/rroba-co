@@ -50,7 +50,7 @@ function BuyPage() {
       if (!row) return;
       const [h] = await hydrateListings([row as ListingRow]);
       const { data: prof } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("id,name,avatar_url")
         .eq("id", row.user_id)
         .maybeSingle();
