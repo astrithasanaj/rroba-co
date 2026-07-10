@@ -381,12 +381,12 @@ function UserProfile() {
                 <Stat
                   value={followers}
                   label="ndjekës"
-                  onClick={() => navigate({ to: "/user/$id/followers", params: { id } })}
+                  onClick={() => navigate({ to: "/user/$id_/followers", params: { id } })}
                 />
                 <Stat
                   value={followingCount}
                   label="ndjek"
-                  onClick={() => navigate({ to: "/user/$id/following", params: { id } })}
+                  onClick={() => navigate({ to: "/user/$id_/following", params: { id } })}
                 />
               </div>
 
