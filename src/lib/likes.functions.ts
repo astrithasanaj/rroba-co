@@ -12,7 +12,7 @@ export const getListingLikeInfo = createServerFn({ method: "GET" })
       .eq("listing_id", data.listingId);
 
     if (countError || !count || count === 0) {
-      return { count: 0, recentLiker: null };
+      return { count: 0, recentLiker: null, recentLikerId: null };
     }
 
     const { data: likes } = await supabaseAdmin
@@ -22,7 +22,7 @@ export const getListingLikeInfo = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(1);
 
-    const recentUserId = likes?.[0]?.user_id;
+    const recentUserId = likes?.[0]?.user_id ?? null;
     let recentLiker: string | null = null;
 
     if (recentUserId) {
@@ -34,5 +34,5 @@ export const getListingLikeInfo = createServerFn({ method: "GET" })
       if (profile?.name) recentLiker = profile.name;
     }
 
-    return { count, recentLiker };
+    return { count, recentLiker, recentLikerId: recentUserId };
   });
