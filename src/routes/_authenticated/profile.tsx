@@ -750,16 +750,37 @@ function HeightSheet({
 
 
 
-function Stat({ value, label }: { value: number; label: string }) {
-  return (
-    <div style={{ textAlign: "center" }}>
+function Stat({ value, label, onClick }: { value: number; label: string; onClick?: () => void }) {
+  const inner = (
+    <>
       <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
       <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
         {label}
       </p>
-    </div>
+    </>
   );
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="active:opacity-70"
+        style={{
+          textAlign: "center",
+          background: "transparent",
+          border: 0,
+          padding: 0,
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        {inner}
+      </button>
+    );
+  }
+  return <div style={{ textAlign: "center" }}>{inner}</div>;
 }
+
 
 
 function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {
