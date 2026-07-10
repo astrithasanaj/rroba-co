@@ -379,9 +379,18 @@ function UserProfile() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={activeCount} label="artikuj" />
-                <Stat value={followers} label="ndjekës" onClick={() => setFollowSheet("followers")} />
-                <Stat value={followingCount} label="ndjek" onClick={() => setFollowSheet("following")} />
+                <Stat
+                  value={followers}
+                  label="ndjekës"
+                  onClick={() => navigate({ to: "/user/$id/followers", params: { id } })}
+                />
+                <Stat
+                  value={followingCount}
+                  label="ndjek"
+                  onClick={() => navigate({ to: "/user/$id/following", params: { id } })}
+                />
               </div>
+
 
               <div style={{ display: "flex", gap: 7 }}>
                 {!isOwn && (
