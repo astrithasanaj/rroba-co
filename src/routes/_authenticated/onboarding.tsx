@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
+import { CityPicker } from "@/components/marketplace/CityPicker";
+import { useCityById } from "@/hooks/useCities";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   ssr: false,
@@ -16,7 +18,7 @@ const DARK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";
 
-const CITIES = ["Prishtinë", "Prizren", "Pejë", "Gjilan", "Ferizaj", "Tiranë", "Tjetër"];
+// City list moved to DB — see CityPicker/useCities
 const GENDERS = [
   { id: "women", label: "Femra" },
   { id: "men", label: "Meshkuj" },
@@ -215,7 +217,7 @@ function StepCity({
   onNext,
 }: {
   value: string | null;
-  onChange: (v: string) => void;
+  onChange: (cityId: string, cityName: string) => void;
   onNext: () => void;
 }) {
   return (
@@ -230,13 +232,10 @@ function StepCity({
           <div className="mb-3 text-sm font-semibold" style={{ color: DARK }}>
             Ku jeton?
           </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            {CITIES.map((c) => (
-              <Chip key={c} active={value === c} onClick={() => onChange(c)}>
-                {c}
-              </Chip>
-            ))}
-          </div>
+          <CityPicker
+            value={value}
+            onChange={(id, c) => onChange(id, c.name)}
+          />
         </div>
       </div>
       <div className="px-5 pb-6 pt-2">
@@ -247,6 +246,7 @@ function StepCity({
     </div>
   );
 }
+
 
 /* ---------- Step 2: Profile ---------- */
 function StepProfile({
