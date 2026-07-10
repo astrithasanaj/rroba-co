@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -132,6 +133,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const hideBottomNav =
+    pathname === "/sell" ||
+    /^\/listing\/[^/]+\/(edit|promote|premium)$/.test(pathname);
   const [navRoot, setNavRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -170,7 +175,7 @@ function RootComponent() {
           <Outlet />
         </div>
         <Toaster />
-        {navRoot ? createPortal(<BottomNav />, navRoot) : null}
+        {navRoot && !hideBottomNav ? createPortal(<BottomNav />, navRoot) : null}
       </UserCollectionsProvider>
     </QueryClientProvider>
   );
