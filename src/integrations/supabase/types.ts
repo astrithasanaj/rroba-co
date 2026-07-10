@@ -62,6 +62,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cities: {
+        Row: {
+          country_code: string
+          country_name: string
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          country_code: string
+          country_name: string
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          country_code?: string
+          country_name?: string
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           archived_by_buyer: boolean
@@ -214,6 +241,7 @@ export type Database = {
           brand: string
           category: string
           city: string
+          city_id: string | null
           color: string
           condition: string
           created_at: string
@@ -235,6 +263,7 @@ export type Database = {
           brand?: string
           category: string
           city?: string
+          city_id?: string | null
           color?: string
           condition?: string
           created_at?: string
@@ -256,6 +285,7 @@ export type Database = {
           brand?: string
           category?: string
           city?: string
+          city_id?: string | null
           color?: string
           condition?: string
           created_at?: string
@@ -273,7 +303,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "listings_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -412,6 +450,7 @@ export type Database = {
           blocked_at: string | null
           blocked_reason: string | null
           city: string | null
+          city_id: string | null
           created_at: string
           date_of_birth: string | null
           display_name: string | null
@@ -440,6 +479,7 @@ export type Database = {
           blocked_at?: string | null
           blocked_reason?: string | null
           city?: string | null
+          city_id?: string | null
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
@@ -468,6 +508,7 @@ export type Database = {
           blocked_at?: string | null
           blocked_reason?: string | null
           city?: string | null
+          city_id?: string | null
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
@@ -490,7 +531,15 @@ export type Database = {
           updated_at?: string
           username?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       promotions: {
         Row: {
