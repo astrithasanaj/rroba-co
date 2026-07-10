@@ -104,7 +104,7 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
-  const [followSheet, setFollowSheet] = useState<null | "followers" | "following">(null);
+  
 
 
   const loadAll = useCallback(async () => {
