@@ -622,7 +622,7 @@ function UserProfile() {
 
       <FollowListSheet
         open={followSheet !== null}
-        onOpenChange={(v) => !v && setFollowSheet(null)}
+        onOpenChange={(v: boolean) => !v && setFollowSheet(null)}
         userId={id}
         mode={followSheet ?? "followers"}
         currentUserId={currentUserId}
