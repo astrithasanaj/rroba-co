@@ -100,6 +100,7 @@ export function ReviewsSheet({
   sellerUsername?: string;
   sellerCreatedAt?: string | null;
 }) {
+  const navigate = useNavigate();
   const [rows, setRows] = useState<Row[]>([]);
   const [raters, setRaters] = useState<Record<string, RaterProfile>>({});
   const [loading, setLoading] = useState(true);
