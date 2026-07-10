@@ -22,7 +22,7 @@ export const getListingLikeInfo = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(1);
 
-    const recentUserId = likes?.[0]?.user_id;
+    const recentUserId = likes?.[0]?.user_id ?? null;
     let recentLiker: string | null = null;
 
     if (recentUserId) {
@@ -34,5 +34,5 @@ export const getListingLikeInfo = createServerFn({ method: "GET" })
       if (profile?.name) recentLiker = profile.name;
     }
 
-    return { count, recentLiker };
+    return { count, recentLiker, recentLikerId: recentUserId };
   });
