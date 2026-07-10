@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { CityPicker } from "@/components/marketplace/CityPicker";
 
 export const Route = createFileRoute("/auth/signup-full")({
   ssr: false,
