@@ -30,6 +30,7 @@ import { deleteMyAccount } from "@/lib/delete-account.functions";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { StarRow } from "@/components/marketplace/RatingsDialog";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
+import { FollowListSheet } from "@/components/marketplace/FollowListSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
@@ -103,6 +104,8 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
+  const [followSheet, setFollowSheet] = useState<null | "followers" | "following">(null);
+
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -319,8 +322,9 @@ function ProfilePage() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={myListings.filter((l) => l.status === "active").length} label="artikuj" />
-                <Stat value={followers} label="ndjekës" />
-                <Stat value={following} label="ndjek" />
+                <Stat value={followers} label="ndjekës" onClick={() => setFollowSheet("followers")} />
+                <Stat value={following} label="ndjek" onClick={() => setFollowSheet("following")} />
+
               </div>
               <div style={{ display: "flex", gap: 7 }}>
                 <button
@@ -664,7 +668,15 @@ function ProfilePage() {
         current={profile?.height_cm ?? null}
         onSaved={loadAll}
       />
+      <FollowListSheet
+        open={followSheet !== null}
+        onOpenChange={(v: boolean) => !v && setFollowSheet(null)}
+        userId={user.id}
+        mode={followSheet ?? "followers"}
+        currentUserId={user.id}
+      />
     </MobileShell>
+
 
   );
 }
@@ -746,16 +758,37 @@ function HeightSheet({
 
 
 
-function Stat({ value, label }: { value: number; label: string }) {
-  return (
-    <div style={{ textAlign: "center" }}>
+function Stat({ value, label, onClick }: { value: number; label: string; onClick?: () => void }) {
+  const inner = (
+    <>
       <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
       <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
         {label}
       </p>
-    </div>
+    </>
   );
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="active:opacity-70"
+        style={{
+          textAlign: "center",
+          background: "transparent",
+          border: 0,
+          padding: 0,
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        {inner}
+      </button>
+    );
+  }
+  return <div style={{ textAlign: "center" }}>{inner}</div>;
 }
+
 
 
 function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {

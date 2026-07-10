@@ -19,6 +19,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
+import { FollowListSheet } from "@/components/marketplace/FollowListSheet";
 
 export const Route = createFileRoute("/user/$id")({
   component: () => (
@@ -48,16 +49,45 @@ const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";
 const CORAL = "#e8826a";
 
-function Stat({ value, label }: { value: number | string; label: string }) {
-  return (
-    <div style={{ textAlign: "center" }}>
+function Stat({
+  value,
+  label,
+  onClick,
+}: {
+  value: number | string;
+  label: string;
+  onClick?: () => void;
+}) {
+  const content = (
+    <>
       <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
       <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
         {label}
       </p>
-    </div>
+    </>
   );
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="active:opacity-70"
+        style={{
+          textAlign: "center",
+          background: "transparent",
+          border: 0,
+          padding: 0,
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        {content}
+      </button>
+    );
+  }
+  return <div style={{ textAlign: "center" }}>{content}</div>;
 }
+
 
 function UserProfile() {
   const { id } = useParams({ from: "/user/$id" });
@@ -77,6 +107,8 @@ function UserProfile() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
+  const [followSheet, setFollowSheet] = useState<null | "followers" | "following">(null);
+
 
   const loadFollows = useCallback(async () => {
     const [{ count: fCount }, { count: gCount }] = await Promise.all([
@@ -347,9 +379,10 @@ function UserProfile() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={activeCount} label="artikuj" />
-                <Stat value={followers} label="ndjekës" />
-                <Stat value={followingCount} label="ndjek" />
+                <Stat value={followers} label="ndjekës" onClick={() => setFollowSheet("followers")} />
+                <Stat value={followingCount} label="ndjek" onClick={() => setFollowSheet("following")} />
               </div>
+
               <div style={{ display: "flex", gap: 7 }}>
                 {!isOwn && (
                   <button
@@ -587,8 +620,17 @@ function UserProfile() {
         sellerCreatedAt={profile.created_at}
       />
 
+      <FollowListSheet
+        open={followSheet !== null}
+        onOpenChange={(v: boolean) => !v && setFollowSheet(null)}
+        userId={id}
+        mode={followSheet ?? "followers"}
+        currentUserId={currentUserId}
+      />
+
       {/* Suppress unused var lint for likesTotal (surfaced via popular sort but unused otherwise) */}
       <span className="hidden">{likesTotal}</span>
+
     </MobileShell>
   );
 }
