@@ -59,6 +59,7 @@ export function ColorPickerSheet({
   };
 
   const confirm = () => {
+    console.log("[ColorPickerSheet] Konfirmo clicked", selected);
     onChange(selected);
     onOpenChange(false);
   };
