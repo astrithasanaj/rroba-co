@@ -106,6 +106,8 @@ function UserProfile() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
+  const [followSheet, setFollowSheet] = useState<null | "followers" | "following">(null);
+
 
   const loadFollows = useCallback(async () => {
     const [{ count: fCount }, { count: gCount }] = await Promise.all([
