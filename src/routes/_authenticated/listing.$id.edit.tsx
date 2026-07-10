@@ -611,21 +611,13 @@ function EditListingPage() {
             </div>
             <div>
               <SectionLabel className="mt-0">Qyteti</SectionLabel>
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full rounded-2xl px-4 py-3.5 text-sm focus:outline-none"
-                style={{ background: CARD, color: city ? INK : MUTED }}
-              >
-                <option value="" disabled>
-                  Zgjidh
-                </option>
-                {CITIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              <CityPicker
+                value={cityId}
+                onChange={(id, c) => {
+                  setCityId(id);
+                  setCity(c.name);
+                }}
+              />
             </div>
           </div>
 
