@@ -326,32 +326,3 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
   );
 }
 
-function Tab({
-  active,
-  to,
-  userId,
-  children,
-}: {
-  active: boolean;
-  to: "/user/$id/followers" | "/user/$id/following";
-  userId: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      to={to}
-      params={{ id: userId }}
-      replace
-      style={{
-        padding: "12px 0",
-        fontSize: 14,
-        fontWeight: active ? 600 : 500,
-        color: active ? INK : MUTED,
-        borderBottom: `2px solid ${active ? INK : "transparent"}`,
-        marginBottom: -1,
-      }}
-    >
-      {children}
-    </Link>
-  );
-}
