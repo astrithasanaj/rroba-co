@@ -19,6 +19,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
+import { FollowListSheet } from "@/components/marketplace/FollowListSheet";
 
 export const Route = createFileRoute("/user/$id")({
   component: () => (
