@@ -325,7 +325,20 @@ function ProductDetail() {
       {/* Social proof line */}
       {likeInfo.count > 0 && likeInfo.recentLiker && (
         <p className="px-[18px] py-1 text-[13px]" style={{ color: "#1a1a1a" }}>
-          Likt nga <span className="font-semibold">{likeInfo.recentLiker}</span>
+          Likt nga{" "}
+          {likeInfo.recentLikerId ? (
+            <Link
+              to="/user/$id"
+              params={{ id: likeInfo.recentLikerId }}
+              onClick={(e) => e.stopPropagation()}
+              className="font-semibold hover:underline active:opacity-70"
+              style={{ WebkitTapHighlightColor: "transparent" }}
+            >
+              {likeInfo.recentLiker}
+            </Link>
+          ) : (
+            <span className="font-semibold">{likeInfo.recentLiker}</span>
+          )}
           {likeInfo.count > 1 ? ` dhe ${likeInfo.count - 1} të tjerë` : ""}
         </p>
       )}
