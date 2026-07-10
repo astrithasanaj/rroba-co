@@ -95,7 +95,7 @@ function UserProfile() {
       const uid = auth?.user?.id ?? null;
 
       const [p, l] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
+        supabase.from("public_profiles" as any).select("id,name,avatar_url,city,bio,rating_avg,rating_count,created_at").eq("id", id).maybeSingle(),
         supabase
           .from("listings")
           .select("*")

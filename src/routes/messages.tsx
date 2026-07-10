@@ -125,7 +125,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
     const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
     const [profs, listings, lastMsgs] = await Promise.all([
-      supabase.from("profiles").select("id,name,avatar_url").in("id", otherIds),
+      supabase.from("public_profiles" as any).select("id,name,avatar_url").in("id", otherIds),
       supabase.from("listings").select("id,title,image_paths,price").in("id", listingIds),
       supabase.from("messages").select("conversation_id,content,created_at,sender_id").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
     ]);
@@ -484,7 +484,7 @@ function NewMessage({ me }: { me: string }) {
         .limit(20);
       const others = Array.from(new Set((convs ?? []).map((c) => (c.buyer_id === me ? c.seller_id : c.buyer_id)))).slice(0, 5);
       if (others.length) {
-        const { data: profs } = await supabase.from("profiles").select("id,name,avatar_url").in("id", others);
+        const { data: profs } = await supabase.from("public_profiles" as any).select("id,name,avatar_url").in("id", others);
         setRecent((profs ?? []) as ProfileResult[]);
       }
     })();
@@ -495,7 +495,7 @@ function NewMessage({ me }: { me: string }) {
     setLoading(true);
     const handle = setTimeout(async () => {
       const { data } = await supabase
-        .from("profiles")
+        .from("public_profiles" as any)
         .select("id,name,avatar_url")
         .neq("id", me)
         .ilike("name", `%${q.trim()}%`)
@@ -618,7 +618,7 @@ function Thread({ id, me }: { id: string; me: string }) {
       const isBuyer = conv.buyer_id === me;
       const otherId = isBuyer ? conv.seller_id : conv.buyer_id;
       const [prof, listing, msgRes] = await Promise.all([
-        supabase.from("profiles").select("name,avatar_url").eq("id", otherId).maybeSingle(),
+        supabase.from("public_profiles" as any).select("name,avatar_url").eq("id", otherId).maybeSingle(),
         supabase.from("listings").select("title,price,image_paths").eq("id", conv.listing_id).maybeSingle(),
         supabase.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: true }),
       ]);

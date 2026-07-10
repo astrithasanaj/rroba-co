@@ -305,17 +305,12 @@ function StepProfile({
     }
     setUsernameStatus("checking");
     const t = setTimeout(async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .ilike("username", raw)
-        .neq("id", userId)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("is_username_available", { _username: raw });
       if (error) {
         setUsernameStatus("idle");
         return;
       }
-      setUsernameStatus(data ? "taken" : "available");
+      setUsernameStatus(data ? "available" : "taken");
     }, 400);
     return () => clearTimeout(t);
   }, [username, userId]);
