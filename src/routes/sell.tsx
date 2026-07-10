@@ -371,8 +371,11 @@ function SellPage() {
               color={color}
               price={price}
               setPrice={setPrice}
-              city={city}
-              setCity={setCity}
+              cityId={cityId}
+              onCityChange={(id, name) => {
+                setCityId(id);
+                setCity(name);
+              }}
               delivery={delivery}
               setDelivery={setDelivery}
               onOpenSize={() => setSizeSheetOpen(true)}
@@ -1074,21 +1077,10 @@ function FinalStep({
           </div>
           <div>
             <Label>Qyteti</Label>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full rounded-2xl px-4 py-3.5 text-sm focus:outline-none"
-              style={{ background: CARD, color: city ? INK : MUTED }}
-            >
-              <option value="" disabled>
-                Zgjidh
-              </option>
-              {CITIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <CityPicker
+              value={cityId}
+              onChange={(id, c) => onCityChange(id, c.name)}
+            />
           </div>
         </div>
 
