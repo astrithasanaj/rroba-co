@@ -12,7 +12,7 @@ export const getListingLikeInfo = createServerFn({ method: "GET" })
       .eq("listing_id", data.listingId);
 
     if (countError || !count || count === 0) {
-      return { count: 0, recentLiker: null };
+      return { count: 0, recentLiker: null, recentLikerId: null };
     }
 
     const { data: likes } = await supabaseAdmin
