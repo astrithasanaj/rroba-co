@@ -114,7 +114,7 @@ function getSubcategories(category: string, gender: string): string[] {
   }
 }
 
-const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
+// City list moved to DB — see CityPicker/useCities
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 
 type View = "media" | "details" | "final";
@@ -145,6 +145,7 @@ function SellPage() {
   const [color, setColor] = useState<string[]>([]);
   const [price, setPrice] = useState("");
   const [city, setCity] = useState("");
+  const [cityId, setCityId] = useState<string | null>(null);
   const [delivery, setDelivery] = useState<string[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
@@ -225,7 +226,7 @@ function SellPage() {
     price.trim().length > 0 &&
     Number.isFinite(priceNum) &&
     priceNum >= 0 &&
-    !!city;
+    !!cityId;
 
   const publish = async () => {
     if (!userId || submitting || !finalValid) return;
@@ -252,6 +253,7 @@ function SellPage() {
         condition,
         color: color.length ? color.join(", ") : "",
         city,
+        city_id: cityId,
         gender: catGender,
         price: priceNum,
         description: description.trim(),
