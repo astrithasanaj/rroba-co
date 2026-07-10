@@ -51,10 +51,11 @@ function ProductDetail() {
   const [offerOpen, setOfferOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
-  const [likeInfo, setLikeInfo] = useState<{ count: number; recentLiker: string | null }>({
-    count: 0,
-    recentLiker: null,
-  });
+  const [likeInfo, setLikeInfo] = useState<{
+    count: number;
+    recentLiker: string | null;
+    recentLikerId: string | null;
+  }>({ count: 0, recentLiker: null, recentLikerId: null });
   const { likes, saves, toggleLike, toggleSave } = useUserCollections();
 
   useEffect(() => {
