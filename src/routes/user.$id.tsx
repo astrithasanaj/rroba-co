@@ -48,16 +48,45 @@ const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";
 const CORAL = "#e8826a";
 
-function Stat({ value, label }: { value: number | string; label: string }) {
-  return (
-    <div style={{ textAlign: "center" }}>
+function Stat({
+  value,
+  label,
+  onClick,
+}: {
+  value: number | string;
+  label: string;
+  onClick?: () => void;
+}) {
+  const content = (
+    <>
       <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
       <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
         {label}
       </p>
-    </div>
+    </>
   );
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="active:opacity-70"
+        style={{
+          textAlign: "center",
+          background: "transparent",
+          border: 0,
+          padding: 0,
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        {content}
+      </button>
+    );
+  }
+  return <div style={{ textAlign: "center" }}>{content}</div>;
 }
+
 
 function UserProfile() {
   const { id } = useParams({ from: "/user/$id" });
