@@ -77,7 +77,7 @@ function ProductDetail() {
       }
       const [hydrated] = await hydrateListings([row as ListingRow]);
       const { data: prof } = await supabase
-        .from("public_profiles" as any)
+        .from("public_profiles")
         .select("id,name,avatar_url,rating_avg,rating_count")
         .eq("id", row.user_id)
         .maybeSingle();

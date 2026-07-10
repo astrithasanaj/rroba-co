@@ -129,7 +129,7 @@ export function ReviewsSheet({
       const ids = Array.from(new Set(list.map((r) => r.rater_id)));
       if (ids.length) {
         const { data: profs } = await supabase
-          .from("public_profiles" as any)
+          .from("public_profiles")
           .select("id,name,avatar_url")
           .in("id", ids);
         const map: Record<string, RaterProfile> = {};
