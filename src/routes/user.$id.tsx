@@ -629,14 +629,6 @@ function UserProfile() {
         sellerCreatedAt={profile.created_at}
       />
 
-      <FollowListSheet
-        open={followSheet !== null}
-        onOpenChange={(v: boolean) => !v && setFollowSheet(null)}
-        userId={id}
-        mode={followSheet ?? "followers"}
-        currentUserId={currentUserId}
-      />
-
       {/* Suppress unused var lint for likesTotal (surfaced via popular sort but unused otherwise) */}
       <span className="hidden">{likesTotal}</span>
 
