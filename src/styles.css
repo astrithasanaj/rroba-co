@@ -140,12 +140,6 @@ input, textarea, select {
 
 /* Nav bar portal should not block sheets/modals when BottomNav is hidden */
 #nav-bar-root {
-  position: fixed !important;
-  bottom: 16px !important;
-  left: 16px !important;
-  right: 16px !important;
-  height: 58px !important;
-  z-index: 99999 !important;
   pointer-events: none !important;
 }
 
