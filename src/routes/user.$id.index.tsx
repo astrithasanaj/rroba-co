@@ -93,7 +93,7 @@ function Stat({
 
 
 function UserProfile() {
-  const { id } = useParams({ from: "/user/$id" });
+  const { id } = useParams({ from: "/user/$id/" });
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [listings, setListings] = useState<ListingView[]>([]);
