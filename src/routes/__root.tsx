@@ -133,6 +133,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const hideBottomNav =
+    pathname === "/sell" ||
+    /^\/listing\/[^/]+\/(edit|promote|premium)$/.test(pathname);
   const [navRoot, setNavRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
