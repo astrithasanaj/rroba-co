@@ -32,19 +32,7 @@ const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
   { code: "+1", flag: "🇺🇸", name: "SHBA" },
 ];
 
-const CITIES = [
-  "Prishtinë",
-  "Prizren",
-  "Pejë",
-  "Gjilan",
-  "Ferizaj",
-  "Mitrovicë",
-  "Tiranë",
-  "Durrës",
-  "Vlorë",
-  "Shkodër",
-  "Tjetër",
-];
+// City list moved to DB — see CityPicker/useCities
 
 type Gender = "female" | "male" | "unspecified";
 
