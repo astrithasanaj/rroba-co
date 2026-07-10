@@ -378,6 +378,11 @@ export function ReviewsSheet({
                 filtered.map((r) => {
                   const rp = raters[r.rater_id];
                   const name = rp?.name || "Përdorues";
+                  const goToProfile = (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    onOpenChange(false);
+                    navigate({ to: "/user/$id", params: { id: r.rater_id } });
+                  };
                   return (
                     <div
                       key={r.id}
@@ -395,20 +400,52 @@ export function ReviewsSheet({
                       onPointerUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
                       onPointerLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                     >
-                      {rp?.avatar_url ? (
-                        <img
-                          src={rp.avatar_url}
-                          alt=""
-                          style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
-                        />
-                      ) : (
-                        <Initials name={name} />
-                      )}
+                      <button
+                        type="button"
+                        onClick={goToProfile}
+                        style={{
+                          background: "transparent",
+                          border: 0,
+                          padding: 0,
+                          cursor: "pointer",
+                          flexShrink: 0,
+                          WebkitTapHighlightColor: "transparent",
+                        }}
+                        aria-label={name}
+                      >
+                        {rp?.avatar_url ? (
+                          <img
+                            src={rp.avatar_url}
+                            alt=""
+                            style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", display: "block" }}
+                          />
+                        ) : (
+                          <Initials name={name} />
+                        )}
+                      </button>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                          <div style={{ fontSize: 14, fontWeight: 600, color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <button
+                            type="button"
+                            onClick={goToProfile}
+                            className="active:opacity-70 hover:underline"
+                            style={{
+                              background: "transparent",
+                              border: 0,
+                              padding: 0,
+                              cursor: "pointer",
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: INK,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              textAlign: "left",
+                              WebkitTapHighlightColor: "transparent",
+                            }}
+                          >
                             {name}
-                          </div>
+                          </button>
                           <StarBar value={r.stars} />
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2 }}>
