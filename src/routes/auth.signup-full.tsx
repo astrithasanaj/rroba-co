@@ -753,25 +753,13 @@ function SignupFullPage() {
               <label className="mb-1 block px-1 text-[13px]" style={{ color: MUTED }}>
                 Qyteti
               </label>
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full appearance-none text-[15px] outline-none"
-                style={{
-                  background: CARD,
-                  color: city ? INK : MUTED,
-                  height: 52,
-                  borderRadius: 12,
-                  padding: "0 16px",
+              <CityPicker
+                value={cityId}
+                onChange={(id, c) => {
+                  setCityId(id);
+                  setCity(c.name);
                 }}
-              >
-                <option value="">Zgjidh qytetin</option>
-                {CITIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div>
