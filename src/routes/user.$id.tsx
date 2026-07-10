@@ -19,7 +19,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
-import { FollowListSheet } from "@/components/marketplace/FollowListSheet";
+
 
 export const Route = createFileRoute("/user/$id")({
   component: () => (
@@ -107,7 +107,6 @@ function UserProfile() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
-  const [followSheet, setFollowSheet] = useState<null | "followers" | "following">(null);
 
 
   const loadFollows = useCallback(async () => {
@@ -379,9 +378,18 @@ function UserProfile() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={activeCount} label="artikuj" />
-                <Stat value={followers} label="ndjekës" onClick={() => setFollowSheet("followers")} />
-                <Stat value={followingCount} label="ndjek" onClick={() => setFollowSheet("following")} />
+                <Stat
+                  value={followers}
+                  label="ndjekës"
+                  onClick={() => navigate({ to: "/user/$id/followers", params: { id } })}
+                />
+                <Stat
+                  value={followingCount}
+                  label="ndjek"
+                  onClick={() => navigate({ to: "/user/$id/following", params: { id } })}
+                />
               </div>
+
 
               <div style={{ display: "flex", gap: 7 }}>
                 {!isOwn && (
@@ -618,14 +626,6 @@ function UserProfile() {
         sellerName={displayName}
         sellerUsername={username}
         sellerCreatedAt={profile.created_at}
-      />
-
-      <FollowListSheet
-        open={followSheet !== null}
-        onOpenChange={(v: boolean) => !v && setFollowSheet(null)}
-        userId={id}
-        mode={followSheet ?? "followers"}
-        currentUserId={currentUserId}
       />
 
       {/* Suppress unused var lint for likesTotal (surfaced via popular sort but unused otherwise) */}
