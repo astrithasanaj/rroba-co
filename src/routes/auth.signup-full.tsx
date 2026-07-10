@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 
 export const Route = createFileRoute("/auth/signup-full")({
@@ -191,6 +192,28 @@ function SignupFullPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [globalErr, setGlobalErr] = useState("");
+  const [appleErr, setAppleErr] = useState("");
+  const [appleLoading, setAppleLoading] = useState(false);
+
+  const handleApple = async () => {
+    setAppleErr("");
+    setAppleLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: `${window.location.origin}/auth/callback`,
+      });
+      if (result.error) {
+        setAppleErr("Diçka shkoi keq me hyrjen përmes Apple. Provo përsëri.");
+        setAppleLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      navigate({ to: "/auth/callback", replace: true });
+    } catch {
+      setAppleErr("Diçka shkoi keq me hyrjen përmes Apple. Provo përsëri.");
+      setAppleLoading(false);
+    }
+  };
 
   // Step 1
   const [firstName, setFirstName] = useState("");
@@ -476,12 +499,37 @@ function SignupFullPage() {
 
         {/* Step 1 */}
         {step === 1 && (
+          <>
+            <div className="mt-6 space-y-3">
+              <button
+                type="button"
+                onClick={handleApple}
+                disabled={appleLoading}
+                className="flex h-[52px] w-full items-center justify-center gap-2 text-[15px] font-semibold transition disabled:opacity-60 active:scale-[0.98]"
+                style={{ background: "#000", color: "#fff", borderRadius: 14 }}
+              >
+                <svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+                  <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zM256.6 84.4c30.2-35.8 27.5-68.4 26.6-80.4-26.7 1.5-57.6 18.2-75.2 38.7-19.4 22-30.8 49.2-28.4 79.9 28.9 2.2 55.3-12.6 76.9-38.2z" />
+                </svg>
+                {appleLoading ? "Duke hyrë..." : "Vazhdo me Apple"}
+              </button>
+              {appleErr && (
+                <p className="px-1 text-xs" style={{ color: ERR }}>
+                  {appleErr}
+                </p>
+              )}
+              <div className="flex items-center gap-3 pt-1">
+                <div className="h-px flex-1" style={{ background: DIVIDER }} />
+                <span className="text-[12px]" style={{ color: MUTED }}>ose</span>
+                <div className="h-px flex-1" style={{ background: DIVIDER }} />
+              </div>
+            </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               nextFromStep1();
             }}
-            className="mt-8 space-y-3"
+            className="mt-4 space-y-3"
           >
             <Field value={firstName} onChange={setFirstName} placeholder="Emri" autoComplete="given-name" />
             <Field value={lastName} onChange={setLastName} placeholder="Mbiemri" autoComplete="family-name" />
@@ -655,6 +703,7 @@ function SignupFullPage() {
               </Link>
             </p>
           </form>
+          </>
         )}
 
         {/* Step 2 */}
