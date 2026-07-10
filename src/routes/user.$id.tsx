@@ -378,9 +378,10 @@ function UserProfile() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat value={activeCount} label="artikuj" />
-                <Stat value={followers} label="ndjekës" />
-                <Stat value={followingCount} label="ndjek" />
+                <Stat value={followers} label="ndjekës" onClick={() => setFollowSheet("followers")} />
+                <Stat value={followingCount} label="ndjek" onClick={() => setFollowSheet("following")} />
               </div>
+
               <div style={{ display: "flex", gap: 7 }}>
                 {!isOwn && (
                   <button
