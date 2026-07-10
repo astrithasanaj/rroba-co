@@ -836,7 +836,9 @@ function OnboardingFlow() {
 
   // Steps: 0 splash, 1 city, 2 profile, 3 style, 4 how, 5 notify, 6 done
   const [step, setStep] = useState(0);
-  const [city, setCity] = useState<string | null>(null);
+  const [cityId, setCityId] = useState<string | null>(null);
+  const [cityName, setCityName] = useState<string>("");
+  const cityFromDb = useCityById(cityId);
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
@@ -864,7 +866,7 @@ function OnboardingFlow() {
       // If already completed, skip out
       const { data: prof } = await supabase
         .from("profiles")
-        .select("onboarding_completed, name, city")
+        .select("onboarding_completed, name, city, city_id")
         .eq("id", user.id)
         .maybeSingle();
       if (prof?.onboarding_completed) {
@@ -872,7 +874,9 @@ function OnboardingFlow() {
         return;
       }
       if (prof?.name && !displayName) setDisplayName(prof.name);
-      if (prof?.city && !city) setCity(prof.city);
+      const p = prof as { city?: string | null; city_id?: string | null } | null;
+      if (p?.city_id && !cityId) setCityId(p.city_id);
+      if (p?.city && !cityName) setCityName(p.city);
       setReady(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -895,7 +899,8 @@ function OnboardingFlow() {
     const heightNum = height ? parseInt(height, 10) : null;
     const uname = username.replace(/^@/, "").trim().toLowerCase();
     const updatePayload: Record<string, unknown> = {
-      city: city ?? undefined,
+      city: (cityName || cityFromDb?.name) ?? undefined,
+      city_id: cityId ?? undefined,
       name: displayName.trim(),
       display_name: displayName.trim(),
       username: uname || null,
@@ -936,7 +941,14 @@ function OnboardingFlow() {
         return <StepSplash onDone={() => setStep(1)} />;
       case 1:
         return (
-          <StepCity value={city} onChange={setCity} onNext={() => setStep(2)} />
+          <StepCity
+            value={cityId}
+            onChange={(id, name) => {
+              setCityId(id);
+              setCityName(name);
+            }}
+            onNext={() => setStep(2)}
+          />
         );
       case 2:
         return (
