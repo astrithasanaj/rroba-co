@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { CityPicker } from "@/components/marketplace/CityPicker";
 
 export const Route = createFileRoute("/auth/signup-full")({
   ssr: false,
@@ -32,19 +33,7 @@ const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
   { code: "+1", flag: "🇺🇸", name: "SHBA" },
 ];
 
-const CITIES = [
-  "Prishtinë",
-  "Prizren",
-  "Pejë",
-  "Gjilan",
-  "Ferizaj",
-  "Mitrovicë",
-  "Tiranë",
-  "Durrës",
-  "Vlorë",
-  "Shkodër",
-  "Tjetër",
-];
+// City list moved to DB — see CityPicker/useCities
 
 type Gender = "female" | "male" | "unspecified";
 
@@ -276,6 +265,7 @@ function SignupFullPage() {
   // Step 3
   const [dob, setDob] = useState("");
   const [city, setCity] = useState("");
+  const [cityId, setCityId] = useState<string | null>(null);
   const [gender, setGender] = useState<Gender | "">("");
   const [username, setUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState<
@@ -351,7 +341,7 @@ function SignupFullPage() {
 
   const step3Filled =
     dob &&
-    city &&
+    cityId &&
     gender &&
     username &&
     usernameStatus === "ok" &&
@@ -433,6 +423,7 @@ function SignupFullPage() {
         phone_verified: false,
         date_of_birth: dob,
         city,
+        city_id: cityId,
         gender: genderMap[gender as Gender],
         signup_device:
           typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : "unknown",
@@ -764,25 +755,13 @@ function SignupFullPage() {
               <label className="mb-1 block px-1 text-[13px]" style={{ color: MUTED }}>
                 Qyteti
               </label>
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full appearance-none text-[15px] outline-none"
-                style={{
-                  background: CARD,
-                  color: city ? INK : MUTED,
-                  height: 52,
-                  borderRadius: 12,
-                  padding: "0 16px",
+              <CityPicker
+                value={cityId}
+                onChange={(id, c) => {
+                  setCityId(id);
+                  setCity(c.name);
                 }}
-              >
-                <option value="">Zgjidh qytetin</option>
-                {CITIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div>

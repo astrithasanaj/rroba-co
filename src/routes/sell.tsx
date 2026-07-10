@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { CityPicker } from "@/components/marketplace/CityPicker";
 import {
   SizePickerSheet,
   resolveSizeKind,
@@ -114,7 +115,7 @@ function getSubcategories(category: string, gender: string): string[] {
   }
 }
 
-const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë", "Gjilan", "Ferizaj"];
+// City list moved to DB — see CityPicker/useCities
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 
 type View = "media" | "details" | "final";
@@ -145,6 +146,7 @@ function SellPage() {
   const [color, setColor] = useState<string[]>([]);
   const [price, setPrice] = useState("");
   const [city, setCity] = useState("");
+  const [cityId, setCityId] = useState<string | null>(null);
   const [delivery, setDelivery] = useState<string[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
@@ -225,7 +227,7 @@ function SellPage() {
     price.trim().length > 0 &&
     Number.isFinite(priceNum) &&
     priceNum >= 0 &&
-    !!city;
+    !!cityId;
 
   const publish = async () => {
     if (!userId || submitting || !finalValid) return;
@@ -252,6 +254,7 @@ function SellPage() {
         condition,
         color: color.length ? color.join(", ") : "",
         city,
+        city_id: cityId,
         gender: catGender,
         price: priceNum,
         description: description.trim(),
@@ -369,8 +372,11 @@ function SellPage() {
               color={color}
               price={price}
               setPrice={setPrice}
-              city={city}
-              setCity={setCity}
+              cityId={cityId}
+              onCityChange={(id, name) => {
+                setCityId(id);
+                setCity(name);
+              }}
               delivery={delivery}
               setDelivery={setDelivery}
               onOpenSize={() => setSizeSheetOpen(true)}
@@ -941,8 +947,8 @@ function FinalStep({
   color,
   price,
   setPrice,
-  city,
-  setCity,
+  cityId,
+  onCityChange,
   delivery,
   setDelivery,
   onOpenSize,
@@ -958,8 +964,8 @@ function FinalStep({
   color: string[];
   price: string;
   setPrice: (v: string) => void;
-  city: string;
-  setCity: (v: string) => void;
+  cityId: string | null;
+  onCityChange: (id: string, name: string) => void;
   delivery: string[];
   setDelivery: (v: string[]) => void;
   onOpenSize: () => void;
@@ -1072,21 +1078,10 @@ function FinalStep({
           </div>
           <div>
             <Label>Qyteti</Label>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full rounded-2xl px-4 py-3.5 text-sm focus:outline-none"
-              style={{ background: CARD, color: city ? INK : MUTED }}
-            >
-              <option value="" disabled>
-                Zgjidh
-              </option>
-              {CITIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <CityPicker
+              value={cityId}
+              onChange={(id, c) => onCityChange(id, c.name)}
+            />
           </div>
         </div>
 
