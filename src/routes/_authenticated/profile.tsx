@@ -32,7 +32,8 @@ import { StarRow } from "@/components/marketplace/RatingsDialog";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
-import { hydrateListings, type ListingRow, type ListingView, CITIES } from "@/lib/listings";
+import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -52,6 +53,7 @@ type Profile = {
   name: string;
   avatar_url: string | null;
   city: string;
+  city_id: string | null;
   bio: string;
   rating_avg: number;
   rating_count: number;
@@ -1278,6 +1280,7 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [city, setCity] = useState(profile?.city ?? "");
+  const [cityId, setCityId] = useState<string | null>(profile?.city_id ?? null);
   const [height, setHeight] = useState<string>(profile?.height_cm?.toString() ?? "");
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
   const [saving, setSaving] = useState(false);
@@ -1287,6 +1290,7 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     setName(profile?.name ?? "");
     setBio(profile?.bio ?? "");
     setCity(profile?.city ?? "");
+    setCityId(profile?.city_id ?? null);
     setHeight(profile?.height_cm?.toString() ?? "");
     setAvatarUrl(profile?.avatar_url ?? "");
   }, [profile]);
@@ -1316,7 +1320,7 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     const h = height.trim() === "" ? null : Math.max(0, Math.min(260, parseInt(height, 10) || 0));
     const { error } = await supabase
       .from("profiles")
-      .update({ name, bio, city, avatar_url: avatarUrl || null, height_cm: h })
+      .update({ name, bio, city, city_id: cityId, avatar_url: avatarUrl || null, height_cm: h })
       .eq("id", profile.id);
     setSaving(false);
     if (error) toast.error(error.message);
@@ -1343,10 +1347,15 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
       </div>
       <div>
         <Label style={{ color: INK }}>Qyteti</Label>
-        <select value={city} onChange={(e) => setCity(e.target.value)} className="mt-1 h-10 w-full rounded-md px-3 text-sm" style={{ backgroundColor: CARD, border: `1px solid ${DIVIDER}`, color: INK }}>
-          <option value="">Zgjidh</option>
-          {CITIES.map((c) => (<option key={c} value={c}>{c}</option>))}
-        </select>
+        <div className="mt-1">
+          <CityPicker
+            value={cityId}
+            onChange={(id, c) => {
+              setCityId(id);
+              setCity(c.name);
+            }}
+          />
+        </div>
       </div>
       <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold disabled:opacity-50" style={{ backgroundColor: INK, color: "#ffffff" }}>
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
