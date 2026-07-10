@@ -643,8 +643,11 @@ function EditListingPage() {
 
         {/* Sticky save button */}
         <div
-          className="sticky bottom-0 px-5 pb-6 pt-3"
-          style={{ background: `linear-gradient(to top, ${CREAM} 70%, transparent)` }}
+          className="sticky bottom-0 px-5 pt-3"
+          style={{
+            background: `linear-gradient(to top, ${CREAM} 70%, transparent)`,
+            paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)",
+          }}
         >
           <button
             type="button"
