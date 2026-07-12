@@ -113,9 +113,10 @@ function AuthCallbackPage() {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col items-center justify-center px-6 text-center"
-      style={{ background: CREAM }}
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
     >
+
       <div
         className="italic"
         style={{

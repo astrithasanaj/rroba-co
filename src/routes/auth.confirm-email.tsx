@@ -36,7 +36,8 @@ function ConfirmEmailPage() {
   ];
 
   return (
-    <div className="min-h-screen w-full" style={{ background: CREAM }}>
+    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
+
       <div className="mx-auto flex w-full max-w-[420px] flex-col items-center px-6 pb-12 pt-[60px] text-center">
         <div
           className="italic"
