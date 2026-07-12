@@ -136,7 +136,12 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hideBottomNav =
     pathname === "/sell" ||
+    pathname === "/onboarding" ||
+    pathname === "/blocked" ||
+    pathname === "/reset-password" ||
+    pathname.startsWith("/auth") ||
     /^\/listing\/[^/]+\/(edit|promote|premium)$/.test(pathname);
+
   const [navRoot, setNavRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
