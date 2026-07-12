@@ -113,23 +113,26 @@ function AuthCallbackPage() {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col items-center justify-center px-6 text-center"
-      style={{ background: CREAM }}
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
     >
-      <div
-        className="italic"
-        style={{
-          fontFamily: '"Instrument Serif", serif',
-          fontSize: 44,
-          color: INK,
-          fontWeight: 400,
-        }}
-      >
-        Rroba
+      <div className="flex min-h-screen w-full flex-col items-center justify-center px-6 text-center">
+        <div
+          className="italic"
+          style={{
+            fontFamily: '"Instrument Serif", serif',
+            fontSize: 44,
+            color: INK,
+            fontWeight: 400,
+          }}
+        >
+          Rroba
+        </div>
+        <p className="mt-6 text-sm" style={{ color: MUTED }}>
+          {status === "working" ? "Duke konfirmuar llogarinë..." : "Diçka shkoi keq. Provo sërish."}
+        </p>
       </div>
-      <p className="mt-6 text-sm" style={{ color: MUTED }}>
-        {status === "working" ? "Duke konfirmuar llogarinë..." : "Diçka shkoi keq. Provo sërish."}
-      </p>
     </div>
+
   );
 }

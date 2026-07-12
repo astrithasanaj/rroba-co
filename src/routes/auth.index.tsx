@@ -25,7 +25,8 @@ function AuthLanding() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen w-full" style={{ background: CREAM }}>
+    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
+
       <div className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col px-6 pb-10 pt-[60px]">
         <div className="text-center">
           <div
