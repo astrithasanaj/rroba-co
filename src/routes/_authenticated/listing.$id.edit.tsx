@@ -307,7 +307,6 @@ function EditListingPage() {
           description: description.trim(),
           image_paths: finalPaths,
           delivery,
-          status: "pending_review",
           updated_at: new Date().toISOString(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any)
