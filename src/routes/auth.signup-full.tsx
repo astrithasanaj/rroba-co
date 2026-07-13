@@ -406,6 +406,7 @@ function SignupFullPage() {
   const submit = async () => {
     setGlobalErr("");
     setAgeErr("");
+    setStep1Err({});
     if (!validateAge(dob)) {
       setAgeErr("Duhet të jesh të paktën 16 vjeç për t'u regjistruar.");
       return;
@@ -472,7 +473,18 @@ function SignupFullPage() {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message.toLowerCase() : "";
-      if (msg.includes("already") || msg.includes("registered")) {
+      const isWeakPassword =
+        (err && typeof err === "object" && "code" in err && (err as { code?: string }).code === "weak_password") ||
+        msg.includes("pwned") ||
+        msg.includes("weak") ||
+        msg.includes("easy to guess");
+
+      if (isWeakPassword) {
+        setStep1Err({
+          password:
+            "Ky fjalëkalim është identifikuar si i pasigurt (është gjetur në rrjedhje të dhënash të mëparshme). Ju lutem zgjidhni një fjalëkalim tjetër.",
+        });
+      } else if (msg.includes("already") || msg.includes("registered")) {
         setGlobalErr("Ky email është tashmë i regjistruar.");
       } else {
         setGlobalErr("Diçka shkoi keq. Provo sërish ose kontakto mbështetjen.");
