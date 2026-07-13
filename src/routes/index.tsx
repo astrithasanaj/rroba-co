@@ -28,6 +28,7 @@ const CATEGORIES = [
 
 function HomePage() {
   const [listings, setListings] = useState<ListingView[]>([]);
+  const [promoted, setPromoted] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +36,6 @@ function HomePage() {
     const load = async () => {
       setLoading(true);
 
-      // Step 1: active feed_top promoted listings
       const nowIso = new Date().toISOString();
       const { data: promos } = await supabase
         .from("promotions")
@@ -50,7 +50,6 @@ function HomePage() {
         .filter((r): r is ListingRow => !!r && r.status === "active");
       const promotedIds = promotedRows.map((r) => r.id);
 
-      // Step 2: regular listings excluding promoted
       let query = supabase
         .from("listings")
         .select("*")
@@ -62,13 +61,13 @@ function HomePage() {
       }
       const { data: regular } = await query;
 
-      const merged: ListingRow[] = [...promotedRows, ...((regular ?? []) as ListingRow[])];
-      const hydrated = await hydrateListings(merged);
-      const promotedSet = new Set(promotedIds);
-      const withFlag = hydrated.map((l) => ({ ...l, is_promoted: promotedSet.has(l.id) }));
+      const hydratedPromoted = await hydrateListings(promotedRows);
+      const hydratedRegular = await hydrateListings((regular ?? []) as ListingRow[]);
+      const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
 
       if (active) {
-        setListings(withFlag);
+        setPromoted(promotedWithFlag.slice(0, 10));
+        setListings(hydratedRegular);
         setLoading(false);
       }
     };
@@ -171,6 +170,24 @@ function HomePage() {
           </div>
         ) : (
           <>
+            {promoted.length > 0 && (
+              <section className="mt-7">
+                <div className="px-5">
+                  <SectionHeader title="Të zgjedhura" />
+                </div>
+                <div
+                  className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  {promoted.map((l) => (
+                    <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                      <ListingCard listing={l} />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Trending — uniform 2-column grid */}
             <section className="mt-7 px-[18px]">
               <SectionHeader title="Trending tani" />
