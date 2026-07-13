@@ -103,6 +103,10 @@ function LoginPage() {
         return;
       }
       await router.invalidate();
+      if (nextPath) {
+        window.location.href = nextPath;
+        return;
+      }
       if ((prof as any)?.onboarding_completed) {
         navigate({ to: "/", replace: true });
       } else {
