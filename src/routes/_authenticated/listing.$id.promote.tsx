@@ -490,7 +490,27 @@ function PaySheet({
         <p className="mt-4 text-[18px] font-bold" style={{ color: INK }}>
           Bli {p.label}
         </p>
-        <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="text-[14px] line-through" style={{ color: MUTED }}>
+            €{p.original.toFixed(2)}
+          </span>
+          <span
+            style={{
+              backgroundColor: CORAL,
+              color: "#ffffff",
+              fontSize: 10,
+              fontWeight: 700,
+              padding: "2px 6px",
+              borderRadius: 999,
+            }}
+          >
+            −25%
+          </span>
+          <span className="text-[16px] font-bold" style={{ color: INK }}>
+            €{p.price.toFixed(2)}
+          </span>
+        </div>
+        <p className="mt-2 text-[13px]" style={{ color: MUTED }}>
           Kreditet do të shtohen në saldon tënde pas verifikimit.
         </p>
 
