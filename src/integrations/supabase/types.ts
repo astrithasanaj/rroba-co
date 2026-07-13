@@ -550,8 +550,11 @@ export type Database = {
           id: string
           is_blocked: boolean
           last_name: string | null
+          membership_renewed_at: string | null
+          membership_tier: string | null
           name: string | null
           onboarding_completed: boolean
+          paid_placement_days: number
           phone: string | null
           phone_verified: boolean
           preferences: Json | null
@@ -560,6 +563,7 @@ export type Database = {
           signup_device: string | null
           signup_ip: string | null
           terms_accepted_at: string | null
+          top_of_list_credits: number
           updated_at: string
           username: string | null
         }
@@ -579,8 +583,11 @@ export type Database = {
           id: string
           is_blocked?: boolean
           last_name?: string | null
+          membership_renewed_at?: string | null
+          membership_tier?: string | null
           name?: string | null
           onboarding_completed?: boolean
+          paid_placement_days?: number
           phone?: string | null
           phone_verified?: boolean
           preferences?: Json | null
@@ -589,6 +596,7 @@ export type Database = {
           signup_device?: string | null
           signup_ip?: string | null
           terms_accepted_at?: string | null
+          top_of_list_credits?: number
           updated_at?: string
           username?: string | null
         }
@@ -608,8 +616,11 @@ export type Database = {
           id?: string
           is_blocked?: boolean
           last_name?: string | null
+          membership_renewed_at?: string | null
+          membership_tier?: string | null
           name?: string | null
           onboarding_completed?: boolean
+          paid_placement_days?: number
           phone?: string | null
           phone_verified?: boolean
           preferences?: Json | null
@@ -618,6 +629,7 @@ export type Database = {
           signup_device?: string | null
           signup_ip?: string | null
           terms_accepted_at?: string | null
+          top_of_list_credits?: number
           updated_at?: string
           username?: string | null
         }
@@ -845,6 +857,10 @@ export type Database = {
       }
     }
     Functions: {
+      consume_promotion_credit: {
+        Args: { _days: number; _kind: string; _listing_id: string }
+        Returns: string
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -878,6 +894,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      renew_membership: { Args: { _tier: string }; Returns: undefined }
     }
     Enums: {
       report_reason:
