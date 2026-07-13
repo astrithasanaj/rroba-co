@@ -1,11 +1,10 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Check, ChevronRight, Copy } from "lucide-react";
+import { ArrowLeft, Loader2, Check, ChevronRight, Copy, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
-import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/promote")({
   component: () => (
@@ -23,14 +22,17 @@ const CORAL = "#e8826a";
 const DIVIDER = "#ddd8ce";
 
 type PromoType = "feed_top" | "category_top" | "search_top";
+type CreditKind = "paid_placement_days" | "top_of_list_credits";
 
 type Option = {
   key: PromoType;
   title: string;
   description: string;
-  durations: { days: number; price: number }[];
+  creditKind: CreditKind;
+  creditUnit: "day" | "use";
+  membershipLabel: string;
+  purchases: { amount: number; price: number; label: string }[];
   defaultIndex: number;
-  bundle?: { count: number; price: number; days: number };
 };
 
 const OPTIONS: Option[] = [
@@ -38,11 +40,14 @@ const OPTIONS: Option[] = [
     key: "feed_top",
     title: "Krye i feed-it",
     description:
-      "Shfaq artikullin tënd te 'E re këtë javë' dhe 'Për ty' te blerësit që kanë treguar interes për artikuj të ngjashëm. Rrit ndjeshëm shanset për shitje të shpejtë.",
-    durations: [
-      { days: 3, price: 0.99 },
-      { days: 5, price: 1.49 },
-      { days: 7, price: 1.99 },
+      "Shfaq artikullin tënd te 'E re këtë javë' dhe 'Për ty'. Rrit ndjeshëm shanset për shitje të shpejtë.",
+    creditKind: "paid_placement_days",
+    creditUnit: "day",
+    membershipLabel: "1 ditë nga plasimi i paguar",
+    purchases: [
+      { amount: 3, price: 1.49, label: "3 ditë" },
+      { amount: 5, price: 1.99, label: "5 ditë" },
+      { amount: 7, price: 2.49, label: "7 ditë" },
     ],
     defaultIndex: 1,
   },
@@ -50,11 +55,14 @@ const OPTIONS: Option[] = [
     key: "category_top",
     title: "Krye i kategorisë",
     description:
-      "Artikulli yt do të shfaqet i pari në rezultatet e kërkimit brenda kategorisë së zgjedhur. Kap vëmendjen e blerësve që shfletojnë kategori specifike.",
-    durations: [
-      { days: 3, price: 1.49 },
-      { days: 5, price: 1.99 },
-      { days: 7, price: 2.49 },
+      "Artikulli yt shfaqet i pari në kategorinë e zgjedhur. Kap vëmendjen e blerësve që shfletojnë kategori specifike.",
+    creditKind: "paid_placement_days",
+    creditUnit: "day",
+    membershipLabel: "1 ditë nga plasimi i paguar",
+    purchases: [
+      { amount: 3, price: 1.49, label: "3 ditë" },
+      { amount: 5, price: 1.99, label: "5 ditë" },
+      { amount: 7, price: 2.49, label: "7 ditë" },
     ],
     defaultIndex: 1,
   },
@@ -62,37 +70,97 @@ const OPTIONS: Option[] = [
     key: "search_top",
     title: "Krye i kërkimit",
     description:
-      "Kur dikush kërkon diçka të ngjashme me artikullin tënd, ai shfaqet i pari. Merr 3 promovime të paketëzuara — i pari aktivizohet menjëherë, dy të tjerat kur të dëshirosh.",
-    durations: [{ days: 30, price: 0.99 }],
+      "Kur dikush kërkon diçka të ngjashme, artikulli yt shfaqet i pari. Kreditë ruhen dhe përdoren kur të duash.",
+    creditKind: "top_of_list_credits",
+    creditUnit: "use",
+    membershipLabel: "1 kredit 'Krye e listës'",
+    purchases: [
+      { amount: 3, price: 1.49, label: "3 kredite" },
+      { amount: 5, price: 2.29, label: "5 kredite" },
+      { amount: 10, price: 3.99, label: "10 kredite" },
+    ],
     defaultIndex: 0,
-    bundle: { count: 3, price: 0.99, days: 30 },
   },
 ];
+
+type Balances = {
+  tier: string | null;
+  paid_placement_days: number;
+  top_of_list_credits: number;
+};
 
 function PromotePage() {
   const { id } = useParams({ from: "/_authenticated/listing/$id/promote" });
   const navigate = useNavigate();
-  const [listing, setListing] = useState<ListingView | null>(null);
   const [loading, setLoading] = useState(true);
+  const [balances, setBalances] = useState<Balances>({
+    tier: null,
+    paid_placement_days: 0,
+    top_of_list_credits: 0,
+  });
   const [selected, setSelected] = useState<Record<PromoType, number>>({
     feed_top: 1,
     category_top: 1,
     search_top: 0,
   });
   const [paySheet, setPaySheet] = useState<{ option: Option; index: number } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const load = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("membership_tier, top_of_list_credits, paid_placement_days")
+      .eq("id", user.id)
+      .maybeSingle();
+    const p = (prof ?? {}) as {
+      membership_tier?: string | null;
+      top_of_list_credits?: number;
+      paid_placement_days?: number;
+    };
+    setBalances({
+      tier: p.membership_tier ?? null,
+      paid_placement_days: p.paid_placement_days ?? 0,
+      top_of_list_credits: p.top_of_list_credits ?? 0,
+    });
+    setLoading(false);
+  };
 
   useEffect(() => {
-    (async () => {
-      const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
-      if (row) {
-        const [h] = await hydrateListings([row as ListingRow]);
-        setListing(h);
-      }
-      setLoading(false);
-    })();
-  }, [id]);
+    load();
+  }, []);
 
-  if (loading || !listing) {
+  const useMembershipCredit = async (opt: Option) => {
+    if (busy) return;
+    setBusy(true);
+    const args: Record<string, unknown> = {
+      _listing_id: id,
+      _kind: opt.key,
+      _days: opt.creditUnit === "day" ? 1 : null,
+    };
+    const { error } = await (supabase as unknown as {
+      rpc: (fn: string, a: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+    }).rpc("consume_promotion_credit", args);
+    setBusy(false);
+    if (error) {
+      if (error.message.includes("no_paid_placement_days")) {
+        toast.error("Nuk keni më ditë 'Plasim i paguar' këtë muaj");
+      } else if (error.message.includes("no_top_of_list_credits")) {
+        toast.error("Nuk keni më kredite 'Krye të listës' këtë muaj");
+      } else {
+        toast.error(error.message);
+      }
+      return;
+    }
+    toast.success("Promovimi u aktivizua!");
+    navigate({ to: "/listing/$id/manage", params: { id } });
+  };
+
+  if (loading) {
     return (
       <MobileShell hideNav>
         <div className="grid h-screen place-items-center" style={{ backgroundColor: CREAM }}>
@@ -102,10 +170,11 @@ function PromotePage() {
     );
   }
 
+  const isMember = !!balances.tier;
+
   return (
     <MobileShell hideNav>
       <div className="min-h-screen" style={{ backgroundColor: CREAM }}>
-        {/* Header */}
         <header
           className="sticky top-0 z-30 flex items-center px-4 pt-4 pb-3"
           style={{ backgroundColor: CREAM }}
@@ -133,77 +202,56 @@ function PromotePage() {
           </Link>
         </header>
 
-
-        {/* Hero banner */}
-        <section className="px-4 pt-2">
-          <div
-            className="w-full"
-            style={{
-              backgroundColor: INK,
-              borderRadius: 16,
-              padding: "24px 20px",
-              color: "#ffffff",
-            }}
-          >
-            <p className="font-display italic" style={{ fontSize: 28, fontWeight: 700, lineHeight: 1.1 }}>
-              Bli Rroba Premium
-            </p>
-            <p className="mt-2 text-[14px]" style={{ color: "#e5e0d5" }}>
-              Për €2.99/muaj merr:
-            </p>
-            <ul className="mt-3 space-y-2">
-              {[
-                "5 promovime falas në krye të listës",
-                "5 ditë plassim i sponsorizuar",
-                "Përfitime ekskluzive anëtare",
-              ].map((t) => (
-                <li key={t} className="flex items-start gap-2 text-[14px] font-bold" style={{ color: "#ffffff" }}>
-                  <Check className="mt-0.5 h-4 w-4 shrink-0" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
+        {/* Non-member savings banner */}
+        {!isMember && (
+          <section className="px-4 pt-1">
             <Link
               to="/listing/$id/premium"
               params={{ id }}
-              className="mt-4 grid w-full place-items-center"
+              className="block"
               style={{
-                backgroundColor: CORAL,
-                color: "#ffffff",
-                height: 46,
+                backgroundColor: CARD,
                 borderRadius: 12,
-                fontWeight: 700,
-                fontSize: 14,
+                padding: "12px 14px",
+                border: `1px solid ${DIVIDER}`,
               }}
             >
-              Shiko të gjitha përfitimet →
+              <p className="text-[13px]" style={{ color: INK, lineHeight: 1.4 }}>
+                Shitësit që promovojnë shpesh <strong>kursejnë deri në 40%</strong> me Rroba Premium →
+              </p>
             </Link>
-          </div>
-        </section>
+          </section>
+        )}
 
-        {/* Options */}
-        <section className="mt-6 space-y-3 px-4 pb-32">
-          {OPTIONS.map((opt) => (
-            <PromoCard
-              key={opt.key}
-              option={opt}
-              listing={listing}
-              selectedIndex={selected[opt.key]}
-              onSelect={(i) => setSelected((s) => ({ ...s, [opt.key]: i }))}
-              onBuy={() => setPaySheet({ option: opt, index: selected[opt.key] })}
-            />
-          ))}
+        <section className="mt-4 space-y-3 px-4 pb-32">
+          {OPTIONS.map((opt) => {
+            const remaining =
+              opt.creditKind === "paid_placement_days"
+                ? balances.paid_placement_days
+                : balances.top_of_list_credits;
+            return (
+              <PromoCard
+                key={opt.key}
+                option={opt}
+                remaining={remaining}
+                canUseMembership={remaining > 0}
+                onUseMembership={() => useMembershipCredit(opt)}
+                selectedIndex={selected[opt.key]}
+                onSelect={(i) => setSelected((s) => ({ ...s, [opt.key]: i }))}
+                onBuy={() => setPaySheet({ option: opt, index: selected[opt.key] })}
+              />
+            );
+          })}
         </section>
 
         {paySheet && (
           <PaySheet
             option={paySheet.option}
             index={paySheet.index}
-            listing={listing}
             onClose={() => setPaySheet(null)}
             onDone={() => {
               setPaySheet(null);
-              navigate({ to: "/listing/$id/manage", params: { id } });
+              navigate({ to: "/my-promotions" });
             }}
           />
         )}
@@ -214,37 +262,41 @@ function PromotePage() {
 
 function PromoCard({
   option,
-  listing,
+  remaining,
+  canUseMembership,
+  onUseMembership,
   selectedIndex,
   onSelect,
   onBuy,
 }: {
   option: Option;
-  listing: ListingView;
+  remaining: number;
+  canUseMembership: boolean;
+  onUseMembership: () => void;
   selectedIndex: number;
   onSelect: (i: number) => void;
   onBuy: () => void;
 }) {
-  const sel = option.durations[selectedIndex];
-  const buyLabel = option.bundle
-    ? `Bli ${option.bundle.count} për €${option.bundle.price.toFixed(2)}`
-    : `€${sel.price.toFixed(2)}`;
+  const purchase = option.purchases[selectedIndex];
+  const suffix = option.creditUnit === "day" ? "ditë" : "kredite";
 
   return (
-    <div
-      style={{
-        backgroundColor: CARD,
-        borderRadius: 16,
-        padding: 16,
-      }}
-    >
-      <div className="flex gap-3">
+    <div style={{ backgroundColor: CARD, borderRadius: 16, padding: 16 }}>
+      <div className="flex items-start gap-3">
         <div
-          className="overflow-hidden"
-          style={{ width: 80, height: 80, borderRadius: 12, backgroundColor: DIVIDER, flexShrink: 0 }}
+          className="grid place-items-center"
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            backgroundColor: CREAM,
+            flexShrink: 0,
+          }}
         >
-          {listing.coverUrl && (
-            <img src={listing.coverUrl} alt="" className="h-full w-full object-cover" />
+          {option.creditKind === "paid_placement_days" ? (
+            <Sparkles className="h-5 w-5" style={{ color: CORAL }} />
+          ) : (
+            <Zap className="h-5 w-5" style={{ color: CORAL }} />
           )}
         </div>
         <div className="min-w-0 flex-1">
@@ -257,46 +309,74 @@ function PromoCard({
         </div>
       </div>
 
-      {!option.bundle && (
-        <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar">
-          {option.durations.map((d, i) => {
-            const active = i === selectedIndex;
-            return (
-              <button
-                key={d.days}
-                onClick={() => onSelect(i)}
-                className="grid place-items-center px-4 py-2"
-                style={{
-                  backgroundColor: active ? INK : CREAM,
-                  color: active ? "#ffffff" : INK,
-                  borderRadius: 12,
-                  minWidth: 92,
-                  border: `1px solid ${active ? INK : DIVIDER}`,
-                }}
-              >
-                <span className="text-[13px] font-semibold">{d.days} ditë</span>
-                <span className="text-[12px]" style={{ opacity: 0.85 }}>
-                  €{d.price.toFixed(2)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      {/* Membership-credit primary CTA */}
+      {canUseMembership && (
+        <button
+          onClick={onUseMembership}
+          className="mt-4 flex w-full items-center justify-between px-4 py-3 text-left"
+          style={{
+            backgroundColor: INK,
+            color: "#ffffff",
+            borderRadius: 12,
+            border: `2px solid ${CORAL}`,
+          }}
+        >
+          <div>
+            <p className="text-[14px] font-bold">Përdor {option.membershipLabel} — FALAS</p>
+            <p className="text-[12px]" style={{ opacity: 0.85 }}>
+              Të mbeten {remaining} {suffix} nga medlemskapi
+            </p>
+          </div>
+          <Check className="h-5 w-5" />
+        </button>
       )}
+
+      <p
+        className="mt-4 text-[11px]"
+        style={{ color: MUTED, letterSpacing: 0.6, fontWeight: 700 }}
+      >
+        {canUseMembership ? "OSE BLI MË SHUMË" : "BLI KREDITE"}
+      </p>
+
+      <div className="mt-2 flex gap-2 overflow-x-auto no-scrollbar">
+        {option.purchases.map((p, i) => {
+          const active = i === selectedIndex;
+          return (
+            <button
+              key={p.amount}
+              onClick={() => onSelect(i)}
+              className="grid place-items-center px-4 py-2"
+              style={{
+                backgroundColor: active ? INK : CREAM,
+                color: active ? "#ffffff" : INK,
+                borderRadius: 12,
+                minWidth: 96,
+                border: `1px solid ${active ? INK : DIVIDER}`,
+              }}
+            >
+              <span className="text-[13px] font-semibold">{p.label}</span>
+              <span className="text-[12px]" style={{ opacity: 0.85 }}>
+                €{p.price.toFixed(2)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       <button
         onClick={onBuy}
-        className="mt-4 w-full"
+        className="mt-3 w-full"
         style={{
-          backgroundColor: CORAL,
-          color: "#ffffff",
-          height: 50,
+          backgroundColor: canUseMembership ? CARD : CORAL,
+          color: canUseMembership ? INK : "#ffffff",
+          border: canUseMembership ? `1px solid ${DIVIDER}` : "none",
+          height: 48,
           borderRadius: 14,
           fontWeight: 700,
-          fontSize: 15,
+          fontSize: 14,
         }}
       >
-        {buyLabel}
+        Bli {purchase.label} për €{purchase.price.toFixed(2)}
       </button>
     </div>
   );
@@ -311,22 +391,21 @@ const PAY_METHODS = [
 function PaySheet({
   option,
   index,
-  listing,
   onClose,
   onDone,
 }: {
   option: Option;
   index: number;
-  listing: ListingView;
   onClose: () => void;
   onDone: () => void;
 }) {
-  const d = option.durations[index];
-  const price = option.bundle ? option.bundle.price : d.price;
-  const days = option.bundle ? option.bundle.days : d.days;
+  const p = option.purchases[index];
   const [method, setMethod] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const reference = useMemo(() => `PROMO-${listing.id.slice(0, 8).toUpperCase()}`, [listing.id]);
+  const reference = useMemo(
+    () => `CRED-${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
+    [],
+  );
 
   const submit = async () => {
     if (!method) return;
@@ -339,19 +418,21 @@ function PaySheet({
       setSubmitting(false);
       return;
     }
-    const ends = new Date();
-    ends.setDate(ends.getDate() + days);
-    const { error } = await supabase.from("promotions").insert({
-      listing_id: listing.id,
-      seller_id: user.id,
-      type: option.key,
-      duration_days: days,
-      price_eur: price,
-      ends_at: ends.toISOString(),
-      status: "pending_payment",
-      payment_method: method,
-      payment_reference: reference,
-    });
+    const { error } = await (supabase as unknown as {
+      from: (t: string) => {
+        insert: (row: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+      };
+    })
+      .from("credit_purchases")
+      .insert({
+        user_id: user.id,
+        kind: option.creditKind,
+        amount: p.amount,
+        price_eur: p.price,
+        payment_method: method,
+        payment_reference: reference,
+        status: "pending_payment",
+      });
     setSubmitting(false);
     if (error) {
       toast.error(error.message);
@@ -379,10 +460,10 @@ function PaySheet({
       >
         <div className="mx-auto h-1 w-10 rounded-full" style={{ backgroundColor: DIVIDER }} />
         <p className="mt-4 text-[18px] font-bold" style={{ color: INK }}>
-          Si të paguash
+          Bli {p.label}
         </p>
         <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
-          Zgjedh metodën e pagesës për €{price.toFixed(2)}
+          Kreditet do të shtohen në saldon tënde pas verifikimit.
         </p>
 
         <div className="mt-4 space-y-2">
@@ -412,12 +493,9 @@ function PaySheet({
         </div>
 
         {method && (
-          <div
-            className="mt-4"
-            style={{ backgroundColor: CARD, borderRadius: 12, padding: 14 }}
-          >
+          <div className="mt-4" style={{ backgroundColor: CARD, borderRadius: 12, padding: 14 }}>
             <p className="text-[13px]" style={{ color: INK, lineHeight: 1.5 }}>
-              Dërgo <strong>€{price.toFixed(2)}</strong> dhe na shkruaj në mesazhe me referencën:
+              Dërgo <strong>€{p.price.toFixed(2)}</strong> me referencën:
             </p>
             <button
               onClick={() => {
@@ -438,7 +516,7 @@ function PaySheet({
               <Copy className="h-3.5 w-3.5" style={{ color: MUTED }} />
             </button>
             <p className="mt-3 text-[12px]" style={{ color: MUTED }}>
-              Do të aktivizojmë promovimin tuaj brenda 2 orëve.
+              Kreditet aktivizohen brenda 2 orëve.
             </p>
           </div>
         )}
