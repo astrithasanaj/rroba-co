@@ -22,7 +22,7 @@ const MUTED = "#a89f94";
 const CORAL = "#e8826a";
 const DIVIDER = "#ddd8ce";
 
-type Kind = "top_of_list" | "paid_placement";
+type Kind = "feed_top" | "category_top" | "search_top";
 
 function MyPromotionsPage() {
   const [loading, setLoading] = useState(true);
