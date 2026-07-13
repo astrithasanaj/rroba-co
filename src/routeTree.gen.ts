@@ -45,6 +45,7 @@ import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminPromotionsRouteImport } from './routes/_authenticated/admin.promotions'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
 import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
@@ -237,6 +238,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedListingIdPromoteRoute =
   AuthenticatedListingIdPromoteRouteImport.update({
     id: '/listing/$id/promote',
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/auth/': typeof AuthIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -325,6 +332,7 @@ export interface FileRoutesByTo {
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/auth': typeof AuthIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -368,6 +376,7 @@ export interface FileRoutesById {
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/auth/': typeof AuthIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/promotions': typeof AuthenticatedAdminPromotionsRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -411,6 +420,7 @@ export interface FileRouteTypes {
     | '/auth/signup-full'
     | '/product/$id'
     | '/auth/'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/promotions'
     | '/admin/reports'
@@ -451,6 +461,7 @@ export interface FileRouteTypes {
     | '/auth/signup-full'
     | '/product/$id'
     | '/auth'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/promotions'
     | '/admin/reports'
@@ -493,6 +504,7 @@ export interface FileRouteTypes {
     | '/auth/signup-full'
     | '/product/$id'
     | '/auth/'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/promotions'
     | '/_authenticated/admin/reports'
@@ -527,6 +539,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ProductIdRoute: typeof ProductIdRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicNotifyNewReportRoute: typeof ApiPublicNotifyNewReportRoute
   ApiPublicNotifyPendingPromotionRoute: typeof ApiPublicNotifyPendingPromotionRoute
@@ -792,6 +805,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/listing/$id/promote': {
       id: '/_authenticated/listing/$id/promote'
       path: '/listing/$id/promote'
@@ -890,6 +910,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ProductIdRoute: ProductIdRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicNotifyNewReportRoute: ApiPublicNotifyNewReportRoute,
   ApiPublicNotifyPendingPromotionRoute: ApiPublicNotifyPendingPromotionRoute,
