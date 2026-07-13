@@ -31,7 +31,10 @@ function MyPromotionsPage() {
   const [tier, setTier] = useState<string | null>(null);
   const [listings, setListings] = useState<ListingView[]>([]);
   const [picker, setPicker] = useState<{ listing: ListingView } | null>(null);
-  const [ppSheet, setPpSheet] = useState<{ listing: ListingView } | null>(null);
+  const [daysSheet, setDaysSheet] = useState<{
+    listing: ListingView;
+    kind: "feed_top" | "category_top";
+  } | null>(null);
 
   const load = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -62,11 +65,11 @@ function MyPromotionsPage() {
   }, []);
 
   const consume = async (listingId: string, kind: Kind, days?: number) => {
-    if (kind === "top_of_list" && topCredits <= 0) {
+    if (kind === "search_top" && topCredits <= 0) {
       toast.error("Nuk keni më kredite 'Krye të listës' këtë muaj");
       return;
     }
-    if (kind === "paid_placement" && (days ?? 0) > ppDays) {
+    if ((kind === "feed_top" || kind === "category_top") && (days ?? 0) > ppDays) {
       toast.error("Nuk keni më ditë 'Plasim i paguar' këtë muaj");
       return;
     }
@@ -75,7 +78,7 @@ function MyPromotionsPage() {
     }).rpc("consume_promotion_credit", {
       _listing_id: listingId,
       _kind: kind,
-      _days: kind === "paid_placement" ? days : null,
+      _days: kind === "search_top" ? null : days,
     });
     if (error) {
       if (error.message.includes("no_top_of_list_credits")) {
@@ -89,7 +92,7 @@ function MyPromotionsPage() {
     }
     toast.success("Promovimi u aktivizua!");
     setPicker(null);
-    setPpSheet(null);
+    setDaysSheet(null);
     load();
   };
 
@@ -123,7 +126,6 @@ function MyPromotionsPage() {
           </div>
         ) : (
           <>
-            {/* Balances */}
             <section className="px-4 pt-2">
               <div
                 style={{
@@ -139,7 +141,7 @@ function MyPromotionsPage() {
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <BalanceTile
                     icon={<Zap className="h-4 w-4" />}
-                    label="Krye të listës"
+                    label="Krye e kërkimit"
                     value={String(topCredits)}
                     suffix="kredite"
                   />
@@ -152,13 +154,12 @@ function MyPromotionsPage() {
                 </div>
                 {!tier && (
                   <p className="mt-3 text-[12px]" style={{ color: "#e5e0d5" }}>
-                    Bli një medlemskap për të marrë kredite mujore.
+                    Bli një medlemskap ose kredite për të filluar promovimet.
                   </p>
                 )}
               </div>
             </section>
 
-            {/* Listings */}
             <section className="mt-6 px-4 pb-32">
               <h2 className="text-[16px] font-bold" style={{ color: INK }}>
                 Artikujt e mi
@@ -232,24 +233,27 @@ function MyPromotionsPage() {
               </p>
 
               <button
-                onClick={() =>
-                  topCredits > 0
-                    ? consume(picker.listing.id, "top_of_list")
-                    : toast.error("Nuk keni më kredite 'Krye të listës' këtë muaj")
-                }
-                disabled={topCredits <= 0}
+                onClick={() => {
+                  if (ppDays <= 0) {
+                    toast.error("Nuk keni më ditë 'Plasim i paguar' këtë muaj");
+                    return;
+                  }
+                  setDaysSheet({ listing: picker.listing, kind: "feed_top" });
+                  setPicker(null);
+                }}
+                disabled={ppDays <= 0}
                 className="mt-4 flex w-full items-center justify-between px-4 py-3 text-left disabled:opacity-50"
                 style={{ backgroundColor: CARD, borderRadius: 12 }}
               >
                 <div>
                   <p className="text-[14px] font-bold" style={{ color: INK }}>
-                    Krye të listës (48h)
+                    Krye i feed-it
                   </p>
                   <p className="text-[12px]" style={{ color: MUTED }}>
-                    Përdor 1 kredit • {topCredits} të mbetura
+                    Zgjedh 1–{ppDays} ditë • {ppDays} ditë të mbetura
                   </p>
                 </div>
-                <Zap className="h-5 w-5" style={{ color: CORAL }} />
+                <Sparkles className="h-5 w-5" style={{ color: CORAL }} />
               </button>
 
               <button
@@ -258,8 +262,8 @@ function MyPromotionsPage() {
                     toast.error("Nuk keni më ditë 'Plasim i paguar' këtë muaj");
                     return;
                   }
+                  setDaysSheet({ listing: picker.listing, kind: "category_top" });
                   setPicker(null);
-                  setPpSheet({ listing: picker.listing });
                 }}
                 disabled={ppDays <= 0}
                 className="mt-2 flex w-full items-center justify-between px-4 py-3 text-left disabled:opacity-50"
@@ -267,24 +271,45 @@ function MyPromotionsPage() {
               >
                 <div>
                   <p className="text-[14px] font-bold" style={{ color: INK }}>
-                    Plasim i paguar
+                    Krye i kategorisë
                   </p>
                   <p className="text-[12px]" style={{ color: MUTED }}>
-                    Zgjedh 1–{ppDays} ditë • {ppDays} të mbetura
+                    Zgjedh 1–{ppDays} ditë • {ppDays} ditë të mbetura
                   </p>
                 </div>
                 <Sparkles className="h-5 w-5" style={{ color: CORAL }} />
+              </button>
+
+              <button
+                onClick={() =>
+                  topCredits > 0
+                    ? consume(picker.listing.id, "search_top")
+                    : toast.error("Nuk keni më kredite 'Krye të listës' këtë muaj")
+                }
+                disabled={topCredits <= 0}
+                className="mt-2 flex w-full items-center justify-between px-4 py-3 text-left disabled:opacity-50"
+                style={{ backgroundColor: CARD, borderRadius: 12 }}
+              >
+                <div>
+                  <p className="text-[14px] font-bold" style={{ color: INK }}>
+                    Krye i kërkimit
+                  </p>
+                  <p className="text-[12px]" style={{ color: MUTED }}>
+                    Përdor 1 kredit • {topCredits} të mbetura
+                  </p>
+                </div>
+                <Zap className="h-5 w-5" style={{ color: CORAL }} />
               </button>
             </div>
           </div>
         )}
 
-        {ppSheet && (
+        {daysSheet && (
           <DaysSheet
             max={ppDays}
-            listing={ppSheet.listing}
-            onClose={() => setPpSheet(null)}
-            onConfirm={(d) => consume(ppSheet.listing.id, "paid_placement", d)}
+            listing={daysSheet.listing}
+            onClose={() => setDaysSheet(null)}
+            onConfirm={(d) => consume(daysSheet.listing.id, daysSheet.kind, d)}
           />
         )}
       </div>
