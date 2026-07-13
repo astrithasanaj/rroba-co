@@ -174,6 +174,8 @@ function ProfilePage() {
     const ch = supabase
       .channel("profile-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "listings", filter: `user_id=eq.${user.id}` }, () => loadAll())
+      // DELETE events don't include user_id in default REPLICA IDENTITY, so listen broadly and let loadAll reconcile.
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "listings" }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `seller_id=eq.${user.id}` }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `buyer_id=eq.${user.id}` }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "ratings", filter: `seller_id=eq.${user.id}` }, () => loadAll())
