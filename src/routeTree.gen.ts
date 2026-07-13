@@ -46,6 +46,7 @@ import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminPromotionsRouteImport } from './routes/_authenticated/admin.promotions'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
 import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
@@ -243,6 +244,12 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedListingIdPromoteRoute =
   AuthenticatedListingIdPromoteRouteImport.update({
     id: '/listing/$id/promote',
@@ -309,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
   '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -350,6 +358,7 @@ export interface FileRoutesByTo {
   '/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
   '/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -394,6 +403,7 @@ export interface FileRoutesById {
   '/_authenticated/listing/$id/manage': typeof AuthenticatedListingIdManageRoute
   '/_authenticated/listing/$id/premium': typeof AuthenticatedListingIdPremiumRoute
   '/_authenticated/listing/$id/promote': typeof AuthenticatedListingIdPromoteRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/listing/$id/manage'
     | '/listing/$id/premium'
     | '/listing/$id/promote'
+    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/listing/$id/manage'
     | '/listing/$id/premium'
     | '/listing/$id/promote'
+    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -522,6 +534,7 @@ export interface FileRouteTypes {
     | '/_authenticated/listing/$id/manage'
     | '/_authenticated/listing/$id/premium'
     | '/_authenticated/listing/$id/promote'
+    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -549,6 +562,7 @@ export interface RootRouteChildren {
   UserIdFollowersRoute: typeof UserIdFollowersRoute
   UserIdFollowingRoute: typeof UserIdFollowingRoute
   UserIdIndexRoute: typeof UserIdIndexRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -812,6 +826,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/listing/$id/promote': {
       id: '/_authenticated/listing/$id/promote'
       path: '/listing/$id/promote'
@@ -920,6 +941,7 @@ const rootRouteChildren: RootRouteChildren = {
   UserIdFollowersRoute: UserIdFollowersRoute,
   UserIdFollowingRoute: UserIdFollowingRoute,
   UserIdIndexRoute: UserIdIndexRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
