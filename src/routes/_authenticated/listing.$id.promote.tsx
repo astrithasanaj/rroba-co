@@ -124,8 +124,15 @@ function PromotePage() {
           >
             Promovo
           </h1>
-          <div className="h-10 w-10" />
+          <Link
+            to="/my-promotions"
+            className="grid h-10 place-items-center px-3 rounded-full text-[12px] font-bold"
+            style={{ backgroundColor: CARD, color: INK }}
+          >
+            Kreditet
+          </Link>
         </header>
+
 
         {/* Hero banner */}
         <section className="px-4 pt-2">

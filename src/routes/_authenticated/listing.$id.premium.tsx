@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/premium")({
   component: () => (
@@ -71,8 +73,24 @@ const PLANS: Plan[] = [
 ];
 
 function PremiumPage() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState("mid");
-  const [comingSoon, setComingSoon] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const activate = async () => {
+    setSubmitting(true);
+    const { error } = await (supabase as unknown as {
+      rpc: (fn: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+    }).rpc("renew_membership", { _tier: selected });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Medlemskapi u aktivizua! Kreditet u rifreskuan.");
+    navigate({ to: "/my-promotions" });
+  };
+
 
   return (
     <MobileShell hideNav>
@@ -161,8 +179,9 @@ function PremiumPage() {
           style={{ backgroundColor: CREAM, borderTop: `1px solid #ddd8ce` }}
         >
           <button
-            onClick={() => setComingSoon(true)}
-            className="w-full"
+            onClick={activate}
+            disabled={submitting}
+            className="grid w-full place-items-center disabled:opacity-60"
             style={{
               backgroundColor: INK,
               color: "#ffffff",
@@ -172,50 +191,10 @@ function PremiumPage() {
               fontSize: 15,
             }}
           >
-            Vazhdo
+            {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "Aktivizo"}
           </button>
         </div>
 
-        {comingSoon && (
-          <div
-            className="fixed inset-0 z-50 flex items-end justify-center"
-            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-            onClick={() => setComingSoon(false)}
-          >
-            <div
-              className="w-full max-w-[440px]"
-              style={{
-                backgroundColor: CREAM,
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                padding: "20px 20px 28px",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mx-auto h-1 w-10 rounded-full" style={{ backgroundColor: "#ddd8ce" }} />
-              <p className="mt-4 text-[18px] font-bold" style={{ color: INK }}>
-                Së shpejti
-              </p>
-              <p className="mt-2 text-[14px]" style={{ color: MUTED, lineHeight: 1.5 }}>
-                Pagesat po vijnë së shpejti. Do të njoftohesh kur të aktivizohen.
-              </p>
-              <button
-                onClick={() => setComingSoon(false)}
-                className="mt-5 w-full"
-                style={{
-                  backgroundColor: INK,
-                  color: "#ffffff",
-                  height: 50,
-                  borderRadius: 14,
-                  fontWeight: 700,
-                  fontSize: 15,
-                }}
-              >
-                Në rregull
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </MobileShell>
   );
