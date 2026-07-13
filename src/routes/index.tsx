@@ -170,6 +170,24 @@ function HomePage() {
           </div>
         ) : (
           <>
+            {promoted.length > 0 && (
+              <section className="mt-7">
+                <div className="px-5">
+                  <SectionHeader title="Të zgjedhura" />
+                </div>
+                <div
+                  className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  {promoted.map((l) => (
+                    <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                      <ListingCard listing={l} />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Trending — uniform 2-column grid */}
             <section className="mt-7 px-[18px]">
               <SectionHeader title="Trending tani" />
