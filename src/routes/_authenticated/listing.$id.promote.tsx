@@ -347,17 +347,39 @@ function PromoCard({
             <button
               key={p.amount}
               onClick={() => onSelect(i)}
-              className="grid place-items-center px-4 py-2"
+              className="relative flex flex-col items-center px-3 py-2"
               style={{
                 backgroundColor: active ? INK : CREAM,
                 color: active ? "#ffffff" : INK,
                 borderRadius: 12,
-                minWidth: 96,
+                minWidth: 104,
                 border: `1px solid ${active ? INK : DIVIDER}`,
               }}
             >
+              <span
+                className="absolute"
+                style={{
+                  top: -8,
+                  right: -6,
+                  backgroundColor: CORAL,
+                  color: "#ffffff",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: "2px 6px",
+                  borderRadius: 999,
+                  letterSpacing: 0.3,
+                }}
+              >
+                −25%
+              </span>
               <span className="text-[13px] font-semibold">{p.label}</span>
-              <span className="text-[12px]" style={{ opacity: 0.85 }}>
+              <span
+                className="text-[11px] line-through"
+                style={{ opacity: active ? 0.6 : 0.5 }}
+              >
+                €{p.original.toFixed(2)}
+              </span>
+              <span className="text-[13px] font-bold" style={{ color: active ? "#ffffff" : CORAL }}>
                 €{p.price.toFixed(2)}
               </span>
             </button>
@@ -367,7 +389,7 @@ function PromoCard({
 
       <button
         onClick={onBuy}
-        className="mt-3 w-full"
+        className="mt-4 w-full flex items-center justify-center gap-2"
         style={{
           backgroundColor: canUseMembership ? CARD : CORAL,
           color: canUseMembership ? INK : "#ffffff",
@@ -378,7 +400,11 @@ function PromoCard({
           fontSize: 14,
         }}
       >
-        Bli {purchase.label} për €{purchase.price.toFixed(2)}
+        <span>Bli {purchase.label} për</span>
+        <span className="line-through" style={{ opacity: 0.55, fontWeight: 500 }}>
+          €{purchase.original.toFixed(2)}
+        </span>
+        <span>€{purchase.price.toFixed(2)}</span>
       </button>
     </div>
   );
