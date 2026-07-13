@@ -267,6 +267,44 @@ function AdminPromotions() {
           ))}
         </div>
 
+        {tab === "pending" && pendingCredits.length > 0 && (
+          <div className="space-y-2 px-4 pb-4">
+            <p className="text-[11px] font-bold" style={{ color: MUTED, letterSpacing: 0.8 }}>
+              BLERJE KREDITESH NË PRITJE
+            </p>
+            {pendingCredits.map((c) => (
+              <div key={c.id} style={{ backgroundColor: CARD, borderRadius: 14, padding: 14 }}>
+                <p className="text-[13px] font-bold" style={{ color: INK }}>
+                  {c.buyer_name}
+                </p>
+                <p className="mt-1 text-[13px]" style={{ color: INK }}>
+                  {c.amount} × {CREDIT_LABEL[c.kind] ?? c.kind} · €{Number(c.price_eur).toFixed(2)}
+                </p>
+                <p className="mt-0.5 text-[11px]" style={{ color: MUTED }}>
+                  {c.payment_method ?? "—"} · ref {c.payment_reference ?? "—"}
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => confirmCredit(c.id)}
+                    className="flex-1 py-2 text-[13px] font-bold"
+                    style={{ backgroundColor: OK, color: "#fff", borderRadius: 10 }}
+                  >
+                    <Check className="mx-auto h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => refuseCredit(c.id)}
+                    className="flex-1 py-2 text-[13px] font-bold"
+                    style={{ backgroundColor: CREAM, color: ERR, borderRadius: 10, border: `1px solid ${DIVIDER}` }}
+                  >
+                    <X className="mx-auto h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+
         {loading ? (
           <div className="grid h-64 place-items-center">
             <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
