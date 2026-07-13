@@ -10,6 +10,7 @@ import {
   Grid2x2,
   Heart,
   HelpCircle,
+  ImageIcon,
   Loader2,
   LogOut,
   MessageSquare,
@@ -173,6 +174,8 @@ function ProfilePage() {
     const ch = supabase
       .channel("profile-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "listings", filter: `user_id=eq.${user.id}` }, () => loadAll())
+      // DELETE events don't include user_id in default REPLICA IDENTITY, so listen broadly and let loadAll reconcile.
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "listings" }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `seller_id=eq.${user.id}` }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `buyer_id=eq.${user.id}` }, () => loadAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "ratings", filter: `seller_id=eq.${user.id}` }, () => loadAll())
@@ -845,7 +848,7 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             className="relative block aspect-square overflow-hidden"
             style={{ backgroundColor: CARD, borderRadius: 0 }}
           >
-            {l.coverUrl && (
+            {l.coverUrl ? (
               <img
                 src={l.coverUrl}
                 alt={l.title}
@@ -857,6 +860,14 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
                   ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
                 }}
               />
+            ) : (
+              <div
+                className="grid h-full w-full place-items-center"
+                style={{ backgroundColor: "#f0ece3" }}
+                aria-label="Pa foto"
+              >
+                <ImageIcon style={{ width: 28, height: 28, color: MUTED }} strokeWidth={1.4} />
+              </div>
             )}
             <span
               className="pointer-events-none absolute italic"
