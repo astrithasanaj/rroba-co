@@ -848,7 +848,7 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             className="relative block aspect-square overflow-hidden"
             style={{ backgroundColor: CARD, borderRadius: 0 }}
           >
-            {l.coverUrl && (
+            {l.coverUrl ? (
               <img
                 src={l.coverUrl}
                 alt={l.title}
@@ -860,6 +860,14 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
                   ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
                 }}
               />
+            ) : (
+              <div
+                className="grid h-full w-full place-items-center"
+                style={{ backgroundColor: "#f0ece3" }}
+                aria-label="Pa foto"
+              >
+                <ImageIcon style={{ width: 28, height: 28, color: MUTED }} strokeWidth={1.4} />
+              </div>
             )}
             <span
               className="pointer-events-none absolute italic"
