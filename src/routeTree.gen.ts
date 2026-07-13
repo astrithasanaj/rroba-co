@@ -30,6 +30,7 @@ import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-emai
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedMyPromotionsRouteImport } from './routes/_authenticated/my-promotions'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as UserIdIndexRouteImport } from './routes/user.$id.index'
@@ -158,6 +159,12 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMyPromotionsRoute =
+  AuthenticatedMyPromotionsRouteImport.update({
+    id: '/my-promotions',
+    path: '/my-promotions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -300,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/sell': typeof SellRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -344,6 +352,7 @@ export interface FileRoutesByTo {
   '/sell': typeof SellRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -391,6 +400,7 @@ export interface FileRoutesById {
   '/sell': typeof SellRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/sell'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/my-promotions'
     | '/onboarding'
     | '/profile'
     | '/auth/callback'
@@ -482,6 +493,7 @@ export interface FileRouteTypes {
     | '/sell'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/my-promotions'
     | '/onboarding'
     | '/profile'
     | '/auth/callback'
@@ -528,6 +540,7 @@ export interface FileRouteTypes {
     | '/sell'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/my-promotions'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/auth/callback'
@@ -740,6 +753,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/my-promotions': {
+      id: '/_authenticated/my-promotions'
+      path: '/my-promotions'
+      fullPath: '/my-promotions'
+      preLoaderRoute: typeof AuthenticatedMyPromotionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -905,6 +925,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedMyPromotionsRoute: typeof AuthenticatedMyPromotionsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedAdminPromotionsRoute: typeof AuthenticatedAdminPromotionsRoute
@@ -918,6 +939,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedMyPromotionsRoute: AuthenticatedMyPromotionsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedAdminPromotionsRoute: AuthenticatedAdminPromotionsRoute,
