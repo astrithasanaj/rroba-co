@@ -122,7 +122,7 @@ function AdminPromotions() {
       ]),
     );
     setRows(
-      promos.map((p) => ({
+      safePromos.map((p) => ({
         id: p.id,
         listing_id: p.listing_id,
         seller_id: p.seller_id,
@@ -138,6 +138,12 @@ function AdminPromotions() {
         listing_cover: listingMap.get(p.listing_id)?.cover ?? "",
         seller_name: profileMap.get(p.seller_id) ?? "—",
         seller_email: "",
+      })),
+    );
+    setCredits(
+      safeCredits.map((c) => ({
+        ...c,
+        buyer_name: profileMap.get(c.user_id) ?? "—",
       })),
     );
     setLoading(false);
