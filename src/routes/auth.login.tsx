@@ -5,8 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/login")({
   ssr: false,
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : undefined,
+  }),
   component: LoginPage,
 });
+
+function safeNext(next: string | undefined): string | null {
+  if (!next) return null;
+  if (!next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
 
 const CREAM = "#f6f1e7";
 const CARD = "#ede8de";
@@ -62,6 +71,8 @@ function AuthField({
 function LoginPage() {
   const navigate = useNavigate();
   const router = useRouter();
+  const { next } = Route.useSearch();
+  const nextPath = safeNext(next);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -92,6 +103,10 @@ function LoginPage() {
         return;
       }
       await router.invalidate();
+      if (nextPath) {
+        window.location.href = nextPath;
+        return;
+      }
       if ((prof as any)?.onboarding_completed) {
         navigate({ to: "/", replace: true });
       } else {

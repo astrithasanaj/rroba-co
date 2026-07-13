@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://esbruowumjcugftgptyv.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "rroba-mcp",
+      "version": "0.1.0",
+      "title": "Rroba"
+    },
+    "tools": [
+      {
+        "name": "list_my_listings",
+        "title": "List my listings",
+        "description": "List the signed-in user's Rroba listings (title, price, status, category, id).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "include_sold": {
+              "description": "Include sold listings (default false).",
+              "type": "boolean"
+            },
+            "limit": {
+              "description": "Max rows (default 50).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_listings",
+        "title": "Search listings",
+        "description": "Search active Rroba listings by keyword, category, city, or price range. Returns active (unsold) items.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Keyword matched against title/brand/description.",
+              "type": "string"
+            },
+            "category": {
+              "description": "Category slug, e.g. 'mode'.",
+              "type": "string"
+            },
+            "city": {
+              "description": "City name.",
+              "type": "string"
+            },
+            "min_price": {
+              "type": "number"
+            },
+            "max_price": {
+              "type": "number"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_unread_messages",
+        "title": "Get unread messages",
+        "description": "Return the signed-in user's unread messages across all conversations.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "mark_listing_sold",
+        "title": "Mark listing as sold",
+        "description": "Mark one of the signed-in user's listings as sold.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "listing_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The listing UUID to mark sold."
+            }
+          },
+          "required": [
+            "listing_id"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
