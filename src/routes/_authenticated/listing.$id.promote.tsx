@@ -133,10 +133,6 @@ function PromotePage() {
           </Link>
         </header>
 
-        {/* placeholder replaced */}
-        <div style={{ display: "none" }} />
-        {/* keep spacing */}
-        <div style={{ display: "none" }}>
 
         {/* Hero banner */}
         <section className="px-4 pt-2">
