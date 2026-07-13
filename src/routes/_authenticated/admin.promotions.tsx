@@ -134,11 +134,12 @@ function AdminPromotions() {
     toast.success("Promovimi u aktivizua");
     const row = rows.find((r) => r.id === id);
     if (row) {
-      await supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: row.seller_id,
         type: "promotion_active",
         data: { promotion_id: id, listing_id: row.listing_id, title: row.listing_title },
       });
+      if (notifError) toast.error(`Njoftimi dështoi: ${notifError.message}`);
     }
     load();
   };
@@ -148,15 +149,17 @@ function AdminPromotions() {
     const { error } = await supabase.from("promotions").update({ status: "refused" }).eq("id", id);
     if (error) return toast.error(error.message);
     if (row) {
-      await supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: row.seller_id,
         type: "promotion_refused",
         data: { promotion_id: id, listing_id: row.listing_id, title: row.listing_title },
       });
+      if (notifError) toast.error(`Njoftimi dështoi: ${notifError.message}`);
     }
     toast.success("Promovimi u refuzua");
     load();
   };
+
 
   const filtered = rows.filter((r) => {
     if (tab === "pending") return r.status === "pending_payment";
