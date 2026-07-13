@@ -247,6 +247,7 @@ export type Database = {
           created_at: string
           delivery: string[]
           description: string
+          expires_at: string
           gender: string
           id: string
           image_paths: string[]
@@ -269,6 +270,7 @@ export type Database = {
           created_at?: string
           delivery?: string[]
           description?: string
+          expires_at?: string
           gender?: string
           id?: string
           image_paths: string[]
@@ -291,6 +293,7 @@ export type Database = {
           created_at?: string
           delivery?: string[]
           description?: string
+          expires_at?: string
           gender?: string
           id?: string
           image_paths?: string[]
@@ -731,6 +734,7 @@ export type Database = {
       }
     }
     Functions: {
+      expire_stale_content: { Args: never; Returns: undefined }
       is_admin: { Args: { _uid: string }; Returns: boolean }
       is_signup_blocked: {
         Args: { _email: string; _phone: string }
