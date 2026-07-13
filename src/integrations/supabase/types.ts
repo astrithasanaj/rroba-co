@@ -136,6 +136,51 @@ export type Database = {
           },
         ]
       }
+      credit_purchases: {
+        Row: {
+          amount: number
+          confirmed_by: string | null
+          created_at: string
+          id: string
+          kind: string
+          payment_confirmed_at: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          price_eur: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          confirmed_by?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          payment_confirmed_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          price_eur: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          confirmed_by?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          payment_confirmed_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          price_eur?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
