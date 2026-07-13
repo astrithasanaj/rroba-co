@@ -219,7 +219,7 @@ function PromotePage() {
               }}
             >
               <p className="text-[13px]" style={{ color: INK, lineHeight: 1.4 }}>
-                Shitësit që promovojnë shpesh <strong>kursejnë deri në 40%</strong> me Rroba Premium →
+                Shitësit që promovojnë shpesh <strong>kursejnë deri në 52%</strong> me Rroba Premium →
               </p>
             </Link>
           </section>
