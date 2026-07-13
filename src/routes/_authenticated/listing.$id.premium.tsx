@@ -38,6 +38,7 @@ const PLANS: Plan[] = [
     perks: [
       "5 promovime falas në krye të listës/muaj",
       "5 ditë plassim i sponsorizuar/muaj",
+      "Kurse ~26% krahasuar me blerjet e veçanta",
       "Shenjë verifikimi premium",
       "Statistika të avancuara",
     ],
@@ -51,6 +52,7 @@ const PLANS: Plan[] = [
     perks: [
       "12 promovime falas/muaj",
       "12 ditë plassim i sponsorizuar/muaj",
+      "Kurse ~47% krahasuar me blerjet e veçanta",
       "Shenjë verifikimi premium ari",
       "Statistika të avancuara",
       "Prioritet në kërkim gjithmonë",
@@ -64,6 +66,7 @@ const PLANS: Plan[] = [
     perks: [
       "20 promovime falas/muaj",
       "30 ditë plassim i sponsorizuar/muaj",
+      "Kurse ~52% krahasuar me blerjet e veçanta",
       "Shenjë verifikimi PRO",
       "Shfaqje në faqen kryesore",
       "Statistika të avancuara",

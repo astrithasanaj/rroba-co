@@ -24,6 +24,8 @@ const DIVIDER = "#ddd8ce";
 type PromoType = "feed_top" | "category_top" | "search_top";
 type CreditKind = "paid_placement_days" | "top_of_list_credits";
 
+type Purchase = { amount: number; original: number; price: number; label: string };
+
 type Option = {
   key: PromoType;
   title: string;
@@ -31,7 +33,7 @@ type Option = {
   creditKind: CreditKind;
   creditUnit: "day" | "use";
   membershipLabel: string;
-  purchases: { amount: number; price: number; label: string }[];
+  purchases: Purchase[];
   defaultIndex: number;
 };
 
@@ -45,9 +47,9 @@ const OPTIONS: Option[] = [
     creditUnit: "day",
     membershipLabel: "1 ditë nga plasimi i paguar",
     purchases: [
-      { amount: 3, price: 1.49, label: "3 ditë" },
-      { amount: 5, price: 1.99, label: "5 ditë" },
-      { amount: 7, price: 2.49, label: "7 ditë" },
+      { amount: 3, original: 1.86, price: 1.40, label: "3 ditë" },
+      { amount: 5, original: 2.49, price: 1.87, label: "5 ditë" },
+      { amount: 7, original: 3.11, price: 2.33, label: "7 ditë" },
     ],
     defaultIndex: 1,
   },
@@ -60,9 +62,9 @@ const OPTIONS: Option[] = [
     creditUnit: "day",
     membershipLabel: "1 ditë nga plasimi i paguar",
     purchases: [
-      { amount: 3, price: 1.49, label: "3 ditë" },
-      { amount: 5, price: 1.99, label: "5 ditë" },
-      { amount: 7, price: 2.49, label: "7 ditë" },
+      { amount: 3, original: 1.86, price: 1.40, label: "3 ditë" },
+      { amount: 5, original: 2.49, price: 1.87, label: "5 ditë" },
+      { amount: 7, original: 3.11, price: 2.33, label: "7 ditë" },
     ],
     defaultIndex: 1,
   },
@@ -75,9 +77,9 @@ const OPTIONS: Option[] = [
     creditUnit: "use",
     membershipLabel: "1 kredit 'Krye e listës'",
     purchases: [
-      { amount: 3, price: 1.49, label: "3 kredite" },
-      { amount: 5, price: 2.29, label: "5 kredite" },
-      { amount: 10, price: 3.99, label: "10 kredite" },
+      { amount: 3, original: 1.86, price: 1.40, label: "3 kredite" },
+      { amount: 5, original: 2.86, price: 2.15, label: "5 kredite" },
+      { amount: 10, original: 4.99, price: 3.74, label: "10 kredite" },
     ],
     defaultIndex: 0,
   },
@@ -217,7 +219,7 @@ function PromotePage() {
               }}
             >
               <p className="text-[13px]" style={{ color: INK, lineHeight: 1.4 }}>
-                Shitësit që promovojnë shpesh <strong>kursejnë deri në 40%</strong> me Rroba Premium →
+                Shitësit që promovojnë shpesh <strong>kursejnë deri në 52%</strong> me Rroba Premium →
               </p>
             </Link>
           </section>
@@ -345,17 +347,39 @@ function PromoCard({
             <button
               key={p.amount}
               onClick={() => onSelect(i)}
-              className="grid place-items-center px-4 py-2"
+              className="relative flex flex-col items-center px-3 py-2"
               style={{
                 backgroundColor: active ? INK : CREAM,
                 color: active ? "#ffffff" : INK,
                 borderRadius: 12,
-                minWidth: 96,
+                minWidth: 104,
                 border: `1px solid ${active ? INK : DIVIDER}`,
               }}
             >
+              <span
+                className="absolute"
+                style={{
+                  top: -8,
+                  right: -6,
+                  backgroundColor: CORAL,
+                  color: "#ffffff",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: "2px 6px",
+                  borderRadius: 999,
+                  letterSpacing: 0.3,
+                }}
+              >
+                −25%
+              </span>
               <span className="text-[13px] font-semibold">{p.label}</span>
-              <span className="text-[12px]" style={{ opacity: 0.85 }}>
+              <span
+                className="text-[11px] line-through"
+                style={{ opacity: active ? 0.6 : 0.5 }}
+              >
+                €{p.original.toFixed(2)}
+              </span>
+              <span className="text-[13px] font-bold" style={{ color: active ? "#ffffff" : CORAL }}>
                 €{p.price.toFixed(2)}
               </span>
             </button>
@@ -365,7 +389,7 @@ function PromoCard({
 
       <button
         onClick={onBuy}
-        className="mt-3 w-full"
+        className="mt-4 w-full flex items-center justify-center gap-2"
         style={{
           backgroundColor: canUseMembership ? CARD : CORAL,
           color: canUseMembership ? INK : "#ffffff",
@@ -376,7 +400,11 @@ function PromoCard({
           fontSize: 14,
         }}
       >
-        Bli {purchase.label} për €{purchase.price.toFixed(2)}
+        <span>Bli {purchase.label} për</span>
+        <span className="line-through" style={{ opacity: 0.55, fontWeight: 500 }}>
+          €{purchase.original.toFixed(2)}
+        </span>
+        <span>€{purchase.price.toFixed(2)}</span>
       </button>
     </div>
   );
@@ -462,7 +490,27 @@ function PaySheet({
         <p className="mt-4 text-[18px] font-bold" style={{ color: INK }}>
           Bli {p.label}
         </p>
-        <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="text-[14px] line-through" style={{ color: MUTED }}>
+            €{p.original.toFixed(2)}
+          </span>
+          <span
+            style={{
+              backgroundColor: CORAL,
+              color: "#ffffff",
+              fontSize: 10,
+              fontWeight: 700,
+              padding: "2px 6px",
+              borderRadius: 999,
+            }}
+          >
+            −25%
+          </span>
+          <span className="text-[16px] font-bold" style={{ color: INK }}>
+            €{p.price.toFixed(2)}
+          </span>
+        </div>
+        <p className="mt-2 text-[13px]" style={{ color: MUTED }}>
           Kreditet do të shtohen në saldon tënde pas verifikimit.
         </p>
 
