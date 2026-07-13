@@ -290,6 +290,23 @@ function EditListingPage() {
         }
       }
 
+      // Verify every path resolves in storage before saving — drop broken references
+      // so no listing goes live with an unresolvable cover image.
+      const toVerify = finalPaths.filter((p) => !/^https?:\/\//i.test(p));
+      const verified = new Set<string>(finalPaths.filter((p) => /^https?:\/\//i.test(p)));
+      if (toVerify.length) {
+        const { data: signed } = await supabase.storage
+          .from("photos")
+          .createSignedUrls(toVerify, 60);
+        for (const s of signed ?? []) {
+          if (s.path && s.signedUrl && !s.error) verified.add(s.path);
+        }
+      }
+      const cleanPaths = finalPaths.filter((p) => verified.has(p));
+      if (cleanPaths.length < 1) {
+        throw new Error("Duhet të paktën 1 foto e vlefshme");
+      }
+
       const { data: updated, error } = await supabase
         .from("listings")
         .update({
@@ -305,7 +322,7 @@ function EditListingPage() {
           city_id: cityId,
           price: priceNum,
           description: description.trim(),
-          image_paths: finalPaths,
+          image_paths: cleanPaths,
           delivery,
           updated_at: new Date().toISOString(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

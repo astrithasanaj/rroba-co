@@ -48,12 +48,15 @@ export async function signPaths(paths: string[]): Promise<Record<string, string>
 export async function hydrateListings(rows: ListingRow[]): Promise<ListingView[]> {
   const all = rows.flatMap((r) => r.image_paths ?? []);
   const urls = await signPaths(all);
-  return rows.map((r) => {
-    const imageUrls = (r.image_paths ?? [])
-      .map((p) => (/^https?:\/\//i.test(p) ? p : urls[p] ?? ""))
-      .filter(Boolean);
-    return { ...r, coverUrl: imageUrls[0] ?? "", imageUrls };
-  });
+  return rows
+    .map((r) => {
+      const imageUrls = (r.image_paths ?? [])
+        .map((p) => (/^https?:\/\//i.test(p) ? p : urls[p] ?? ""))
+        .filter(Boolean);
+      return { ...r, coverUrl: imageUrls[0] ?? "", imageUrls };
+    })
+    // Hide listings whose cover image cannot be resolved — no empty boxes anywhere.
+    .filter((l) => !!l.coverUrl);
 }
 
 export const CATEGORIES = [

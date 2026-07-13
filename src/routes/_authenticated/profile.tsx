@@ -10,7 +10,6 @@ import {
   Grid2x2,
   Heart,
   HelpCircle,
-  ImageIcon,
   Loader2,
   LogOut,
   MessageSquare,
@@ -834,7 +833,7 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
   return (
     <div
       className="grid grid-cols-2"
-      style={{ gap: 1.5, backgroundColor: "#e8e3d9" }}
+      style={{ gap: 1.5, backgroundColor: "transparent" }}
     >
       {listings.map((l) => {
         const linkProps = manage
@@ -846,29 +845,19 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
             key={l.id}
             {...linkProps}
             className="relative block aspect-square overflow-hidden"
-            style={{ backgroundColor: CARD, borderRadius: 0 }}
+            style={{ backgroundColor: "transparent", borderRadius: 0 }}
           >
-            {l.coverUrl ? (
-              <img
-                src={l.coverUrl}
-                alt={l.title}
-                className="h-full w-full"
-                loading="lazy"
-                style={{
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
-                }}
-              />
-            ) : (
-              <div
-                className="grid h-full w-full place-items-center"
-                style={{ backgroundColor: "#f0ece3" }}
-                aria-label="Pa foto"
-              >
-                <ImageIcon style={{ width: 28, height: 28, color: MUTED }} strokeWidth={1.4} />
-              </div>
-            )}
+            <img
+              src={l.coverUrl}
+              alt={l.title}
+              className="h-full w-full"
+              loading="lazy"
+              style={{
+                objectFit: "cover",
+                objectPosition: "center top",
+                ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
+              }}
+            />
             <span
               className="pointer-events-none absolute italic"
               style={{
