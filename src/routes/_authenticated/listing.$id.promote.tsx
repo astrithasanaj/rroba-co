@@ -347,39 +347,43 @@ function PromoCard({
             <button
               key={p.amount}
               onClick={() => onSelect(i)}
-              className="relative flex flex-col items-center px-3 py-2"
+              className="flex flex-col items-center justify-center px-3 py-3"
               style={{
                 backgroundColor: active ? INK : CREAM,
                 color: active ? "#ffffff" : INK,
                 borderRadius: 12,
                 minWidth: 104,
+                minHeight: 126,
                 border: `1px solid ${active ? INK : DIVIDER}`,
               }}
             >
+              <div className="flex items-center gap-1.5">
+                <span className="text-[13px] font-semibold">{p.label}</span>
+                <span
+                  style={{
+                    backgroundColor: active ? CORAL : "rgba(232, 130, 106, 0.14)",
+                    color: active ? "#ffffff" : CORAL,
+                    fontSize: 9,
+                    fontWeight: 800,
+                    padding: "2px 5px",
+                    borderRadius: 999,
+                    letterSpacing: 0.3,
+                    lineHeight: 1,
+                  }}
+                >
+                  −25%
+                </span>
+              </div>
               <span
-                className="absolute"
-                style={{
-                  top: -8,
-                  right: -6,
-                  backgroundColor: CORAL,
-                  color: "#ffffff",
-                  fontSize: 10,
-                  fontWeight: 700,
-                  padding: "2px 6px",
-                  borderRadius: 999,
-                  letterSpacing: 0.3,
-                }}
-              >
-                −25%
-              </span>
-              <span className="text-[13px] font-semibold">{p.label}</span>
-              <span
-                className="text-[11px] line-through"
-                style={{ opacity: active ? 0.6 : 0.5 }}
+                className="mt-3 text-[11px] line-through"
+                style={{ color: active ? "rgba(255,255,255,0.55)" : MUTED }}
               >
                 €{p.original.toFixed(2)}
               </span>
-              <span className="text-[13px] font-bold" style={{ color: active ? "#ffffff" : CORAL }}>
+              <span
+                className="mt-1 text-[18px] font-extrabold tracking-tight"
+                style={{ color: active ? "#ffffff" : CORAL }}
+              >
                 €{p.price.toFixed(2)}
               </span>
             </button>
