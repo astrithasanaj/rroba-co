@@ -194,12 +194,40 @@ function AdminPromotions() {
     load();
   };
 
+  const confirmCredit = async (id: string) => {
+    const row = credits.find((c) => c.id === id);
+    const { error } = await supabase
+      .from("credit_purchases")
+      .update({ status: "confirmed" })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    if (row) {
+      await supabase.from("notifications").insert({
+        user_id: row.user_id,
+        type: "credits_added",
+        data: { kind: row.kind, amount: row.amount },
+      });
+    }
+    toast.success("Kreditet u shtuan");
+    load();
+  };
+
+  const refuseCredit = async (id: string) => {
+    const { error } = await supabase
+      .from("credit_purchases")
+      .update({ status: "refused" })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Blerja u refuzua");
+    load();
+  };
 
   const filtered = rows.filter((r) => {
     if (tab === "pending") return r.status === "pending_payment";
     if (tab === "active") return r.status === "active";
     return true;
   });
+  const pendingCredits = credits.filter((c) => c.status === "pending_payment");
 
   return (
     <MobileShell hideNav>
