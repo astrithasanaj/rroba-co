@@ -54,28 +54,56 @@ const TYPE_LABEL: Record<string, string> = {
   search_top: "Krye i kërkimit",
 };
 
+type CreditRow = {
+  id: string;
+  user_id: string;
+  kind: string;
+  amount: number;
+  price_eur: number;
+  status: string;
+  payment_method: string | null;
+  payment_reference: string | null;
+  created_at: string;
+  buyer_name: string;
+};
+
+const CREDIT_LABEL: Record<string, string> = {
+  paid_placement_days: "Ditë plasimi",
+  top_of_list_credits: "Kredite kërkimi",
+};
+
 function AdminPromotions() {
   const [rows, setRows] = useState<Row[]>([]);
+  const [credits, setCredits] = useState<CreditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"pending" | "active" | "all">("pending");
 
   const load = async () => {
     setLoading(true);
-    const { data: promos } = await supabase
-      .from("promotions")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(200);
-    if (!promos) {
-      setRows([]);
-      setLoading(false);
-      return;
-    }
-    const listingIds = [...new Set(promos.map((p) => p.listing_id))];
-    const sellerIds = [...new Set(promos.map((p) => p.seller_id))];
+    const [{ data: promos }, { data: cRows }] = await Promise.all([
+      supabase.from("promotions").select("*").order("created_at", { ascending: false }).limit(200),
+      supabase
+        .from("credit_purchases")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200),
+    ]);
+    const safePromos = promos ?? [];
+    const safeCredits = (cRows ?? []) as unknown as CreditRow[];
+    const listingIds = [...new Set(safePromos.map((p) => p.listing_id))];
+    const sellerIds = [
+      ...new Set([
+        ...safePromos.map((p) => p.seller_id),
+        ...safeCredits.map((c) => c.user_id),
+      ]),
+    ];
     const [{ data: listings }, { data: profiles }] = await Promise.all([
-      supabase.from("listings").select("id,title,image_paths").in("id", listingIds),
-      supabase.from("profiles").select("id,name,display_name,username").in("id", sellerIds),
+      listingIds.length
+        ? supabase.from("listings").select("id,title,image_paths").in("id", listingIds)
+        : Promise.resolve({ data: [] as { id: string; title: string; image_paths: string[] }[] }),
+      sellerIds.length
+        ? supabase.from("profiles").select("id,name,display_name,username").in("id", sellerIds)
+        : Promise.resolve({ data: [] as { id: string; name: string; display_name: string; username: string }[] }),
     ]);
     const coverPaths = (listings ?? [])
       .map((l) => (l.image_paths as string[])?.[0])
@@ -94,7 +122,7 @@ function AdminPromotions() {
       ]),
     );
     setRows(
-      promos.map((p) => ({
+      safePromos.map((p) => ({
         id: p.id,
         listing_id: p.listing_id,
         seller_id: p.seller_id,
@@ -110,6 +138,12 @@ function AdminPromotions() {
         listing_cover: listingMap.get(p.listing_id)?.cover ?? "",
         seller_name: profileMap.get(p.seller_id) ?? "—",
         seller_email: "",
+      })),
+    );
+    setCredits(
+      safeCredits.map((c) => ({
+        ...c,
+        buyer_name: profileMap.get(c.user_id) ?? "—",
       })),
     );
     setLoading(false);
@@ -160,12 +194,40 @@ function AdminPromotions() {
     load();
   };
 
+  const confirmCredit = async (id: string) => {
+    const row = credits.find((c) => c.id === id);
+    const { error } = await supabase
+      .from("credit_purchases")
+      .update({ status: "confirmed" })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    if (row) {
+      await supabase.from("notifications").insert({
+        user_id: row.user_id,
+        type: "credits_added",
+        data: { kind: row.kind, amount: row.amount },
+      });
+    }
+    toast.success("Kreditet u shtuan");
+    load();
+  };
+
+  const refuseCredit = async (id: string) => {
+    const { error } = await supabase
+      .from("credit_purchases")
+      .update({ status: "refused" })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Blerja u refuzua");
+    load();
+  };
 
   const filtered = rows.filter((r) => {
     if (tab === "pending") return r.status === "pending_payment";
     if (tab === "active") return r.status === "active";
     return true;
   });
+  const pendingCredits = credits.filter((c) => c.status === "pending_payment");
 
   return (
     <MobileShell hideNav>
@@ -204,6 +266,44 @@ function AdminPromotions() {
             </button>
           ))}
         </div>
+
+        {tab === "pending" && pendingCredits.length > 0 && (
+          <div className="space-y-2 px-4 pb-4">
+            <p className="text-[11px] font-bold" style={{ color: MUTED, letterSpacing: 0.8 }}>
+              BLERJE KREDITESH NË PRITJE
+            </p>
+            {pendingCredits.map((c) => (
+              <div key={c.id} style={{ backgroundColor: CARD, borderRadius: 14, padding: 14 }}>
+                <p className="text-[13px] font-bold" style={{ color: INK }}>
+                  {c.buyer_name}
+                </p>
+                <p className="mt-1 text-[13px]" style={{ color: INK }}>
+                  {c.amount} × {CREDIT_LABEL[c.kind] ?? c.kind} · €{Number(c.price_eur).toFixed(2)}
+                </p>
+                <p className="mt-0.5 text-[11px]" style={{ color: MUTED }}>
+                  {c.payment_method ?? "—"} · ref {c.payment_reference ?? "—"}
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => confirmCredit(c.id)}
+                    className="flex-1 py-2 text-[13px] font-bold"
+                    style={{ backgroundColor: OK, color: "#fff", borderRadius: 10 }}
+                  >
+                    <Check className="mx-auto h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => refuseCredit(c.id)}
+                    className="flex-1 py-2 text-[13px] font-bold"
+                    style={{ backgroundColor: CREAM, color: ERR, borderRadius: 10, border: `1px solid ${DIVIDER}` }}
+                  >
+                    <X className="mx-auto h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
 
         {loading ? (
           <div className="grid h-64 place-items-center">
