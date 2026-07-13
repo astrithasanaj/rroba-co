@@ -73,8 +73,24 @@ const PLANS: Plan[] = [
 ];
 
 function PremiumPage() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState("mid");
-  const [comingSoon, setComingSoon] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const activate = async () => {
+    setSubmitting(true);
+    const { error } = await (supabase as unknown as {
+      rpc: (fn: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+    }).rpc("renew_membership", { _tier: selected });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Medlemskapi u aktivizua! Kreditet u rifreskuan.");
+    navigate({ to: "/my-promotions" });
+  };
+
 
   return (
     <MobileShell hideNav>
