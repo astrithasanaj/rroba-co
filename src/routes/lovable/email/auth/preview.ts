@@ -18,7 +18,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "rroba-style-discover"
+const SITE_NAME = "Rroba"
 const ROOT_DOMAIN = "rroba.co"
 
 // Sample data for preview mode ONLY (not used in actual email sending).

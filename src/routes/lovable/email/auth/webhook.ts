@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "rroba-style-discover"
+const SITE_NAME = "Rroba"
 const SENDER_DOMAIN = "notify.rroba.co"
 const ROOT_DOMAIN = "rroba.co"
 const FROM_DOMAIN = "rroba.co"
