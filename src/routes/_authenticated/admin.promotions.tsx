@@ -89,7 +89,7 @@ function AdminPromotions() {
         .limit(200),
     ]);
     const safePromos = promos ?? [];
-    const safeCredits = (cRows ?? []) as CreditRow[];
+    const safeCredits = (cRows ?? []) as unknown as CreditRow[];
     const listingIds = [...new Set(safePromos.map((p) => p.listing_id))];
     const sellerIds = [
       ...new Set([
