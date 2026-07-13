@@ -88,16 +88,22 @@ function AdminPromotions() {
         .order("created_at", { ascending: false })
         .limit(200),
     ]);
-    if (!promos) {
-      setRows([]);
-      setLoading(false);
-      return;
-    }
-    const listingIds = [...new Set(promos.map((p) => p.listing_id))];
-    const sellerIds = [...new Set(promos.map((p) => p.seller_id))];
+    const safePromos = promos ?? [];
+    const safeCredits = (cRows ?? []) as CreditRow[];
+    const listingIds = [...new Set(safePromos.map((p) => p.listing_id))];
+    const sellerIds = [
+      ...new Set([
+        ...safePromos.map((p) => p.seller_id),
+        ...safeCredits.map((c) => c.user_id),
+      ]),
+    ];
     const [{ data: listings }, { data: profiles }] = await Promise.all([
-      supabase.from("listings").select("id,title,image_paths").in("id", listingIds),
-      supabase.from("profiles").select("id,name,display_name,username").in("id", sellerIds),
+      listingIds.length
+        ? supabase.from("listings").select("id,title,image_paths").in("id", listingIds)
+        : Promise.resolve({ data: [] as { id: string; title: string; image_paths: string[] }[] }),
+      sellerIds.length
+        ? supabase.from("profiles").select("id,name,display_name,username").in("id", sellerIds)
+        : Promise.resolve({ data: [] as { id: string; name: string; display_name: string; username: string }[] }),
     ]);
     const coverPaths = (listings ?? [])
       .map((l) => (l.image_paths as string[])?.[0])
