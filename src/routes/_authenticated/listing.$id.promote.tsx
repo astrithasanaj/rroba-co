@@ -24,6 +24,8 @@ const DIVIDER = "#ddd8ce";
 type PromoType = "feed_top" | "category_top" | "search_top";
 type CreditKind = "paid_placement_days" | "top_of_list_credits";
 
+type Purchase = { amount: number; original: number; price: number; label: string };
+
 type Option = {
   key: PromoType;
   title: string;
@@ -31,7 +33,7 @@ type Option = {
   creditKind: CreditKind;
   creditUnit: "day" | "use";
   membershipLabel: string;
-  purchases: { amount: number; price: number; label: string }[];
+  purchases: Purchase[];
   defaultIndex: number;
 };
 
@@ -45,9 +47,9 @@ const OPTIONS: Option[] = [
     creditUnit: "day",
     membershipLabel: "1 ditë nga plasimi i paguar",
     purchases: [
-      { amount: 3, price: 1.49, label: "3 ditë" },
-      { amount: 5, price: 1.99, label: "5 ditë" },
-      { amount: 7, price: 2.49, label: "7 ditë" },
+      { amount: 3, original: 1.86, price: 1.40, label: "3 ditë" },
+      { amount: 5, original: 2.49, price: 1.87, label: "5 ditë" },
+      { amount: 7, original: 3.11, price: 2.33, label: "7 ditë" },
     ],
     defaultIndex: 1,
   },
@@ -60,9 +62,9 @@ const OPTIONS: Option[] = [
     creditUnit: "day",
     membershipLabel: "1 ditë nga plasimi i paguar",
     purchases: [
-      { amount: 3, price: 1.49, label: "3 ditë" },
-      { amount: 5, price: 1.99, label: "5 ditë" },
-      { amount: 7, price: 2.49, label: "7 ditë" },
+      { amount: 3, original: 1.86, price: 1.40, label: "3 ditë" },
+      { amount: 5, original: 2.49, price: 1.87, label: "5 ditë" },
+      { amount: 7, original: 3.11, price: 2.33, label: "7 ditë" },
     ],
     defaultIndex: 1,
   },
@@ -75,9 +77,9 @@ const OPTIONS: Option[] = [
     creditUnit: "use",
     membershipLabel: "1 kredit 'Krye e listës'",
     purchases: [
-      { amount: 3, price: 1.49, label: "3 kredite" },
-      { amount: 5, price: 2.29, label: "5 kredite" },
-      { amount: 10, price: 3.99, label: "10 kredite" },
+      { amount: 3, original: 1.86, price: 1.40, label: "3 kredite" },
+      { amount: 5, original: 2.86, price: 2.15, label: "5 kredite" },
+      { amount: 10, original: 4.99, price: 3.74, label: "10 kredite" },
     ],
     defaultIndex: 0,
   },
