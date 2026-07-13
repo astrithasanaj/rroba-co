@@ -54,18 +54,40 @@ const TYPE_LABEL: Record<string, string> = {
   search_top: "Krye i kërkimit",
 };
 
+type CreditRow = {
+  id: string;
+  user_id: string;
+  kind: string;
+  amount: number;
+  price_eur: number;
+  status: string;
+  payment_method: string | null;
+  payment_reference: string | null;
+  created_at: string;
+  buyer_name: string;
+};
+
+const CREDIT_LABEL: Record<string, string> = {
+  paid_placement_days: "Ditë plasimi",
+  top_of_list_credits: "Kredite kërkimi",
+};
+
 function AdminPromotions() {
   const [rows, setRows] = useState<Row[]>([]);
+  const [credits, setCredits] = useState<CreditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"pending" | "active" | "all">("pending");
 
   const load = async () => {
     setLoading(true);
-    const { data: promos } = await supabase
-      .from("promotions")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(200);
+    const [{ data: promos }, { data: cRows }] = await Promise.all([
+      supabase.from("promotions").select("*").order("created_at", { ascending: false }).limit(200),
+      supabase
+        .from("credit_purchases")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200),
+    ]);
     if (!promos) {
       setRows([]);
       setLoading(false);
