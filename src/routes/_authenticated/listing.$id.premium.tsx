@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/premium")({
   component: () => (
