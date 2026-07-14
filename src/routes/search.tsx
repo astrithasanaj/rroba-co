@@ -7,6 +7,8 @@ import {
   Loader2,
   Clock,
   LayoutGrid,
+  Users,
+  ChevronRight,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,6 +73,17 @@ type Filters = {
   priceMax?: string;
 };
 
+type Tab = "main" | "profile" | "brand" | "category";
+
+type ProfileRow = {
+  id: string;
+  name: string | null;
+  display_name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  city: string | null;
+};
+
 const RECENT_KEY = "rroba-recent-searches";
 
 function loadRecent(): string[] {
@@ -129,6 +142,17 @@ function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecent());
   const inputRef = useRef<HTMLInputElement>(null);
+  const [tab, setTab] = useState<Tab>("main");
+  const [me, setMe] = useState<string | null>(null);
+  const [profileResults, setProfileResults] = useState<ProfileRow[]>([]);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileCounts, setProfileCounts] = useState<Record<string, number>>({});
+  const [followingSet, setFollowingSet] = useState<Set<string>>(new Set());
+  const [brandResults, setBrandResults] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+  }, []);
 
   useEffect(() => {
     setQ(initialQ ?? "");
@@ -194,6 +218,125 @@ function SearchPage() {
       clearTimeout(t);
     };
   }, [q, filters, section, showResults, dbCategories, subLabels]);
+
+  // Profile + brand search
+  useEffect(() => {
+    if (!hasQuery) {
+      setProfileResults([]);
+      setBrandResults([]);
+      setProfileCounts({});
+      return;
+    }
+    let active = true;
+    const run = async () => {
+      setProfileLoading(true);
+      const term = `%${q.trim()}%`;
+      const { data: profs } = await supabase
+        .from("public_profiles")
+        .select("id,name,display_name,username,avatar_url,city")
+        .or(`username.ilike.${term},display_name.ilike.${term},name.ilike.${term}`)
+        .limit(20);
+      if (!active) return;
+      const list = (profs ?? []) as ProfileRow[];
+      setProfileResults(list);
+
+      // Counts of active listings per matched profile
+      if (list.length > 0) {
+        const ids = list.map((p) => p.id);
+        const { data: cnt } = await supabase
+          .from("listings")
+          .select("user_id")
+          .in("user_id", ids)
+          .eq("status", "active");
+        const counts: Record<string, number> = {};
+        (cnt ?? []).forEach((r: any) => {
+          counts[r.user_id] = (counts[r.user_id] ?? 0) + 1;
+        });
+        if (active) setProfileCounts(counts);
+
+        // Following state for current user
+        const meId = (await supabase.auth.getUser()).data.user?.id ?? null;
+        if (meId && active) {
+          const { data: mine } = await supabase
+            .from("followers")
+            .select("following_id")
+            .eq("follower_id", meId)
+            .in("following_id", ids);
+          if (active) {
+            setFollowingSet((prev) => {
+              const next = new Set(prev);
+              (mine ?? []).forEach((r: any) => next.add(r.following_id));
+              return next;
+            });
+          }
+        }
+      } else {
+        setProfileCounts({});
+      }
+
+      // Brand suggestions from listings
+      const { data: brandRows } = await supabase
+        .from("listings")
+        .select("brand")
+        .ilike("brand", term)
+        .eq("status", "active")
+        .not("brand", "is", null)
+        .limit(60);
+      if (active) {
+        const uniq = Array.from(
+          new Set(
+            (brandRows ?? [])
+              .map((r: any) => (r.brand as string | null) ?? "")
+              .filter((b) => b.trim().length > 0),
+          ),
+        ).slice(0, 20);
+        setBrandResults(uniq);
+      }
+      if (active) setProfileLoading(false);
+    };
+    const t = setTimeout(run, 250);
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
+  }, [q, hasQuery]);
+
+  const toggleFollow = async (targetId: string) => {
+    if (!me || me === targetId) return;
+    const isFollowing = followingSet.has(targetId);
+    const next = new Set(followingSet);
+    if (isFollowing) {
+      next.delete(targetId);
+      setFollowingSet(next);
+      const { error } = await supabase
+        .from("followers")
+        .delete()
+        .eq("follower_id", me)
+        .eq("following_id", targetId);
+      if (error) {
+        const revert = new Set(next);
+        revert.add(targetId);
+        setFollowingSet(revert);
+      }
+    } else {
+      next.add(targetId);
+      setFollowingSet(next);
+      const { error } = await supabase
+        .from("followers")
+        .insert({ follower_id: me, following_id: targetId });
+      if (error) {
+        const revert = new Set(next);
+        revert.delete(targetId);
+        setFollowingSet(revert);
+      }
+    }
+  };
+
+  const matchedCategories = useMemo(() => {
+    if (!hasQuery) return [];
+    const term = q.trim().toLowerCase();
+    return HOME_CATEGORIES.filter((c) => c.label.toLowerCase().includes(term));
+  }, [q, hasQuery]);
 
   const commitRecent = (term: string) => {
     const t = term.trim();
@@ -326,11 +469,16 @@ function SearchPage() {
               ))}
             </div>
           )}
+          {/* Tab bar — only visible when the user is actively searching */}
+          {hasQuery && (
+            <TabBar tab={tab} setTab={setTab} />
+          )}
         </header>
 
         {focused && !hasQuery ? (
-          <RecentSearches
-            items={recent}
+          <BrowseAndRecent
+            recent={recent}
+            onBrowseAll={() => navigate({ to: "/users" })}
             onPick={(t) => {
               setQ(t);
               commitRecent(t);
@@ -339,7 +487,21 @@ function SearchPage() {
             onClear={clearRecent}
           />
         ) : showResults ? (
-          <ResultsSection loading={loading} results={results} />
+          <TabbedResults
+            tab={tab}
+            loading={loading}
+            profileLoading={profileLoading}
+            results={results}
+            profiles={profileResults}
+            profileCounts={profileCounts}
+            followingSet={followingSet}
+            me={me}
+            onToggleFollow={toggleFollow}
+            brands={brandResults}
+            matchedCategories={matchedCategories}
+            onPickBrand={(b) => setQ(b)}
+            onPickCategory={pickCategoryCard}
+          />
         ) : (
           <CategoriesSection onPick={pickCategoryCard} />
         )}
@@ -482,6 +644,317 @@ function RecentSearches({
         ))}
       </ul>
     </section>
+  );
+}
+
+function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
+  const items: { key: Tab; label: string }[] = [
+    { key: "main", label: "Kryesore" },
+    { key: "profile", label: "Profile" },
+    { key: "brand", label: "Marka" },
+    { key: "category", label: "Kategori" },
+  ];
+  return (
+    <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+      {items.map((it) => {
+        const active = tab === it.key;
+        return (
+          <button
+            key={it.key}
+            type="button"
+            onClick={() => setTab(it.key)}
+            className="rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap"
+            style={{
+              backgroundColor: active ? INK : CARD,
+              color: active ? "#ffffff" : INK,
+            }}
+          >
+            {it.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function BrowseAndRecent({
+  recent,
+  onBrowseAll,
+  onPick,
+  onRemove,
+  onClear,
+}: {
+  recent: string[];
+  onBrowseAll: () => void;
+  onPick: (t: string) => void;
+  onRemove: (t: string) => void;
+  onClear: () => void;
+}) {
+  return (
+    <>
+      <section className="mt-6 px-5">
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            onBrowseAll();
+          }}
+          className="flex w-full items-center gap-3 rounded-2xl p-4 text-left"
+          style={{ backgroundColor: CARD }}
+        >
+          <div
+            className="grid h-11 w-11 place-items-center rounded-full"
+            style={{ backgroundColor: "#efe7d6" }}
+          >
+            <Users className="h-5 w-5" style={{ color: INK }} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] font-semibold" style={{ color: INK }}>
+              Të gjithë përdoruesit
+            </p>
+            <p className="text-xs" style={{ color: MUTED }}>
+              Shfleto profilet e Rroba
+            </p>
+          </div>
+          <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
+        </button>
+      </section>
+      <RecentSearches items={recent} onPick={onPick} onRemove={onRemove} onClear={onClear} />
+    </>
+  );
+}
+
+function TabbedResults({
+  tab,
+  loading,
+  profileLoading,
+  results,
+  profiles,
+  profileCounts,
+  followingSet,
+  me,
+  onToggleFollow,
+  brands,
+  matchedCategories,
+  onPickBrand,
+  onPickCategory,
+}: {
+  tab: Tab;
+  loading: boolean;
+  profileLoading: boolean;
+  results: ListingView[];
+  profiles: ProfileRow[];
+  profileCounts: Record<string, number>;
+  followingSet: Set<string>;
+  me: string | null;
+  onToggleFollow: (id: string) => void;
+  brands: string[];
+  matchedCategories: (typeof HOME_CATEGORIES)[number][];
+  onPickBrand: (b: string) => void;
+  onPickCategory: (key: string) => void;
+}) {
+  if (tab === "profile") {
+    return (
+      <section className="mt-6 px-5">
+        <p className="mb-3 text-xs" style={{ color: MUTED }}>
+          {profileLoading ? "Po kërkon..." : `${profiles.length} profile`}
+        </p>
+        {profileLoading ? (
+          <div className="grid place-items-center py-10">
+            <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+          </div>
+        ) : profiles.length === 0 ? (
+          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+            Asnjë profil u gjet
+          </div>
+        ) : (
+          <ul className="divide-y" style={{ borderColor: DIVIDER }}>
+            {profiles.map((p) => (
+              <ProfileListRow
+                key={p.id}
+                profile={p}
+                count={profileCounts[p.id] ?? 0}
+                isFollowing={followingSet.has(p.id)}
+                isMe={me === p.id}
+                canFollow={!!me}
+                onToggleFollow={() => onToggleFollow(p.id)}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
+    );
+  }
+
+  if (tab === "brand") {
+    return (
+      <section className="mt-6 px-5">
+        <p className="mb-3 text-xs" style={{ color: MUTED }}>
+          {brands.length} marka
+        </p>
+        {brands.length === 0 ? (
+          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+            Asnjë markë u gjet
+          </div>
+        ) : (
+          <ul>
+            {brands.map((b) => (
+              <li key={b} className="border-b" style={{ borderColor: DIVIDER }}>
+                <button
+                  type="button"
+                  onClick={() => onPickBrand(b)}
+                  className="w-full py-3 text-left text-[15px] font-medium"
+                  style={{ color: INK }}
+                >
+                  {b}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    );
+  }
+
+  if (tab === "category") {
+    return (
+      <section className="mt-6 px-5">
+        {matchedCategories.length === 0 ? (
+          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+            Asnjë kategori
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {matchedCategories.map(({ key, label, Icon, boxColor, iconColor }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onPickCategory(key)}
+                className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left"
+                style={{ backgroundColor: boxColor }}
+              >
+                <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: iconColor }} />
+                <span className="text-[15px] font-bold leading-tight" style={{ color: INK }}>
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  }
+
+  // "main" / Kryesore — mixed
+  return (
+    <>
+      {profiles.length > 0 && (
+        <section className="mt-6 px-5">
+          <h3 className="mb-2 text-sm font-bold" style={{ color: INK }}>
+            Profile
+          </h3>
+          <ul>
+            {profiles.slice(0, 3).map((p) => (
+              <ProfileListRow
+                key={p.id}
+                profile={p}
+                count={profileCounts[p.id] ?? 0}
+                isFollowing={followingSet.has(p.id)}
+                isMe={me === p.id}
+                canFollow={!!me}
+                onToggleFollow={() => onToggleFollow(p.id)}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+      {matchedCategories.length > 0 && (
+        <section className="mt-4 px-5">
+          <h3 className="mb-2 text-sm font-bold" style={{ color: INK }}>
+            Kategoritë
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {matchedCategories.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onPickCategory(key)}
+                className="rounded-full px-3 py-1.5 text-xs font-semibold"
+                style={{ backgroundColor: CARD, color: INK }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      <ResultsSection loading={loading} results={results} />
+    </>
+  );
+}
+
+function ProfileListRow({
+  profile,
+  count,
+  isFollowing,
+  isMe,
+  canFollow,
+  onToggleFollow,
+}: {
+  profile: ProfileRow;
+  count: number;
+  isFollowing: boolean;
+  isMe: boolean;
+  canFollow: boolean;
+  onToggleFollow: () => void;
+}) {
+  const label = profile.display_name || profile.name || profile.username || "Përdorues";
+  return (
+    <li
+      className="flex items-center gap-3 border-b py-3"
+      style={{ borderColor: DIVIDER }}
+    >
+      <Link
+        to="/user/$id"
+        params={{ id: profile.id }}
+        className="flex min-w-0 flex-1 items-center gap-3"
+      >
+        <img
+          src={profile.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(label)}`}
+          alt=""
+          className="h-11 w-11 shrink-0 rounded-full object-cover"
+          style={{ backgroundColor: CARD }}
+        />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[15px] font-semibold" style={{ color: INK }}>
+            {label}
+          </p>
+          <p className="truncate text-xs" style={{ color: MUTED }}>
+            {[profile.city, `${count} ${count === 1 ? "artikull" : "artikuj"}`]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        </div>
+      </Link>
+      {!isMe && canFollow && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onToggleFollow();
+          }}
+          className="shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-opacity active:opacity-80"
+          style={{
+            backgroundColor: isFollowing ? CARD : CORAL,
+            color: isFollowing ? INK : "#ffffff",
+            border: isFollowing ? `1px solid ${DIVIDER}` : "none",
+          }}
+        >
+          {isFollowing ? "Duke ndjekur" : "Ndiq"}
+        </button>
+      )}
+    </li>
   );
 }
 
