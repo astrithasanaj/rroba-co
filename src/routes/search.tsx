@@ -131,6 +131,17 @@ function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecent());
   const inputRef = useRef<HTMLInputElement>(null);
+  const [tab, setTab] = useState<Tab>("main");
+  const [me, setMe] = useState<string | null>(null);
+  const [profileResults, setProfileResults] = useState<ProfileRow[]>([]);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileCounts, setProfileCounts] = useState<Record<string, number>>({});
+  const [followingSet, setFollowingSet] = useState<Set<string>>(new Set());
+  const [brandResults, setBrandResults] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+  }, []);
 
   useEffect(() => {
     setQ(initialQ ?? "");
