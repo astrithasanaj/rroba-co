@@ -1,3 +1,5 @@
+import { Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+
 export type GenderSlug = "femra" | "meshkuj" | "vajza" | "djem" | "all";
 
 export type CategoryDef = {
@@ -77,3 +79,48 @@ export const CATEGORY_SUBCATEGORIES: Record<string, string[]> = {
     "Vazo & qeramikë", "Tekstil dekorativ", "Vintage & antike", "Krijime artizanale",
   ],
 };
+
+export const HOME_CATEGORIES = [
+  {
+    key: "mode",
+    label: "Modë & aksesorë",
+    Icon: Shirt,
+    boxColor: "#f0e0d8",
+    iconColor: "#b85c3e",
+  },
+  {
+    key: "outdoor",
+    label: "Outdoor & sport",
+    Icon: Mountain,
+    boxColor: "#e3e8dc",
+    iconColor: "#6b7c5b",
+  },
+  {
+    key: "interior",
+    label: "Interiør & mobilje",
+    Icon: Archive,
+    boxColor: "#e1e7ed",
+    iconColor: "#6e849e",
+  },
+  {
+    key: "femije",
+    label: "Fëmijë & bebe",
+    Icon: Baby,
+    boxColor: "#f8e8dc",
+    iconColor: "#d9966e",
+  },
+  {
+    key: "art",
+    label: "Art & dizajn",
+    Icon: Frame,
+    boxColor: "#f2ead6",
+    iconColor: "#b89255",
+  },
+  {
+    key: "elektronik",
+    label: "Elektronikë & zë",
+    Icon: Speaker,
+    boxColor: "#e0e8e6",
+    iconColor: "#5e7d87",
+  },
+] as const;

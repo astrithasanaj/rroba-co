@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+import { Bell } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
 
 import { supabase } from "@/integrations/supabase/client";
+import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/")({
@@ -16,15 +17,6 @@ const PAGE_BG = "#f6f1e7";
 const CARD_BG = "#ede8de";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
-
-const CATEGORIES = [
-  { key: "mode", label: "Modë & aksesorë", Icon: Shirt },
-  { key: "outdoor", label: "Outdoor & sport", Icon: Mountain },
-  { key: "interior", label: "Interiør & mobilje", Icon: Archive },
-  { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
-  { key: "art", label: "Art & dizajn", Icon: Frame },
-  { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },
-] as const;
 
 function HomePage() {
   const [listings, setListings] = useState<ListingView[]>([]);
@@ -119,7 +111,7 @@ function HomePage() {
             Kategoritë
           </h2>
           <div className="category-scroll mt-3 pb-1">
-            {CATEGORIES.map(({ key, label, Icon }) => {
+            {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
               const hasGender = key === "mode" || key === "femije";
               const hasSubcategory = key === "outdoor" || key === "interior" || key === "art";
               const linkProps = hasGender
@@ -140,10 +132,10 @@ function HomePage() {
                       width: 84,
                       height: 84,
                       borderRadius: 14,
-                      backgroundColor: CARD_BG,
+                      backgroundColor: boxColor,
                     }}
                   >
-                    <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
+                    <Icon size={26} strokeWidth={1.6} style={{ color: iconColor }} />
                   </div>
                   <span
                     className="mt-1.5 text-center font-bold leading-tight line-clamp-2"

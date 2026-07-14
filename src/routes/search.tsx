@@ -6,16 +6,11 @@ import {
   SlidersHorizontal,
   Loader2,
   Clock,
-  Shirt,
-  Mountain,
-  Archive,
-  Baby,
-  Frame,
-  Speaker,
   LayoutGrid,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { HOME_CATEGORIES } from "@/lib/categories";
 import {
   CITIES,
   CONDITIONS,
@@ -75,21 +70,6 @@ type Filters = {
   priceMin?: string;
   priceMax?: string;
 };
-
-type CategoryCard = {
-  label: string;
-  key: string;
-  Icon: typeof Shirt;
-};
-
-const CATEGORY_CARDS: CategoryCard[] = [
-  { label: "Modë & aksesorë", key: "mode", Icon: Shirt },
-  { label: "Outdoor & sport", key: "outdoor", Icon: Mountain },
-  { label: "Interiør & mobilje", key: "interior", Icon: Archive },
-  { label: "Fëmijë & bebe", key: "femije", Icon: Baby },
-  { label: "Art & dizajn", key: "art", Icon: Frame },
-  { label: "Elektronikë & zë", key: "elektronik", Icon: Speaker },
-];
 
 const RECENT_KEY = "rroba-recent-searches";
 
@@ -409,15 +389,15 @@ function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
         Kategoritë
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        {CATEGORY_CARDS.map(({ label, key, Icon }) => (
+        {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => (
           <button
             key={key}
             type="button"
             onClick={() => onPick(key)}
             className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left"
-            style={{ backgroundColor: CARD }}
+            style={{ backgroundColor: boxColor }}
           >
-            <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: INK }} />
+            <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: iconColor }} />
             <span
               className="text-[15px] font-bold leading-tight"
               style={{ color: INK }}
