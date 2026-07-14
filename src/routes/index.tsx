@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, UserPlus } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
@@ -14,14 +14,19 @@ export const Route = createFileRoute("/")({
 });
 
 const PAGE_BG = "#f6f1e7";
-const CARD_BG = "#ede8de";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 
+type Tab = "for-you" | "following";
+
 function HomePage() {
+  const [tab, setTab] = useState<Tab>("for-you");
   const [listings, setListings] = useState<ListingView[]>([]);
   const [promoted, setPromoted] = useState<ListingView[]>([]);
+  const [followingListings, setFollowingListings] = useState<ListingView[]>([]);
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [followingLoading, setFollowingLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -75,145 +80,352 @@ function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    const loadFollowing = async () => {
+      setFollowingLoading(true);
+      const { data: authData } = await supabase.auth.getUser();
+      const uid = authData.user?.id;
+      if (!uid) {
+        if (active) {
+          setFollowingIds([]);
+          setFollowingListings([]);
+          setFollowingLoading(false);
+        }
+        return;
+      }
+      const { data: follows } = await supabase
+        .from("followers")
+        .select("following_id")
+        .eq("follower_id", uid);
+      const ids = (follows ?? []).map((f) => f.following_id);
+      if (ids.length === 0) {
+        if (active) {
+          setFollowingIds([]);
+          setFollowingListings([]);
+          setFollowingLoading(false);
+        }
+        return;
+      }
+      const { data: rows } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("status", "active")
+        .in("user_id", ids)
+        .order("created_at", { ascending: false })
+        .limit(60);
+      const hydrated = await hydrateListings((rows ?? []) as ListingRow[]);
+      if (active) {
+        setFollowingIds(ids);
+        setFollowingListings(hydrated);
+        setFollowingLoading(false);
+      }
+    };
+    loadFollowing();
+    const ch = supabase
+      .channel("home-following")
+      .on("postgres_changes", { event: "*", schema: "public", table: "followers" }, () => loadFollowing())
+      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => loadFollowing())
+      .subscribe();
+    return () => {
+      active = false;
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
   const trending = useMemo(() => listings.slice(0, 5), [listings]);
   const newThisWeek = useMemo(() => listings.slice(0, 10), [listings]);
+  const followingPreview = useMemo(() => followingListings.slice(0, 5), [followingListings]);
 
   return (
     <MobileShell>
       <div style={{ backgroundColor: PAGE_BG, minHeight: "100%" }}>
         <header
-          className="sticky top-0 z-30 flex items-center justify-between px-[18px] py-4 backdrop-blur"
+          className="sticky top-0 z-30 backdrop-blur"
           style={{ backgroundColor: `${PAGE_BG}f2` }}
         >
-          <h1
-            className="text-3xl italic"
-            style={{
-              color: INK,
-              fontFamily: 'Georgia, "Times New Roman", serif',
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Rroba
-          </h1>
-          <Link
-            to="/notifications"
-            className="grid h-10 w-10 place-items-center rounded-full"
-            aria-label="Njoftime"
-          >
-            <Bell className="h-5 w-5" strokeWidth={1.7} style={{ color: INK }} />
-          </Link>
+          <div className="flex items-center justify-between px-[18px] py-4">
+            <h1
+              className="text-3xl italic"
+              style={{
+                color: INK,
+                fontFamily: 'Georgia, "Times New Roman", serif',
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Rroba
+            </h1>
+            <Link
+              to="/notifications"
+              className="grid h-10 w-10 place-items-center rounded-full"
+              aria-label="Njoftime"
+            >
+              <Bell className="h-5 w-5" strokeWidth={1.7} style={{ color: INK }} />
+            </Link>
+          </div>
+          <div className="px-[18px] pb-3">
+            <div
+              className="flex p-1 rounded-full"
+              style={{ backgroundColor: "#ede8de" }}
+              role="tablist"
+            >
+              <TabButton active={tab === "for-you"} onClick={() => setTab("for-you")}>
+                Për ty
+              </TabButton>
+              <TabButton active={tab === "following"} onClick={() => setTab("following")}>
+                Duke ndjekur
+              </TabButton>
+            </div>
+          </div>
         </header>
 
-        {/* Categories */}
-        <section className="mt-2">
-          <h2 className="px-[18px] text-[16px] font-bold" style={{ color: INK }}>
-            Kategoritë
-          </h2>
-          <div className="category-scroll mt-3 pb-1">
-            {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
-              const hasGender = key === "mode" || key === "femije";
-              const hasSubcategory = key === "outdoor" || key === "interior" || key === "art";
-              const linkProps = hasGender
-                ? ({ to: "/category/$slug/choose-gender", params: { slug: key } } as const)
-                : hasSubcategory
-                ? ({ to: "/category/$slug/subcategory", params: { slug: key } } as const)
-                : ({ to: "/category/$slug/$gender", params: { slug: key, gender: "all" } } as const);
-              return (
-                <Link
-                  key={key}
-                  {...linkProps}
-                  className="flex flex-col items-center"
-                  style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
-                >
-                  <div
-                    className="grid place-items-center"
-                    style={{
-                      width: 84,
-                      height: 84,
-                      borderRadius: 14,
-                      backgroundColor: boxColor,
-                    }}
-                  >
-                    <Icon size={26} strokeWidth={1.6} style={{ color: iconColor }} />
-                  </div>
-                  <span
-                    className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
-                    style={{ color: INK, fontSize: 11, width: 84 }}
-                  >
-                    {label}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        {loading ? (
-          <section className="mt-7 px-[18px]">
-            <ProductGridSkeleton count={6} />
-          </section>
-        ) : listings.length === 0 ? (
-          <div
-            className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
-            style={{ borderColor: "#ddd8ce", color: MUTED }}
-          >
-            Ende nuk ka artikuj. Bëhu i pari që publikon!
-          </div>
+        {tab === "for-you" ? (
+          <ForYou
+            loading={loading}
+            listings={listings}
+            promoted={promoted}
+            trending={trending}
+            newThisWeek={newThisWeek}
+            followingPreview={followingPreview}
+          />
         ) : (
-          <>
-            {promoted.length > 0 && (
-              <section className="mt-7">
-                <div className="px-5">
-                  <SectionHeader title="Të zgjedhura" />
-                </div>
+          <FollowingFeed
+            loading={followingLoading}
+            hasFollowing={followingIds.length > 0}
+            listings={followingListings}
+          />
+        )}
+      </div>
+    </MobileShell>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className="flex-1 py-2 text-sm font-semibold rounded-full transition-colors"
+      style={{
+        backgroundColor: active ? INK : "transparent",
+        color: active ? "#f6f1e7" : MUTED,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ForYou({
+  loading,
+  listings,
+  promoted,
+  trending,
+  newThisWeek,
+  followingPreview,
+}: {
+  loading: boolean;
+  listings: ListingView[];
+  promoted: ListingView[];
+  trending: ListingView[];
+  newThisWeek: ListingView[];
+  followingPreview: ListingView[];
+}) {
+  return (
+    <>
+      {/* Categories */}
+      <section className="mt-2">
+        <h2 className="px-[18px] text-[16px] font-bold" style={{ color: INK }}>
+          Kategoritë
+        </h2>
+        <div className="category-scroll mt-3 pb-1">
+          {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
+            const hasGender = key === "mode" || key === "femije";
+            const hasSubcategory = key === "outdoor" || key === "interior" || key === "art";
+            const linkProps = hasGender
+              ? ({ to: "/category/$slug/choose-gender", params: { slug: key } } as const)
+              : hasSubcategory
+              ? ({ to: "/category/$slug/subcategory", params: { slug: key } } as const)
+              : ({ to: "/category/$slug/$gender", params: { slug: key, gender: "all" } } as const);
+            return (
+              <Link
+                key={key}
+                {...linkProps}
+                className="flex flex-col items-center"
+                style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
+              >
                 <div
-                  className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
-                  style={{ scrollbarWidth: "none" }}
+                  className="grid place-items-center"
+                  style={{ width: 84, height: 84, borderRadius: 14, backgroundColor: boxColor }}
                 >
-                  {promoted.map((l) => (
-                    <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                      <ListingCard listing={l} />
-                    </div>
-                  ))}
+                  <Icon size={26} strokeWidth={1.6} style={{ color: iconColor }} />
                 </div>
-              </section>
-            )}
+                <span
+                  className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
+                  style={{ color: INK, fontSize: 11, width: 84 }}
+                >
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
-            {/* Trending — uniform 2-column grid */}
-            <section className="mt-7 px-[18px]">
-              <SectionHeader title="Trending tani" />
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {trending.map((l, i) => (
-                  <ListingCard key={l.id} listing={l} eager={i < 4} />
-                ))}
-              </div>
-            </section>
-
-
-
-            {/* New this week — horizontal scroll */}
-            <section className="mt-8">
+      {loading ? (
+        <section className="mt-7 px-[18px]">
+          <ProductGridSkeleton count={6} />
+        </section>
+      ) : listings.length === 0 ? (
+        <div
+          className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
+          style={{ borderColor: "#ddd8ce", color: MUTED }}
+        >
+          Ende nuk ka artikuj. Bëhu i pari që publikon!
+        </div>
+      ) : (
+        <>
+          {followingPreview.length > 0 && (
+            <section className="mt-7">
               <div className="px-5">
-                <SectionHeader title="E re këtë javë" />
+                <SectionHeader title="Nga profilet që ndjek" />
               </div>
               <div
                 className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
                 style={{ scrollbarWidth: "none" }}
               >
-                {newThisWeek.map((l) => (
+                {followingPreview.map((l) => (
                   <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
                     <ListingCard listing={l} />
                   </div>
                 ))}
               </div>
             </section>
+          )}
 
-            <div className="h-24" />
-          </>
-        )}
+          {promoted.length > 0 && (
+            <section className="mt-7">
+              <div className="px-5">
+                <SectionHeader title="Të zgjedhura" />
+              </div>
+              <div
+                className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {promoted.map((l) => (
+                  <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                    <ListingCard listing={l} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="mt-7 px-[18px]">
+            <SectionHeader title="Trending tani" />
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {trending.map((l, i) => (
+                <ListingCard key={l.id} listing={l} eager={i < 4} />
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-8">
+            <div className="px-5">
+              <SectionHeader title="E re këtë javë" />
+            </div>
+            <div
+              className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+              style={{ scrollbarWidth: "none" }}
+            >
+              {newThisWeek.map((l) => (
+                <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                  <ListingCard listing={l} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="h-24" />
+        </>
+      )}
+    </>
+  );
+}
+
+function FollowingFeed({
+  loading,
+  hasFollowing,
+  listings,
+}: {
+  loading: boolean;
+  hasFollowing: boolean;
+  listings: ListingView[];
+}) {
+  if (loading) {
+    return (
+      <section className="mt-6 px-[18px]">
+        <ProductGridSkeleton count={6} />
+      </section>
+    );
+  }
+
+  if (!hasFollowing) {
+    return (
+      <div className="mt-10 flex flex-col items-center px-8 text-center">
+        <div
+          className="mb-4 grid h-16 w-16 place-items-center rounded-full"
+          style={{ backgroundColor: "#ede8de" }}
+        >
+          <UserPlus className="h-7 w-7" strokeWidth={1.6} style={{ color: INK }} />
+        </div>
+        <h3 className="text-lg font-bold" style={{ color: INK }}>
+          Nuk ndjek ende askënd
+        </h3>
+        <p className="mt-2 max-w-xs text-sm" style={{ color: MUTED }}>
+          Eksploro dhe fillo të ndjekësh shitës që të pëlqejnë.
+        </p>
+        <Link
+          to="/search"
+          className="mt-6 rounded-full px-6 py-3 text-sm font-semibold"
+          style={{ backgroundColor: INK, color: "#f6f1e7" }}
+        >
+          Eksploro
+        </Link>
       </div>
-    </MobileShell>
+    );
+  }
+
+  if (listings.length === 0) {
+    return (
+      <div
+        className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
+        style={{ borderColor: "#ddd8ce", color: MUTED }}
+      >
+        Ende asnjë artikull nga profilet që ndjek.
+      </div>
+    );
+  }
+
+  return (
+    <section className="mt-4 px-[18px]">
+      <div className="grid grid-cols-2 gap-2">
+        {listings.map((l, i) => (
+          <ListingCard key={l.id} listing={l} eager={i < 4} />
+        ))}
+      </div>
+      <div className="h-24" />
+    </section>
   );
 }
 
@@ -229,4 +441,3 @@ function SectionHeader({ title }: { title: string }) {
     </div>
   );
 }
-
