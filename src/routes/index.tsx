@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+import { Bell } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
 
 import { supabase } from "@/integrations/supabase/client";
+import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/")({
