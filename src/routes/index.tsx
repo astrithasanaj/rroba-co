@@ -18,15 +18,6 @@ const CARD_BG = "#ede8de";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 
-const CATEGORIES = [
-  { key: "mode", label: "Modë & aksesorë", Icon: Shirt },
-  { key: "outdoor", label: "Outdoor & sport", Icon: Mountain },
-  { key: "interior", label: "Interiør & mobilje", Icon: Archive },
-  { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
-  { key: "art", label: "Art & dizajn", Icon: Frame },
-  { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },
-] as const;
-
 function HomePage() {
   const [listings, setListings] = useState<ListingView[]>([]);
   const [promoted, setPromoted] = useState<ListingView[]>([]);
