@@ -7,6 +7,8 @@ import {
   Loader2,
   Clock,
   LayoutGrid,
+  Users,
+  ChevronRight,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
