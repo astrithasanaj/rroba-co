@@ -6,16 +6,11 @@ import {
   SlidersHorizontal,
   Loader2,
   Clock,
-  Shirt,
-  Mountain,
-  Archive,
-  Baby,
-  Frame,
-  Speaker,
   LayoutGrid,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { HOME_CATEGORIES } from "@/lib/categories";
 import {
   CITIES,
   CONDITIONS,
