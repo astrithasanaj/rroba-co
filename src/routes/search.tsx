@@ -219,6 +219,125 @@ function SearchPage() {
     };
   }, [q, filters, section, showResults, dbCategories, subLabels]);
 
+  // Profile + brand search
+  useEffect(() => {
+    if (!hasQuery) {
+      setProfileResults([]);
+      setBrandResults([]);
+      setProfileCounts({});
+      return;
+    }
+    let active = true;
+    const run = async () => {
+      setProfileLoading(true);
+      const term = `%${q.trim()}%`;
+      const { data: profs } = await supabase
+        .from("public_profiles")
+        .select("id,name,display_name,username,avatar_url,city")
+        .or(`username.ilike.${term},display_name.ilike.${term},name.ilike.${term}`)
+        .limit(20);
+      if (!active) return;
+      const list = (profs ?? []) as ProfileRow[];
+      setProfileResults(list);
+
+      // Counts of active listings per matched profile
+      if (list.length > 0) {
+        const ids = list.map((p) => p.id);
+        const { data: cnt } = await supabase
+          .from("listings")
+          .select("user_id")
+          .in("user_id", ids)
+          .eq("status", "active");
+        const counts: Record<string, number> = {};
+        (cnt ?? []).forEach((r: any) => {
+          counts[r.user_id] = (counts[r.user_id] ?? 0) + 1;
+        });
+        if (active) setProfileCounts(counts);
+
+        // Following state for current user
+        const meId = (await supabase.auth.getUser()).data.user?.id ?? null;
+        if (meId && active) {
+          const { data: mine } = await supabase
+            .from("followers")
+            .select("following_id")
+            .eq("follower_id", meId)
+            .in("following_id", ids);
+          if (active) {
+            setFollowingSet((prev) => {
+              const next = new Set(prev);
+              (mine ?? []).forEach((r: any) => next.add(r.following_id));
+              return next;
+            });
+          }
+        }
+      } else {
+        setProfileCounts({});
+      }
+
+      // Brand suggestions from listings
+      const { data: brandRows } = await supabase
+        .from("listings")
+        .select("brand")
+        .ilike("brand", term)
+        .eq("status", "active")
+        .not("brand", "is", null)
+        .limit(60);
+      if (active) {
+        const uniq = Array.from(
+          new Set(
+            (brandRows ?? [])
+              .map((r: any) => (r.brand as string | null) ?? "")
+              .filter((b) => b.trim().length > 0),
+          ),
+        ).slice(0, 20);
+        setBrandResults(uniq);
+      }
+      if (active) setProfileLoading(false);
+    };
+    const t = setTimeout(run, 250);
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
+  }, [q, hasQuery]);
+
+  const toggleFollow = async (targetId: string) => {
+    if (!me || me === targetId) return;
+    const isFollowing = followingSet.has(targetId);
+    const next = new Set(followingSet);
+    if (isFollowing) {
+      next.delete(targetId);
+      setFollowingSet(next);
+      const { error } = await supabase
+        .from("followers")
+        .delete()
+        .eq("follower_id", me)
+        .eq("following_id", targetId);
+      if (error) {
+        const revert = new Set(next);
+        revert.add(targetId);
+        setFollowingSet(revert);
+      }
+    } else {
+      next.add(targetId);
+      setFollowingSet(next);
+      const { error } = await supabase
+        .from("followers")
+        .insert({ follower_id: me, following_id: targetId });
+      if (error) {
+        const revert = new Set(next);
+        revert.delete(targetId);
+        setFollowingSet(revert);
+      }
+    }
+  };
+
+  const matchedCategories = useMemo(() => {
+    if (!hasQuery) return [];
+    const term = q.trim().toLowerCase();
+    return HOME_CATEGORIES.filter((c) => c.label.toLowerCase().includes(term));
+  }, [q, hasQuery]);
+
   const commitRecent = (term: string) => {
     const t = term.trim();
     if (!t) return;
