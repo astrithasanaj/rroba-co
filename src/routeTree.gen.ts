@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -23,7 +25,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as AuthSignupFullRouteImport } from './routes/auth.signup-full'
-import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
@@ -55,6 +56,11 @@ import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_aut
 import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
 import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SellRoute = SellRouteImport.update({
   id: '/sell',
   path: '/sell',
@@ -68,6 +74,11 @@ const SearchRoute = SearchRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -122,11 +133,6 @@ const ProductIdRoute = ProductIdRouteImport.update({
 const AuthSignupFullRoute = AuthSignupFullRouteImport.update({
   id: '/signup-full',
   path: '/signup-full',
-  getParentRoute: () => AuthRoute,
-} as any)
-const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -302,9 +308,11 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
@@ -314,7 +322,6 @@ export interface FileRoutesByFullPath {
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/auth/': typeof AuthIndexRoute
@@ -347,9 +354,11 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
@@ -359,7 +368,6 @@ export interface FileRoutesByTo {
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/auth': typeof AuthIndexRoute
@@ -395,9 +403,11 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sell': typeof SellRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/my-promotions': typeof AuthenticatedMyPromotionsRoute
@@ -407,7 +417,6 @@ export interface FileRoutesById {
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/signup': typeof AuthSignupRoute
   '/auth/signup-full': typeof AuthSignupFullRoute
   '/product/$id': typeof ProductIdRoute
   '/auth/': typeof AuthIndexRoute
@@ -443,9 +452,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/messages'
     | '/notifications'
+    | '/privacy'
     | '/reset-password'
     | '/search'
     | '/sell'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/my-promotions'
@@ -455,7 +466,6 @@ export interface FileRouteTypes {
     | '/auth/confirm-email'
     | '/auth/forgot-password'
     | '/auth/login'
-    | '/auth/signup'
     | '/auth/signup-full'
     | '/product/$id'
     | '/auth/'
@@ -488,9 +498,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/messages'
     | '/notifications'
+    | '/privacy'
     | '/reset-password'
     | '/search'
     | '/sell'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/my-promotions'
@@ -500,7 +512,6 @@ export interface FileRouteTypes {
     | '/auth/confirm-email'
     | '/auth/forgot-password'
     | '/auth/login'
-    | '/auth/signup'
     | '/auth/signup-full'
     | '/product/$id'
     | '/auth'
@@ -535,9 +546,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/messages'
     | '/notifications'
+    | '/privacy'
     | '/reset-password'
     | '/search'
     | '/sell'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/my-promotions'
@@ -547,7 +560,6 @@ export interface FileRouteTypes {
     | '/auth/confirm-email'
     | '/auth/forgot-password'
     | '/auth/login'
-    | '/auth/signup'
     | '/auth/signup-full'
     | '/product/$id'
     | '/auth/'
@@ -583,9 +595,11 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SellRoute: typeof SellRoute
+  TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ProductIdRoute: typeof ProductIdRoute
@@ -606,6 +620,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sell': {
       id: '/sell'
       path: '/sell'
@@ -625,6 +646,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -702,13 +730,6 @@ declare module '@tanstack/react-router' {
       path: '/signup-full'
       fullPath: '/auth/signup-full'
       preLoaderRoute: typeof AuthSignupFullRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/auth/signup': {
-      id: '/auth/signup'
-      path: '/signup'
-      fullPath: '/auth/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
       parentRoute: typeof AuthRoute
     }
     '/auth/login': {
@@ -960,7 +981,6 @@ interface AuthRouteChildren {
   AuthConfirmEmailRoute: typeof AuthConfirmEmailRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
-  AuthSignupRoute: typeof AuthSignupRoute
   AuthSignupFullRoute: typeof AuthSignupFullRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
@@ -970,7 +990,6 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthConfirmEmailRoute: AuthConfirmEmailRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
-  AuthSignupRoute: AuthSignupRoute,
   AuthSignupFullRoute: AuthSignupFullRoute,
   AuthIndexRoute: AuthIndexRoute,
 }
@@ -986,9 +1005,11 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SellRoute: SellRoute,
+  TermsRoute: TermsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
