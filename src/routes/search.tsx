@@ -71,21 +71,6 @@ type Filters = {
   priceMax?: string;
 };
 
-type CategoryCard = {
-  label: string;
-  key: string;
-  Icon: typeof Shirt;
-};
-
-const CATEGORY_CARDS: CategoryCard[] = [
-  { label: "Modë & aksesorë", key: "mode", Icon: Shirt },
-  { label: "Outdoor & sport", key: "outdoor", Icon: Mountain },
-  { label: "Interiør & mobilje", key: "interior", Icon: Archive },
-  { label: "Fëmijë & bebe", key: "femije", Icon: Baby },
-  { label: "Art & dizajn", key: "art", Icon: Frame },
-  { label: "Elektronikë & zë", key: "elektronik", Icon: Speaker },
-];
-
 const RECENT_KEY = "rroba-recent-searches";
 
 function loadRecent(): string[] {
