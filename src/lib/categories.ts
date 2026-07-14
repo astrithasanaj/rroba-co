@@ -1,3 +1,5 @@
+import { Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+
 export type GenderSlug = "femra" | "meshkuj" | "vajza" | "djem" | "all";
 
 export type CategoryDef = {
