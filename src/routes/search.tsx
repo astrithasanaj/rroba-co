@@ -389,15 +389,15 @@ function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
         Kategoritë
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        {CATEGORY_CARDS.map(({ label, key, Icon }) => (
+        {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => (
           <button
             key={key}
             type="button"
             onClick={() => onPick(key)}
             className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left"
-            style={{ backgroundColor: CARD }}
+            style={{ backgroundColor: boxColor }}
           >
-            <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: INK }} />
+            <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: iconColor }} />
             <span
               className="text-[15px] font-bold leading-tight"
               style={{ color: INK }}
