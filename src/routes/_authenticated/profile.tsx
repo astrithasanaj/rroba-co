@@ -1003,10 +1003,10 @@ function OffersList({
             </span>
             {canRespond && o.status === "pending" && (
               <div className="flex gap-2">
-                <button onClick={() => onRespond(o, "declined")} className="grid h-7 w-7 place-items-center rounded-full" style={{ backgroundColor: DIVIDER }} aria-label="Refuzo">
+                <button onClick={() => onRespond(o, "declined")} className="grid h-11 w-11 place-items-center rounded-full" style={{ backgroundColor: DIVIDER }} aria-label="Refuzo">
                   <X className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => onRespond(o, "accepted")} className="grid h-7 w-7 place-items-center rounded-full text-white" style={{ backgroundColor: INK }} aria-label="Prano">
+                <button onClick={() => onRespond(o, "accepted")} className="grid h-11 w-11 place-items-center rounded-full text-white" style={{ backgroundColor: INK }} aria-label="Prano">
                   <Check className="h-3.5 w-3.5" />
                 </button>
               </div>
