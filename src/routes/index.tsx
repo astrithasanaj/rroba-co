@@ -111,7 +111,7 @@ function HomePage() {
             Kategoritë
           </h2>
           <div className="category-scroll mt-3 pb-1">
-            {CATEGORIES.map(({ key, label, Icon }) => {
+            {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
               const hasGender = key === "mode" || key === "femije";
               const hasSubcategory = key === "outdoor" || key === "interior" || key === "art";
               const linkProps = hasGender
@@ -132,10 +132,10 @@ function HomePage() {
                       width: 84,
                       height: 84,
                       borderRadius: 14,
-                      backgroundColor: CARD_BG,
+                      backgroundColor: boxColor,
                     }}
                   >
-                    <Icon size={26} strokeWidth={1.6} style={{ color: INK }} />
+                    <Icon size={26} strokeWidth={1.6} style={{ color: iconColor }} />
                   </div>
                   <span
                     className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
