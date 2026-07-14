@@ -749,7 +749,7 @@ function TabbedResults({
   me: string | null;
   onToggleFollow: (id: string) => void;
   brands: string[];
-  matchedCategories: typeof HOME_CATEGORIES;
+  matchedCategories: (typeof HOME_CATEGORIES)[number][];
   onPickBrand: (b: string) => void;
   onPickCategory: (key: string) => void;
 }) {
