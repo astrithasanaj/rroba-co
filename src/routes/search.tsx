@@ -73,6 +73,17 @@ type Filters = {
   priceMax?: string;
 };
 
+type Tab = "main" | "profile" | "brand" | "category";
+
+type ProfileRow = {
+  id: string;
+  name: string | null;
+  display_name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  city: string | null;
+};
+
 const RECENT_KEY = "rroba-recent-searches";
 
 function loadRecent(): string[] {
