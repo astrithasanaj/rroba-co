@@ -254,10 +254,10 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           <h1 className="text-[22px] font-bold" style={{ color: INK }}>{title}</h1>
           {mode === "inbox" ? (
             <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: INK }}>
-              <button onClick={() => navigate({ to: "/messages", search: { view: "archive", tab } })} aria-label="Arkiva" className="grid h-8 w-8 place-items-center rounded-full transition-transform active:scale-90">
+              <button onClick={() => navigate({ to: "/messages", search: { view: "archive", tab } })} aria-label="Arkiva" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
                 <InboxIcon />
               </button>
-              <button onClick={() => navigate({ to: "/messages", search: { view: "new", tab } })} aria-label="Mesazh i ri" className="grid h-8 w-8 place-items-center rounded-full transition-transform active:scale-90">
+              <button onClick={() => navigate({ to: "/messages", search: { view: "new", tab } })} aria-label="Mesazh i ri" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
                 <ComposeIcon />
               </button>
             </div>
@@ -725,7 +725,7 @@ function Thread({ id, me }: { id: string; me: string }) {
             paddingTop: "calc(env(safe-area-inset-top) + 12px)",
           }}
         >
-          <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-9 w-9 place-items-center rounded-full">
+          <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-11 w-11 place-items-center rounded-full">
             <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
           </button>
           {info ? (
