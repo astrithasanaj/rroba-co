@@ -924,13 +924,13 @@ function SignupFullPage() {
               </button>
               <span className="text-[13px]" style={{ color: INK }}>
                 Pranoj{" "}
-                <a href="#" className="underline">
+                <Link to="/terms" className="underline" onClick={(e) => e.stopPropagation()}>
                   kushtet e shërbimit
-                </a>{" "}
+                </Link>{" "}
                 dhe{" "}
-                <a href="#" className="underline">
+                <Link to="/privacy" className="underline" onClick={(e) => e.stopPropagation()}>
                   politikën e privatësisë
-                </a>{" "}
+                </Link>{" "}
                 së Rroba.
               </span>
             </label>
