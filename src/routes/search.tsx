@@ -469,11 +469,16 @@ function SearchPage() {
               ))}
             </div>
           )}
+          {/* Tab bar — only visible when the user is actively searching */}
+          {hasQuery && (
+            <TabBar tab={tab} setTab={setTab} />
+          )}
         </header>
 
         {focused && !hasQuery ? (
-          <RecentSearches
-            items={recent}
+          <BrowseAndRecent
+            recent={recent}
+            onBrowseAll={() => navigate({ to: "/users" })}
             onPick={(t) => {
               setQ(t);
               commitRecent(t);
@@ -482,7 +487,21 @@ function SearchPage() {
             onClear={clearRecent}
           />
         ) : showResults ? (
-          <ResultsSection loading={loading} results={results} />
+          <TabbedResults
+            tab={tab}
+            loading={loading}
+            profileLoading={profileLoading}
+            results={results}
+            profiles={profileResults}
+            profileCounts={profileCounts}
+            followingSet={followingSet}
+            me={me}
+            onToggleFollow={toggleFollow}
+            brands={brandResults}
+            matchedCategories={matchedCategories}
+            onPickBrand={(b) => setQ(b)}
+            onPickCategory={pickCategoryCard}
+          />
         ) : (
           <CategoriesSection onPick={pickCategoryCard} />
         )}
