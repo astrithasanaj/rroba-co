@@ -225,15 +225,16 @@ export function SizePickerSheet({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="border-0" style={{ background: "#ffffff", maxHeight: "92vh" }}>
         <div className="mx-auto h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
-        <div className="flex items-center justify-between px-5 pb-3 pt-4">
-          <DrawerTitle className="text-base font-medium text-foreground">Zgjedh madhësinë</DrawerTitle>
+        <div className="flex items-center gap-3 px-5 pb-3 pt-4">
           <button
             onClick={() => onOpenChange(false)}
-            className="rounded-full px-4 py-1.5 text-sm font-medium text-white"
-            style={{ background: "#1a1a1a" }}
+            aria-label="Mbrapa"
+            className="grid h-9 w-9 place-items-center rounded-full"
+            style={{ background: "#ede8de", color: "#1a1a1a" }}
           >
-            Mbyll
+            <ArrowLeft className="h-5 w-5" />
           </button>
+          <DrawerTitle className="text-base font-medium text-foreground">Zgjedh madhësinë</DrawerTitle>
         </div>
         <div className="overflow-y-auto px-5 pb-8">
           <h2 className="mb-5 text-2xl font-bold leading-tight">Çfarë madhësie është në etiketë?</h2>
