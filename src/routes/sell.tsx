@@ -616,8 +616,8 @@ function MediaCategoryStep({
               key={cat.id}
               type="button"
               onClick={() => onPickCategory(cat)}
-              className="flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98]"
-              style={{ background: CARD, color: INK }}
+              className="flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl p-4 transition active:scale-[0.98]"
+              style={{ background: CARD, color: INK, border: "1px solid #d8d8d2" }}
             >
               <cat.Icon className="h-7 w-7" strokeWidth={1.4} />
               <span className="px-2 text-center text-[13px] font-bold leading-tight">
