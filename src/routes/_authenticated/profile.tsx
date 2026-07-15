@@ -833,83 +833,90 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
   return (
     <div
       className="grid grid-cols-2"
-      style={{ gap: 1.5, backgroundColor: "transparent" }}
+      style={{ gap: 1.5, backgroundColor: "#f4f4f2" }}
     >
-      {listings.map((l) => {
-        const linkProps = manage
-          ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
-          : ({ to: "/product/$id", params: { id: l.id } } as const);
-        const isSold = l.status === "sold" || l.sold;
-        return (
-          <Link
-            key={l.id}
-            {...linkProps}
-            className="relative block aspect-square overflow-hidden"
-            style={{ backgroundColor: "transparent", borderRadius: 0 }}
-          >
-            <img
-              src={l.coverUrl}
-              alt={l.title}
-              className="h-full w-full"
-              loading="lazy"
-              style={{
-                objectFit: "cover",
-                objectPosition: "center top",
-                ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
-              }}
-            />
-            <span
-              className="pointer-events-none absolute italic"
-              style={{
-                top: 0,
-                left: 0,
-                padding: "6px 7px",
-                fontFamily: "var(--font-voice), Georgia, serif",
-                fontSize: 9,
-                color: "#ffffff",
-                opacity: 0.75,
-                textShadow: "0 1px 2px rgba(0,0,0,0.35)",
-              }}
-            >
-              Rroba
-            </span>
-            {isSold && <SoldRibbon />}
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0"
-              style={{
-                padding: "10px 8px 8px",
-                backgroundImage: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.58) 100%)",
-              }}
-            >
-              <p
-                className="truncate"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: "#ffffff",
-                  letterSpacing: "0.1px",
-                  opacity: isSold ? 0.85 : 1,
-                }}
-              >
-                {l.title}
-              </p>
-              <p
-                className="truncate"
-                style={{
-                  fontSize: 10,
-                  color: "rgba(255,255,255,0.82)",
-                  marginTop: 2,
-                }}
-              >
-                {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
-              </p>
-            </div>
-          </Link>
-        );
-      })}
+      {listings.map((l) => (
+        <ListingGridTile key={l.id} listing={l} manage={manage} />
+      ))}
     </div>
   );
 }
+
+function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?: boolean }) {
+  const [broken, setBroken] = useState(false);
+  if (!l.coverUrl || broken) return null;
+  const linkProps = manage
+    ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
+    : ({ to: "/product/$id", params: { id: l.id } } as const);
+  const isSold = l.status === "sold" || l.sold;
+  return (
+    <Link
+      {...linkProps}
+      className="relative block aspect-square overflow-hidden"
+      style={{ backgroundColor: "transparent", borderRadius: 0 }}
+    >
+      <img
+        src={l.coverUrl}
+        alt={l.title}
+        className="h-full w-full"
+        loading="lazy"
+        onError={() => setBroken(true)}
+        style={{
+          objectFit: "cover",
+          objectPosition: "center top",
+          ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
+        }}
+      />
+      <span
+        className="pointer-events-none absolute italic"
+        style={{
+          top: 0,
+          left: 0,
+          padding: "6px 7px",
+          fontFamily: "var(--font-voice), Georgia, serif",
+          fontSize: 9,
+          color: "#ffffff",
+          opacity: 0.75,
+          textShadow: "0 1px 2px rgba(0,0,0,0.35)",
+        }}
+      >
+        Rroba
+      </span>
+      {isSold && <SoldRibbon />}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0"
+        style={{
+          padding: "10px 8px 8px",
+          backgroundImage: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.58) 100%)",
+        }}
+      >
+        <p
+          className="truncate"
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: "#ffffff",
+            letterSpacing: "0.1px",
+            opacity: isSold ? 0.85 : 1,
+          }}
+        >
+          {l.title}
+        </p>
+        <p
+          className="truncate"
+          style={{
+            fontSize: 10,
+            color: "rgba(255,255,255,0.82)",
+            marginTop: 2,
+          }}
+        >
+          {[l.brand, l.size, `€${l.price}`].filter(Boolean).join(" · ")}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 
 function SoldRibbon() {
   return (

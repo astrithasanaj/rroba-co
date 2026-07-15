@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import type { ListingView } from "@/lib/listings";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { prefetchListing, warmImage } from "@/lib/prefetch";
@@ -17,10 +18,12 @@ export function ListingCard({
   const aspectClass =
     aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
   const isSold = listing.sold || listing.status === "sold";
+  const [imageBroken, setImageBroken] = useState(false);
   const prefetch = () => {
     prefetchListing(listing.id);
     warmImage(listing.coverUrl);
   };
+  if (!listing.coverUrl || imageBroken) return null;
   return (
     <Link
       to="/product/$id"
@@ -34,18 +37,17 @@ export function ListingCard({
         className={`relative ${aspectClass} overflow-hidden rounded-2xl bg-muted`}
         style={{ position: "relative" }}
       >
-        {listing.coverUrl && (
-          <img
-            src={listing.coverUrl}
-            alt={listing.title}
-            loading={eager ? "eager" : "lazy"}
-            decoding="async"
-            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-            style={{
-              filter: isSold && isOnProfileGrid ? "brightness(0.82) saturate(0.65)" : "none",
-            }}
-          />
-        )}
+        <img
+          src={listing.coverUrl}
+          alt={listing.title}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+          onError={() => setImageBroken(true)}
+          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          style={{
+            filter: isSold && isOnProfileGrid ? "brightness(0.82) saturate(0.65)" : "none",
+          }}
+        />
 
         {/* Rroba watermark */}
         <span

@@ -516,7 +516,7 @@ function UserProfile() {
             Asnjë artikull për tu shfaqur.
           </div>
         ) : (
-          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#e8e3d9" }}>
+          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#f4f4f2" }}>
             {sorted.map((l) => (
               <div key={l.id} className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }}>
                 <ListingCard listing={l} aspect="1/1" isOnProfileGrid />
