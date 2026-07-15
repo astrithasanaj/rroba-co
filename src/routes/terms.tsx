@@ -11,7 +11,7 @@ export const Route = createFileRoute("/terms")({
   component: TermsPage,
 });
 
-const CREAM = "#f6f1e7";
+const CREAM = "#ffffff";
 const INK = "#1a1a1a";
 
 const PARAGRAPHS = [

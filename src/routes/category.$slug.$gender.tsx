@@ -14,8 +14,8 @@ import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerShee
 import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
 
 
-const BG = "#f6f1e7";
-const CARD = "#ede8de";
+const BG = "#ffffff";
+const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 

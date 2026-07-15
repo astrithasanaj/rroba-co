@@ -70,7 +70,7 @@ function AdminReports() {
 
   return (
     <MobileShell hideNav>
-      <div className="min-h-screen px-5 py-6" style={{ backgroundColor: "#f6f1e7", color: "#1a1a1a" }}>
+      <div className="min-h-screen px-5 py-6" style={{ backgroundColor: "#ffffff", color: "#1a1a1a" }}>
         <h1 className="mb-4 text-2xl font-bold">Raportet</h1>
         {loading ? (
           <div className="grid place-items-center py-20"><Loader2 className="h-6 w-6 animate-spin" /></div>
@@ -92,7 +92,7 @@ function AdminReports() {
                     </p>
                     <p className="mt-1 text-xs opacity-60">Listing status: {r.product?.status ?? "—"}</p>
                   </div>
-                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "#ede8de" }}>
+                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "#ffffff" }}>
                     {r.status}
                   </span>
                 </div>
@@ -101,7 +101,7 @@ function AdminReports() {
                     value={r.status}
                     onChange={(e) => updateStatus(r.id, e.target.value as Report["status"])}
                     className="rounded-full border px-3 py-1.5 text-xs"
-                    style={{ borderColor: "#ddd8ce", backgroundColor: "#f6f1e7" }}
+                    style={{ borderColor: "#ddd8ce", backgroundColor: "#ffffff" }}
                   >
                     <option value="pending">pending</option>
                     <option value="reviewed">reviewed</option>

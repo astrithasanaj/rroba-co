@@ -55,7 +55,7 @@ export function ListingCard({
           style={{
             fontFamily: 'Georgia, "Times New Roman", serif',
             fontSize: 10,
-            color: "#f6f1e7",
+            color: "#ffffff",
             opacity: 0.85,
             letterSpacing: "0.02em",
             textShadow: "0 1px 2px rgba(0,0,0,0.25)",

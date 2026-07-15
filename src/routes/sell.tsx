@@ -34,8 +34,8 @@ export const Route = createFileRoute("/sell")({
 });
 
 // Palette
-const CREAM = "#f6f1e7";
-const CARD = "#ede8de";
+const CREAM = "#ffffff";
+const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";

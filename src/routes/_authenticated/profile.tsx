@@ -72,8 +72,8 @@ type OfferRow = {
   created_at: string;
 };
 
-const CREAM = "#f6f1e7";
-const CARD = "#ede8de";
+const CREAM = "#ffffff";
+const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";
@@ -833,7 +833,7 @@ function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: 
   return (
     <div
       className="grid grid-cols-2"
-      style={{ gap: 1.5, backgroundColor: "#f4f4f2" }}
+      style={{ gap: 1.5, backgroundColor: "#ffffff" }}
     >
       {listings.map((l) => (
         <ListingGridTile key={l.id} listing={l} manage={manage} />
@@ -1509,7 +1509,7 @@ const FAQS = [
 
 function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
   return (
-    <div style={{ backgroundColor: open ? "#ede8de" : CREAM, borderRadius: open ? "0 0 10px 10px" : 0, transition: "background-color 160ms ease" }}>
+    <div style={{ backgroundColor: open ? "#ffffff" : CREAM, borderRadius: open ? "0 0 10px 10px" : 0, transition: "background-color 160ms ease" }}>
       <button
         onClick={onToggle}
         className="flex w-full items-center gap-3 text-left"
@@ -1633,7 +1633,7 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
           </button>
           <button
             onClick={() => onOpenChange(false)}
-            style={{ backgroundColor: "#ede8de", color: INK, height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
+            style={{ backgroundColor: "#ffffff", color: INK, height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
           >
             Anulo
           </button>
@@ -1708,7 +1708,7 @@ function DeleteAccountFlow({
     fontSize: 14, fontWeight: 600, width: "100%", border: "none", cursor: "pointer",
   };
   const btnCream: React.CSSProperties = {
-    backgroundColor: "#ede8de", color: INK, height: 50, borderRadius: 12,
+    backgroundColor: "#ffffff", color: INK, height: 50, borderRadius: 12,
     fontSize: 14, fontWeight: 600, width: "100%", border: "none", cursor: "pointer",
   };
 
@@ -1769,7 +1769,7 @@ function DeleteAccountFlow({
                     style={{
                       width: "100%",
                       height: 52,
-                      background: "#ede8de",
+                      background: "#ffffff",
                       border: "none",
                       borderRadius: 12,
                       padding: "0 44px 0 16px",

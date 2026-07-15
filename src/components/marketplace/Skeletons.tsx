@@ -1,4 +1,4 @@
-const CARD_BG = "#ede8de";
+const CARD_BG = "#ffffff";
 
 const shimmerStyle: React.CSSProperties = {
   backgroundColor: CARD_BG,

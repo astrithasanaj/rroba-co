@@ -5,9 +5,9 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, SUBCATEGORY_OPTIONS, type GenderSlug } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
-const BG = "#f6f1e7";
-const CARD = "#ede8de";
-const CHIP = "#ede8de";
+const BG = "#ffffff";
+const CARD = "#ffffff";
+const CHIP = "#ffffff";
 const INK = "#1a1a1a";
 const CORAL = "#e8826a";
 const DISABLED = "#ddd8ce";

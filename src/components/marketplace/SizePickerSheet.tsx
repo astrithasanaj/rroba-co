@@ -223,7 +223,7 @@ export function SizePickerSheet({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="border-0" style={{ background: "#f6f1e7", maxHeight: "92vh" }}>
+      <DrawerContent className="border-0" style={{ background: "#ffffff", maxHeight: "92vh" }}>
         <div className="mx-auto h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
         <div className="flex items-center justify-between px-5 pb-3 pt-4">
           <DrawerTitle className="text-base font-medium text-foreground">Zgjedh madhësinë</DrawerTitle>
@@ -249,7 +249,7 @@ export function SizePickerSheet({
                   style={
                     active
                       ? { background: "#1a1a1a", color: "#ffffff" }
-                      : { background: "#ede8de", color: "#1a1a1a" }
+                      : { background: "#ffffff", color: "#1a1a1a" }
                   }
                 >
                   {s}

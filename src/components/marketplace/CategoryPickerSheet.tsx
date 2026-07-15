@@ -11,11 +11,11 @@ import {
   type SubcategoryNode,
 } from "@/lib/category-taxonomy";
 
-const BG = "#f6f1e7";
+const BG = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";
-const CHIP = "#ede8de";
+const CHIP = "#ffffff";
 const CHECK_BORDER = "#c8c3b9";
 const CORAL = "#e8826a";
 

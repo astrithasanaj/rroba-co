@@ -42,8 +42,8 @@ type Profile = {
 
 type SortMode = "new" | "low" | "high" | "popular";
 
-const CREAM = "#f6f1e7";
-const CARD = "#ede8de";
+const CREAM = "#ffffff";
+const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";
@@ -516,7 +516,7 @@ function UserProfile() {
             Asnjë artikull për tu shfaqur.
           </div>
         ) : (
-          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#f4f4f2" }}>
+          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#ffffff" }}>
             {sorted.map((l) => (
               <div key={l.id} className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }}>
                 <ListingCard listing={l} aspect="1/1" isOnProfileGrid />

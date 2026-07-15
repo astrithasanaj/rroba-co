@@ -8,7 +8,7 @@ export const Route = createFileRoute("/blocked")({
   component: BlockedPage,
 });
 
-const CREAM = "#f6f1e7";
+const CREAM = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";
@@ -28,7 +28,7 @@ function BlockedPage() {
       <div className="flex flex-col items-center text-center" style={{ maxWidth: 340 }}>
         <div
           className="mb-4 flex items-center justify-center"
-          style={{ width: 72, height: 72, borderRadius: 36, background: "#ede8de" }}
+          style={{ width: 72, height: 72, borderRadius: 36, background: "#ffffff" }}
         >
           <Lock size={40} color={ERR} strokeWidth={2} />
         </div>

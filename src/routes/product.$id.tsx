@@ -185,7 +185,7 @@ function ProductDetail() {
       {/* Fixed header */}
       <div
         className="fixed top-0 left-1/2 z-50 flex w-full max-w-[480px] -translate-x-1/2 items-center justify-between border-b px-4 py-3"
-        style={{ backgroundColor: "#f6f1e7", borderColor: "#ddd8ce" }}
+        style={{ backgroundColor: "#ffffff", borderColor: "#ddd8ce" }}
       >
         <button
           onClick={() => window.history.back()}
@@ -259,7 +259,7 @@ function ProductDetail() {
       {/* Inline action bar */}
       <div
         className="flex items-center justify-between border-b px-[18px] py-3"
-        style={{ backgroundColor: "#f6f1e7", borderColor: "#ddd8ce" }}
+        style={{ backgroundColor: "#ffffff", borderColor: "#ddd8ce" }}
       >
         <div className="flex items-center gap-5">
           <button

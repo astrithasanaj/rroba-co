@@ -6,8 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { signPaths } from "@/lib/listings";
 import { toast } from "sonner";
 
-const CREAM = "#f6f1e7";
-const CREAM_ALT = "#ede8de";
+const CREAM = "#ffffff";
+const CREAM_ALT = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const DIVIDER = "#ddd8ce";

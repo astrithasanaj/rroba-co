@@ -4,10 +4,10 @@ import { ArrowLeft, Flag, Link2, Share, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-const CREAM = "#f6f1e7";
+const CREAM = "#ffffff";
 const INK = "#1a1a1a";
 const DIVIDER = "#ddd8ce";
-const CANCEL_BG = "#ede8de";
+const CANCEL_BG = "#ffffff";
 const DISABLED = "#ddd8ce";
 const RED = "#e53935";
 const CORAL = "#e8826a";

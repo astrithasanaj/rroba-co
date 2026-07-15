@@ -67,7 +67,7 @@ export function ColorPickerSheet({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
         className="flex flex-col border-0"
-        style={{ background: "#f6f1e7", height: "92vh", maxHeight: "92vh" }}
+        style={{ background: "#ffffff", height: "92vh", maxHeight: "92vh" }}
       >
         <div className="shrink-0">
           <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
@@ -128,7 +128,7 @@ export function ColorPickerSheet({
         <div
           className="shrink-0 px-5 pt-3"
           style={{
-            background: "#f6f1e7",
+            background: "#ffffff",
             paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)",
           }}
         >
