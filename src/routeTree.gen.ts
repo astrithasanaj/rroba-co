@@ -43,6 +43,7 @@ import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as ApiPublicNotifyPendingPromotionRouteImport } from './routes/api/public/notify-pending-promotion'
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
+import { Route as AuthenticatedProfileDeleteAccountRouteImport } from './routes/_authenticated/profile.delete-account'
 import { Route as AuthenticatedProfileChangeEmailRouteImport } from './routes/_authenticated/profile.change-email'
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -233,6 +234,12 @@ const ApiPublicNotifyNewReportRoute =
     path: '/api/public/notify-new-report',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedProfileDeleteAccountRoute =
+  AuthenticatedProfileDeleteAccountRouteImport.update({
+    id: '/delete-account',
+    path: '/delete-account',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
 const AuthenticatedProfileChangeEmailRoute =
   AuthenticatedProfileChangeEmailRouteImport.update({
     id: '/change-email',
@@ -346,6 +353,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -394,6 +402,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
   '/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -445,6 +454,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
   '/_authenticated/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/_authenticated/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/buy/$id'
     | '/profile/change-email'
+    | '/profile/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/buy/$id'
     | '/profile/change-email'
+    | '/profile/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -594,6 +606,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
     | '/_authenticated/profile/change-email'
+    | '/_authenticated/profile/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -884,6 +897,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNotifyNewReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profile/delete-account': {
+      id: '/_authenticated/profile/delete-account'
+      path: '/delete-account'
+      fullPath: '/profile/delete-account'
+      preLoaderRoute: typeof AuthenticatedProfileDeleteAccountRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
     '/_authenticated/profile/change-email': {
       id: '/_authenticated/profile/change-email'
       path: '/change-email'
@@ -987,10 +1007,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedProfileRouteChildren {
   AuthenticatedProfileChangeEmailRoute: typeof AuthenticatedProfileChangeEmailRoute
+  AuthenticatedProfileDeleteAccountRoute: typeof AuthenticatedProfileDeleteAccountRoute
 }
 
 const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
   AuthenticatedProfileChangeEmailRoute: AuthenticatedProfileChangeEmailRoute,
+  AuthenticatedProfileDeleteAccountRoute:
+    AuthenticatedProfileDeleteAccountRoute,
 }
 
 const AuthenticatedProfileRouteWithChildren =
