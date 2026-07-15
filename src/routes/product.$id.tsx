@@ -190,7 +190,7 @@ function ProductDetail() {
         <button
           onClick={() => window.history.back()}
           className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
-          style={{ borderColor: "#ddd8ce", backgroundColor: "rgba(246,241,231,0.85)" }}
+          style={{ borderColor: "#e2e2de", backgroundColor: "#ffffff" }}
         >
           <ArrowLeft className="h-4 w-4" color="#1a1a1a" />
         </button>
@@ -201,7 +201,7 @@ function ProductDetail() {
           >
             {listing.title}
           </h1>
-          <p className="text-sm font-semibold" style={{ color: "#e8826a" }}>
+          <p className="text-sm font-semibold" style={{ color: "#2c3548" }}>
             €{listing.price}
           </p>
         </div>
@@ -209,7 +209,7 @@ function ProductDetail() {
           onClick={() => setMoreOpen(true)}
           aria-label="Më shumë"
           className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
-          style={{ borderColor: "#ddd8ce", backgroundColor: "rgba(246,241,231,0.85)" }}
+          style={{ borderColor: "#e2e2de", backgroundColor: "#ffffff" }}
         >
           <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
         </button>
@@ -268,13 +268,13 @@ function ProductDetail() {
               toggleLike(listing.id);
             }}
             aria-label="Pëlqe"
-            className="grid h-11 w-11 place-items-center"
+            className="grid h-11 w-11 place-items-center rounded-full border border-[#d6dae6] transition active:scale-95"
           >
             <Heart
               size={24}
               strokeWidth={1.5}
-              color={likes.has(listing.id) ? "#e8826a" : "#1a1a1a"}
-              fill={likes.has(listing.id) ? "#e8826a" : "none"}
+              color="#2c3548"
+              fill={likes.has(listing.id) ? "#2c3548" : "none"}
             />
           </button>
           <button
@@ -310,7 +310,7 @@ function ProductDetail() {
           disabled={isSold || isOwn}
           className="px-4 text-base font-bold transition active:scale-95 disabled:opacity-50"
           style={{
-            backgroundColor: "#e8826a",
+            backgroundColor: "#1c1a16",
             color: "#fff",
             minWidth: 90,
             height: 44,
@@ -363,7 +363,7 @@ function ProductDetail() {
       )}
 
       {/* Product details card */}
-      <dl className="mx-[18px] my-3 grid grid-cols-2 gap-y-3 rounded-2xl bg-secondary/60 p-4 text-sm">
+      <dl className="mx-[18px] my-3 grid grid-cols-2 gap-y-3 rounded-2xl border border-[#e2e2de] bg-white p-4 text-sm">
         {meta.map(([k, v]) => (
           <div key={k}>
             <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
