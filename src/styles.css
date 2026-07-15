@@ -37,12 +37,12 @@
 
 :root {
   --radius: 1rem;
-  /* Warm off-white */
-  --background: oklch(0.975 0.012 80);
+  /* Pure white */
+  --background: oklch(1 0 0);
   --foreground: oklch(0.16 0.01 60);
-  --card: oklch(0.99 0.008 80);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.16 0.01 60);
-  --popover: oklch(0.99 0.008 80);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.16 0.01 60);
   --primary: oklch(0.18 0.01 60);
   --primary-foreground: oklch(0.975 0.012 80);
