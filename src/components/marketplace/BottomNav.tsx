@@ -23,7 +23,10 @@ export const BottomNav = () => {
         left: "16px",
         right: "16px",
         height: "58px",
-        backgroundColor: "#1a1a1a",
+        background: "rgba(30,27,23,0.55)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        border: "0.5px solid rgba(255,255,255,0.08)",
         borderRadius: "40px",
         display: "flex",
         flexDirection: "row",
@@ -46,7 +49,7 @@ export const BottomNav = () => {
             <button
               key={item.route}
               onClick={() => navigate({ to: item.route })}
-              className="nav-sell-btn"
+              className="nav-sell-btn tap-icon"
               style={{
                 width: "44px",
                 height: "44px",
@@ -54,8 +57,8 @@ export const BottomNav = () => {
                 maxWidth: "44px",
                 minHeight: "44px",
                 maxHeight: "44px",
-                backgroundColor: "#ffffff",
-                border: "none",
+                backgroundColor: "transparent",
+                border: "1.5px solid #ffffff",
                 borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
@@ -70,7 +73,7 @@ export const BottomNav = () => {
                 className="ti ti-plus"
                 style={{
                   fontSize: "20px",
-                  color: "#1a1a1a",
+                  color: "#ffffff",
                   lineHeight: 1,
                 }}
               />
@@ -82,15 +85,15 @@ export const BottomNav = () => {
           <button
             key={item.route}
             onClick={() => navigate({ to: item.route })}
-            className="nav-item"
+            className="nav-item tap-icon"
             style={{
-              width: "48px",
-              height: "48px",
-              minWidth: "48px",
-              maxWidth: "48px",
-              minHeight: "48px",
-              maxHeight: "48px",
-              backgroundColor: isActive ? "rgba(255,255,255,0.12)" : "transparent",
+              width: "44px",
+              height: "44px",
+              minWidth: "44px",
+              maxWidth: "44px",
+              minHeight: "44px",
+              maxHeight: "44px",
+              backgroundColor: isActive ? "var(--color-accent)" : "transparent",
               border: "none",
               borderRadius: "50%",
               display: "flex",
@@ -106,7 +109,7 @@ export const BottomNav = () => {
               className={`ti ${item.icon}`}
               style={{
                 fontSize: "20px",
-                color: isActive ? "#ffffff" : "rgba(255,255,255,0.5)",
+                color: "#ffffff",
                 lineHeight: 1,
                 display: "block",
                 width: "20px",
