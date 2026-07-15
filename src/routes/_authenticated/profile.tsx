@@ -1343,7 +1343,7 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     try {
       const compressed = await compressImage(file, AVATAR_OPTIONS);
       const ext = compressed.type === "image/webp" ? "webp" : "jpg";
-      const path = `avatars/${profile.id}/${crypto.randomUUID()}.${ext}`;
+      const path = `${profile.id}/avatars/${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage.from("photos").upload(path, compressed, { contentType: compressed.type, upsert: false });
       if (error) { toast.error(error.message); return; }
       const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60 * 24 * 365);
