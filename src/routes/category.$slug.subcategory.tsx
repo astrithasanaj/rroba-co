@@ -75,8 +75,9 @@ function SubcategorySelectPage() {
                   onClick={() => toggle(s)}
                   className="rounded-full px-3 py-2 text-[13px] font-medium transition-colors"
                   style={{
-                    backgroundColor: active ? INK : CHIP,
+                    backgroundColor: active ? INK : "transparent",
                     color: active ? "#fff" : INK,
+                    border: active ? "none" : "1px solid #d8d8d2",
                   }}
                 >
                   {s}
