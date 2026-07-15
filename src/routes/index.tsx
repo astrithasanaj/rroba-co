@@ -170,10 +170,10 @@ function HomePage() {
               style={{ backgroundColor: "#ffffff" }}
               role="tablist"
             >
-              <TabButton active={tab === "for-you"} onClick={() => setTab("for-you")}>
+              <TabButton active={tab === "for-you"} onClick={() => handleTabChange("for-you")}>
                 Për ty
               </TabButton>
-              <TabButton active={tab === "following"} onClick={() => setTab("following")}>
+              <TabButton active={tab === "following"} onClick={() => handleTabChange("following")}>
                 Duke ndjekur
               </TabButton>
             </div>
