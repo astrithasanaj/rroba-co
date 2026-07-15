@@ -433,7 +433,7 @@ function SearchPage() {
               type="button"
               onClick={() => setShowCategoryPicker(true)}
               className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
-              style={{ backgroundColor: CARD, color: INK }}
+              style={{ backgroundColor: CARD, color: INK, border: "1px solid #d8d8d2" }}
             >
               <LayoutGrid className="h-4 w-4" />
               Kategoritë
