@@ -1391,7 +1391,7 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
           <Label style={{ color: INK }}>Email</Label>
           <button
             type="button"
-            onClick={() => setEmailChangeOpen(true)}
+            onClick={() => navigate({ to: "/profile/change-email" })}
             className="text-xs font-semibold underline"
             style={{ color: INK, background: "transparent", border: "none", cursor: "pointer" }}
           >
@@ -1400,7 +1400,6 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
         </div>
         <Input value={email} disabled style={inputStyle} />
       </div>
-      <EmailChangeFlow open={emailChangeOpen} onOpenChange={setEmailChangeOpen} email={email} />
       <div><Label style={{ color: INK }}>Emri</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} style={inputStyle} /></div>
       <div><Label style={{ color: INK }}>Bio</Label><Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} style={inputStyle} /></div>
       <div>
