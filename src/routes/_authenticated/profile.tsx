@@ -1324,7 +1324,7 @@ function TermsView() {
 }
 
 function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; email: string; onSaved: () => void }) {
-  const [emailChangeOpen, setEmailChangeOpen] = useState(false);
+  const navigate = useNavigate();
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [city, setCity] = useState(profile?.city ?? "");
