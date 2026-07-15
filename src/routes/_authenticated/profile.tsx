@@ -1871,3 +1871,204 @@ function DeleteAccountFlow({
   );
 }
 
+function EmailChangeFlow({
+  open,
+  onOpenChange,
+  email,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  email: string;
+}) {
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState("");
+
+  const RED = "#e53935";
+
+  useEffect(() => {
+    if (open) {
+      setStep(1);
+      setPassword("");
+      setShowPw(false);
+      setNewEmail("");
+      setVerifying(false);
+      setSubmitting(false);
+      setError(null);
+      setSentTo("");
+    }
+  }, [open]);
+
+  if (!open) return null;
+
+  const close = () => {
+    if (!verifying && !submitting) onOpenChange(false);
+  };
+
+  const verifyPassword = async () => {
+    if (!email || !password) return;
+    setVerifying(true);
+    setError(null);
+    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+    setVerifying(false);
+    if (err) {
+      setError("Fjalëkalimi është i gabuar");
+      return;
+    }
+    setStep(2);
+  };
+
+  const submitEmail = async () => {
+    const trimmed = newEmail.trim();
+    if (!trimmed) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError("Email-i nuk është valid");
+      return;
+    }
+    if (trimmed.toLowerCase() === email.toLowerCase()) {
+      setError("Email-i i ri duhet të jetë ndryshe nga aktuali");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    const { error: err } = await supabase.auth.updateUser({ email: trimmed });
+    setSubmitting(false);
+    if (err) {
+      const msg = err.message?.toLowerCase() ?? "";
+      if (msg.includes("already") || msg.includes("registered") || msg.includes("exists") || msg.includes("taken")) {
+        setError("Ky email është tashmë në përdorim nga një llogari tjetër");
+      } else if (msg.includes("invalid")) {
+        setError("Email-i nuk është valid");
+      } else {
+        setError("Diçka shkoi keq. Provo sërish.");
+      }
+      return;
+    }
+    setSentTo(trimmed);
+    setStep(3);
+  };
+
+  const btnDark: React.CSSProperties = {
+    backgroundColor: INK, color: "#ffffff", height: 50, borderRadius: 12,
+    fontSize: 14, fontWeight: 600, width: "100%", border: "none", cursor: "pointer",
+  };
+  const btnCream: React.CSSProperties = {
+    backgroundColor: "#ffffff", color: INK, height: 50, borderRadius: 12,
+    fontSize: 14, fontWeight: 600, width: "100%", border: "none", cursor: "pointer",
+  };
+  const inputBox: React.CSSProperties = {
+    width: "100%", height: 52, background: "#ffffff", border: "none",
+    borderRadius: 12, padding: "0 16px", fontSize: 15, color: INK, outline: "none",
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-end justify-center"
+      style={{ backgroundColor: "rgba(26,26,26,0.5)" }}
+      onClick={close}
+    >
+      <div
+        className="w-full rounded-t-3xl px-5 pt-6 pb-8"
+        style={{ backgroundColor: CREAM, color: INK, maxWidth: 520 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {step === 1 && (
+          <>
+            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center" }}>
+              Konfirmo identitetin tënd
+            </div>
+            <div style={{ fontSize: 13, color: INK, marginTop: 10, textAlign: "center" }}>
+              Për siguri, shkruaj fjalëkalimin tënd për të ndryshuar email-in.
+            </div>
+            <div style={{ position: "relative", marginTop: 18 }}>
+              <input
+                type={showPw ? "text" : "password"}
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError(null); }}
+                placeholder="Fjalëkalimi juaj"
+                autoFocus
+                style={{ ...inputBox, paddingRight: 44 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                aria-label={showPw ? "Fshih" : "Shfaq"}
+                style={{
+                  position: "absolute", right: 12, top: 0, bottom: 0,
+                  display: "flex", alignItems: "center",
+                  background: "transparent", border: "none", cursor: "pointer",
+                }}
+              >
+                <i className={`ti ${showPw ? "ti-eye-off" : "ti-eye"}`} style={{ fontSize: 18, color: MUTED }} />
+              </button>
+            </div>
+            {error && <div style={{ fontSize: 12, color: RED, marginTop: 8 }}>{error}</div>}
+            <div className="mt-5 flex flex-col gap-2">
+              <button
+                style={{ ...btnDark, opacity: verifying || !password ? 0.6 : 1 }}
+                disabled={verifying || !password}
+                onClick={verifyPassword}
+              >
+                {verifying ? "Duke verifikuar…" : "Vazhdo"}
+              </button>
+              <button style={btnCream} onClick={close}>Anulo</button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center" }}>
+              Email-i i ri
+            </div>
+            <div style={{ fontSize: 13, color: INK, marginTop: 10, textAlign: "center" }}>
+              Do të dërgojmë një link konfirmimi te adresa e re.
+            </div>
+            <div style={{ marginTop: 18 }}>
+              <input
+                type="email"
+                value={newEmail}
+                onChange={(e) => { setNewEmail(e.target.value); setError(null); }}
+                placeholder="email@shembull.com"
+                autoFocus
+                autoComplete="email"
+                style={inputBox}
+              />
+            </div>
+            {error && <div style={{ fontSize: 12, color: RED, marginTop: 8 }}>{error}</div>}
+            <div className="mt-5 flex flex-col gap-2">
+              <button
+                style={{ ...btnDark, opacity: submitting || !newEmail.trim() ? 0.6 : 1 }}
+                disabled={submitting || !newEmail.trim()}
+                onClick={submitEmail}
+              >
+                {submitting ? "Duke dërguar…" : "Dërgo linkun e konfirmimit"}
+              </button>
+              <button style={btnCream} onClick={close}>Anulo</button>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center" }}>
+              Kontrollo email-in tënd
+            </div>
+            <div style={{ fontSize: 13, color: INK, marginTop: 12, lineHeight: 1.55, textAlign: "center" }}>
+              Dërguam një link konfirmimi te <b>{sentTo}</b>. Kliko linkun për ta aktivizuar këtë email si adresën tënde të re.
+            </div>
+            <div className="mt-6 flex flex-col gap-2">
+              <button style={btnDark} onClick={() => onOpenChange(false)}>Në rregull</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
