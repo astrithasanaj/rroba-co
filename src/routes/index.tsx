@@ -21,6 +21,14 @@ type Tab = "for-you" | "following";
 
 function HomePage() {
   const [tab, setTab] = useState<Tab>("for-you");
+
+  const handleTabChange = (next: Tab) => {
+    if (next === tab) return;
+    setTab(next);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  };
   const [listings, setListings] = useState<ListingView[]>([]);
   const [promoted, setPromoted] = useState<ListingView[]>([]);
   const [followingListings, setFollowingListings] = useState<ListingView[]>([]);
@@ -170,10 +178,10 @@ function HomePage() {
               style={{ backgroundColor: "#ffffff" }}
               role="tablist"
             >
-              <TabButton active={tab === "for-you"} onClick={() => setTab("for-you")}>
+              <TabButton active={tab === "for-you"} onClick={() => handleTabChange("for-you")}>
                 Për ty
               </TabButton>
-              <TabButton active={tab === "following"} onClick={() => setTab("following")}>
+              <TabButton active={tab === "following"} onClick={() => handleTabChange("following")}>
                 Duke ndjekur
               </TabButton>
             </div>
@@ -219,6 +227,8 @@ function TabButton({
       style={{
         backgroundColor: active ? INK : "transparent",
         color: active ? "#ffffff" : MUTED,
+        flexBasis: 0,
+        minWidth: 0,
       }}
     >
       {children}
