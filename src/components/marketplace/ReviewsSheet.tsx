@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Star, BadgeCheck, User as UserIcon } from "lucide-react";
+import { Loader2, Star, BadgeCheck, User as UserIcon, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -216,7 +216,26 @@ export function ReviewsSheet({
               backgroundColor: CREAM,
             }}
           >
-            <div style={{ width: 72 }} />
+            <div style={{ width: 72, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+              <button
+                onClick={() => onOpenChange(false)}
+                aria-label="Mbrapa"
+                style={{
+                  background: CARD,
+                  color: INK,
+                  width: 36,
+                  height: 36,
+                  borderRadius: 999,
+                  display: "grid",
+                  placeItems: "center",
+                  border: 0,
+                  WebkitTapHighlightColor: "transparent",
+                  cursor: "pointer",
+                }}
+              >
+                <ArrowLeft size={20} />
+              </button>
+            </div>
             <div style={{ textAlign: "center", flex: 1 }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerësimet</div>
               {sellerUsername && (
@@ -225,22 +244,7 @@ export function ReviewsSheet({
                 </div>
               )}
             </div>
-            <button
-              onClick={() => onOpenChange(false)}
-              style={{
-                background: CARD,
-                color: INK,
-                borderRadius: 20,
-                padding: "8px 16px",
-                fontSize: 13,
-                fontWeight: 600,
-                border: 0,
-                WebkitTapHighlightColor: "transparent",
-                cursor: "pointer",
-              }}
-            >
-              Mbyll
-            </button>
+            <div style={{ width: 72 }} />
           </div>
 
           {/* Body */}
