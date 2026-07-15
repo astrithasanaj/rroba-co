@@ -393,7 +393,7 @@ function SearchPage() {
 
           <div
             className="mt-5 flex h-[52px] items-center gap-3 rounded-full px-5"
-            style={{ backgroundColor: CARD }}
+            style={{ backgroundColor: CARD, border: "1px solid #d8d8d2" }}
             onClick={() => inputRef.current?.focus()}
           >
             <SearchIcon className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
@@ -433,7 +433,7 @@ function SearchPage() {
               type="button"
               onClick={() => setShowCategoryPicker(true)}
               className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
-              style={{ backgroundColor: CARD, color: INK }}
+              style={{ backgroundColor: CARD, color: INK, border: "1px solid #d8d8d2" }}
             >
               <LayoutGrid className="h-4 w-4" />
               Kategoritë
