@@ -25,8 +25,9 @@ function HomePage() {
   const handleTabChange = (next: Tab) => {
     if (next === tab) return;
     setTab(next);
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "auto" });
+    const scroller = typeof document !== "undefined" ? document.querySelector<HTMLElement>(".page-wrapper") : null;
+    if (scroller && scroller.scrollTop > 0) {
+      scroller.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
   const [listings, setListings] = useState<ListingView[]>([]);
@@ -188,22 +189,24 @@ function HomePage() {
           </div>
         </header>
 
-        {tab === "for-you" ? (
-          <ForYou
-            loading={loading}
-            listings={listings}
-            promoted={promoted}
-            trending={trending}
-            newThisWeek={newThisWeek}
-            followingPreview={followingPreview}
-          />
-        ) : (
-          <FollowingFeed
-            loading={followingLoading}
-            hasFollowing={followingIds.length > 0}
-            listings={followingListings}
-          />
-        )}
+        <div key={tab} className="animate-fade-in" style={{ animationDuration: "150ms" }}>
+          {tab === "for-you" ? (
+            <ForYou
+              loading={loading}
+              listings={listings}
+              promoted={promoted}
+              trending={trending}
+              newThisWeek={newThisWeek}
+              followingPreview={followingPreview}
+            />
+          ) : (
+            <FollowingFeed
+              loading={followingLoading}
+              hasFollowing={followingIds.length > 0}
+              listings={followingListings}
+            />
+          )}
+        </div>
       </div>
     </MobileShell>
   );
