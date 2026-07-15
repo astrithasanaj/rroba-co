@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import type { ListingView } from "@/lib/listings";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { prefetchListing, warmImage } from "@/lib/prefetch";
