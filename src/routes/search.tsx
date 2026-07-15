@@ -551,15 +551,33 @@ function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
         Kategoritë
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => (
+        {HOME_CATEGORIES.map(({ key, label, Icon }) => (
           <button
             key={key}
             type="button"
             onClick={() => onPick(key)}
-            className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left"
-            style={{ backgroundColor: boxColor }}
+            className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left tap-icon"
+            style={{
+              backgroundColor: CARD,
+              border: "0.5px solid #e2e2de",
+              borderRadius: "16px",
+              padding: "1rem",
+            }}
           >
-            <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: iconColor }} />
+            <div
+              className="grid place-items-center"
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: "50%",
+                background: "rgba(10,9,7,0.94)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "0.5px solid rgba(255,255,255,0.09)",
+              }}
+            >
+              <Icon size={22} strokeWidth={1.5} style={{ color: "#f2ede3" }} />
+            </div>
             <span
               className="text-[15px] font-bold leading-tight"
               style={{ color: INK }}
