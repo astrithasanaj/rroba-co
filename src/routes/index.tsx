@@ -188,22 +188,24 @@ function HomePage() {
           </div>
         </header>
 
-        {tab === "for-you" ? (
-          <ForYou
-            loading={loading}
-            listings={listings}
-            promoted={promoted}
-            trending={trending}
-            newThisWeek={newThisWeek}
-            followingPreview={followingPreview}
-          />
-        ) : (
-          <FollowingFeed
-            loading={followingLoading}
-            hasFollowing={followingIds.length > 0}
-            listings={followingListings}
-          />
-        )}
+        <div key={tab} className="animate-fade-in" style={{ animationDuration: "150ms" }}>
+          {tab === "for-you" ? (
+            <ForYou
+              loading={loading}
+              listings={listings}
+              promoted={promoted}
+              trending={trending}
+              newThisWeek={newThisWeek}
+              followingPreview={followingPreview}
+            />
+          ) : (
+            <FollowingFeed
+              loading={followingLoading}
+              hasFollowing={followingIds.length > 0}
+              listings={followingListings}
+            />
+          )}
+        </div>
       </div>
     </MobileShell>
   );
