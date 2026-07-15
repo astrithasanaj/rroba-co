@@ -93,7 +93,7 @@ export const BottomNav = () => {
               maxWidth: "44px",
               minHeight: "44px",
               maxHeight: "44px",
-              backgroundColor: isActive ? "var(--color-accent)" : "transparent",
+              backgroundColor: isActive ? "#d6dae6" : "transparent",
               border: "none",
               borderRadius: "50%",
               display: "flex",
@@ -109,7 +109,7 @@ export const BottomNav = () => {
               className={`ti ${item.icon}`}
               style={{
                 fontSize: "20px",
-                color: "#ffffff",
+                color: isActive ? "#2c3548" : "#ffffff",
                 lineHeight: 1,
                 display: "block",
                 width: "20px",
