@@ -195,6 +195,18 @@ input, textarea, select {
 }
 .settings-row:active { background: #ffffff; }
 
+/* Tap feedback for round icon tiles (categories + bottom nav) */
+.tap-icon {
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+}
+.tap-icon:active {
+  transform: scale(0.92);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+
 .settings-icon {
   font-size: 20px;
   color: #1a1a1a;
