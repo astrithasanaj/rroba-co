@@ -28,13 +28,13 @@ function ChangeEmailPage() {
   const [error, setError] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState("");
 
-  // Load current email on mount
-  useState(() => {
+  useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setCurrentEmail(data.user.email);
       else navigate({ to: "/profile" });
     });
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const goBack = () => {
     if (verifying || submitting) return;
