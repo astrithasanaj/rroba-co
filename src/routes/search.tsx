@@ -393,7 +393,7 @@ function SearchPage() {
 
           <div
             className="mt-5 flex h-[52px] items-center gap-3 rounded-full px-5"
-            style={{ backgroundColor: CARD }}
+            style={{ backgroundColor: CARD, border: "1px solid #d8d8d2" }}
             onClick={() => inputRef.current?.focus()}
           >
             <SearchIcon className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
