@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { title: "Rroba — Blej, shit dhe zbulo stil të ri." },
       { name: "description", content: "Tregu i modës së përdorur në Kosovë. Blej dhe shit rroba, këpucë dhe aksesorë në Prishtinë, Prizren, Pejë dhe Tiranë." },
-      { name: "theme-color", content: "#f6f1e7" },
+      { name: "theme-color", content: "#ffffff" },
       { property: "og:title", content: "Rroba — Blej, shit dhe zbulo stil të ri." },
       { property: "og:description", content: "Tregu i modës së përdorur në Kosovë. Blej dhe shit rroba, këpucë dhe aksesorë në Prishtinë, Prizren, Pejë dhe Tiranë." },
       { property: "og:type", content: "website" },

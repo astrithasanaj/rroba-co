@@ -5,7 +5,7 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
 
-const CREAM = "#f6f1e7";
+const CREAM = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const DIVIDER = "#e2d9c4";

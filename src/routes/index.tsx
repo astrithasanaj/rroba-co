@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const PAGE_BG = "#f6f1e7";
+const PAGE_BG = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 
@@ -167,7 +167,7 @@ function HomePage() {
           <div className="px-[18px] pb-3">
             <div
               className="flex p-1 rounded-full"
-              style={{ backgroundColor: "#ede8de" }}
+              style={{ backgroundColor: "#ffffff" }}
               role="tablist"
             >
               <TabButton active={tab === "for-you"} onClick={() => setTab("for-you")}>
@@ -218,7 +218,7 @@ function TabButton({
       className="flex-1 py-2 text-sm font-semibold rounded-full transition-colors"
       style={{
         backgroundColor: active ? INK : "transparent",
-        color: active ? "#f6f1e7" : MUTED,
+        color: active ? "#ffffff" : MUTED,
       }}
     >
       {children}
@@ -385,7 +385,7 @@ function FollowingFeed({
       <div className="mt-10 flex flex-col items-center px-8 text-center">
         <div
           className="mb-4 grid h-16 w-16 place-items-center rounded-full"
-          style={{ backgroundColor: "#ede8de" }}
+          style={{ backgroundColor: "#ffffff" }}
         >
           <UserPlus className="h-7 w-7" strokeWidth={1.6} style={{ color: INK }} />
         </div>
@@ -398,7 +398,7 @@ function FollowingFeed({
         <Link
           to="/search"
           className="mt-6 rounded-full px-6 py-3 text-sm font-semibold"
-          style={{ backgroundColor: INK, color: "#f6f1e7" }}
+          style={{ backgroundColor: INK, color: "#ffffff" }}
         >
           Eksploro
         </Link>

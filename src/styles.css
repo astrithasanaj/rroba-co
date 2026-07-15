@@ -177,7 +177,7 @@ input, textarea, select {
 }
 .profile-btn:active {
   transform: scale(0.97);
-  background-color: #ede8de;
+  background-color: #ffffff;
 }
 
 .settings-row {
@@ -187,13 +187,13 @@ input, textarea, select {
   padding: 14px 20px;
   width: 100%;
   text-align: left;
-  background: #f6f1e7;
+  background: #ffffff;
   border-bottom: 1px solid #ddd8ce;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: background 80ms ease;
 }
-.settings-row:active { background: #ede8de; }
+.settings-row:active { background: #ffffff; }
 
 .settings-icon {
   font-size: 20px;

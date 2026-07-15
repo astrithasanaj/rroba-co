@@ -12,8 +12,8 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   component: OnboardingFlow,
 });
 
-const CREAM = "#f6f1e7";
-const CHIP_BG = "#ede8de";
+const CREAM = "#ffffff";
+const CHIP_BG = "#ffffff";
 const DARK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";
