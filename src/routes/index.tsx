@@ -25,8 +25,8 @@ function HomePage() {
   const handleTabChange = (next: Tab) => {
     if (next === tab) return;
     setTab(next);
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "auto" });
+    if (typeof window !== "undefined" && window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
   const [listings, setListings] = useState<ListingView[]>([]);
