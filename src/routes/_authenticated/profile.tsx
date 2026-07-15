@@ -1386,7 +1386,21 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
           <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
         </label>
       </div>
-      <div><Label style={{ color: INK }}>Email</Label><Input value={email} disabled style={inputStyle} /></div>
+      <div>
+        <div className="flex items-center justify-between">
+          <Label style={{ color: INK }}>Email</Label>
+          <button
+            type="button"
+            onClick={() => setEmailChangeOpen(true)}
+            className="text-xs font-semibold underline"
+            style={{ color: INK, background: "transparent", border: "none", cursor: "pointer" }}
+          >
+            Ndrysho email-in
+          </button>
+        </div>
+        <Input value={email} disabled style={inputStyle} />
+      </div>
+      <EmailChangeFlow open={emailChangeOpen} onOpenChange={setEmailChangeOpen} email={email} />
       <div><Label style={{ color: INK }}>Emri</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} style={inputStyle} /></div>
       <div><Label style={{ color: INK }}>Bio</Label><Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} style={inputStyle} /></div>
       <div>
