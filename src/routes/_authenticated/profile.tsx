@@ -26,8 +26,6 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useServerFn } from "@tanstack/react-start";
-import { deleteMyAccount } from "@/lib/delete-account.functions";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { StarRow } from "@/components/marketplace/RatingsDialog";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
