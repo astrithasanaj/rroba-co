@@ -21,6 +21,14 @@ type Tab = "for-you" | "following";
 
 function HomePage() {
   const [tab, setTab] = useState<Tab>("for-you");
+
+  const handleTabChange = (next: Tab) => {
+    if (next === tab) return;
+    setTab(next);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  };
   const [listings, setListings] = useState<ListingView[]>([]);
   const [promoted, setPromoted] = useState<ListingView[]>([]);
   const [followingListings, setFollowingListings] = useState<ListingView[]>([]);
