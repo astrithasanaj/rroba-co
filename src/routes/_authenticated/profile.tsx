@@ -589,27 +589,31 @@ function ProfilePage() {
               backgroundColor: CREAM,
             }}
           >
-            <div style={{ width: 72 }} />
+            <div style={{ width: 72, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+              <button
+                onClick={() => setBenefitsOpen(false)}
+                aria-label="Mbrapa"
+                style={{
+                  background: CARD,
+                  color: INK,
+                  width: 36,
+                  height: 36,
+                  borderRadius: 999,
+                  display: "grid",
+                  placeItems: "center",
+                  border: 0,
+                  WebkitTapHighlightColor: "transparent",
+                  cursor: "pointer",
+                }}
+              >
+                <ArrowLeft size={20} />
+              </button>
+            </div>
             <div style={{ textAlign: "center", flex: 1 }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Përfitimet</div>
               <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>e shitësit</div>
             </div>
-            <button
-              onClick={() => setBenefitsOpen(false)}
-              style={{
-                background: CARD,
-                color: INK,
-                borderRadius: 20,
-                padding: "8px 16px",
-                fontSize: 13,
-                fontWeight: 600,
-                border: 0,
-                WebkitTapHighlightColor: "transparent",
-                cursor: "pointer",
-              }}
-            >
-              Mbyll
-            </button>
+            <div style={{ width: 72 }} />
           </div>
 
           <div style={{ overflowY: "auto", height: "calc(100dvh - 60px)", paddingBottom: 40 }}>
