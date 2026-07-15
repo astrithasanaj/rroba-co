@@ -227,6 +227,8 @@ function TabButton({
       style={{
         backgroundColor: active ? INK : "transparent",
         color: active ? "#ffffff" : MUTED,
+        flexBasis: 0,
+        minWidth: 0,
       }}
     >
       {children}
