@@ -265,10 +265,18 @@ function ForYou({
                 style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
               >
                 <div
-                  className="grid place-items-center"
-                  style={{ width: 84, height: 84, borderRadius: 14, backgroundColor: boxColor }}
+                  className="tap-icon grid place-items-center"
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: "50%",
+                    background: "rgba(10,9,7,0.94)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "0.5px solid rgba(255,255,255,0.09)",
+                  }}
                 >
-                  <Icon size={26} strokeWidth={1.6} style={{ color: iconColor }} />
+                  <Icon size={24} strokeWidth={1.5} style={{ color: "#f2ede3" }} />
                 </div>
                 <span
                   className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
