@@ -43,6 +43,8 @@ import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as ApiPublicNotifyPendingPromotionRouteImport } from './routes/api/public/notify-pending-promotion'
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
+import { Route as AuthenticatedProfileDeleteAccountRouteImport } from './routes/_authenticated/profile.delete-account'
+import { Route as AuthenticatedProfileChangeEmailRouteImport } from './routes/_authenticated/profile.change-email'
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
@@ -232,6 +234,18 @@ const ApiPublicNotifyNewReportRoute =
     path: '/api/public/notify-new-report',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedProfileDeleteAccountRoute =
+  AuthenticatedProfileDeleteAccountRouteImport.update({
+    id: '/delete-account',
+    path: '/delete-account',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
+const AuthenticatedProfileChangeEmailRoute =
+  AuthenticatedProfileChangeEmailRouteImport.update({
+    id: '/change-email',
+    path: '/change-email',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
 const AuthenticatedBuyIdRoute = AuthenticatedBuyIdRouteImport.update({
   id: '/buy/$id',
   path: '/buy/$id',
@@ -324,7 +338,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/profile': typeof AuthenticatedProfileRoute
+  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -338,6 +352,8 @@ export interface FileRoutesByFullPath {
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
+  '/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -371,7 +387,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/profile': typeof AuthenticatedProfileRoute
+  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -385,6 +401,8 @@ export interface FileRoutesByTo {
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/buy/$id': typeof AuthenticatedBuyIdRoute
+  '/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -421,7 +439,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -435,6 +453,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
+  '/_authenticated/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/_authenticated/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -485,6 +505,8 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/users'
     | '/buy/$id'
+    | '/profile/change-email'
+    | '/profile/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -532,6 +554,8 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/users'
     | '/buy/$id'
+    | '/profile/change-email'
+    | '/profile/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -581,6 +605,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
+    | '/_authenticated/profile/change-email'
+    | '/_authenticated/profile/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -871,6 +897,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNotifyNewReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profile/delete-account': {
+      id: '/_authenticated/profile/delete-account'
+      path: '/delete-account'
+      fullPath: '/profile/delete-account'
+      preLoaderRoute: typeof AuthenticatedProfileDeleteAccountRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
+    '/_authenticated/profile/change-email': {
+      id: '/_authenticated/profile/change-email'
+      path: '/change-email'
+      fullPath: '/profile/change-email'
+      preLoaderRoute: typeof AuthenticatedProfileChangeEmailRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
     '/_authenticated/buy/$id': {
       id: '/_authenticated/buy/$id'
       path: '/buy/$id'
@@ -965,10 +1005,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedProfileRouteChildren {
+  AuthenticatedProfileChangeEmailRoute: typeof AuthenticatedProfileChangeEmailRoute
+  AuthenticatedProfileDeleteAccountRoute: typeof AuthenticatedProfileDeleteAccountRoute
+}
+
+const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
+  AuthenticatedProfileChangeEmailRoute: AuthenticatedProfileChangeEmailRoute,
+  AuthenticatedProfileDeleteAccountRoute:
+    AuthenticatedProfileDeleteAccountRoute,
+}
+
+const AuthenticatedProfileRouteWithChildren =
+  AuthenticatedProfileRoute._addFileChildren(AuthenticatedProfileRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedMyPromotionsRoute: typeof AuthenticatedMyPromotionsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
   AuthenticatedAdminPromotionsRoute: typeof AuthenticatedAdminPromotionsRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -982,7 +1036,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMyPromotionsRoute: AuthenticatedMyPromotionsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
   AuthenticatedAdminPromotionsRoute: AuthenticatedAdminPromotionsRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
