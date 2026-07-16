@@ -78,18 +78,23 @@ export function NewListingDialog({
   const [images, setImages] = useState<PendingImage[]>([]);
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
+  const [nodeKey, setNodeKey] = useState("");
+  const [subcategory, setSubcategory] = useState("");
   const [size, setSize] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const selectedNode = CATEGORY_TAXONOMY.find((n) => n.key === nodeKey);
+  const category = selectedNode?.categories[0] ?? "";
 
   const reset = () => {
     images.forEach((i) => URL.revokeObjectURL(i.previewUrl));
     setImages([]);
     setTitle("");
     setBrand("");
-    setCategory("");
+    setNodeKey("");
+    setSubcategory("");
     setSize("");
     setPrice("");
     setDescription("");
