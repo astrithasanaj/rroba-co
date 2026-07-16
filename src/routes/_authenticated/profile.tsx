@@ -1407,10 +1407,10 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
 
   return (
     <div className="space-y-4 pb-6">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col items-center gap-3">
         <img src={avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`} alt="" className="h-16 w-16 rounded-full object-cover" style={{ boxShadow: `0 0 0 2px ${DIVIDER}` }} />
-        <div className="flex flex-col gap-1.5">
-          <label className="cursor-pointer rounded-full px-3 py-2 text-xs font-medium" style={{ backgroundColor: CARD, color: INK, width: "fit-content" }}>
+        <div className="flex items-center gap-2">
+          <label className="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-xs font-medium" style={{ backgroundColor: "#f4f4f2", color: "#1c1a16", border: "1px solid #e2e2de", borderRadius: 9999, minWidth: 120 }}>
             {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
             <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
           </label>
@@ -1418,10 +1418,10 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
             <button
               type="button"
               onClick={() => setRemovePhotoOpen(true)}
-              className="w-fit text-xs font-medium"
-              style={{ color: "#b3392f", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}
+              className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium"
+              style={{ backgroundColor: "#fbeceb", color: "#b3392f", border: "1px solid #f3d4d1", borderRadius: 9999, minWidth: 120, cursor: "pointer" }}
             >
-              Hiq foton aktuale
+              Hiq foton
             </button>
           )}
         </div>
