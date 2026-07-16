@@ -217,6 +217,11 @@ function SearchPage() {
       if (filters.condition) query = query.eq("condition", filters.condition);
       if (filters.city) query = query.eq("city", filters.city);
       if (filters.gender) query = query.eq("gender", filters.gender);
+      if (genderTab === "Femra" || genderTab === "Meshkuj") {
+        query = query.eq("gender", genderTab);
+      } else if (genderTab === "Fëmijë") {
+        query = query.eq("category", "Fëmijë & bebe");
+      }
       if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
       query = query.order("created_at", { ascending: section !== "trending" });
@@ -232,7 +237,7 @@ function SearchPage() {
       active = false;
       clearTimeout(t);
     };
-  }, [q, filters, section, showResults, dbCategories, subLabels]);
+  }, [q, filters, section, showResults, dbCategories, subLabels, genderTab]);
 
   // Profile + brand search
   useEffect(() => {
