@@ -1125,7 +1125,7 @@ function FinalStep({
           onClick={onPublish}
           disabled={!canPublish || submitting}
           className="inline-flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition"
-          style={{ background: canPublish ? CORAL : DIVIDER, color: canPublish ? "#fff" : MUTED }}
+          style={{ background: canPublish ? CORAL_GRADIENT : DIVIDER, color: canPublish ? "#fff" : MUTED }}
         >
           {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {submitting ? "Po publikon..." : "Publiko"}
