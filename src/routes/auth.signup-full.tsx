@@ -12,10 +12,10 @@ export const Route = createFileRoute("/auth/signup-full")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
-const DIVIDER = "#ddd8ce";
+const CORAL = "#c65a7a";
+const DIVIDER = "#e2e2de";
 const ERR = "#e53935";
 
 const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
@@ -602,7 +602,7 @@ function SignupFullPage() {
                         : strength.score === 3
                           ? "#f9a825"
                           : strength.score === 4
-                            ? "#e8826a"
+                            ? "#c65a7a"
                             : "#43a047";
                     return (
                       <div

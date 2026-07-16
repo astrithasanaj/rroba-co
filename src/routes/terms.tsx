@@ -12,7 +12,7 @@ export const Route = createFileRoute("/terms")({
 });
 
 const CREAM = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 
 const PARAGRAPHS = [
   "Duke përdorur Rroba, ti pranon këto kushte. Përdoruesit janë përgjegjës për saktësinë e informacionit të artikujve dhe për transaksionet e tyre.",

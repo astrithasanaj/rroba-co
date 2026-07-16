@@ -5,12 +5,12 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const CREAM = "#ffffff";
-const INK = "#1a1a1a";
-const DIVIDER = "#ddd8ce";
+const INK = "#2d1521";
+const DIVIDER = "#e2e2de";
 const CANCEL_BG = "#ffffff";
-const DISABLED = "#ddd8ce";
+const DISABLED = "#e2e2de";
 const RED = "#e53935";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 
 type Reason = {
   key: "scam" | "counterfeit" | "misleading" | "inappropriate" | "spam" | "prohibited" | "other";

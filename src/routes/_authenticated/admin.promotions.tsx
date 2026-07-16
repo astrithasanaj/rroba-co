@@ -23,12 +23,12 @@ export const Route = createFileRoute("/_authenticated/admin/promotions")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 const OK = "#2e7d32";
 const ERR = "#e53935";
-const DIVIDER = "#ddd8ce";
+const DIVIDER = "#e2e2de";
 
 type Row = {
   id: string;

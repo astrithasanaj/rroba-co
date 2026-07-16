@@ -8,10 +8,10 @@ import { toast } from "sonner";
 
 const CREAM = "#ffffff";
 const CREAM_ALT = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const DIVIDER = "#ddd8ce";
-const CORAL = "#e8826a";
+const DIVIDER = "#e2e2de";
+const CORAL = "#c65a7a";
 
 type View = "list" | "archive" | "new";
 

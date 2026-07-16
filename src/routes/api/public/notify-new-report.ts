@@ -67,7 +67,7 @@ export const Route = createFileRoute("/api/public/notify-new-report")({
           const reporterName = r.reporter?.name ?? r.reporter_id;
 
           const html = `
-            <div style="font-family:Arial,sans-serif;color:#1a1a1a;max-width:560px;margin:0 auto;padding:24px;">
+            <div style="font-family:Arial,sans-serif;color:#2d1521;max-width:560px;margin:0 auto;padding:24px;">
               <h2 style="margin:0 0 12px 0;">New report submitted</h2>
               <p style="margin:0 0 16px 0;color:#555;">A user reported a listing on Rroba.</p>
               <table style="width:100%;border-collapse:collapse;font-size:14px;">
@@ -80,7 +80,7 @@ export const Route = createFileRoute("/api/public/notify-new-report")({
               </table>
               <p style="margin:20px 0 0 0;">
                 <a href="https://rroba-style-discover.lovable.app/admin/reports"
-                   style="display:inline-block;background:#e8826a;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;">
+                   style="display:inline-block;background:#c65a7a;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;">
                   Review in admin
                 </a>
               </p>

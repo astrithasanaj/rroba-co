@@ -12,7 +12,7 @@ export const Route = createFileRoute("/auth/")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
 
 function AuthLanding() {

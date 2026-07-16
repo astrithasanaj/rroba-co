@@ -12,7 +12,7 @@ export const Route = createFileRoute("/privacy")({
 });
 
 const CREAM = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 
 const PARAGRAPHS = [
   "Ne respektojmë privatësinë tënde. Të dhënat që mbledhim përdoren vetëm për të ofruar shërbimin Rroba dhe për të përmirësuar përvojën tënde.",

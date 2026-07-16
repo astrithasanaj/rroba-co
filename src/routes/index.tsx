@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
 });
 
 const PAGE_BG = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
 
 type Tab = "for-you" | "following";
@@ -324,7 +324,7 @@ function ForYou({
       ) : listings.length === 0 ? (
         <div
           className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
-          style={{ borderColor: "#ddd8ce", color: MUTED }}
+          style={{ borderColor: "#e2e2de", color: MUTED }}
         >
           Ende nuk ka artikuj. Bëhu i pari që publikon!
         </div>
@@ -445,7 +445,7 @@ function FollowingFeed({
     return (
       <div
         className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
-        style={{ borderColor: "#ddd8ce", color: MUTED }}
+        style={{ borderColor: "#e2e2de", color: MUTED }}
       >
         Ende asnjë artikull nga profilet që ndjek.
       </div>

@@ -6,10 +6,10 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
 
 const CREAM = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
 const DIVIDER = "#e2d9c4";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 const CHIP_BG = "#efe7d6";
 const CHIP_BORDER = "#d9cbb0";
 
