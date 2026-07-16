@@ -299,9 +299,9 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                             borderRadius: 999,
                             fontSize: 13,
                             fontWeight: isFollowing ? 500 : 600,
-                            border: isFollowing ? `1px solid ${CHIP_BORDER}` : "none",
-                            background: isFollowing ? CHIP_BG : "linear-gradient(120deg, #e8836a, #c65a7a)",
-                            color: isFollowing ? INK : "#ffffff",
+                            border: isFollowing ? "1px solid #e2e2de" : "none",
+                            background: isFollowing ? "#f4f4f2" : "linear-gradient(120deg, #e8836a, #c65a7a)",
+                            color: isFollowing ? "#1c1a16" : "#ffffff",
                             WebkitTapHighlightColor: "transparent",
                             whiteSpace: "nowrap",
                           }}
