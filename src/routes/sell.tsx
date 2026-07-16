@@ -39,6 +39,7 @@ const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";
+const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
 const DIVIDER = "#ddd8ce";
 
 const MAX_PHOTOS = 8;
