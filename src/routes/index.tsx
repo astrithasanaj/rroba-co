@@ -150,8 +150,9 @@ function HomePage() {
       if (trendingRows.length < 5) {
         const have = new Set(trendingRows.map((r) => r.id));
         const fillers = ((regular ?? []) as ListingRow[]).filter(
-          (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe"
+          (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r)
         );
+
         trendingRows = [...trendingRows, ...fillers].slice(0, 5);
       }
 
