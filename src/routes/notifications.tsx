@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
@@ -123,10 +123,20 @@ function NotificationsPage() {
     <MobileShell>
       <header className="sticky top-0 z-30 flex items-center gap-3 bg-background/95 px-4 py-4 backdrop-blur">
         <button
+          type="button"
           onClick={() => window.history.back()}
-          className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary"
+          aria-label="Kthehu"
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "rgba(255,255,255,0.7)",
+            border: "1px solid rgba(226,226,222,0.8)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
         </button>
         <h1 className="font-display text-2xl">Njoftimet</h1>
       </header>

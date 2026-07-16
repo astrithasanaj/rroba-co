@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { Ruler, ChevronDown, ArrowLeft } from "lucide-react";
+import { ChevronLeft, Ruler, ChevronDown, ArrowLeft } from "lucide-react";
 
 export type SizeKind =
   | "clothing-femra"
@@ -227,12 +227,20 @@ export function SizePickerSheet({
         <div className="mx-auto h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
         <div className="flex items-center gap-3 px-5 pb-3 pt-4">
           <button
+            type="button"
             onClick={() => onOpenChange(false)}
-            aria-label="Mbrapa"
-            className="grid h-9 w-9 place-items-center rounded-full"
-            style={{ background: "#ffffff", color: "#2d1521", border: "1px solid #e2e2de" }}
+            aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
           <DrawerTitle className="text-base font-medium text-foreground">Zgjedh madhësinë</DrawerTitle>
         </div>

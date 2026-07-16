@@ -271,6 +271,7 @@ export function CategoryPickerSheet({
           type="button"
           onClick={goBack}
           aria-label={level.kind === "root" ? "Mbyll" : "Kthehu"}
+          className="transition-transform duration-150 active:scale-90"
           style={{
             width: 36,
             height: 36,
@@ -284,7 +285,7 @@ export function CategoryPickerSheet({
             flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color={HEADER_TEXT} />
+          <ChevronLeft size={18} color={HEADER_TEXT} strokeWidth={2} />
         </button>
         <span
           style={{

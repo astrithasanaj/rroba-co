@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -64,12 +64,20 @@ function TopBar({
     <div className="flex items-center justify-between px-5 pt-4 pb-2">
       {onBack ? (
         <button
+          type="button"
           onClick={onBack}
           aria-label="Kthehu"
-          className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full"
-          style={{ color: DARK }}
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "rgba(255,255,255,0.7)",
+            border: "1px solid rgba(226,226,222,0.8)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
         >
-          <ArrowLeft size={22} />
+          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
         </button>
       ) : (
         <div className="h-9 w-9" />

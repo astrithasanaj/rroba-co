@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { ArrowLeft, Flag, Link2, Share, Send } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Flag, Link2, Share, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -163,8 +163,21 @@ export function MoreSheet({
         ) : (
           <div className="flex flex-col">
             <div className="relative flex items-center justify-center px-4 pt-5 pb-4">
-              <button onClick={() => setView("more")} className="absolute left-4 top-4 p-1" aria-label="Mbrapa">
-                <ArrowLeft size={22} color={INK} strokeWidth={1.6} />
+              <button
+                type="button"
+                onClick={() => setView("more")}
+                aria-label="Kthehu"
+                className="absolute left-4 top-4 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+                style={{
+                  width: 36,
+                  height: 36,
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(226,226,222,0.8)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                }}
+              >
+                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 Raporto artikullin

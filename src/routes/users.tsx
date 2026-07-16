@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Users } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Loader2, Users } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
@@ -125,12 +125,20 @@ function UsersBrowsePage() {
             }}
           >
             <button
+              type="button"
               onClick={() => window.history.back()}
               aria-label="Kthehu"
-              style={{ width: 36, height: 36, display: "grid", placeItems: "center", borderRadius: 999 }}
-              className="active:opacity-70"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{
+                width: 36,
+                height: 36,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
             >
-              <ArrowLeft size={20} color={INK} />
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
             </button>
             <h1 style={{ flex: 1, textAlign: "center", fontSize: 16, fontWeight: 600, color: INK, marginRight: 36 }}>
               Të gjithë përdoruesit

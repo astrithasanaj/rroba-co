@@ -127,11 +127,18 @@ function CategoryResultsPage() {
           <button
             type="button"
             onClick={backTo}
-            className="absolute left-5 top-6 grid h-10 w-10 place-items-center rounded-full"
-            style={{ backgroundColor: CARD }}
             aria-label="Kthehu"
+            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            <ChevronLeft className="h-5 w-5" style={{ color: INK }} />
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
           <h1 className="px-12 text-center text-[15px] font-bold leading-tight" style={{ color: INK }}>
             {title}

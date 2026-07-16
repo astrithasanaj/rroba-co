@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Info, MapPin, Handshake, Home, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Info, MapPin, Handshake, Home, ChevronRight, X } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -163,11 +163,20 @@ function BuyPage() {
           style={{ backgroundColor: CREAM, height: 56, borderBottom: `1px solid ${DIVIDER}` }}
         >
           <button
+            type="button"
             onClick={() => window.history.back()}
-            className="grid h-9 w-9 place-items-center rounded-full"
             aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            <ArrowLeft size={22} strokeWidth={1.6} color={TEXT} />
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
           <h1 className="text-base font-bold" style={{ color: TEXT }}>Bli</h1>
           {seller ? (

@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Check, X } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Loader2, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
@@ -237,12 +237,20 @@ function AdminPromotions() {
           style={{ backgroundColor: CREAM }}
         >
           <button
+            type="button"
             onClick={() => window.history.back()}
-            className="grid h-10 w-10 place-items-center rounded-full"
-            style={{ backgroundColor: CARD }}
             aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
           <h1 className="flex-1 px-3 text-center font-display text-[22px] italic" style={{ color: INK }}>
             Promovime

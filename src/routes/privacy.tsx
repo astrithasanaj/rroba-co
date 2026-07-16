@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -26,9 +26,16 @@ function PrivacyPage() {
       <div className="mx-auto w-full max-w-[520px] px-5 pt-4 pb-10">
         <Link
           to="/auth/signup-full"
-          className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full"
-          style={{ color: INK }}
           aria-label="Kthehu"
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "rgba(255,255,255,0.7)",
+            border: "1px solid rgba(226,226,222,0.8)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
           onClick={(e) => {
             if (window.history.length > 1) {
               e.preventDefault();
@@ -36,7 +43,7 @@ function PrivacyPage() {
             }
           }}
         >
-          <ArrowLeft size={22} />
+          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
         </Link>
         <h1
           className="italic mt-2"
