@@ -47,13 +47,34 @@ function HomePage() {
       setLoading(true);
 
       const nowIso = new Date().toISOString();
-      const { data: promos } = await supabase
+      const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      const promosPromise = supabase
         .from("promotions")
         .select("listing_id, listings(*)")
         .eq("type", "feed_top")
         .eq("status", "active")
         .eq("payment_confirmed", true)
         .gt("ends_at", nowIso);
+
+      const newThisWeekPromise = supabase
+        .from("listings")
+        .select("*")
+        .eq("status", "active")
+        .gte("created_at", weekAgoIso)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      const trendingLikesPromise = supabase
+        .from("listing_likes")
+        .select("listing_id")
+        .gte("created_at", weekAgoIso);
+
+      const [{ data: promos }, { data: newThisWeekRows }, { data: likeRows }] = await Promise.all([
+        promosPromise,
+        newThisWeekPromise,
+        trendingLikesPromise,
+      ]);
 
       const promotedRows = ((promos ?? []) as Array<{ listings: ListingRow | null }>)
         .map((p) => p.listings)
@@ -71,17 +92,52 @@ function HomePage() {
       }
       const { data: regular } = await query;
 
+      // Trending: rank active listings by like count in the last 7 days
+      const likeCounts = new Map<string, number>();
+      for (const r of (likeRows ?? []) as Array<{ listing_id: string }>) {
+        likeCounts.set(r.listing_id, (likeCounts.get(r.listing_id) ?? 0) + 1);
+      }
+      const rankedIds = Array.from(likeCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .map(([id]) => id);
+
+      let trendingRows: ListingRow[] = [];
+      if (rankedIds.length > 0) {
+        const { data: trendingActive } = await supabase
+          .from("listings")
+          .select("*")
+          .eq("status", "active")
+          .in("id", rankedIds);
+        const byId = new Map<string, ListingRow>();
+        for (const row of (trendingActive ?? []) as ListingRow[]) byId.set(row.id, row);
+        trendingRows = rankedIds
+          .map((id) => byId.get(id))
+          .filter((r): r is ListingRow => !!r)
+          .slice(0, 5);
+      }
+      // Fill up to 5 with newest active listings if needed
+      if (trendingRows.length < 5) {
+        const have = new Set(trendingRows.map((r) => r.id));
+        const fillers = ((regular ?? []) as ListingRow[]).filter((r) => !have.has(r.id));
+        trendingRows = [...trendingRows, ...fillers].slice(0, 5);
+      }
+
       const hydratedPromoted = await hydrateListings(promotedRows);
       const hydratedRegular = await hydrateListings((regular ?? []) as ListingRow[]);
+      const hydratedTrending = await hydrateListings(trendingRows);
+      const hydratedNewWeek = await hydrateListings((newThisWeekRows ?? []) as ListingRow[]);
       const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
 
       if (active) {
         setPromoted(promotedWithFlag.slice(0, 10));
         setListings(hydratedRegular);
+        setTrendingListings(hydratedTrending);
+        setNewThisWeekListings(hydratedNewWeek);
         setLoading(false);
       }
     };
     load();
+
     const ch = supabase
       .channel("home-feed")
       .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => load())
