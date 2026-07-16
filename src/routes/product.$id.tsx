@@ -201,7 +201,7 @@ function ProductDetail() {
           >
             {listing.title}
           </h1>
-          <p className="text-sm font-semibold" style={{ color: "#2c3548" }}>
+          <p className="text-sm font-semibold" style={{ color: "#c65a7a" }}>
             €{listing.price}
           </p>
         </div>
