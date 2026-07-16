@@ -202,9 +202,8 @@ function HomePage() {
     };
   }, []);
 
-  const trending = useMemo(() => listings.slice(0, 5), [listings]);
-  const newThisWeek = useMemo(() => listings.slice(0, 10), [listings]);
   const followingPreview = useMemo(() => followingListings.slice(0, 5), [followingListings]);
+
 
   return (
     <MobileShell>
