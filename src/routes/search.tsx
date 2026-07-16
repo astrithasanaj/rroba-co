@@ -495,7 +495,12 @@ function SearchPage() {
             onPickCategory={pickCategoryCard}
           />
         ) : (
-          <CategoriesSection onPick={pickCategoryCard} />
+          <EksploreList
+            onOpenPicker={(key) => {
+              setPickerInitialKey(key);
+              setShowCategoryPicker(true);
+            }}
+          />
         )}
 
         {showResults && (
