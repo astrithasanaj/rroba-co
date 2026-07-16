@@ -6,6 +6,7 @@ import {
   Bell,
   Bookmark,
   Check,
+  ChevronLeft,
   ChevronRight,
   Gem,
   Grid2x2,
