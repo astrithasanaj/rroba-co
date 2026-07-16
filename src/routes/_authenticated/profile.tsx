@@ -1135,7 +1135,7 @@ function SettingsSheet({
           )}
           {view === "profile" && (
             <div className="px-5 pt-2">
-              <ProfileForm profile={profile} email={email} onSaved={onSaved} />
+              <ProfileForm profile={profile} email={email} onSaved={onSaved} onDirtyChange={setProfileDirty} />
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
@@ -1151,6 +1151,17 @@ function SettingsSheet({
           onOpenChange={setConfirmLogout}
           onConfirm={() => { setConfirmLogout(false); onSignOut(); }}
         />
+
+        <UnsavedChangesDialog
+          open={confirmDiscard}
+          onOpenChange={setConfirmDiscard}
+          onDiscard={() => {
+            setConfirmDiscard(false);
+            setProfileDirty(false);
+            setView("main");
+          }}
+        />
+
 
       </SheetContent>
     </Sheet>
