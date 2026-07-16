@@ -1676,20 +1676,61 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center"
-      style={{ backgroundColor: "rgba(26,26,26,0.45)" }}
-      onClick={() => onOpenChange(false)}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: CREAM,
+        zIndex: 60,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <div
-        className="w-full rounded-t-3xl px-5 pt-6 pb-8"
-        style={{ backgroundColor: CREAM, color: INK, maxWidth: 520 }}
-        onClick={(e) => e.stopPropagation()}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: "14px 16px 12px",
+          background: "#2d1521",
+          flexShrink: 0,
+        }}
       >
-        <div style={{ fontSize: 17, fontWeight: 700, color: INK, textAlign: "center" }}>A jeni i sigurt?</div>
-        <div style={{ fontSize: 13, color: MUTED, textAlign: "center", marginTop: 6 }}>
+        <button
+          type="button"
+          onClick={() => onOpenChange(false)}
+          aria-label="Kthehu"
+          style={{
+            width: 36,
+            height: 36,
+            background: "rgba(255,255,255,0.12)",
+            border: "none",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          <ChevronLeft size={18} color="#ffffff" />
+        </button>
+        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
+          A jeni i sigurt?
+        </span>
+      </div>
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+          padding: "24px 20px",
+          color: INK,
+        }}
+      >
+        <div style={{ fontSize: 13, color: MUTED, marginBottom: 20 }}>
           Do të dilni nga llogaria juaj.
         </div>
-        <div className="mt-6 flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <button
             onClick={onConfirm}
             style={{ backgroundColor: INK, color: "#ffffff", height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
@@ -1698,7 +1739,7 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
           </button>
           <button
             onClick={() => onOpenChange(false)}
-            style={{ backgroundColor: "#ffffff", color: INK, height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
+            style={{ backgroundColor: "#ffffff", color: INK, border: `1px solid ${DIVIDER}`, height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
           >
             Anulo
           </button>
