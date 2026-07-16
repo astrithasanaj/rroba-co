@@ -77,7 +77,7 @@ export function ColorPickerSheet({
               onClick={() => onOpenChange(false)}
               aria-label="Mbrapa"
               className="grid h-9 w-9 place-items-center rounded-full"
-              style={{ background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }}
+              style={{ background: "#ffffff", color: "#2d1521", border: "1px solid #e2e2de" }}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
