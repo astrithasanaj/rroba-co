@@ -6,9 +6,16 @@ import {
   SlidersHorizontal,
   Loader2,
   Clock,
-  LayoutGrid,
   Users,
   ChevronRight,
+  Sparkles,
+  Shirt,
+  Baby,
+  Archive,
+  Mountain,
+  Frame,
+  Speaker,
+  Gamepad2,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
