@@ -1327,6 +1327,8 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [removePhotoOpen, setRemovePhotoOpen] = useState(false);
+  const [removingPhoto, setRemovingPhoto] = useState(false);
 
   useEffect(() => {
     setName(profile?.name ?? "");
