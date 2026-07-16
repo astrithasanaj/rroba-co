@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Star, BadgeCheck, User as UserIcon, ArrowLeft } from "lucide-react";
+import { Loader2, Star, BadgeCheck, User as UserIcon, ArrowLeft, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
