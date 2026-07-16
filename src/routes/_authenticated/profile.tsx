@@ -1848,6 +1848,84 @@ function RemovePhotoDialog({
   );
 }
 
+function UnsavedChangesDialog({
+  open,
+  onOpenChange,
+  onDiscard,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onDiscard: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-6"
+      style={{
+        backgroundColor: "rgba(20,18,15,0.55)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+      }}
+      onClick={() => onOpenChange(false)}
+    >
+      <div
+        className="w-full"
+        style={{
+          maxWidth: 280,
+          backgroundColor: "#ffffff",
+          borderRadius: 22,
+          boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+          padding: "24px 20px 20px",
+          textAlign: "center",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ fontSize: 16, fontWeight: 600, color: "#1a1a1a" }}>
+          Ndryshimet e paruajtura
+        </div>
+        <div style={{ fontSize: 13, color: "#a89f94", lineHeight: 1.5, marginTop: 8 }}>
+          Ke ndryshime që nuk janë ruajtur ende. A dëshiron të largohesh pa i ruajtur?
+        </div>
+        <div className="mt-5 flex flex-col gap-2">
+          <button
+            onClick={onDiscard}
+            style={{
+              backgroundColor: "#fbeceb",
+              color: "#b3392f",
+              height: 48,
+              borderRadius: 999,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+              border: "1px solid #f3d4d1",
+              cursor: "pointer",
+            }}
+          >
+            Largohu pa ruajtur
+          </button>
+          <button
+            onClick={() => onOpenChange(false)}
+            style={{
+              backgroundColor: "#f4f4f2",
+              color: "#1a1a1a",
+              height: 48,
+              borderRadius: 999,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Vazhdo redaktimin
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 
 
