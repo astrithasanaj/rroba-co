@@ -268,15 +268,6 @@ export function SizePickerSheet({
         </h2>
       </div>
       <div style={{ flex: 1, overflowY: "auto" }} className="px-5 pb-8 pt-4">
-        <h2 className="mb-5 text-2xl font-bold leading-tight">Çfarë madhësie është në etiketë?</h2>
-        <div className="grid grid-cols-3 gap-2.5">
-          {options.map((s) => {
-            const active = value === s;
-            return (
-              <button
-                key={s}
-                ref={active ? selectedRef : undefined}
-                onClick={() => pick(s)}
           <h2 className="mb-5 text-2xl font-bold leading-tight">Çfarë madhësie është në etiketë?</h2>
           <div className="grid grid-cols-3 gap-2.5">
             {options.map((s) => {
