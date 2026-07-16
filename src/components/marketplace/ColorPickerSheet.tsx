@@ -64,41 +64,54 @@ export function ColorPickerSheet({
     onOpenChange(false);
   };
 
+  if (!open) return null;
+
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent
-        className="flex flex-col border-0"
-        style={{ background: "#ffffff", height: "92vh", maxHeight: "92vh" }}
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "#ffffff",
+        zIndex: 60,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        className="shrink-0"
+        style={{
+          background: "#2d1521",
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
+          paddingBottom: 12,
+          paddingLeft: 16,
+          paddingRight: 16,
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+        }}
       >
-        <div className="shrink-0">
-          <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
-          <div className="flex items-center justify-start px-5 pb-2 pt-2">
-            <button
-              type="button"
-              onClick={() => onOpenChange(false)}
-              aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-              style={{
-                width: 36,
-                height: 36,
-                backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-              }}
-            >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
-            </button>
-          </div>
-          <div className="px-5 pb-3 text-center">
-            <DrawerTitle className="text-lg font-medium" style={{ color: "#2d1521" }}>
-              Zgjedh ngjyrën
-            </DrawerTitle>
-            <p className="mt-1 text-xs" style={{ color: "#8a8478" }}>
-              Mund të zgjedhësh deri në dy ngjyra.
-            </p>
-          </div>
+        <button
+          type="button"
+          onClick={() => onOpenChange(false)}
+          aria-label="Kthehu"
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "rgba(255,255,255,0.12)",
+          }}
+        >
+          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+        </button>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <h2 className="text-base font-medium" style={{ color: "#ffffff" }}>
+            Zgjedh ngjyrën
+          </h2>
+          <p className="text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
+            Mund të zgjedhësh deri në dy ngjyra.
+          </p>
         </div>
+      </div>
 
         <div className="flex-1 overflow-y-auto px-5 pb-6">
           <div className="grid grid-cols-4 gap-x-3 gap-y-5">
