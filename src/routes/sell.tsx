@@ -806,7 +806,7 @@ function DetailsStep({
                 <div
                   key={img.previewUrl}
                   className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-2xl"
-                  style={{ background: CARD }}
+                  style={{ background: CARD, border: "1px solid #e2e2de" }}
                 >
                   <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
                   <button
@@ -826,7 +826,7 @@ function DetailsStep({
                 type="button"
                 onClick={onAddMore}
                 className="grid h-[100px] w-[100px] shrink-0 place-items-center rounded-2xl"
-                style={{ background: CARD, color: MUTED }}
+                style={{ background: CARD, color: MUTED, border: "1px solid #e2e2de" }}
               >
                 <Images className="h-7 w-7" strokeWidth={1.5} />
               </button>
