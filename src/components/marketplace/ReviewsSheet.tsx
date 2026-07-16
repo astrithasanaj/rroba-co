@@ -473,7 +473,22 @@ export function ReviewsSheet({
       <Sheet open={rateOpen} onOpenChange={setRateOpen}>
         <SheetContent side="bottom" hideClose className="p-0 border-0" style={{ backgroundColor: CREAM }}>
           <div style={{ padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => setRateOpen(false)}
+                aria-label="Kthehu"
+                className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+                style={{
+                  width: 36,
+                  height: 36,
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(226,226,222,0.8)",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              </button>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerëso shitësin</div>
             </div>
             <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 20 }}>

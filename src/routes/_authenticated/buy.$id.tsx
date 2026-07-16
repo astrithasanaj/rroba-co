@@ -371,11 +371,18 @@ function BuyPage() {
 
       {/* Offer sheet */}
       <Sheet open={offerOpen} onOpenChange={setOfferOpen}>
-        <SheetContent side="bottom" style={{ backgroundColor: CREAM, borderColor: DIVIDER }} className="rounded-t-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-14" />
+        <SheetContent side="bottom" hideClose style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              type="button"
+              onClick={() => setOfferOpen(false)}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            </button>
             <h3 className="text-base font-bold" style={{ color: TEXT }}>Propozim çmimi</h3>
-            <button onClick={() => setOfferOpen(false)} className="text-sm" style={{ color: MUTED }}>Anulo</button>
           </div>
           <p className="text-sm mb-3" style={{ color: MUTED }}>Çmimi aktual: €{price}</p>
           <div className="flex items-center rounded-xl px-4 py-3 mb-2" style={{ backgroundColor: CARD }}>
@@ -406,12 +413,18 @@ function BuyPage() {
 
       {/* Protection info sheet */}
       <Sheet open={protectionInfoOpen} onOpenChange={setProtectionInfoOpen}>
-        <SheetContent side="bottom" style={{ backgroundColor: CREAM, borderColor: DIVIDER }} className="rounded-t-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold" style={{ color: TEXT }}>Mbrojtja e blerësit</h3>
-            <button onClick={() => setProtectionInfoOpen(false)}>
-              <X size={20} color={TEXT} />
+        <SheetContent side="bottom" hideClose style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              type="button"
+              onClick={() => setProtectionInfoOpen(false)}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
             </button>
+            <h3 className="text-base font-bold" style={{ color: TEXT }}>Mbrojtja e blerësit</h3>
           </div>
           <p className="text-sm mb-6" style={{ color: TEXT }}>
             Mbrojtja e blerësit siguron që të marrësh artikullin siç përshkruhet.
@@ -421,8 +434,19 @@ function BuyPage() {
 
       {/* Confirm buy sheet */}
       <Sheet open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <SheetContent side="bottom" style={{ backgroundColor: CREAM, borderColor: DIVIDER }} className="rounded-t-2xl">
-          <h3 className="text-base font-bold mb-4 text-center" style={{ color: TEXT }}>Konfirmo blerjen</h3>
+        <SheetContent side="bottom" hideClose style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              type="button"
+              onClick={() => setConfirmOpen(false)}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            </button>
+            <h3 className="text-base font-bold" style={{ color: TEXT }}>Konfirmo blerjen</h3>
+          </div>
           <div className="rounded-2xl p-4 mb-4 space-y-2" style={{ backgroundColor: CARD }}>
             <div className="flex justify-between text-sm"><span style={{ color: MUTED }}>Artikulli</span><span style={{ color: TEXT }} className="font-semibold">{listing.title}</span></div>
             <div className="flex justify-between text-sm"><span style={{ color: MUTED }}>Çmimi</span><span style={{ color: TEXT }} className="font-semibold">€{price}</span></div>

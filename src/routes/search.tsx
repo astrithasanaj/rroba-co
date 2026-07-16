@@ -8,6 +8,7 @@ import {
   Clock,
   Users,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   Shirt,
   Baby,
@@ -1233,12 +1234,28 @@ function FiltersSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="max-h-[85vh] overflow-y-auto border-0"
+        hideClose
+        className="overflow-y-auto border-0"
         style={{ backgroundColor: BG }}
       >
-        <SheetHeader>
+        <div className="flex items-center gap-3 pb-4">
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+          </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
-        </SheetHeader>
+        </div>
         <div className="mt-4 space-y-5">
           <FilterChips
             label="Gjendja"
