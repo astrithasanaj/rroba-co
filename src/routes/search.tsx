@@ -119,6 +119,8 @@ function SearchPage() {
   const [focused, setFocused] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [pickerInitialKey, setPickerInitialKey] = useState<string | undefined>(undefined);
+  const [genderTab, setGenderTab] = useState<"Femra" | "Meshkuj" | "Fëmijë" | null>(null);
   const [filters, setFilters] = useState<Filters>({});
   const [catSelection, setCatSelection] = useState<CategorySelection>(() => {
     const sel = emptySelection();
