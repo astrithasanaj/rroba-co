@@ -1363,6 +1363,20 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
     setAvatarUrl(profile?.avatar_url ?? "");
   }, [profile]);
 
+  useEffect(() => {
+    if (!onDirtyChange) return;
+    const h = height.trim() === "" ? null : Math.max(0, Math.min(260, parseInt(height, 10) || 0));
+    const dirty =
+      (name ?? "") !== (profile?.name ?? "") ||
+      (bio ?? "") !== (profile?.bio ?? "") ||
+      (city ?? "") !== (profile?.city ?? "") ||
+      (cityId ?? null) !== (profile?.city_id ?? null) ||
+      h !== (profile?.height_cm ?? null) ||
+      (avatarUrl || null) !== (profile?.avatar_url ?? null);
+    onDirtyChange(dirty);
+  }, [name, bio, city, cityId, height, avatarUrl, profile, onDirtyChange]);
+
+
   const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
