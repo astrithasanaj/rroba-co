@@ -1438,7 +1438,7 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
             type="button"
             onClick={() => navigate({ to: "/profile/change-email" })}
             className="text-xs font-semibold"
-            style={{ color: "#ffffff", backgroundColor: "#1c1a16", border: "none", borderRadius: 9999, padding: "5px 12px", cursor: "pointer" }}
+            style={{ color: "#ffffff", background: "linear-gradient(120deg, #e8836a, #c65a7a)", border: "none", borderRadius: 9999, padding: "5px 12px", cursor: "pointer" }}
           >
             Ndrysho email-in
           </button>
