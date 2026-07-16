@@ -1092,7 +1092,7 @@ function SettingsSheet({
           }}
         >
           <button
-            onClick={() => (view !== "main" ? setView("main") : onOpenChange(false))}
+            onClick={handleBack}
             aria-label="Mbrapa"
             style={{
               background: CARD,
