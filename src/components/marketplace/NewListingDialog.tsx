@@ -159,6 +159,7 @@ export function NewListingDialog({
     brand.trim().length > 0 &&
     brand.trim().length <= 60 &&
     category.length > 0 &&
+    subcategory.length > 0 &&
     size.trim().length > 0 &&
     size.trim().length <= 20 &&
     price.trim().length > 0 &&
