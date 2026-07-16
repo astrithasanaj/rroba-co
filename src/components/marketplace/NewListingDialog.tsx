@@ -188,6 +188,7 @@ export function NewListingDialog({
         title: title.trim(),
         brand: brand.trim(),
         category,
+        subcategory,
         size: size.trim(),
         price: priceNum,
         description: description.trim(),
