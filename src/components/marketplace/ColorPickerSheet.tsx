@@ -165,7 +165,6 @@ export function ColorPickerSheet({
             Konfirmo
           </button>
         </div>
-      </DrawerContent>
-    </Drawer>
+    </div>
   );
 }
