@@ -1409,11 +1409,29 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     <div className="space-y-4 pb-6">
       <div className="flex items-center gap-3">
         <img src={avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`} alt="" className="h-16 w-16 rounded-full object-cover" style={{ boxShadow: `0 0 0 2px ${DIVIDER}` }} />
-        <label className="cursor-pointer rounded-full px-3 py-2 text-xs font-medium" style={{ backgroundColor: CARD, color: INK }}>
-          {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
-          <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
-        </label>
+        <div className="flex flex-col gap-1.5">
+          <label className="cursor-pointer rounded-full px-3 py-2 text-xs font-medium" style={{ backgroundColor: CARD, color: INK, width: "fit-content" }}>
+            {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
+            <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
+          </label>
+          {avatarUrl && !avatarUrl.includes("dicebear.com") && (
+            <button
+              type="button"
+              onClick={() => setRemovePhotoOpen(true)}
+              className="w-fit text-xs font-medium"
+              style={{ color: "#b3392f", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}
+            >
+              Hiq foton aktuale
+            </button>
+          )}
+        </div>
       </div>
+      <RemovePhotoDialog
+        open={removePhotoOpen}
+        onOpenChange={setRemovePhotoOpen}
+        onConfirm={handleRemovePhoto}
+        loading={removingPhoto}
+      />
       <div>
         <div className="flex items-center justify-between">
           <Label style={{ color: INK }}>Email</Label>
