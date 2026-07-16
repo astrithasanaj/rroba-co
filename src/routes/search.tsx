@@ -16,6 +16,9 @@ import {
   Frame,
   Speaker,
   Gamepad2,
+  LayoutGrid,
+  Venus,
+  Mars,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -496,6 +499,7 @@ function SearchPage() {
           />
         ) : (
           <EksploreList
+            genderTab={genderTab}
             onOpenPicker={(key) => {
               setPickerInitialKey(key);
               setShowCategoryPicker(true);
@@ -533,6 +537,7 @@ function SearchPage() {
         value={catSelection}
         onApply={setCatSelection}
         initialNodeKey={pickerInitialKey}
+        gender={genderTab ?? "Femra"}
       />
 
       <FiltersSheet
@@ -606,7 +611,21 @@ function GenderTabs({
   );
 }
 
-function EksploreList({ onOpenPicker }: { onOpenPicker: (key?: string) => void }) {
+function EksploreList({
+  genderTab,
+  onOpenPicker,
+}: {
+  genderTab: "Femra" | "Meshkuj" | "Fëmijë" | null;
+  onOpenPicker: (key?: string) => void;
+}) {
+  const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
+  const rows = EKSPLORE_ROWS.filter((row) => row.key !== "femije");
+  const childIcons: Record<string, typeof Baby> = {
+    Vajza: Venus,
+    Djem: Mars,
+    Bebe: Baby,
+  };
+
   return (
     <section className="mt-4">
       <button
@@ -633,32 +652,89 @@ function EksploreList({ onOpenPicker }: { onOpenPicker: (key?: string) => void }
         <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
       </button>
 
-      {EKSPLORE_ROWS.map(({ key, label, Icon }) => (
-        <button
-          key={key}
-          type="button"
-          onClick={() => onOpenPicker(key)}
-          className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-          style={{ borderBottom: "1px solid #e2e2de", background: BG }}
-        >
-          <span
-            className="grid place-items-center"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              background: "#2d1521",
-              flexShrink: 0,
-            }}
+      {genderTab === "Fëmijë" ? (
+        femijeRows.map(({ label }) => {
+          const Icon = childIcons[label] ?? Baby;
+          return (
+            <button
+              key={label}
+              type="button"
+              onClick={() => onOpenPicker("femije")}
+              className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+              style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+            >
+              <span
+                className="grid place-items-center"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  background: "#2d1521",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+              </span>
+              <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
+                {label}
+              </span>
+              <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+            </button>
+          );
+        })
+      ) : (
+        <>
+          {rows.map(({ key, label, Icon }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onOpenPicker(key)}
+              className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+              style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+            >
+              <span
+                className="grid place-items-center"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  background: "#2d1521",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+              </span>
+              <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
+                {label}
+              </span>
+              <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => onOpenPicker(undefined)}
+            className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+            style={{ borderBottom: "1px solid #e2e2de", background: BG }}
           >
-            <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
-          </span>
-          <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
-            {label}
-          </span>
-          <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
-        </button>
-      ))}
+            <span
+              className="grid place-items-center"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                background: "#2d1521",
+                flexShrink: 0,
+              }}
+            >
+              <LayoutGrid size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+            </span>
+            <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
+              Për të gjithë
+            </span>
+            <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+          </button>
+        </>
+      )}
     </section>
   );
 }
