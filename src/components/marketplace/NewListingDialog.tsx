@@ -278,27 +278,53 @@ export function NewListingDialog({
             />
           </div>
 
+          <div>
+            <Label htmlFor="brand">Merke</Label>
+            <Input
+              id="brand"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              maxLength={60}
+              placeholder="Zara, Nike …"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="brand">Merke</Label>
-              <Input
-                id="brand"
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                maxLength={60}
-                placeholder="Zara, Nike …"
-              />
-            </div>
-            <div>
               <Label>Kategori</Label>
-              <Select value={category} onValueChange={setCategory}>
+              <Select
+                value={nodeKey}
+                onValueChange={(v) => {
+                  setNodeKey(v);
+                  setSubcategory("");
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Velg" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
+                  {CATEGORY_TAXONOMY.map((n) => (
+                    <SelectItem key={n.key} value={n.key}>
+                      {n.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Nënkategori</Label>
+              <Select
+                value={subcategory}
+                onValueChange={setSubcategory}
+                disabled={!selectedNode}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={selectedNode ? "Velg" : "—"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectedNode?.groups ?? []).map((g) => (
+                    <SelectItem key={g.label} value={g.label}>
+                      {g.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
