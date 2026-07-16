@@ -10,20 +10,20 @@ export type ColorOption = {
 };
 
 export const COLOR_OPTIONS: ColorOption[] = [
-  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#1a1a1a" },
+  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#2d1521" },
   { name: "Gri", inner: "#9e9e9e", selectedBorder: "#9e9e9e" },
   { name: "E bardhë", inner: "#f5f5f5", innerRing: "#c8c3b9", selectedBorder: "#c8c3b9" },
-  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#1a1a1a" },
+  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#2d1521" },
   { name: "Bezhë", inner: "#d4b896", selectedBorder: "#bca07d" },
   { name: "E gjelbër", inner: "#43a047", selectedBorder: "#2e7d32" },
   { name: "Kaki", inner: "#8a8c5a", selectedBorder: "#6b6d45" },
   { name: "Blu", inner: "#42a5f5", selectedBorder: "#1976d2" },
-  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#1a1a1a" },
+  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#2d1521" },
   { name: "Turkez", inner: "#26c6da", selectedBorder: "#0097a7" },
   { name: "Vjollcë", inner: "#8e24aa", selectedBorder: "#6a1b9a" },
   { name: "Rozë", inner: "#f48fb1", selectedBorder: "#c2185b" },
   { name: "E kuqe", inner: "#e53935", selectedBorder: "#c62828" },
-  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#1a1a1a" },
+  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#2d1521" },
   { name: "Kafe", inner: "#8B5E3C", selectedBorder: "#5d4037" },
   { name: "Portokalli", inner: "#fb8c00", selectedBorder: "#ef6c00" },
   { name: "E verdhë", inner: "#fdd835", selectedBorder: "#fbc02d" },
@@ -77,13 +77,13 @@ export function ColorPickerSheet({
               onClick={() => onOpenChange(false)}
               aria-label="Mbrapa"
               className="grid h-9 w-9 place-items-center rounded-full"
-              style={{ background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }}
+              style={{ background: "#ffffff", color: "#2d1521", border: "1px solid #e2e2de" }}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
           </div>
           <div className="px-5 pb-3 text-center">
-            <DrawerTitle className="text-lg font-medium" style={{ color: "#1a1a1a" }}>
+            <DrawerTitle className="text-lg font-medium" style={{ color: "#2d1521" }}>
               Zgjedh ngjyrën
             </DrawerTitle>
             <p className="mt-1 text-xs" style={{ color: "#8a8478" }}>
@@ -106,7 +106,7 @@ export function ColorPickerSheet({
                   <div
                     className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full transition"
                     style={{
-                      background: "#ddd8ce",
+                      background: "#e2e2de",
                       boxShadow: active ? `0 0 0 2px ${opt.selectedBorder} inset` : undefined,
                     }}
                   >
@@ -118,7 +118,7 @@ export function ColorPickerSheet({
                       }}
                     />
                   </div>
-                  <span className="text-center text-[11px] font-medium" style={{ color: "#1a1a1a" }}>
+                  <span className="text-center text-[11px] font-medium" style={{ color: "#2d1521" }}>
                     {opt.name}
                   </span>
                 </button>

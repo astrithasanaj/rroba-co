@@ -15,10 +15,10 @@ type Seller = { id: string; name: string; avatar_url: string | null };
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const TEXT = "#1a1a1a";
+const TEXT = "#2d1521";
 const MUTED = "#a89f94";
-const DIVIDER = "#ddd8ce";
-const CORAL = "#e8826a";
+const DIVIDER = "#e2e2de";
+const CORAL = "#c65a7a";
 
 function roundHalf(n: number) {
   return Math.round(n * 2) / 2;

@@ -14,9 +14,9 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
 
 const CREAM = "#ffffff";
 const CHIP_BG = "#ffffff";
-const DARK = "#1a1a1a";
+const DARK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 
 // City list moved to DB — see CityPicker/useCities
 const GENDERS = [

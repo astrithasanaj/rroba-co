@@ -44,10 +44,10 @@ type SortMode = "new" | "low" | "high" | "popular";
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const DIVIDER = "#ddd8ce";
-const CORAL = "#e8826a";
+const DIVIDER = "#e2e2de";
+const CORAL = "#c65a7a";
 
 function Stat({
   value,

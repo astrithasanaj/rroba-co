@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/profile/delete-account")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
 const RED = "#e53935";
 
@@ -91,7 +91,7 @@ function DeleteAccountPage() {
   const inputBox: React.CSSProperties = {
     width: "100%",
     height: 52,
-    background: "#f6f1e7",
+    background: "#ffffff",
     border: "none",
     borderRadius: 12,
     padding: "0 16px",

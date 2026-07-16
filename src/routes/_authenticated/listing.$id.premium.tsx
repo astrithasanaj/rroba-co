@@ -16,9 +16,9 @@ export const Route = createFileRoute("/_authenticated/listing/$id/premium")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 
 type Plan = {
   key: string;
@@ -179,7 +179,7 @@ function PremiumPage() {
 
         <div
           className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-3"
-          style={{ backgroundColor: CREAM, borderTop: `1px solid #ddd8ce` }}
+          style={{ backgroundColor: CREAM, borderTop: `1px solid #e2e2de` }}
         >
           <button
             onClick={activate}

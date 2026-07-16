@@ -30,11 +30,11 @@ export const Route = createFileRoute("/_authenticated/listing/$id/edit")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
-const DIVIDER = "#ddd8ce";
+const DIVIDER = "#e2e2de";
 const BORDER = "1px solid #e2e2de";
 
 const MAX_PHOTOS = 8;

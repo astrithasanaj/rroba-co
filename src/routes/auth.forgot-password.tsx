@@ -10,9 +10,9 @@ export const Route = createFileRoute("/auth/forgot-password")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 const ERR = "#e53935";
 
 function ForgotPage() {

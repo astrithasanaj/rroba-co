@@ -9,9 +9,9 @@ export const Route = createFileRoute("/blocked")({
 });
 
 const CREAM = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
+const CORAL = "#c65a7a";
 const ERR = "#e53935";
 
 function BlockedPage() {

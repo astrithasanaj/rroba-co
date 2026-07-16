@@ -8,9 +8,9 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 const BG = "#ffffff";
 const CARD = "#ffffff";
 const CHIP = "#ffffff";
-const INK = "#1a1a1a";
-const CORAL = "#e8826a";
-const DISABLED = "#ddd8ce";
+const INK = "#2d1521";
+const CORAL = "#c65a7a";
+const DISABLED = "#e2e2de";
 
 export const Route = createFileRoute("/category/$slug/choose-gender")({
   component: () => (<SwipeBackWrapper><GenderSelectPage /></SwipeBackWrapper>),

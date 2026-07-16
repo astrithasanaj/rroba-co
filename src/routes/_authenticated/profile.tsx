@@ -74,10 +74,10 @@ type OfferRow = {
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const DIVIDER = "#ddd8ce";
-const SOLD = "#e8826a";
+const DIVIDER = "#e2e2de";
+const SOLD = "#c65a7a";
 
 function ProfilePage() {
   const { user } = Route.useRouteContext();
@@ -1579,7 +1579,7 @@ function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean
         className="flex w-full items-center gap-3 text-left"
         style={{ padding: "16px 20px", WebkitTapHighlightColor: "transparent" }}
       >
-        <div className="flex-1 text-[14px] font-bold" style={{ color: "#1a1a1a" }}>{q}</div>
+        <div className="flex-1 text-[14px] font-bold" style={{ color: "#2d1521" }}>{q}</div>
         <ChevronRight
           className="h-4 w-4 shrink-0"
           strokeWidth={2}
@@ -1615,7 +1615,7 @@ function FaqView() {
             open={openIdx === i}
             onToggle={() => setOpenIdx((cur) => (cur === i ? null : i))}
           />
-          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: "#ddd8ce" }} />}
+          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: "#e2e2de" }} />}
         </div>
       ))}
     </div>
@@ -1751,7 +1751,7 @@ function RemovePhotoDialog({
           style={{
             fontSize: 16,
             fontWeight: 600,
-            color: "#1a1a1a",
+            color: "#2d1521",
             marginTop: 16,
           }}
         >
@@ -1791,7 +1791,7 @@ function RemovePhotoDialog({
             disabled={loading}
             style={{
               backgroundColor: "#f4f4f2",
-              color: "#1a1a1a",
+              color: "#2d1521",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
@@ -1841,7 +1841,7 @@ function UnsavedChangesDialog({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: 16, fontWeight: 600, color: "#1a1a1a" }}>
+        <div style={{ fontSize: 16, fontWeight: 600, color: "#2d1521" }}>
           Ndryshimet e paruajtura
         </div>
         <div style={{ fontSize: 13, color: "#a89f94", lineHeight: 1.5, marginTop: 8 }}>
@@ -1868,7 +1868,7 @@ function UnsavedChangesDialog({
             onClick={() => onOpenChange(false)}
             style={{
               backgroundColor: "#f4f4f2",
-              color: "#1a1a1a",
+              color: "#2d1521",
               height: 48,
               borderRadius: 999,
               fontSize: 14,

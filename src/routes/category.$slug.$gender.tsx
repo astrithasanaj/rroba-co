@@ -16,7 +16,7 @@ import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy"
 
 const BG = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
 
 type SearchParams = { subcategories?: string };

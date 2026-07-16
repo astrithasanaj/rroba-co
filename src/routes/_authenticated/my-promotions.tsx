@@ -17,10 +17,10 @@ export const Route = createFileRoute("/_authenticated/my-promotions")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#1a1a1a";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const CORAL = "#e8826a";
-const DIVIDER = "#ddd8ce";
+const CORAL = "#c65a7a";
+const DIVIDER = "#e2e2de";
 
 type Kind = "feed_top" | "category_top" | "search_top";
 

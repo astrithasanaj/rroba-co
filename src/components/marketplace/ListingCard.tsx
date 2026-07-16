@@ -89,7 +89,7 @@ export function ListingCard({
               top: 18,
               right: -28,
               width: 110,
-              background: "#e8826a",
+              background: "#c65a7a",
               color: "#ffffff",
               fontSize: 11,
               fontWeight: 700,

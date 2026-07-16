@@ -230,7 +230,7 @@ export function SizePickerSheet({
             onClick={() => onOpenChange(false)}
             aria-label="Mbrapa"
             className="grid h-9 w-9 place-items-center rounded-full"
-            style={{ background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }}
+            style={{ background: "#ffffff", color: "#2d1521", border: "1px solid #e2e2de" }}
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -250,7 +250,7 @@ export function SizePickerSheet({
                   style={
                     active
                       ? { background: "linear-gradient(120deg, #e8836a, #c65a7a)", color: "#ffffff" }
-                      : { background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }
+                      : { background: "#ffffff", color: "#2d1521", border: "1px solid #e2e2de" }
                   }
                 >
                   {s}
@@ -291,7 +291,7 @@ export function SizePickerSheet({
                               key={j}
                               className="py-2.5 pr-3 whitespace-nowrap"
                               style={{
-                                color: j === 0 ? "#1a1a1a" : "#8a8478",
+                                color: j === 0 ? "#2d1521" : "#8a8478",
                                 fontWeight: j === 0 ? 600 : 400,
                               }}
                             >
