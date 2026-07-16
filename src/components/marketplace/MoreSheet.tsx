@@ -116,7 +116,8 @@ export function MoreSheet({
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(true) : close())}>
       <SheetContent
         side="bottom"
-        className="p-0 border-0 rounded-t-2xl max-h-[88vh] overflow-hidden"
+        hideClose
+        className="p-0 border-0 flex flex-col"
         style={{ backgroundColor: CREAM }}
       >
         {view === "more" ? (
