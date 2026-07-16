@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { ChevronLeft, Ruler, ChevronDown, ArrowLeft } from "lucide-react";
+import { ChevronLeft, Ruler, ChevronDown } from "lucide-react";
+
 
 export type SizeKind =
   | "clothing-femra"
@@ -124,8 +124,12 @@ export function resolveSizeKind(
   gender: string,
   sub: string,
 ): SizeKind {
-  const isKidsCat = categoryLabel === "Artikuj për fëmijë";
+  const isKidsCat = categoryLabel === "Fëmijë & bebe";
   const s = (sub || "").toLowerCase();
+
+  if (categoryLabel === "Këpucë") {
+    return isKidsCat ? "shoes-kids" : gender === "Meshkuj" ? "shoes-meshkuj" : "shoes-femra";
+  }
 
   const clothingSubs = [
     "veshje", "bluza", "t-shirt", "këmisha", "pantallona", "funde",
@@ -221,30 +225,49 @@ export function SizePickerSheet({
     setTimeout(() => onOpenChange(false), 200);
   };
 
+  if (!open) return null;
+
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="border-0" style={{ background: "#ffffff", height: "92vh", maxHeight: "92vh" }}>
-        <div className="mx-auto h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
-        <div className="flex items-center gap-3 px-5 pb-3 pt-4">
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-            style={{
-              width: 36,
-              height: 36,
-              backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-            }}
-          >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
-          </button>
-          <DrawerTitle className="text-base font-medium text-foreground">Zgjedh madhësinë</DrawerTitle>
-        </div>
-        <div className="overflow-y-auto px-5 pb-8">
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "#ffffff",
+        zIndex: 60,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{
+          background: "#2d1521",
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
+          paddingBottom: 12,
+          paddingLeft: 16,
+          paddingRight: 16,
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => onOpenChange(false)}
+          aria-label="Kthehu"
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "rgba(255,255,255,0.12)",
+          }}
+        >
+          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+        </button>
+        <h2 className="text-base font-medium" style={{ color: "#ffffff" }}>
+          Zgjedh madhësinë
+        </h2>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto" }} className="px-5 pb-8 pt-4">
           <h2 className="mb-5 text-2xl font-bold leading-tight">Çfarë madhësie është në etiketë?</h2>
           <div className="grid grid-cols-3 gap-2.5">
             {options.map((s) => {
@@ -314,8 +337,7 @@ export function SizePickerSheet({
               )}
             </div>
           )}
-        </div>
-      </DrawerContent>
-    </Drawer>
+      </div>
+    </div>
   );
 }
