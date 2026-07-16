@@ -940,7 +940,7 @@ function DetailsStep({
           onClick={onNext}
           disabled={!canNext}
           className="w-full rounded-2xl py-4 text-sm font-bold transition"
-          style={{ background: canNext ? CORAL : DIVIDER, color: canNext ? "#fff" : MUTED }}
+          style={{ background: canNext ? CORAL_GRADIENT : DIVIDER, color: canNext ? "#fff" : MUTED }}
         >
           Tjetër
         </button>
