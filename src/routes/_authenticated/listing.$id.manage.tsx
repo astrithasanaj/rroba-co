@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
+  ChevronLeft,
   ChevronRight,
   Eye,
   Heart,
