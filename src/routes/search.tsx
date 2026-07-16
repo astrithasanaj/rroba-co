@@ -545,49 +545,120 @@ function SearchPage() {
   );
 }
 
-function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
+const EKSPLORE_ROWS: {
+  key: string;
+  label: string;
+  Icon: React.ComponentType<{ size?: number; strokeWidth?: number; style?: React.CSSProperties }>;
+}[] = [
+  { key: "mode", label: "Modë & aksesorë", Icon: Shirt },
+  { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
+  { key: "interior", label: "Interiør & mobilje", Icon: Archive },
+  { key: "outdoor", label: "Outdoor & sport", Icon: Mountain },
+  { key: "art", label: "Art & dizajn", Icon: Frame },
+  { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },
+  { key: "hobi", label: "Hobi", Icon: Gamepad2 },
+];
+
+function GenderTabs({
+  value,
+  onChange,
+}: {
+  value: "Femra" | "Meshkuj" | "Fëmijë" | null;
+  onChange: (v: "Femra" | "Meshkuj" | "Fëmijë" | null) => void;
+}) {
+  const tabs: ("Femra" | "Meshkuj" | "Fëmijë")[] = ["Femra", "Meshkuj", "Fëmijë"];
   return (
-    <section className="mt-8 px-5">
-      <h2 className="mb-4 text-[20px] font-bold" style={{ color: INK }}>
-        Kategoritë
-      </h2>
-      <div className="grid grid-cols-2 gap-3">
-        {HOME_CATEGORIES.map(({ key, label, Icon }) => (
+    <div
+      className="mt-4 flex items-center gap-6"
+      style={{ borderBottom: "1px solid #e2e2de" }}
+    >
+      {tabs.map((t) => {
+        const active = value === t;
+        return (
           <button
-            key={key}
+            key={t}
             type="button"
-            onClick={() => onPick(key)}
-            className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left tap-icon"
+            onClick={() => onChange(active ? null : t)}
+            className="relative pb-3 pt-1 text-[15px]"
             style={{
-              backgroundColor: CARD,
-              border: "0.5px solid #e2e2de",
-              borderRadius: "16px",
-              padding: "1rem",
+              color: active ? INK : MUTED,
+              fontWeight: active ? 600 : 500,
             }}
           >
-            <div
-              className="grid place-items-center"
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: "50%",
-                background: "#2d1521",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                border: "0.5px solid rgba(255,255,255,0.09)",
-              }}
-            >
-              <Icon size={22} strokeWidth={1.5} style={{ color: "#e8836a" }} />
-            </div>
-            <span
-              className="text-[15px] font-bold leading-tight"
-              style={{ color: INK }}
-            >
-              {label}
-            </span>
+            {t}
+            {active && (
+              <span
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  bottom: -1,
+                  height: 2,
+                  background: "#e8836a",
+                  borderRadius: 2,
+                }}
+              />
+            )}
           </button>
-        ))}
-      </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function EksploreList({ onOpenPicker }: { onOpenPicker: (key?: string) => void }) {
+  return (
+    <section className="mt-4">
+      <button
+        type="button"
+        onClick={() => onOpenPicker(undefined)}
+        className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+        style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+      >
+        <span
+          className="grid place-items-center"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "#fbeceb",
+            flexShrink: 0,
+          }}
+        >
+          <Sparkles size={18} strokeWidth={1.7} style={{ color: "#c65a7a" }} />
+        </span>
+        <span className="flex-1 text-[15px] font-semibold" style={{ color: "#c65a7a" }}>
+          Trending
+        </span>
+        <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
+      </button>
+
+      {EKSPLORE_ROWS.map(({ key, label, Icon }) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => onOpenPicker(key)}
+          className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+          style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+        >
+          <span
+            className="grid place-items-center"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              background: "#2d1521",
+              flexShrink: 0,
+            }}
+          >
+            <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+          </span>
+          <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
+            {label}
+          </span>
+          <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+        </button>
+      ))}
     </section>
   );
 }
