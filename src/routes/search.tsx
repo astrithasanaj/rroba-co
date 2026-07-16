@@ -436,26 +436,9 @@ function SearchPage() {
             )}
           </div>
 
-          {/* Kategoritë trigger */}
-          <div className="mt-3 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowCategoryPicker(true)}
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
-              style={{ backgroundColor: CARD, color: INK, border: "1px solid #d8d8d2" }}
-            >
-              <LayoutGrid className="h-4 w-4" />
-              Kategoritë
-              {catChips.length > 0 && (
-                <span
-                  className="grid min-w-[20px] h-[20px] place-items-center rounded-full px-1.5 text-[10px] font-bold text-white"
-                  style={{ backgroundColor: CORAL }}
-                >
-                  {catChips.length}
-                </span>
-              )}
-            </button>
-          </div>
+          {/* Gender tabs — Femra / Meshkuj / Fëmijë */}
+          <GenderTabs value={genderTab} onChange={setGenderTab} />
+
 
           {/* Selected chip tags */}
           {catChips.length > 0 && (
