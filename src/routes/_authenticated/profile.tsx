@@ -503,45 +503,6 @@ function ProfilePage() {
           )}
         </section>
 
-        {/* Floating sort button */}
-        {currentGrid.length > 0 && (
-          <div
-            style={{
-              position: "fixed",
-              bottom: 90,
-              left: 0,
-              right: 0,
-              display: "flex",
-              justifyContent: "center",
-              padding: "10px 0 8px",
-              zIndex: 30,
-              pointerEvents: "none",
-            }}
-          >
-            <button
-              onClick={() => setSortOpen(true)}
-              className="profile-btn"
-              style={{
-                pointerEvents: "auto",
-                backgroundColor: INK,
-                color: CREAM,
-                height: 36,
-                borderRadius: 24,
-                padding: "0 18px",
-                fontSize: 13,
-                fontWeight: 500,
-                letterSpacing: "0.2px",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                border: "none",
-              }}
-            >
-              <ArrowDownUp style={{ width: 14, height: 14 }} strokeWidth={2} />
-              Rendit
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Sort sheet */}
