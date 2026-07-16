@@ -855,7 +855,7 @@ function DetailsStep({
                   type="button"
                   onClick={() => setCondition(c.value)}
                   className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                  style={{ background: active ? INK : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
+                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
                 >
                   <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
                   <span
