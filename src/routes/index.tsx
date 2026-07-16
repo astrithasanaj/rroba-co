@@ -297,13 +297,13 @@ function ForYou({
                     width: 56,
                     height: 56,
                     borderRadius: "50%",
-                    background: "rgba(10,9,7,0.94)",
+                    background: "#2d1521",
                     backdropFilter: "blur(8px)",
                     WebkitBackdropFilter: "blur(8px)",
                     border: "0.5px solid rgba(255,255,255,0.09)",
                   }}
                 >
-                  <Icon size={24} strokeWidth={1.5} style={{ color: "#f2ede3" }} />
+                  <Icon size={24} strokeWidth={1.5} style={{ color: "#e8836a" }} />
                 </div>
                 <span
                   className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
