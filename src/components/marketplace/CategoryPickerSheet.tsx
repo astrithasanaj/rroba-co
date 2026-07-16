@@ -1,106 +1,72 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import {
-  ChevronLeft,
   ChevronRight,
-  Search as SearchIcon,
-  Sparkles,
+  ChevronLeft,
+  Check,
   Shirt,
-  Baby,
-  Sofa,
   Mountain,
-  Palette,
-  Smartphone,
+  Archive,
+  Baby,
+  Frame,
+  Speaker,
   Gamepad2,
-  Tag,
+  Sparkles,
 } from "lucide-react";
 import {
   CATEGORY_TAXONOMY,
+  emptySelection,
   groupLeafLabels,
   type CategoryNode,
   type CategorySelection,
   type SubcategoryNode,
 } from "@/lib/category-taxonomy";
 
-/* ------------------------------------------------------------------ */
-/* Palette                                                            */
-/* ------------------------------------------------------------------ */
+// Rroba brand palette (white / burgundy / coral — see design direction notes)
 const BG = "#ffffff";
-const HEADER_BG = "#2d1521";
-const HEADER_INK = "#ffffff";
-const HEADER_MUTED = "rgba(255,255,255,0.55)";
-const INK = "#2d1521";
+const INK = "#2d1521"; // dark burgundy — default icon/text on white
 const MUTED = "#a89f94";
 const DIVIDER = "#e2e2de";
-const CHEV = "#a89f94";
-const CORAL_ACTIVE = "#c65a7a";
-const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
-const OUTLET_RED = "#b3392f";
+const HEADER_BG = "#2d1521";
+const HEADER_TEXT = "#ffffff";
+const ACCENT = "#c65a7a"; // pressed/active icon + chevron
+const ROW_ACTIVE_BG = "#fbf6f2";
+const CHECK_BORDER = "#c8c3b9";
+const ACCENT_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
 
-type GenderKey = "femra" | "meshkuj" | "femije";
-const GENDER_TABS: { key: GenderKey; label: string }[] = [
-  { key: "femra", label: "Femra" },
-  { key: "meshkuj", label: "Meshkuj" },
-  { key: "femije", label: "Fëmijë" },
-];
-
-/* Mapping from taxonomy node key to /category/$slug in the app */
-const NODE_TO_SLUG: Record<string, string | undefined> = {
-  mode: "mode",
-  femije: "femije",
-  outdoor: "outdoor",
-  interior: "interior",
-  art: "art",
-  elektronik: "elektronik",
-  hobi: undefined, // no dedicated listing route → fall back to /search
-};
-
-const NODE_ICON: Record<string, typeof Shirt> = {
+const NODE_ICONS: Record<string, typeof Shirt> = {
   mode: Shirt,
-  femije: Baby,
-  interior: Sofa,
   outdoor: Mountain,
-  art: Palette,
-  elektronik: Smartphone,
+  interior: Archive,
+  femije: Baby,
+  art: Frame,
+  elektronik: Speaker,
   hobi: Gamepad2,
 };
 
-function genderToSlug(g: GenderKey, node: CategoryNode): string {
-  if (node.key === "femije") return g === "femije" ? "vajza" : "all";
-  if (g === "femra") return "femra";
-  if (g === "meshkuj") return "meshkuj";
-  return "all";
-}
-
-/* ------------------------------------------------------------------ */
-/* Component                                                          */
-/* ------------------------------------------------------------------ */
-
 type Level =
-  | { kind: "root" }
-  | { kind: "node"; node: CategoryNode }
-  | { kind: "group"; node: CategoryNode; group: SubcategoryNode };
+  | { depth: 0 }
+  | { depth: 1; node: CategoryNode }
+  | { depth: 2; node: CategoryNode; group: SubcategoryNode };
 
 export function CategoryPickerSheet({
   open,
   onOpenChange,
-  // Legacy props kept for caller compatibility; not used in drill-down mode.
-  value: _value,
-  onApply: _onApply,
+  value,
+  onApply,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  value?: CategorySelection;
-  onApply?: (sel: CategorySelection) => void;
+  value: CategorySelection;
+  onApply: (sel: CategorySelection) => void;
 }) {
-  const navigate = useNavigate();
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
-  const [gender, setGender] = useState<GenderKey>("femra");
-  const [stack, setStack] = useState<Level[]>([{ kind: "root" }]);
-  const [query, setQuery] = useState("");
+  const [level, setLevel] = useState<Level>({ depth: 0 });
+  // Draft multi-select, only used at the leaf (depth 2) level — cleared
+  // every time a new group is entered.
+  const [leafDraft, setLeafDraft] = useState<Set<string>>(new Set());
 
-  // Swipe-back on the top-level page
+  // Swipe-back (from left edge — goes up one level, or closes at root)
   const pageRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const dragging = useRef(false);
@@ -108,8 +74,8 @@ export function CategoryPickerSheet({
   useEffect(() => {
     if (open) {
       setMounted(true);
-      setStack([{ kind: "root" }]);
-      setQuery("");
+      setLevel({ depth: 0 });
+      setLeafDraft(new Set());
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setVisible(true));
       });
@@ -121,53 +87,14 @@ export function CategoryPickerSheet({
   }, [open, mounted]);
 
   const close = () => onOpenChange(false);
-  const current = stack[stack.length - 1];
 
   const goBack = () => {
-    if (stack.length > 1) setStack((s) => s.slice(0, -1));
+    if (level.depth === 2) setLevel({ depth: 1, node: level.node });
+    else if (level.depth === 1) setLevel({ depth: 0 });
     else close();
   };
 
-  const openNode = (node: CategoryNode) =>
-    setStack((s) => [...s, { kind: "node", node }]);
-  const openGroup = (node: CategoryNode, group: SubcategoryNode) =>
-    setStack((s) => [...s, { kind: "group", node, group }]);
-
-  const navigateToNode = (node: CategoryNode) => {
-    const slug = NODE_TO_SLUG[node.key];
-    if (!slug) {
-      navigate({ to: "/search", search: { category: node.categories[0] } as never });
-    } else {
-      navigate({
-        to: "/category/$slug/$gender",
-        params: { slug, gender: genderToSlug(gender, node) },
-      });
-    }
-    close();
-  };
-
-  const navigateToLeaf = (node: CategoryNode, leafLabel: string) => {
-    const slug = NODE_TO_SLUG[node.key];
-    if (!slug) {
-      navigate({ to: "/search", search: { q: leafLabel } as never });
-    } else {
-      navigate({
-        to: "/category/$slug/$gender",
-        params: { slug, gender: genderToSlug(gender, node) },
-        search: { subcategories: leafLabel } as never,
-      });
-    }
-    close();
-  };
-
-  const navigateTrending = () => {
-    navigate({ to: "/search", search: { section: "trending" } as never });
-    close();
-  };
-
-  /* Swipe-back only on root level (child levels have their own back button) */
   const onTouchStart = (e: React.TouchEvent) => {
-    if (current.kind !== "root") return;
     const t = e.touches[0];
     if (t.clientX <= 24) {
       touchStart.current = { x: t.clientX, y: t.clientY };
@@ -196,40 +123,54 @@ export function CategoryPickerSheet({
     pageRef.current.style.transition = "";
     pageRef.current.style.transform = "";
     touchStart.current = null;
-    if (dragging.current && dx > 80) close();
+    if (dragging.current && dx > 80) goBack();
     dragging.current = false;
   };
 
-  /* Filter the visible items by the search query */
-  const filteredRoot = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return CATEGORY_TAXONOMY;
-    return CATEGORY_TAXONOMY.filter((n) => n.label.toLowerCase().includes(q));
-  }, [query]);
-
-  const filteredGroups = useMemo(() => {
-    if (current.kind !== "node") return [];
-    const q = query.trim().toLowerCase();
-    if (!q) return current.node.groups;
-    return current.node.groups.filter((g) => g.label.toLowerCase().includes(q));
-  }, [current, query]);
-
-  const filteredLeaves = useMemo(() => {
-    if (current.kind !== "group") return [];
-    const q = query.trim().toLowerCase();
-    const leaves = groupLeafLabels(current.group);
-    if (!q) return leaves;
-    return leaves.filter((l) => l.toLowerCase().includes(q));
-  }, [current, query]);
-
   if (!mounted) return null;
 
-  const headerTitle =
-    current.kind === "root"
+  // Apply a selection and close — every leaf tap in the drill-down navigates
+  // straight to results, matching the Zalando "one choice, then go" model.
+  const applyAndClose = (sel: CategorySelection) => {
+    onApply(sel);
+    close();
+  };
+
+  const pickWholeNode = (node: CategoryNode) => {
+    const sel = emptySelection();
+    sel.categories.add(node.key);
+    applyAndClose(sel);
+  };
+
+  const pickWholeGroup = (node: CategoryNode, group: SubcategoryNode) => {
+    const sel = emptySelection();
+    for (const leaf of groupLeafLabels(group)) {
+      sel.subcategories.add(`${node.key}::${leaf}`);
+    }
+    applyAndClose(sel);
+  };
+
+  const pickLeaves = (node: CategoryNode, leaves: Set<string>) => {
+    const sel = emptySelection();
+    for (const leaf of leaves) sel.subcategories.add(`${node.key}::${leaf}`);
+    applyAndClose(sel);
+  };
+
+  const toggleLeaf = (leaf: string) => {
+    setLeafDraft((prev) => {
+      const next = new Set(prev);
+      if (next.has(leaf)) next.delete(leaf);
+      else next.add(leaf);
+      return next;
+    });
+  };
+
+  const title =
+    level.depth === 0
       ? "Kategoritë"
-      : current.kind === "node"
-        ? current.node.label
-        : current.group.label;
+      : level.depth === 1
+        ? level.node.label
+        : level.group.label;
 
   return (
     <div
@@ -250,135 +191,45 @@ export function CategoryPickerSheet({
         touchAction: "pan-y",
       }}
     >
-      {/* Dark burgundy header */}
+      {/* Header */}
       <div
         style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: "14px 16px 12px",
           background: HEADER_BG,
-          color: HEADER_INK,
-          paddingTop: "env(safe-area-inset-top, 0px)",
           flexShrink: 0,
         }}
       >
-        <div
+        <button
+          type="button"
+          onClick={goBack}
+          aria-label={level.depth === 0 ? "Mbyll" : "Kthehu"}
           style={{
+            width: 36,
+            height: 36,
+            background: "rgba(255,255,255,0.12)",
+            border: "none",
+            borderRadius: "50%",
             display: "flex",
             alignItems: "center",
-            padding: "10px 12px 6px",
-            gap: 8,
+            justifyContent: "center",
+            cursor: "pointer",
+            flexShrink: 0,
           }}
         >
-          <button
-            type="button"
-            onClick={goBack}
-            aria-label={current.kind === "root" ? "Mbyll" : "Kthehu"}
-            style={{
-              width: 36,
-              height: 36,
-              display: "grid",
-              placeItems: "center",
-              background: "transparent",
-              border: "none",
-              color: HEADER_INK,
-              cursor: "pointer",
-              WebkitTapHighlightColor: "transparent",
-            }}
-          >
-            <ChevronLeft size={22} strokeWidth={1.8} />
-          </button>
-          <span
-            style={{
-              fontSize: 15,
-              fontWeight: 600,
-              letterSpacing: 0.2,
-              flex: 1,
-              textAlign: "center",
-              paddingRight: 36,
-            }}
-          >
-            {headerTitle}
-          </span>
-        </div>
-
-        {/* Gender tabs — only on the root level */}
-        {current.kind === "root" && (
-          <div
-            style={{
-              display: "flex",
-              padding: "0 4px",
-              gap: 4,
-            }}
-          >
-            {GENDER_TABS.map((t) => {
-              const active = gender === t.key;
-              return (
-                <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => setGender(t.key)}
-                  style={{
-                    flex: 1,
-                    padding: "12px 4px 14px",
-                    background: "transparent",
-                    border: "none",
-                    color: active ? HEADER_INK : HEADER_MUTED,
-                    fontSize: 14,
-                    fontWeight: active ? 700 : 500,
-                    letterSpacing: 0.2,
-                    position: "relative",
-                    cursor: "pointer",
-                    WebkitTapHighlightColor: "transparent",
-                  }}
-                >
-                  {t.label}
-                  <span
-                    aria-hidden
-                    style={{
-                      position: "absolute",
-                      left: 16,
-                      right: 16,
-                      bottom: 0,
-                      height: 3,
-                      borderRadius: 3,
-                      background: active ? CORAL_GRADIENT : "transparent",
-                      transition: "opacity 160ms ease",
-                    }}
-                  />
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Search input */}
-        <div style={{ padding: "10px 14px 14px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              background: "rgba(255,255,255,0.10)",
-              border: "1px solid rgba(255,255,255,0.14)",
-              borderRadius: 12,
-              padding: "10px 12px",
-            }}
-          >
-            <SearchIcon size={16} strokeWidth={1.8} color={HEADER_MUTED} />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Çfarë kërkoni?"
-              style={{
-                flex: 1,
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                color: HEADER_INK,
-                fontSize: 14,
-                fontWeight: 500,
-              }}
-            />
-          </div>
-        </div>
+          <ChevronLeft size={18} color={HEADER_TEXT} />
+        </button>
+        <span
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: HEADER_TEXT,
+          }}
+        >
+          {title}
+        </span>
       </div>
 
       {/* Scrollable list */}
@@ -387,168 +238,248 @@ export function CategoryPickerSheet({
           flex: 1,
           overflowY: "auto",
           WebkitOverflowScrolling: "touch",
-          background: BG,
-          paddingBottom: 96,
         }}
       >
-        {current.kind === "root" && (
-          <>
-            {!query && (
-              <>
-                <Row
-                  label="Trending"
-                  onClick={navigateTrending}
-                  IconLeft={Sparkles}
-                  emphasize
-                />
-                <div
-                  aria-hidden
-                  style={{
-                    height: 8,
-                    background: "#f7f5f0",
-                    borderTop: `1px solid ${DIVIDER}`,
-                    borderBottom: `1px solid ${DIVIDER}`,
-                  }}
-                />
-              </>
-            )}
-            {filteredRoot.map((node) => (
-              <Row
-                key={node.key}
-                label={node.label}
-                onClick={() => openNode(node)}
-                IconLeft={NODE_ICON[node.key] ?? Tag}
-              />
-            ))}
-          </>
+        {level.depth === 0 && (
+          <RootList
+            selection={value}
+            onPickNode={(node) => setLevel({ depth: 1, node })}
+          />
         )}
 
-        {current.kind === "node" && (
-          <>
-            <Row
-              label={`Shiko të gjitha ${current.node.label.toLowerCase()}`}
-              onClick={() => navigateToNode(current.node)}
-              IconLeft={NODE_ICON[current.node.key] ?? Tag}
-              emphasizeText
-            />
-            {filteredGroups.map((g) => {
-              const hasChildren = !!g.children && g.children.length > 0;
-              return (
-                <Row
-                  key={g.label}
-                  label={g.label}
-                  onClick={() =>
-                    hasChildren
-                      ? openGroup(current.node, g)
-                      : navigateToLeaf(current.node, g.label)
-                  }
-                />
-              );
-            })}
-          </>
+        {level.depth === 1 && (
+          <NodeGroupList
+            node={level.node}
+            onPickAll={() => pickWholeNode(level.node)}
+            onPickGroup={(group) => {
+              const hasChildren = !!group.children && group.children.length > 0;
+              if (hasChildren) {
+                setLeafDraft(new Set());
+                setLevel({ depth: 2, node: level.node, group });
+              } else pickWholeGroup(level.node, group);
+            }}
+          />
         )}
 
-        {current.kind === "group" && (
-          <>
-            <Row
-              label={`Shiko të gjitha ${current.group.label.toLowerCase()}`}
-              onClick={() => navigateToLeaf(current.node, current.group.label)}
-              emphasizeText
-            />
-            {filteredLeaves.map((leaf) => (
-              <Row
-                key={leaf}
-                label={leaf}
-                onClick={() => navigateToLeaf(current.node, leaf)}
-              />
-            ))}
-          </>
+        {level.depth === 2 && (
+          <LeafList
+            group={level.group}
+            selected={leafDraft}
+            onPickAll={() => pickWholeGroup(level.node, level.group)}
+            onToggleLeaf={toggleLeaf}
+          />
         )}
       </div>
+
+      {level.depth === 2 && leafDraft.size > 0 && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 82,
+            left: 16,
+            right: 16,
+            zIndex: 100,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => pickLeaves(level.node, leafDraft)}
+            style={{
+              width: "100%",
+              height: 52,
+              background: ACCENT_GRADIENT,
+              color: "#fff",
+              border: "none",
+              borderRadius: 14,
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: "pointer",
+              letterSpacing: "0.2px",
+            }}
+          >
+            Apliko ({leafDraft.size})
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Row                                                                */
-/* ------------------------------------------------------------------ */
+function RootList({
+  selection,
+  onPickNode,
+}: {
+  selection: CategorySelection;
+  onPickNode: (node: CategoryNode) => void;
+}) {
+  return (
+    <div>
+      <Row
+        label="Trending"
+        icon={<Sparkles size={18} strokeWidth={1.6} color={ACCENT} />}
+        onClick={() => {}}
+      />
+      {CATEGORY_TAXONOMY.map((node) => {
+        const Icon = NODE_ICONS[node.key];
+        const active = selection.categories.has(node.key);
+        return (
+          <Row
+            key={node.key}
+            label={node.label}
+            active={active}
+            icon={
+              Icon ? (
+                <Icon
+                  size={18}
+                  strokeWidth={1.6}
+                  color={active ? ACCENT : INK}
+                />
+              ) : undefined
+            }
+            onClick={() => onPickNode(node)}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function NodeGroupList({
+  node,
+  onPickAll,
+  onPickGroup,
+}: {
+  node: CategoryNode;
+  onPickAll: () => void;
+  onPickGroup: (group: SubcategoryNode) => void;
+}) {
+  return (
+    <div>
+      <Row label={`Të gjitha ${node.label.toLowerCase()}`} bold onClick={onPickAll} />
+      {node.groups.map((g) => (
+        <Row key={g.label} label={g.label} onClick={() => onPickGroup(g)} />
+      ))}
+    </div>
+  );
+}
+
+function LeafList({
+  group,
+  selected,
+  onPickAll,
+  onToggleLeaf,
+}: {
+  group: SubcategoryNode;
+  selected: Set<string>;
+  onPickAll: () => void;
+  onToggleLeaf: (leaf: string) => void;
+}) {
+  const leaves = groupLeafLabels(group);
+  return (
+    <div style={{ paddingBottom: selected.size > 0 ? 100 : 0 }}>
+      <Row label={`Të gjitha ${group.label.toLowerCase()}`} bold onClick={onPickAll} />
+      {leaves.map((leaf) => (
+        <CheckRow
+          key={leaf}
+          label={leaf}
+          checked={selected.has(leaf)}
+          onToggle={() => onToggleLeaf(leaf)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function CheckRow({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        width: "100%",
+        padding: "14px 16px",
+        fontSize: 14,
+        fontWeight: checked ? 500 : 400,
+        color: INK,
+        background: checked ? ROW_ACTIVE_BG : BG,
+        border: "none",
+        borderBottom: `1px solid ${DIVIDER}`,
+        cursor: "pointer",
+        textAlign: "left",
+        WebkitTapHighlightColor: "transparent",
+      }}
+    >
+      <span style={{ flex: 1 }}>{label}</span>
+      <span
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: 6,
+          border: checked ? "none" : `1.5px solid ${CHECK_BORDER}`,
+          background: checked ? ACCENT : "transparent",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        {checked && <Check size={14} strokeWidth={3} color="#fff" />}
+      </span>
+    </button>
+  );
+}
 
 function Row({
   label,
+  icon,
+  bold,
+  active,
   onClick,
-  IconLeft,
-  emphasize,
-  emphasizeText,
 }: {
   label: string;
+  icon?: React.ReactNode;
+  bold?: boolean;
+  active?: boolean;
   onClick: () => void;
-  IconLeft?: typeof Shirt;
-  emphasize?: boolean;
-  emphasizeText?: boolean;
 }) {
-  const [pressed, setPressed] = useState(false);
-  const outlet = emphasize && false; // reserved hook, unused
-  void outlet;
-  const iconColor = pressed ? CORAL_ACTIVE : INK;
-  const chevColor = pressed ? CORAL_ACTIVE : CHEV;
-
   return (
     <button
       type="button"
       onClick={onClick}
-      onTouchStart={() => setPressed(true)}
-      onTouchEnd={() => setPressed(false)}
-      onTouchCancel={() => setPressed(false)}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      onMouseLeave={() => setPressed(false)}
       style={{
         display: "flex",
         alignItems: "center",
+        gap: 12,
         width: "100%",
-        gap: 14,
-        padding: "16px 18px",
-        background: pressed ? "rgba(198,90,122,0.06)" : BG,
+        padding: "14px 16px",
+        fontSize: 14,
+        fontWeight: bold || active ? 500 : 400,
+        color: INK,
+        background: active ? ROW_ACTIVE_BG : BG,
         border: "none",
         borderBottom: `1px solid ${DIVIDER}`,
         cursor: "pointer",
+        textAlign: "left",
         WebkitTapHighlightColor: "transparent",
-        position: "relative",
       }}
     >
-      {pressed && (
-        <span
-          aria-hidden
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: 3,
-            background: CORAL_GRADIENT,
-          }}
-        />
-      )}
-      {IconLeft && (
-        <IconLeft
-          size={22}
-          strokeWidth={1.6}
-          color={emphasize ? OUTLET_RED : iconColor}
-        />
-      )}
-      <span
-        style={{
-          flex: 1,
-          textAlign: "left",
-          fontSize: 15,
-          fontWeight: emphasizeText || emphasize ? 600 : 500,
-          color: emphasize ? OUTLET_RED : INK,
-          letterSpacing: 0.1,
-        }}
-      >
-        {label}
-      </span>
-      <ChevronRight size={18} strokeWidth={1.8} color={chevColor} />
+      {icon && <span style={{ display: "flex", flexShrink: 0 }}>{icon}</span>}
+      <span style={{ flex: 1 }}>{label}</span>
+      <ChevronRight
+        size={16}
+        style={{ color: active ? ACCENT : MUTED, flexShrink: 0 }}
+      />
     </button>
   );
 }
