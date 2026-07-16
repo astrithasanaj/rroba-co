@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Check, ChevronRight, Copy, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Loader2, Check, ChevronRight, Copy, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
@@ -476,24 +476,58 @@ function PaySheet({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: CREAM,
+        zIndex: 60,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <div
-        className="w-full max-w-[440px]"
         style={{
-          backgroundColor: CREAM,
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-          padding: "16px 20px 28px",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: "14px 16px 12px",
+          background: "#2d1521",
+          flexShrink: 0,
         }}
-        onClick={(e) => e.stopPropagation()}
       >
-        <div className="mx-auto h-1 w-10 rounded-full" style={{ backgroundColor: DIVIDER }} />
-        <p className="mt-4 text-[18px] font-bold" style={{ color: INK }}>
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={submitting}
+          aria-label="Kthehu"
+          style={{
+            width: 36,
+            height: 36,
+            background: "rgba(255,255,255,0.12)",
+            border: "none",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          <ChevronLeft size={18} color="#ffffff" />
+        </button>
+        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
           Bli {p.label}
-        </p>
+        </span>
+      </div>
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+          padding: "20px 20px 28px",
+        }}
+      >
+
         <div className="mt-1 flex items-center gap-2">
           <span className="text-[14px] line-through" style={{ color: MUTED }}>
             €{p.original.toFixed(2)}
