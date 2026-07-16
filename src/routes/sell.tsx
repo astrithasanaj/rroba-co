@@ -556,7 +556,7 @@ function MediaCategoryStep({
             type="button"
             onClick={onPickFiles}
             className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4"
-            style={{ background: CARD, color: INK, border: "1px solid #d8d8d2" }}
+            style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
           >
             <Images className="h-5 w-5" strokeWidth={1.5} />
             <span className="text-[12px] font-semibold">Ngarko media</span>
@@ -565,7 +565,7 @@ function MediaCategoryStep({
             type="button"
             onClick={onOpenCamera}
             className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4"
-            style={{ background: CARD, color: INK, border: "1px solid #d8d8d2" }}
+            style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
           >
             <Camera className="h-5 w-5" strokeWidth={1.5} />
             <span className="text-[12px] font-semibold">Hap kamerën</span>
