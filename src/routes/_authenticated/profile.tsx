@@ -1438,8 +1438,8 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
           <button
             type="button"
             onClick={() => navigate({ to: "/profile/change-email" })}
-            className="text-xs font-semibold underline"
-            style={{ color: INK, background: "transparent", border: "none", cursor: "pointer" }}
+            className="text-xs font-semibold"
+            style={{ color: "#ffffff", backgroundColor: "#1c1a16", border: "none", borderRadius: 9999, padding: "5px 12px", cursor: "pointer" }}
           >
             Ndrysho email-in
           </button>
