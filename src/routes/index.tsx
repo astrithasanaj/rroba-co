@@ -33,10 +33,13 @@ function HomePage() {
   };
   const [listings, setListings] = useState<ListingView[]>([]);
   const [promoted, setPromoted] = useState<ListingView[]>([]);
+  const [trendingListings, setTrendingListings] = useState<ListingView[]>([]);
+  const [newThisWeekListings, setNewThisWeekListings] = useState<ListingView[]>([]);
   const [followingListings, setFollowingListings] = useState<ListingView[]>([]);
   const [followingIds, setFollowingIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [followingLoading, setFollowingLoading] = useState(true);
+
 
   useEffect(() => {
     let active = true;
