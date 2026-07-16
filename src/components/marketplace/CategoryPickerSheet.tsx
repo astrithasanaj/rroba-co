@@ -129,7 +129,9 @@ export function CategoryPickerSheet({
 
   const goBack = () => {
     if (level.kind === "leaves") {
-      if (level.node.key === FEMIJE_KEY) {
+      if (openedAtLeaves) {
+        close();
+      } else if (level.node.key === FEMIJE_KEY) {
         if (openedDirectly) close();
         else setLevel({ kind: "root" });
       } else {
