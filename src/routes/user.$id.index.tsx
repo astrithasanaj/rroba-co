@@ -404,7 +404,7 @@ function UserProfile() {
                       height: 34,
                       borderRadius: 10,
                       border: isFollowing ? "1px solid #c8c3b9" : "none",
-                      backgroundColor: isFollowing ? CREAM : INK,
+                      background: isFollowing ? CREAM : "linear-gradient(120deg, #e8836a, #c65a7a)",
                       color: isFollowing ? INK : "#ffffff",
                       fontSize: 12,
                       fontWeight: 500,
