@@ -1708,4 +1708,108 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
   );
 }
 
+function RemovePhotoDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+  loading,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onConfirm: () => void;
+  loading: boolean;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-6"
+      style={{
+        backgroundColor: "rgba(20,18,15,0.55)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+      }}
+      onClick={() => onOpenChange(false)}
+    >
+      <div
+        className="w-full"
+        style={{
+          maxWidth: 280,
+          backgroundColor: "#ffffff",
+          borderRadius: 22,
+          boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+          padding: "24px 20px 20px",
+          textAlign: "center",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="mx-auto grid h-[52px] w-[52px] place-items-center rounded-full"
+          style={{ backgroundColor: "#fbeceb" }}
+        >
+          <Trash2 style={{ width: 22, height: 22, color: "#b3392f" }} strokeWidth={2} />
+        </div>
+        <div
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#1a1a1a",
+            marginTop: 16,
+          }}
+        >
+          Hiq foton e profilit?
+        </div>
+        <div
+          style={{
+            fontSize: 13,
+            color: "#a89f94",
+            lineHeight: 1.5,
+            marginTop: 6,
+          }}
+        >
+          Do të kthehesh te avatari standard. Kjo veprim nuk mund të kthehet.
+        </div>
+        <div className="mt-5 flex flex-col gap-2">
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            style={{
+              backgroundColor: "#b3392f",
+              color: "#ffffff",
+              height: 48,
+              borderRadius: 999,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+              border: "none",
+              cursor: loading ? "default" : "pointer",
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? "Duke hequr..." : "Hiq foton"}
+          </button>
+          <button
+            onClick={() => onOpenChange(false)}
+            disabled={loading}
+            style={{
+              backgroundColor: "#f4f4f2",
+              color: "#1a1a1a",
+              height: 48,
+              borderRadius: 999,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+              border: "none",
+              cursor: loading ? "default" : "pointer",
+            }}
+          >
+            Anulo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
 
