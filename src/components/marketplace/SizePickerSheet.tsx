@@ -124,8 +124,12 @@ export function resolveSizeKind(
   gender: string,
   sub: string,
 ): SizeKind {
-  const isKidsCat = categoryLabel === "Artikuj për fëmijë";
+  const isKidsCat = categoryLabel === "Fëmijë & bebe";
   const s = (sub || "").toLowerCase();
+
+  if (categoryLabel === "Këpucë") {
+    return isKidsCat ? "shoes-kids" : gender === "Meshkuj" ? "shoes-meshkuj" : "shoes-femra";
+  }
 
   const clothingSubs = [
     "veshje", "bluza", "t-shirt", "këmisha", "pantallona", "funde",
