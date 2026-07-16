@@ -502,8 +502,9 @@ function SearchPage() {
         ) : (
           <EksploreList
             genderTab={genderTab}
-            onOpenPicker={(key, initialBucket) => {
+            onOpenPicker={(key, initialBucket, groupLabel) => {
               setPickerInitialKey(key);
+              setPickerInitialGroupLabel(groupLabel);
               setPickerInitialBucket(!!initialBucket);
               setShowCategoryPicker(true);
             }}
@@ -537,12 +538,14 @@ function SearchPage() {
           setShowCategoryPicker(v);
           if (!v) {
             setPickerInitialKey(undefined);
+            setPickerInitialGroupLabel(undefined);
             setPickerInitialBucket(false);
           }
         }}
         value={catSelection}
         onApply={setCatSelection}
         initialNodeKey={pickerInitialKey}
+        initialGroupLabel={pickerInitialGroupLabel}
         initialBucket={pickerInitialBucket}
         gender={genderTab ?? "Femra"}
       />
