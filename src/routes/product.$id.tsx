@@ -310,12 +310,12 @@ function ProductDetail() {
           disabled={isSold || isOwn}
           className="px-4 text-base font-bold transition active:scale-95 disabled:opacity-50"
           style={{
-            backgroundColor: "#1c1a16",
+            background: "linear-gradient(120deg, #e8836a, #c65a7a)",
             color: "#fff",
             minWidth: 90,
             height: 44,
             borderRadius: 14,
-            boxShadow: "0 2px 8px rgba(232,130,106,0.35)",
+            boxShadow: "0 2px 8px rgba(198,90,122,0.35)",
           }}
         >
           {isSold ? "Shitur" : "Bli"}
