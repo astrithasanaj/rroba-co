@@ -273,8 +273,8 @@ function ProductDetail() {
             <Heart
               size={24}
               strokeWidth={1.5}
-              color="#2c3548"
-              fill={likes.has(listing.id) ? "#2c3548" : "none"}
+              color="#c65a7a"
+              fill={likes.has(listing.id) ? "#c65a7a" : "none"}
             />
           </button>
           <button
