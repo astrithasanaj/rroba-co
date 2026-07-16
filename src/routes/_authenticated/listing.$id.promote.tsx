@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Check, ChevronRight, Copy, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Loader2, Check, ChevronRight, Copy, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
