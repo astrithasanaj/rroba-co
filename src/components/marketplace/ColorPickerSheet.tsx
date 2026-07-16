@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ArrowLeft } from "lucide-react";
-import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import { ChevronLeft } from "lucide-react";
+
 
 export type ColorOption = {
   name: string;
