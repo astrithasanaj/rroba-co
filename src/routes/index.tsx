@@ -43,11 +43,34 @@ function HomePage() {
 
   useEffect(() => {
     let active = true;
-    const load = async () => {
+      const load = async () => {
       setLoading(true);
 
       const nowIso = new Date().toISOString();
       const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      const { data: authData } = await supabase.auth.getUser();
+      const uid = authData.user?.id;
+
+      let myGenders: string[] = [];
+      if (uid) {
+        const { data: profileRow } = await supabase
+          .from("profiles")
+          .select("preferences")
+          .eq("id", uid)
+          .maybeSingle();
+        const prefs = profileRow?.preferences as { genders?: string[] } | null;
+        myGenders = prefs?.genders ?? [];
+      }
+
+      const wantsWomen = myGenders.includes("women") || myGenders.includes("both") || myGenders.length === 0;
+      const wantsMen = myGenders.includes("men") || myGenders.includes("both") || myGenders.length === 0;
+
+      const allowedGenders: string[] = [];
+      if (wantsWomen) allowedGenders.push("Femra");
+      if (wantsMen) allowedGenders.push("Meshkuj");
+
+      const genderFilter = `gender.in.(${allowedGenders.map((g) => `"${g}"`).join(",")}),gender.is.null`;
 
       const promosPromise = supabase
         .from("promotions")
@@ -62,9 +85,11 @@ function HomePage() {
         .select("*")
         .eq("status", "active")
         .neq("category", "Fëmijë & bebe")
+        .or(genderFilter)
         .gte("created_at", weekAgoIso)
         .order("created_at", { ascending: false })
         .limit(10);
+
 
       const trendingLikesPromise = supabase
         .from("listing_likes")
