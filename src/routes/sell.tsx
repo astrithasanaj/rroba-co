@@ -719,7 +719,7 @@ function SubcategoryPicker({
               type="button"
               onClick={() => onPick(s)}
               className="rounded-full px-2 py-3 text-center text-[12px] font-semibold transition active:scale-[0.97]"
-              style={{ background: CARD, color: INK }}
+              style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
             >
               {s}
             </button>
