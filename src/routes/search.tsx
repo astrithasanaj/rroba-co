@@ -570,13 +570,13 @@ function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
                 width: 52,
                 height: 52,
                 borderRadius: "50%",
-                background: "rgba(10,9,7,0.94)",
+                background: "#2d1521",
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
                 border: "0.5px solid rgba(255,255,255,0.09)",
               }}
             >
-              <Icon size={22} strokeWidth={1.5} style={{ color: "#f2ede3" }} />
+              <Icon size={22} strokeWidth={1.5} style={{ color: "#e8836a" }} />
             </div>
             <span
               className="text-[15px] font-bold leading-tight"

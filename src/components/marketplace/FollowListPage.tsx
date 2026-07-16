@@ -300,7 +300,7 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                             fontSize: 13,
                             fontWeight: isFollowing ? 500 : 600,
                             border: isFollowing ? `1px solid ${CHIP_BORDER}` : "none",
-                            backgroundColor: isFollowing ? CHIP_BG : CORAL,
+                            background: isFollowing ? CHIP_BG : "linear-gradient(120deg, #e8836a, #c65a7a)",
                             color: isFollowing ? INK : "#ffffff",
                             WebkitTapHighlightColor: "transparent",
                             whiteSpace: "nowrap",

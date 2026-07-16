@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, UserPlus } from "lucide-react";
+import { Bell, UserPlus, Shirt } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
@@ -154,17 +154,31 @@ function HomePage() {
           style={{ backgroundColor: `${PAGE_BG}f2` }}
         >
           <div className="flex items-center justify-between px-[18px] py-4">
-            <h1
-              className="text-3xl italic"
-              style={{
-                color: INK,
-                fontFamily: 'Georgia, "Times New Roman", serif',
-                fontWeight: 600,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Rroba
-            </h1>
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="grid place-items-center"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  background: "#2d1521",
+                }}
+              >
+                <Shirt size={18} strokeWidth={1.8} style={{ color: "#e8836a" }} />
+              </span>
+              <h1
+                className="text-3xl italic"
+                style={{
+                  color: INK,
+                  fontFamily: 'Georgia, "Times New Roman", serif',
+                  fontWeight: 600,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Rroba
+              </h1>
+            </div>
             <Link
               to="/notifications"
               className="grid h-10 w-10 place-items-center rounded-full"
@@ -228,7 +242,7 @@ function TabButton({
       onClick={onClick}
       className="flex-1 py-2 text-sm font-semibold rounded-full transition-colors"
       style={{
-        backgroundColor: active ? INK : "transparent",
+        background: active ? "linear-gradient(120deg, #e8836a, #c65a7a)" : "transparent",
         color: active ? "#ffffff" : MUTED,
         flexBasis: 0,
         minWidth: 0,
@@ -283,13 +297,13 @@ function ForYou({
                     width: 56,
                     height: 56,
                     borderRadius: "50%",
-                    background: "rgba(10,9,7,0.94)",
+                    background: "#2d1521",
                     backdropFilter: "blur(8px)",
                     WebkitBackdropFilter: "blur(8px)",
                     border: "0.5px solid rgba(255,255,255,0.09)",
                   }}
                 >
-                  <Icon size={24} strokeWidth={1.5} style={{ color: "#f2ede3" }} />
+                  <Icon size={24} strokeWidth={1.5} style={{ color: "#e8836a" }} />
                 </div>
                 <span
                   className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
