@@ -626,7 +626,7 @@ function EksploreList({
   onOpenPicker,
 }: {
   genderTab: "Femra" | "Meshkuj" | "Fëmijë" | null;
-  onOpenPicker: (key?: string, initialBucket?: boolean) => void;
+  onOpenPicker: (key?: string, initialBucket?: boolean, groupLabel?: string) => void;
 }) {
   const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
   const rows = EKSPLORE_ROWS.filter((row) => row.key !== "femije");
