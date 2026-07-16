@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { ChevronLeft, Ruler, ChevronDown, ArrowLeft } from "lucide-react";
+import { ChevronLeft, Ruler, ChevronDown } from "lucide-react";
+
 
 export type SizeKind =
   | "clothing-femra"
