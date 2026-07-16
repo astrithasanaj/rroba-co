@@ -215,22 +215,60 @@ function MyPromotionsPage() {
 
         {picker && (
           <div
-            className="fixed inset-0 z-50 flex items-end justify-center"
-            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-            onClick={() => setPicker(null)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: CREAM,
+              zIndex: 60,
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
             <div
-              className="w-full max-w-[440px]"
-              style={{ backgroundColor: CREAM, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: "16px 20px 28px" }}
-              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "14px 16px 12px",
+                background: "#2d1521",
+                flexShrink: 0,
+              }}
             >
-              <div className="mx-auto h-1 w-10 rounded-full" style={{ backgroundColor: DIVIDER }} />
-              <p className="mt-4 text-[18px] font-bold" style={{ color: INK }}>
+              <button
+                type="button"
+                onClick={() => setPicker(null)}
+                aria-label="Kthehu"
+                style={{
+                  width: 36,
+                  height: 36,
+                  background: "rgba(255,255,255,0.12)",
+                  border: "none",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  flexShrink: 0,
+                }}
+              >
+                <ChevronLeft size={18} color="#ffffff" />
+              </button>
+              <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
                 Zgjedh promovimin
-              </p>
-              <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+              </span>
+            </div>
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                WebkitOverflowScrolling: "touch",
+                padding: "20px 20px 28px",
+              }}
+            >
+              <p className="text-[13px]" style={{ color: MUTED }}>
                 {picker.listing.title}
               </p>
+
 
               <button
                 onClick={() => {
