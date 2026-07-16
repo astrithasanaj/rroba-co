@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
+import { CATEGORY_TAXONOMY } from "@/lib/category-taxonomy";
 
 const MIN_IMAGES = 3;
 const MAX_IMAGES = 10;
@@ -33,16 +34,6 @@ const MAX_BYTES = 10 * 1024 * 1024;
 const MIN_DIM = 100;
 const MAX_DIM = 8000;
 
-const CATEGORIES = [
-  { value: "topp", label: "Topp" },
-  { value: "bukse", label: "Bukse" },
-  { value: "kjole", label: "Kjole" },
-  { value: "sko", label: "Sko" },
-  { value: "jakke", label: "Jakke" },
-  { value: "veske", label: "Veske" },
-  { value: "tilbehor", label: "Tilbehør" },
-  { value: "annet", label: "Annet" },
-];
 
 type PendingImage = { file: File; previewUrl: string; mime: string };
 
@@ -87,18 +78,23 @@ export function NewListingDialog({
   const [images, setImages] = useState<PendingImage[]>([]);
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
+  const [nodeKey, setNodeKey] = useState("");
+  const [subcategory, setSubcategory] = useState("");
   const [size, setSize] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const selectedNode = CATEGORY_TAXONOMY.find((n) => n.key === nodeKey);
+  const category = selectedNode?.categories[0] ?? "";
 
   const reset = () => {
     images.forEach((i) => URL.revokeObjectURL(i.previewUrl));
     setImages([]);
     setTitle("");
     setBrand("");
-    setCategory("");
+    setNodeKey("");
+    setSubcategory("");
     setSize("");
     setPrice("");
     setDescription("");
@@ -163,6 +159,7 @@ export function NewListingDialog({
     brand.trim().length > 0 &&
     brand.trim().length <= 60 &&
     category.length > 0 &&
+    subcategory.length > 0 &&
     size.trim().length > 0 &&
     size.trim().length <= 20 &&
     price.trim().length > 0 &&
@@ -191,6 +188,7 @@ export function NewListingDialog({
         title: title.trim(),
         brand: brand.trim(),
         category,
+        subcategory,
         size: size.trim(),
         price: priceNum,
         description: description.trim(),
@@ -280,27 +278,53 @@ export function NewListingDialog({
             />
           </div>
 
+          <div>
+            <Label htmlFor="brand">Merke</Label>
+            <Input
+              id="brand"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              maxLength={60}
+              placeholder="Zara, Nike …"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="brand">Merke</Label>
-              <Input
-                id="brand"
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                maxLength={60}
-                placeholder="Zara, Nike …"
-              />
-            </div>
-            <div>
               <Label>Kategori</Label>
-              <Select value={category} onValueChange={setCategory}>
+              <Select
+                value={nodeKey}
+                onValueChange={(v) => {
+                  setNodeKey(v);
+                  setSubcategory("");
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Velg" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
+                  {CATEGORY_TAXONOMY.map((n) => (
+                    <SelectItem key={n.key} value={n.key}>
+                      {n.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Nënkategori</Label>
+              <Select
+                value={subcategory}
+                onValueChange={setSubcategory}
+                disabled={!selectedNode}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={selectedNode ? "Velg" : "—"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectedNode?.groups ?? []).map((g) => (
+                    <SelectItem key={g.label} value={g.label}>
+                      {g.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

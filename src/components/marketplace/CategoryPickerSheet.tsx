@@ -61,6 +61,7 @@ export function CategoryPickerSheet({
   value,
   onApply,
   initialNodeKey,
+  initialGroupLabel,
   initialBucket = false,
   gender = "Femra",
 }: {
@@ -69,6 +70,7 @@ export function CategoryPickerSheet({
   value: CategorySelection;
   onApply: (sel: CategorySelection) => void;
   initialNodeKey?: string;
+  initialGroupLabel?: string;
   initialBucket?: boolean;
   gender?: Gender;
 }) {
@@ -77,6 +79,7 @@ export function CategoryPickerSheet({
   const [level, setLevel] = useState<Level>({ kind: "root" });
   const [leafDraft, setLeafDraft] = useState<Set<string>>(new Set());
   const [openedDirectly, setOpenedDirectly] = useState(false);
+  const [openedAtLeaves, setOpenedAtLeaves] = useState(false);
 
   const femijeNode = CATEGORY_TAXONOMY.find((n) => n.key === FEMIJE_KEY)!;
 
@@ -91,14 +94,25 @@ export function CategoryPickerSheet({
       const startNode = initialNodeKey
         ? CATEGORY_TAXONOMY.find((n) => n.key === initialNodeKey)
         : undefined;
-      if (startNode) {
+      const startGroup =
+        startNode && initialGroupLabel
+          ? startNode.groups.find((g) => g.label === initialGroupLabel)
+          : undefined;
+      if (startNode && startGroup) {
         setOpenedDirectly(true);
+        setOpenedAtLeaves(true);
+        setLevel({ kind: "leaves", node: startNode, group: startGroup });
+      } else if (startNode) {
+        setOpenedDirectly(true);
+        setOpenedAtLeaves(false);
         setLevel({ kind: "groups", node: startNode });
       } else if (initialBucket && gender !== "Fëmijë") {
         setOpenedDirectly(false);
+        setOpenedAtLeaves(false);
         setLevel({ kind: "bucket" });
       } else {
         setOpenedDirectly(false);
+        setOpenedAtLeaves(false);
         setLevel({ kind: "root" });
       }
       requestAnimationFrame(() => {
@@ -109,13 +123,15 @@ export function CategoryPickerSheet({
       const t = setTimeout(() => setMounted(false), 300);
       return () => clearTimeout(t);
     }
-  }, [open, mounted, initialNodeKey, initialBucket, gender]);
+  }, [open, mounted, initialNodeKey, initialGroupLabel, initialBucket, gender]);
 
   const close = () => onOpenChange(false);
 
   const goBack = () => {
     if (level.kind === "leaves") {
-      if (level.node.key === FEMIJE_KEY) {
+      if (openedAtLeaves) {
+        close();
+      } else if (level.node.key === FEMIJE_KEY) {
         if (openedDirectly) close();
         else setLevel({ kind: "root" });
       } else {

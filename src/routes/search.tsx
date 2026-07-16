@@ -123,6 +123,7 @@ function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [pickerInitialKey, setPickerInitialKey] = useState<string | undefined>(undefined);
+  const [pickerInitialGroupLabel, setPickerInitialGroupLabel] = useState<string | undefined>(undefined);
   const [pickerInitialBucket, setPickerInitialBucket] = useState(false);
   const [genderTab, setGenderTab] = useState<"Femra" | "Meshkuj" | "Fëmijë" | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -501,8 +502,9 @@ function SearchPage() {
         ) : (
           <EksploreList
             genderTab={genderTab}
-            onOpenPicker={(key, initialBucket) => {
+            onOpenPicker={(key, initialBucket, groupLabel) => {
               setPickerInitialKey(key);
+              setPickerInitialGroupLabel(groupLabel);
               setPickerInitialBucket(!!initialBucket);
               setShowCategoryPicker(true);
             }}
@@ -536,12 +538,14 @@ function SearchPage() {
           setShowCategoryPicker(v);
           if (!v) {
             setPickerInitialKey(undefined);
+            setPickerInitialGroupLabel(undefined);
             setPickerInitialBucket(false);
           }
         }}
         value={catSelection}
         onApply={setCatSelection}
         initialNodeKey={pickerInitialKey}
+        initialGroupLabel={pickerInitialGroupLabel}
         initialBucket={pickerInitialBucket}
         gender={genderTab ?? "Femra"}
       />
@@ -622,7 +626,7 @@ function EksploreList({
   onOpenPicker,
 }: {
   genderTab: "Femra" | "Meshkuj" | "Fëmijë" | null;
-  onOpenPicker: (key?: string, initialBucket?: boolean) => void;
+  onOpenPicker: (key?: string, initialBucket?: boolean, groupLabel?: string) => void;
 }) {
   const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
   const rows = EKSPLORE_ROWS.filter((row) => row.key !== "femije");
@@ -665,7 +669,7 @@ function EksploreList({
             <button
               key={label}
               type="button"
-              onClick={() => onOpenPicker("femije")}
+              onClick={() => onOpenPicker("femije", false, label)}
               className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
               style={{ borderBottom: "1px solid #e2e2de", background: BG }}
             >
