@@ -171,7 +171,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
   useEffect(() => {
     load();
     const ch = supabase
-      .channel("messages-list")
+      .channel(`messages-list:${me}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => load())
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => load())
       .subscribe();
