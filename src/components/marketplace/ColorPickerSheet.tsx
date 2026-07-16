@@ -106,7 +106,7 @@ export function ColorPickerSheet({
                   <div
                     className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full transition"
                     style={{
-                      background: "#ddd8ce",
+                      background: "#e2e2de",
                       boxShadow: active ? `0 0 0 2px ${opt.selectedBorder} inset` : undefined,
                     }}
                   >
