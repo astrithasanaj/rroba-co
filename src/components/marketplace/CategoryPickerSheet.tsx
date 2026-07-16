@@ -1,53 +1,115 @@
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronLeft, Check } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search as SearchIcon,
+  Sparkles,
+  Shirt,
+  Baby,
+  Sofa,
+  Mountain,
+  Palette,
+  Smartphone,
+  Gamepad2,
+  Tag,
+} from "lucide-react";
 import {
   CATEGORY_TAXONOMY,
-  cloneSelection,
-  emptySelection,
   groupLeafLabels,
-  selectionCount,
   type CategoryNode,
   type CategorySelection,
   type SubcategoryNode,
 } from "@/lib/category-taxonomy";
 
+/* ------------------------------------------------------------------ */
+/* Palette                                                            */
+/* ------------------------------------------------------------------ */
 const BG = "#ffffff";
-const INK = "#1a1a1a";
+const HEADER_BG = "#2d1521";
+const HEADER_INK = "#ffffff";
+const HEADER_MUTED = "rgba(255,255,255,0.55)";
+const INK = "#2d1521";
 const MUTED = "#a89f94";
-const DIVIDER = "#ddd8ce";
-const CHIP = "#ffffff";
-const CHECK_BORDER = "#c8c3b9";
-const CORAL = "#e8826a";
+const DIVIDER = "#e2e2de";
+const CHEV = "#a89f94";
+const CORAL_ACTIVE = "#c65a7a";
+const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
+const OUTLET_RED = "#b3392f";
+
+type GenderKey = "femra" | "meshkuj" | "femije";
+const GENDER_TABS: { key: GenderKey; label: string }[] = [
+  { key: "femra", label: "Femra" },
+  { key: "meshkuj", label: "Meshkuj" },
+  { key: "femije", label: "Fëmijë" },
+];
+
+/* Mapping from taxonomy node key to /category/$slug in the app */
+const NODE_TO_SLUG: Record<string, string | undefined> = {
+  mode: "mode",
+  femije: "femije",
+  outdoor: "outdoor",
+  interior: "interior",
+  art: "art",
+  elektronik: "elektronik",
+  hobi: undefined, // no dedicated listing route → fall back to /search
+};
+
+const NODE_ICON: Record<string, typeof Shirt> = {
+  mode: Shirt,
+  femije: Baby,
+  interior: Sofa,
+  outdoor: Mountain,
+  art: Palette,
+  elektronik: Smartphone,
+  hobi: Gamepad2,
+};
+
+function genderToSlug(g: GenderKey, node: CategoryNode): string {
+  if (node.key === "femije") return g === "femije" ? "vajza" : "all";
+  if (g === "femra") return "femra";
+  if (g === "meshkuj") return "meshkuj";
+  return "all";
+}
+
+/* ------------------------------------------------------------------ */
+/* Component                                                          */
+/* ------------------------------------------------------------------ */
+
+type Level =
+  | { kind: "root" }
+  | { kind: "node"; node: CategoryNode }
+  | { kind: "group"; node: CategoryNode; group: SubcategoryNode };
 
 export function CategoryPickerSheet({
   open,
   onOpenChange,
-  value,
-  onApply,
+  // Legacy props kept for caller compatibility; not used in drill-down mode.
+  value: _value,
+  onApply: _onApply,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  value: CategorySelection;
-  onApply: (sel: CategorySelection) => void;
+  value?: CategorySelection;
+  onApply?: (sel: CategorySelection) => void;
 }) {
+  const navigate = useNavigate();
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
-  const [draft, setDraft] = useState<CategorySelection>(() => cloneSelection(value));
-  const [expanded, setExpanded] = useState<string | null>("mode");
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [gender, setGender] = useState<GenderKey>("femra");
+  const [stack, setStack] = useState<Level[]>([{ kind: "root" }]);
+  const [query, setQuery] = useState("");
 
-  // Swipe-back
+  // Swipe-back on the top-level page
   const pageRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const dragging = useRef(false);
 
-  // Mount + slide-in animation
   useEffect(() => {
     if (open) {
       setMounted(true);
-      setDraft(cloneSelection(value));
-      setExpanded("mode");
-      setExpandedGroup(null);
+      setStack([{ kind: "root" }]);
+      setQuery("");
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setVisible(true));
       });
@@ -56,11 +118,56 @@ export function CategoryPickerSheet({
       const t = setTimeout(() => setMounted(false), 300);
       return () => clearTimeout(t);
     }
-  }, [open, value, mounted]);
+  }, [open, mounted]);
 
   const close = () => onOpenChange(false);
+  const current = stack[stack.length - 1];
 
+  const goBack = () => {
+    if (stack.length > 1) setStack((s) => s.slice(0, -1));
+    else close();
+  };
+
+  const openNode = (node: CategoryNode) =>
+    setStack((s) => [...s, { kind: "node", node }]);
+  const openGroup = (node: CategoryNode, group: SubcategoryNode) =>
+    setStack((s) => [...s, { kind: "group", node, group }]);
+
+  const navigateToNode = (node: CategoryNode) => {
+    const slug = NODE_TO_SLUG[node.key];
+    if (!slug) {
+      navigate({ to: "/search", search: { category: node.categories[0] } as never });
+    } else {
+      navigate({
+        to: "/category/$slug/$gender",
+        params: { slug, gender: genderToSlug(gender, node) },
+      });
+    }
+    close();
+  };
+
+  const navigateToLeaf = (node: CategoryNode, leafLabel: string) => {
+    const slug = NODE_TO_SLUG[node.key];
+    if (!slug) {
+      navigate({ to: "/search", search: { q: leafLabel } as never });
+    } else {
+      navigate({
+        to: "/category/$slug/$gender",
+        params: { slug, gender: genderToSlug(gender, node) },
+        search: { subcategories: leafLabel } as never,
+      });
+    }
+    close();
+  };
+
+  const navigateTrending = () => {
+    navigate({ to: "/search", search: { section: "trending" } as never });
+    close();
+  };
+
+  /* Swipe-back only on root level (child levels have their own back button) */
   const onTouchStart = (e: React.TouchEvent) => {
+    if (current.kind !== "root") return;
     const t = e.touches[0];
     if (t.clientX <= 24) {
       touchStart.current = { x: t.clientX, y: t.clientY };
@@ -93,73 +200,36 @@ export function CategoryPickerSheet({
     dragging.current = false;
   };
 
+  /* Filter the visible items by the search query */
+  const filteredRoot = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return CATEGORY_TAXONOMY;
+    return CATEGORY_TAXONOMY.filter((n) => n.label.toLowerCase().includes(q));
+  }, [query]);
+
+  const filteredGroups = useMemo(() => {
+    if (current.kind !== "node") return [];
+    const q = query.trim().toLowerCase();
+    if (!q) return current.node.groups;
+    return current.node.groups.filter((g) => g.label.toLowerCase().includes(q));
+  }, [current, query]);
+
+  const filteredLeaves = useMemo(() => {
+    if (current.kind !== "group") return [];
+    const q = query.trim().toLowerCase();
+    const leaves = groupLeafLabels(current.group);
+    if (!q) return leaves;
+    return leaves.filter((l) => l.toLowerCase().includes(q));
+  }, [current, query]);
+
   if (!mounted) return null;
 
-  const toggleMain = (key: string) => {
-    setExpanded((prev) => (prev === key ? null : key));
-    setExpandedGroup(null);
-  };
-  const toggleGroup = (id: string) =>
-    setExpandedGroup((prev) => (prev === id ? null : id));
-
-  const toggleAll = (node: CategoryNode) => {
-    setDraft((prev) => {
-      const next = cloneSelection(prev);
-      if (next.categories.has(node.key)) {
-        next.categories.delete(node.key);
-        for (const s of [...next.subcategories])
-          if (s.startsWith(`${node.key}::`)) next.subcategories.delete(s);
-      } else {
-        next.categories.add(node.key);
-        for (const s of [...next.subcategories])
-          if (s.startsWith(`${node.key}::`)) next.subcategories.delete(s);
-      }
-      return next;
-    });
-  };
-  const toggleSub = (nodeKey: string, label: string) => {
-    setDraft((prev) => {
-      const next = cloneSelection(prev);
-      const id = `${nodeKey}::${label}`;
-      if (next.subcategories.has(id)) next.subcategories.delete(id);
-      else {
-        next.subcategories.add(id);
-        next.categories.delete(nodeKey);
-      }
-      return next;
-    });
-  };
-  const toggleGroupAll = (nodeKey: string, group: SubcategoryNode) => {
-    setDraft((prev) => {
-      const next = cloneSelection(prev);
-      const leaves = groupLeafLabels(group);
-      const allSelected = leaves.every((l) =>
-        next.subcategories.has(`${nodeKey}::${l}`),
-      );
-      leaves.forEach((l) => {
-        const id = `${nodeKey}::${l}`;
-        if (allSelected) next.subcategories.delete(id);
-        else {
-          next.subcategories.add(id);
-          next.categories.delete(nodeKey);
-        }
-      });
-      return next;
-    });
-  };
-
-  const reset = () => setDraft(emptySelection());
-  const done = () => {
-    onApply(draft);
-    close();
-  };
-
-  const countSelectedIn = (node: CategoryNode) => {
-    if (draft.categories.has(node.key)) return "Të gjitha";
-    let n = 0;
-    for (const s of draft.subcategories) if (s.startsWith(`${node.key}::`)) n += 1;
-    return n > 0 ? String(n) : null;
-  };
+  const headerTitle =
+    current.kind === "root"
+      ? "Kategoritë"
+      : current.kind === "node"
+        ? current.node.label
+        : current.group.label;
 
   return (
     <div
@@ -180,63 +250,135 @@ export function CategoryPickerSheet({
         touchAction: "pan-y",
       }}
     >
-      {/* Header */}
+      {/* Dark burgundy header */}
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "14px 16px 12px",
-          background: BG,
-          borderBottom: `1px solid ${DIVIDER}`,
+          background: HEADER_BG,
+          color: HEADER_INK,
+          paddingTop: "env(safe-area-inset-top, 0px)",
           flexShrink: 0,
         }}
       >
-        <button
-          type="button"
-          onClick={close}
-          aria-label="Kthehu"
+        <div
           style={{
-            width: 36,
-            height: 36,
-            background: CHIP,
-            border: "none",
-            borderRadius: "50%",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            flexShrink: 0,
+            padding: "10px 12px 6px",
+            gap: 8,
           }}
         >
-          <ChevronLeft size={18} color={INK} />
-        </button>
-        <span
-          style={{
-            fontSize: 16,
-            fontWeight: 600,
-            color: INK,
-          }}
-        >
-          Kategoritë
-        </span>
-        <button
-          type="button"
-          onClick={reset}
-          style={{
-            background: CHIP,
-            border: "none",
-            borderRadius: 20,
-            padding: "8px 14px",
-            fontSize: 13,
-            fontWeight: 500,
-            color: INK,
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Rivendos
-        </button>
+          <button
+            type="button"
+            onClick={goBack}
+            aria-label={current.kind === "root" ? "Mbyll" : "Kthehu"}
+            style={{
+              width: 36,
+              height: 36,
+              display: "grid",
+              placeItems: "center",
+              background: "transparent",
+              border: "none",
+              color: HEADER_INK,
+              cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+            }}
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <span
+            style={{
+              fontSize: 15,
+              fontWeight: 600,
+              letterSpacing: 0.2,
+              flex: 1,
+              textAlign: "center",
+              paddingRight: 36,
+            }}
+          >
+            {headerTitle}
+          </span>
+        </div>
+
+        {/* Gender tabs — only on the root level */}
+        {current.kind === "root" && (
+          <div
+            style={{
+              display: "flex",
+              padding: "0 4px",
+              gap: 4,
+            }}
+          >
+            {GENDER_TABS.map((t) => {
+              const active = gender === t.key;
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setGender(t.key)}
+                  style={{
+                    flex: 1,
+                    padding: "12px 4px 14px",
+                    background: "transparent",
+                    border: "none",
+                    color: active ? HEADER_INK : HEADER_MUTED,
+                    fontSize: 14,
+                    fontWeight: active ? 700 : 500,
+                    letterSpacing: 0.2,
+                    position: "relative",
+                    cursor: "pointer",
+                    WebkitTapHighlightColor: "transparent",
+                  }}
+                >
+                  {t.label}
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      left: 16,
+                      right: 16,
+                      bottom: 0,
+                      height: 3,
+                      borderRadius: 3,
+                      background: active ? CORAL_GRADIENT : "transparent",
+                      transition: "opacity 160ms ease",
+                    }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Search input */}
+        <div style={{ padding: "10px 14px 14px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              background: "rgba(255,255,255,0.10)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              borderRadius: 12,
+              padding: "10px 12px",
+            }}
+          >
+            <SearchIcon size={16} strokeWidth={1.8} color={HEADER_MUTED} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Çfarë kërkoni?"
+              style={{
+                flex: 1,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: HEADER_INK,
+                fontSize: 14,
+                fontWeight: 500,
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Scrollable list */}
@@ -245,279 +387,168 @@ export function CategoryPickerSheet({
           flex: 1,
           overflowY: "auto",
           WebkitOverflowScrolling: "touch",
-          paddingBottom: 160,
+          background: BG,
+          paddingBottom: 96,
         }}
       >
-        {CATEGORY_TAXONOMY.map((node, i) => {
-          const isOpen = expanded === node.key;
-          const count = countSelectedIn(node);
-          return (
-            <div key={node.key}>
-              {i > 0 && <div style={{ height: 8, background: CHIP }} />}
-              <button
-                type="button"
-                onClick={() => toggleMain(node.key)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  padding: "16px 20px",
-                  fontSize: 15,
-                  fontWeight: 600,
-                  color: INK,
-                  borderBottom: `1px solid ${DIVIDER}`,
-                  background: BG,
-                  border: "none",
-                  cursor: "pointer",
-                  WebkitTapHighlightColor: "transparent",
-                }}
-              >
-                <span>{node.label}</span>
-                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {count && (
-                    <span
-                      style={{
-                        background: CORAL,
-                        color: "#fff",
-                        fontSize: 11,
-                        fontWeight: 700,
-                        padding: "2px 8px",
-                        borderRadius: 10,
-                      }}
-                    >
-                      {count}
-                    </span>
-                  )}
-                  <ChevronDown
-                    size={16}
-                    style={{
-                      color: MUTED,
-                      transition: "transform 200ms ease",
-                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    }}
-                  />
-                </span>
-              </button>
-
-              <div
-                style={{
-                  overflow: "hidden",
-                  maxHeight: isOpen ? 4000 : 0,
-                  transition: "max-height 220ms ease-out",
-                }}
-              >
-                <SubRow
-                  label={`Të gjitha ${node.label.toLowerCase()}`}
-                  checked={draft.categories.has(node.key)}
-                  onToggle={() => toggleAll(node)}
+        {current.kind === "root" && (
+          <>
+            {!query && (
+              <>
+                <Row
+                  label="Trending"
+                  onClick={navigateTrending}
+                  IconLeft={Sparkles}
+                  emphasize
                 />
-                {node.groups.map((g) => {
-                  const groupId = `${node.key}::${g.label}`;
-                  const hasChildren = !!g.children && g.children.length > 0;
-                  if (!hasChildren) {
-                    const checked = draft.subcategories.has(
-                      `${node.key}::${g.label}`,
-                    );
-                    return (
-                      <SubRow
-                        key={groupId}
-                        label={g.label}
-                        checked={checked || draft.categories.has(node.key)}
-                        onToggle={() => toggleSub(node.key, g.label)}
-                      />
-                    );
-                  }
-                  const groupOpen = expandedGroup === groupId;
-                  const leaves = groupLeafLabels(g);
-                  const groupAllChecked =
-                    draft.categories.has(node.key) ||
-                    leaves.every((l) =>
-                      draft.subcategories.has(`${node.key}::${l}`),
-                    );
-                  const anyChecked = leaves.some((l) =>
-                    draft.subcategories.has(`${node.key}::${l}`),
-                  );
-                  return (
-                    <div key={groupId}>
-                      <button
-                        type="button"
-                        onClick={() => toggleGroup(groupId)}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          padding: "13px 20px 13px 32px",
-                          fontSize: 14,
-                          fontWeight: 500,
-                          color: INK,
-                          borderBottom: `1px solid ${DIVIDER}`,
-                          background: BG,
-                          border: "none",
-                          cursor: "pointer",
-                          WebkitTapHighlightColor: "transparent",
-                        }}
-                      >
-                        <span>{g.label}</span>
-                        <span
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                          }}
-                        >
-                          {(groupAllChecked || anyChecked) && (
-                            <span
-                              style={{
-                                background: CORAL,
-                                color: "#fff",
-                                fontSize: 11,
-                                fontWeight: 700,
-                                padding: "2px 8px",
-                                borderRadius: 10,
-                              }}
-                            >
-                              {groupAllChecked
-                                ? "Të gjitha"
-                                : leaves.filter((l) =>
-                                    draft.subcategories.has(
-                                      `${node.key}::${l}`,
-                                    ),
-                                  ).length}
-                            </span>
-                          )}
-                          <ChevronDown
-                            size={14}
-                            style={{
-                              color: MUTED,
-                              transition: "transform 200ms ease",
-                              transform: groupOpen
-                                ? "rotate(180deg)"
-                                : "rotate(0deg)",
-                            }}
-                          />
-                        </span>
-                      </button>
-                      <div
-                        style={{
-                          overflow: "hidden",
-                          maxHeight: groupOpen ? 2000 : 0,
-                          transition: "max-height 220ms ease-out",
-                        }}
-                      >
-                        <SubRow
-                          label={`Të gjitha ${g.label.toLowerCase()}`}
-                          deep
-                          checked={groupAllChecked}
-                          onToggle={() => toggleGroupAll(node.key, g)}
-                        />
-                        {leaves.map((leaf) => (
-                          <SubRow
-                            key={`${groupId}::${leaf}`}
-                            label={leaf}
-                            deep
-                            checked={
-                              draft.categories.has(node.key) ||
-                              draft.subcategories.has(`${node.key}::${leaf}`)
-                            }
-                            onToggle={() => toggleSub(node.key, leaf)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                <div
+                  aria-hidden
+                  style={{
+                    height: 8,
+                    background: "#f7f5f0",
+                    borderTop: `1px solid ${DIVIDER}`,
+                    borderBottom: `1px solid ${DIVIDER}`,
+                  }}
+                />
+              </>
+            )}
+            {filteredRoot.map((node) => (
+              <Row
+                key={node.key}
+                label={node.label}
+                onClick={() => openNode(node)}
+                IconLeft={NODE_ICON[node.key] ?? Tag}
+              />
+            ))}
+          </>
+        )}
 
-      {/* Apliko button — above nav bar */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 82,
-          left: 16,
-          right: 16,
-          zIndex: 100,
-        }}
-      >
-        <button
-          type="button"
-          onClick={done}
-          style={{
-            width: "100%",
-            height: 52,
-            background: CORAL,
-            color: "#fff",
-            border: "none",
-            borderRadius: 14,
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: "pointer",
-            letterSpacing: "0.2px",
-            boxShadow: "0 6px 20px -8px rgba(232,130,106,0.55)",
-          }}
-        >
-          Apliko filtrat
-          {selectionCount(draft) > 0 ? ` (${selectionCount(draft)})` : ""}
-        </button>
+        {current.kind === "node" && (
+          <>
+            <Row
+              label={`Shiko të gjitha ${current.node.label.toLowerCase()}`}
+              onClick={() => navigateToNode(current.node)}
+              IconLeft={NODE_ICON[current.node.key] ?? Tag}
+              emphasizeText
+            />
+            {filteredGroups.map((g) => {
+              const hasChildren = !!g.children && g.children.length > 0;
+              return (
+                <Row
+                  key={g.label}
+                  label={g.label}
+                  onClick={() =>
+                    hasChildren
+                      ? openGroup(current.node, g)
+                      : navigateToLeaf(current.node, g.label)
+                  }
+                />
+              );
+            })}
+          </>
+        )}
+
+        {current.kind === "group" && (
+          <>
+            <Row
+              label={`Shiko të gjitha ${current.group.label.toLowerCase()}`}
+              onClick={() => navigateToLeaf(current.node, current.group.label)}
+              emphasizeText
+            />
+            {filteredLeaves.map((leaf) => (
+              <Row
+                key={leaf}
+                label={leaf}
+                onClick={() => navigateToLeaf(current.node, leaf)}
+              />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-function SubRow({
+/* ------------------------------------------------------------------ */
+/* Row                                                                */
+/* ------------------------------------------------------------------ */
+
+function Row({
   label,
-  deep,
-  checked,
-  onToggle,
+  onClick,
+  IconLeft,
+  emphasize,
+  emphasizeText,
 }: {
   label: string;
-  deep?: boolean;
-  checked: boolean;
-  onToggle: () => void;
+  onClick: () => void;
+  IconLeft?: typeof Shirt;
+  emphasize?: boolean;
+  emphasizeText?: boolean;
 }) {
+  const [pressed, setPressed] = useState(false);
+  const outlet = emphasize && false; // reserved hook, unused
+  void outlet;
+  const iconColor = pressed ? CORAL_ACTIVE : INK;
+  const chevColor = pressed ? CORAL_ACTIVE : CHEV;
+
   return (
     <button
       type="button"
-      onClick={onToggle}
+      onClick={onClick}
+      onTouchStart={() => setPressed(true)}
+      onTouchEnd={() => setPressed(false)}
+      onTouchCancel={() => setPressed(false)}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseLeave={() => setPressed(false)}
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
         width: "100%",
-        padding: "13px 20px",
-        paddingLeft: deep ? 48 : 32,
-        fontSize: 14,
-        fontWeight: 400,
-        color: INK,
-        borderBottom: `1px solid ${DIVIDER}`,
-        background: BG,
+        gap: 14,
+        padding: "16px 18px",
+        background: pressed ? "rgba(198,90,122,0.06)" : BG,
         border: "none",
+        borderBottom: `1px solid ${DIVIDER}`,
         cursor: "pointer",
         WebkitTapHighlightColor: "transparent",
+        position: "relative",
       }}
     >
-      <span>{label}</span>
+      {pressed && (
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 3,
+            background: CORAL_GRADIENT,
+          }}
+        />
+      )}
+      {IconLeft && (
+        <IconLeft
+          size={22}
+          strokeWidth={1.6}
+          color={emphasize ? OUTLET_RED : iconColor}
+        />
+      )}
       <span
         style={{
-          width: 22,
-          height: 22,
-          borderRadius: 6,
-          border: checked ? `1.5px solid ${INK}` : `1.5px solid ${CHECK_BORDER}`,
-          background: checked ? INK : "transparent",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          transition: "all 120ms ease",
+          flex: 1,
+          textAlign: "left",
+          fontSize: 15,
+          fontWeight: emphasizeText || emphasize ? 600 : 500,
+          color: emphasize ? OUTLET_RED : INK,
+          letterSpacing: 0.1,
         }}
       >
-        {checked && <Check size={14} strokeWidth={3} color="#fff" />}
+        {label}
       </span>
+      <ChevronRight size={18} strokeWidth={1.8} color={chevColor} />
     </button>
   );
 }
