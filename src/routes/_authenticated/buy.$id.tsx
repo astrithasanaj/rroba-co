@@ -413,12 +413,18 @@ function BuyPage() {
 
       {/* Protection info sheet */}
       <Sheet open={protectionInfoOpen} onOpenChange={setProtectionInfoOpen}>
-        <SheetContent side="bottom" style={{ backgroundColor: CREAM, borderColor: DIVIDER }} className="rounded-t-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold" style={{ color: TEXT }}>Mbrojtja e blerësit</h3>
-            <button onClick={() => setProtectionInfoOpen(false)}>
-              <X size={20} color={TEXT} />
+        <SheetContent side="bottom" hideClose style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              type="button"
+              onClick={() => setProtectionInfoOpen(false)}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
             </button>
+            <h3 className="text-base font-bold" style={{ color: TEXT }}>Mbrojtja e blerësit</h3>
           </div>
           <p className="text-sm mb-6" style={{ color: TEXT }}>
             Mbrojtja e blerësit siguron që të marrësh artikullin siç përshkruhet.
