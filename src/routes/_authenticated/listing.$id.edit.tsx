@@ -712,11 +712,20 @@ function EditListingPage() {
         <Sheet open={catSheet !== null} onOpenChange={(o) => !o && setCatSheet(null)}>
           <SheetContent
             side="bottom"
-            className="rounded-t-3xl border-0 p-0"
-            style={{ background: CREAM, height: "92dvh", maxHeight: "92dvh" }}
+            hideClose
+            className="border-0 p-0"
+            style={{ background: CREAM }}
           >
-            <div className="mx-auto mt-2 h-1 w-10 rounded-full" style={{ background: DIVIDER }} />
-            <SheetHeader className="px-5 pt-3 text-left">
+            <div className="flex items-center gap-3 px-5 pt-4 pb-3">
+              <button
+                type="button"
+                onClick={() => setCatSheet(null)}
+                aria-label="Kthehu"
+                className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+                style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+              >
+                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              </button>
               <SheetTitle style={{ color: INK }}>
                 {catSheet === "category"
                   ? "Zgjidh kategorinë"
@@ -724,8 +733,8 @@ function EditListingPage() {
                     ? "Për kend është?"
                     : "Nënkategoria"}
               </SheetTitle>
-            </SheetHeader>
-            <div className="max-h-[70dvh] overflow-y-auto px-5 pb-6 pt-4">
+            </div>
+            <div className="overflow-y-auto px-5 pb-6 pt-2" style={{ height: "calc(100dvh - 76px)" }}>
               {catSheet === "category" && (
                 <div className="grid grid-cols-2 gap-3">
                   {CATEGORIES.map((c) => (
