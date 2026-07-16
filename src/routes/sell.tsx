@@ -39,6 +39,7 @@ const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";
+const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
 const DIVIDER = "#ddd8ce";
 
 const MAX_PHOTOS = 8;
@@ -854,7 +855,7 @@ function DetailsStep({
                   type="button"
                   onClick={() => setCondition(c.value)}
                   className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                  style={{ background: active ? INK : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
+                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
                 >
                   <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
                   <span
@@ -939,7 +940,7 @@ function DetailsStep({
           onClick={onNext}
           disabled={!canNext}
           className="w-full rounded-2xl py-4 text-sm font-bold transition"
-          style={{ background: canNext ? CORAL : DIVIDER, color: canNext ? "#fff" : MUTED }}
+          style={{ background: canNext ? CORAL_GRADIENT : DIVIDER, color: canNext ? "#fff" : MUTED }}
         >
           Tjetër
         </button>
@@ -1124,7 +1125,7 @@ function FinalStep({
           onClick={onPublish}
           disabled={!canPublish || submitting}
           className="inline-flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition"
-          style={{ background: canPublish ? CORAL : DIVIDER, color: canPublish ? "#fff" : MUTED }}
+          style={{ background: canPublish ? CORAL_GRADIENT : DIVIDER, color: canPublish ? "#fff" : MUTED }}
         >
           {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {submitting ? "Po publikon..." : "Publiko"}
