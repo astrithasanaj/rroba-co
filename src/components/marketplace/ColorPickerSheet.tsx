@@ -118,7 +118,7 @@ export function ColorPickerSheet({
                       }}
                     />
                   </div>
-                  <span className="text-center text-[11px] font-medium" style={{ color: "#1a1a1a" }}>
+                  <span className="text-center text-[11px] font-medium" style={{ color: "#2d1521" }}>
                     {opt.name}
                   </span>
                 </button>
