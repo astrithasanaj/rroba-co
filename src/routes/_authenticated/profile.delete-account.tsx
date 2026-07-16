@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -137,11 +137,18 @@ function DeleteAccountPage() {
           <button
             type="button"
             onClick={goBack}
-            aria-label="Mbrapa"
-            className="grid h-9 w-9 place-items-center rounded-full"
-            style={{ background: CARD, color: INK }}
+            aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
           <h1 className="text-[15px] font-semibold" style={{ color: INK }}>
             {title}

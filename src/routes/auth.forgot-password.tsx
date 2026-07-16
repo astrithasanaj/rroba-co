@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, MailCheck } from "lucide-react";
+import { ChevronLeft, ArrowLeft, MailCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/forgot-password")({
@@ -45,12 +45,20 @@ function ForgotPage() {
 
       <div className="mx-auto w-full max-w-[420px] px-6 pb-10 pt-4">
         <button
+          type="button"
           onClick={() => window.history.back()}
           aria-label="Kthehu"
-          className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full"
-          style={{ color: INK }}
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "rgba(255,255,255,0.7)",
+            border: "1px solid rgba(226,226,222,0.8)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
         >
-          <ArrowLeft size={22} />
+          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
         </button>
 
         {sent ? (

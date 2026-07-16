@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Users } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Loader2, Users } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
@@ -151,19 +151,20 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
             }}
           >
             <button
+              type="button"
               onClick={() => window.history.back()}
               aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{
                 width: 36,
                 height: 36,
-                display: "grid",
-                placeItems: "center",
-                borderRadius: 999,
-                WebkitTapHighlightColor: "transparent",
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
               }}
-              className="active:opacity-70"
             >
-              <ArrowLeft size={20} color={INK} />
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
             </button>
             <h1
               style={{

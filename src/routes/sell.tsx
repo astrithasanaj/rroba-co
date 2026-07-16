@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ChevronLeft,
   ArrowLeft,
   Camera,
   ChevronRight,
@@ -502,11 +503,18 @@ function TopHeader({
           <button
             type="button"
             onClick={onBack}
-            aria-label="Mbrapa"
-            className="grid h-9 w-9 place-items-center rounded-full"
-            style={{ background: CARD, color: INK }}
+            aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
         )}
       </div>

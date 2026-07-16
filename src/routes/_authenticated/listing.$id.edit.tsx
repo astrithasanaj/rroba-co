@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronRight, Loader2, Pencil, X, Grid3x3, Plus, ArrowLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Pencil, X, Grid3x3, Plus, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -376,11 +376,18 @@ function EditListingPage() {
             <button
               type="button"
               onClick={handleCancel}
-              aria-label="Mbrapa"
-              className="grid h-9 w-9 place-items-center rounded-full"
-              style={{ background: "#ffffff", color: INK, border: BORDER }}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{
+                width: 36,
+                height: 36,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
             </button>
           </div>
           <h1 className="text-[15px] font-bold" style={{ color: INK }}>

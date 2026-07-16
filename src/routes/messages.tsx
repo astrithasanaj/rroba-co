@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
+import { ChevronLeft, ArrowLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { signPaths } from "@/lib/listings";
@@ -247,8 +247,21 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           style={{ backgroundColor: CREAM, flexShrink: 0 }}
         >
           {mode === "archive" ? (
-            <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab } })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
-              <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/messages", search: { view: "list", tab } })}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{
+                width: 36,
+                height: 36,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
             </button>
           ) : <div className="w-10" />}
           <h1 className="text-[22px] font-bold" style={{ color: INK }}>{title}</h1>
@@ -725,8 +738,21 @@ function Thread({ id, me }: { id: string; me: string }) {
             paddingTop: "calc(env(safe-area-inset-top) + 12px)",
           }}
         >
-          <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-11 w-11 place-items-center rounded-full">
-            <ArrowLeft className="h-5 w-5" style={{ color: INK }} />
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })}
+            aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(226,226,222,0.8)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
+          >
+            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
           </button>
           {info ? (
             <>
