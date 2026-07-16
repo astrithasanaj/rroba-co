@@ -669,7 +669,7 @@ function EksploreList({
             <button
               key={label}
               type="button"
-              onClick={() => onOpenPicker("femije")}
+              onClick={() => onOpenPicker("femije", false, label)}
               className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
               style={{ borderBottom: "1px solid #e2e2de", background: BG }}
             >
