@@ -1046,8 +1046,21 @@ function SettingsSheet({
   const navigate = useNavigate();
   const [view, setView] = useState<SettingsView>("main");
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [profileDirty, setProfileDirty] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
 
-  useEffect(() => { if (open) setView("main"); }, [open]);
+  useEffect(() => { if (open) { setView("main"); setProfileDirty(false); } }, [open]);
+  useEffect(() => { if (view !== "profile") setProfileDirty(false); }, [view]);
+
+  const handleBack = () => {
+    if (view === "profile" && profileDirty) {
+      setConfirmDiscard(true);
+      return;
+    }
+    if (view !== "main") setView("main");
+    else onOpenChange(false);
+  };
+
 
   const titles: Record<SettingsView, string> = {
     main: "Cilësimet",
