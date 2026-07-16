@@ -337,7 +337,6 @@ export function SizePickerSheet({
               )}
             </div>
           )}
-        </div>
       </div>
     </div>
   );
