@@ -184,7 +184,7 @@ function SearchPage() {
 
   const hasQuery = q.trim().length > 0;
   const hasCategory = selectionCount(catSelection) > 0;
-  const showResults = hasQuery || hasCategory;
+  const showResults = hasQuery || hasCategory || !!section;
 
   useEffect(() => {
     if (!showResults) {

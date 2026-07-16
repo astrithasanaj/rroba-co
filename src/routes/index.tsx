@@ -427,7 +427,7 @@ function ForYou({
           )}
 
           <section className="mt-7 px-[18px]">
-            <SectionHeader title="Trending tani" />
+            <SectionHeader title="Trending tani" seeAllSearch={{ section: "trending" }} />
             <div className="mt-3 grid grid-cols-2 gap-2">
               {trending.map((l, i) => (
                 <ListingCard key={l.id} listing={l} eager={i < 4} />
@@ -437,7 +437,7 @@ function ForYou({
 
           <section className="mt-8">
             <div className="px-5">
-              <SectionHeader title="E re këtë javë" />
+              <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
             </div>
             <div
               className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
@@ -524,13 +524,24 @@ function FollowingFeed({
   );
 }
 
-function SectionHeader({ title }: { title: string }) {
+function SectionHeader({
+  title,
+  seeAllSearch,
+}: {
+  title: string;
+  seeAllSearch?: { section?: "new" | "trending" };
+}) {
   return (
     <div className="flex items-center justify-between">
       <h3 className="text-[16px] font-bold" style={{ color: INK }}>
         {title}
       </h3>
-      <Link to="/search" className="text-xs font-medium" style={{ color: MUTED }}>
+      <Link
+        to="/search"
+        search={seeAllSearch ?? {}}
+        className="text-xs font-medium"
+        style={{ color: MUTED }}
+      >
         Shiko të gjitha
       </Link>
     </div>
