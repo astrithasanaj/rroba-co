@@ -134,7 +134,9 @@ function HomePage() {
           .select("*")
           .eq("status", "active")
           .neq("category", "Fëmijë & bebe")
+          .or(genderFilter)
           .in("id", rankedIds);
+
         const byId = new Map<string, ListingRow>();
         for (const row of (trendingActive ?? []) as ListingRow[]) byId.set(row.id, row);
         trendingRows = rankedIds
