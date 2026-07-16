@@ -223,14 +223,14 @@ export function SizePickerSheet({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="border-0" style={{ background: "#ffffff", maxHeight: "92vh" }}>
+      <DrawerContent className="border-0" style={{ background: "#ffffff", height: "92vh", maxHeight: "92vh" }}>
         <div className="mx-auto h-1.5 w-12 shrink-0 rounded-full" style={{ background: "#c8c3b9" }} />
         <div className="flex items-center gap-3 px-5 pb-3 pt-4">
           <button
             onClick={() => onOpenChange(false)}
             aria-label="Mbrapa"
             className="grid h-9 w-9 place-items-center rounded-full"
-            style={{ background: "#ede8de", color: "#1a1a1a" }}
+            style={{ background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }}
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -249,8 +249,8 @@ export function SizePickerSheet({
                   className="rounded-xl py-3.5 text-sm font-semibold transition"
                   style={
                     active
-                      ? { background: "#1a1a1a", color: "#ffffff" }
-                      : { background: "#ffffff", color: "#1a1a1a" }
+                      ? { background: "linear-gradient(120deg, #e8836a, #c65a7a)", color: "#ffffff" }
+                      : { background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }
                   }
                 >
                   {s}
@@ -260,7 +260,7 @@ export function SizePickerSheet({
           </div>
 
           {guide.rows.length > 0 && (
-            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "#e8e3d9" }}>
+            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "#ffffff", border: "1px solid #e2e2de" }}>
               <button
                 onClick={() => setGuideOpen((o) => !o)}
                 className="flex w-full items-center justify-between px-4 py-3.5"

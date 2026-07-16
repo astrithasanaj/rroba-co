@@ -77,7 +77,7 @@ export function ColorPickerSheet({
               onClick={() => onOpenChange(false)}
               aria-label="Mbrapa"
               className="grid h-9 w-9 place-items-center rounded-full"
-              style={{ background: "#ede8de", color: "#1a1a1a" }}
+              style={{ background: "#ffffff", color: "#1a1a1a", border: "1px solid #e2e2de" }}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
@@ -139,7 +139,7 @@ export function ColorPickerSheet({
             onClick={confirm}
             disabled={selected.length === 0}
             className="w-full rounded-[14px] py-4 text-sm font-semibold text-white transition disabled:opacity-100"
-            style={{ background: selected.length ? "#1a1a1a" : "#c8c3b9" }}
+            style={{ background: selected.length ? "linear-gradient(120deg, #e8836a, #c65a7a)" : "#c8c3b9" }}
           >
             Konfirmo
           </button>
