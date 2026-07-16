@@ -1358,6 +1358,38 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     }
   };
 
+  const extractStoragePath = (url: string): string | null => {
+    try {
+      const u = new URL(url);
+      const m = u.pathname.match(/\/storage\/v1\/object\/(?:sign|public)\/photos\/(.+)$/);
+      return m ? decodeURIComponent(m[1]) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!profile) return;
+    setRemovingPhoto(true);
+    try {
+      const path = extractStoragePath(avatarUrl);
+      if (path) {
+        const { error: removeError } = await supabase.storage.from("photos").remove([path]);
+        if (removeError) console.error("Fotoja në storage nuk u fshi:", removeError.message);
+      }
+      const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", profile.id);
+      if (error) throw error;
+      setAvatarUrl("");
+      toast.success("Fotoja e profilit u hoq");
+      onSaved();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Diçka shkoi keq");
+    } finally {
+      setRemovingPhoto(false);
+      setRemovePhotoOpen(false);
+    }
+  };
+
   const save = async () => {
     if (!profile) return;
     setSaving(true);
