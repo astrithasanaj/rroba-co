@@ -8,6 +8,7 @@ import {
   Clock,
   Users,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   Shirt,
   Baby,
