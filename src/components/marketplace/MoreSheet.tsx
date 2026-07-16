@@ -123,16 +123,24 @@ export function MoreSheet({
         {view === "more" ? (
           <div className="flex flex-col">
             <div className="relative flex items-center justify-center px-4 pt-5 pb-4">
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Kthehu"
+                className="absolute left-4 top-4 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+                style={{
+                  width: 36,
+                  height: 36,
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(226,226,222,0.8)",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 Më shumë
               </h2>
-              <button
-                onClick={close}
-                className="absolute right-4 top-4 rounded-full px-3.5 py-1.5 text-sm font-medium"
-                style={{ backgroundColor: CANCEL_BG, color: INK }}
-              >
-                Anulo
-              </button>
             </div>
             <div style={{ height: 1, backgroundColor: DIVIDER }} />
 
