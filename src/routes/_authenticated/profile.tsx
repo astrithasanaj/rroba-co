@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Star,
+  Trash2,
   User as UserIcon,
   X,
 } from "lucide-react";
@@ -1326,6 +1327,8 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [removePhotoOpen, setRemovePhotoOpen] = useState(false);
+  const [removingPhoto, setRemovingPhoto] = useState(false);
 
   useEffect(() => {
     setName(profile?.name ?? "");
@@ -1355,6 +1358,38 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     }
   };
 
+  const extractStoragePath = (url: string): string | null => {
+    try {
+      const u = new URL(url);
+      const m = u.pathname.match(/\/storage\/v1\/object\/(?:sign|public)\/photos\/(.+)$/);
+      return m ? decodeURIComponent(m[1]) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!profile) return;
+    setRemovingPhoto(true);
+    try {
+      const path = extractStoragePath(avatarUrl);
+      if (path) {
+        const { error: removeError } = await supabase.storage.from("photos").remove([path]);
+        if (removeError) console.error("Fotoja në storage nuk u fshi:", removeError.message);
+      }
+      const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", profile.id);
+      if (error) throw error;
+      setAvatarUrl("");
+      toast.success("Fotoja e profilit u hoq");
+      onSaved();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Diçka shkoi keq");
+    } finally {
+      setRemovingPhoto(false);
+      setRemovePhotoOpen(false);
+    }
+  };
+
   const save = async () => {
     if (!profile) return;
     setSaving(true);
@@ -1374,11 +1409,29 @@ function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; ema
     <div className="space-y-4 pb-6">
       <div className="flex items-center gap-3">
         <img src={avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`} alt="" className="h-16 w-16 rounded-full object-cover" style={{ boxShadow: `0 0 0 2px ${DIVIDER}` }} />
-        <label className="cursor-pointer rounded-full px-3 py-2 text-xs font-medium" style={{ backgroundColor: CARD, color: INK }}>
-          {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
-          <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
-        </label>
+        <div className="flex flex-col gap-1.5">
+          <label className="cursor-pointer rounded-full px-3 py-2 text-xs font-medium" style={{ backgroundColor: CARD, color: INK, width: "fit-content" }}>
+            {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
+            <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
+          </label>
+          {avatarUrl && !avatarUrl.includes("dicebear.com") && (
+            <button
+              type="button"
+              onClick={() => setRemovePhotoOpen(true)}
+              className="w-fit text-xs font-medium"
+              style={{ color: "#b3392f", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}
+            >
+              Hiq foton aktuale
+            </button>
+          )}
+        </div>
       </div>
+      <RemovePhotoDialog
+        open={removePhotoOpen}
+        onOpenChange={setRemovePhotoOpen}
+        onConfirm={handleRemovePhoto}
+        loading={removingPhoto}
+      />
       <div>
         <div className="flex items-center justify-between">
           <Label style={{ color: INK }}>Email</Label>
@@ -1654,5 +1707,109 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
     </div>
   );
 }
+
+function RemovePhotoDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+  loading,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onConfirm: () => void;
+  loading: boolean;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-6"
+      style={{
+        backgroundColor: "rgba(20,18,15,0.55)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+      }}
+      onClick={() => onOpenChange(false)}
+    >
+      <div
+        className="w-full"
+        style={{
+          maxWidth: 280,
+          backgroundColor: "#ffffff",
+          borderRadius: 22,
+          boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+          padding: "24px 20px 20px",
+          textAlign: "center",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="mx-auto grid h-[52px] w-[52px] place-items-center rounded-full"
+          style={{ backgroundColor: "#fbeceb" }}
+        >
+          <Trash2 style={{ width: 22, height: 22, color: "#b3392f" }} strokeWidth={2} />
+        </div>
+        <div
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#1a1a1a",
+            marginTop: 16,
+          }}
+        >
+          Hiq foton e profilit?
+        </div>
+        <div
+          style={{
+            fontSize: 13,
+            color: "#a89f94",
+            lineHeight: 1.5,
+            marginTop: 6,
+          }}
+        >
+          Do të kthehesh te avatari standard. Kjo veprim nuk mund të kthehet.
+        </div>
+        <div className="mt-5 flex flex-col gap-2">
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            style={{
+              backgroundColor: "#b3392f",
+              color: "#ffffff",
+              height: 48,
+              borderRadius: 999,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+              border: "none",
+              cursor: loading ? "default" : "pointer",
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? "Duke hequr..." : "Hiq foton"}
+          </button>
+          <button
+            onClick={() => onOpenChange(false)}
+            disabled={loading}
+            style={{
+              backgroundColor: "#f4f4f2",
+              color: "#1a1a1a",
+              height: 48,
+              borderRadius: 999,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+              border: "none",
+              cursor: loading ? "default" : "pointer",
+            }}
+          >
+            Anulo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 
