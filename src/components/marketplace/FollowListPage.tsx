@@ -202,12 +202,13 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                     width: 64,
                     height: 64,
                     borderRadius: 999,
-                    backgroundColor: CHIP_BG,
+                    backgroundColor: "#f5e6e9",
                     display: "grid",
                     placeItems: "center",
                   }}
                 >
-                  <Users size={28} color={MUTED} strokeWidth={1.6} />
+                  <Users size={28} color="#6e2438" strokeWidth={1.6} />
+
                 </div>
                 <p style={{ color: MUTED, fontSize: 14 }}>{emptyText}</p>
               </div>
