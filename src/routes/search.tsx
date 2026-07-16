@@ -964,9 +964,10 @@ function ProfileListRow({
           }}
           className="shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-opacity active:opacity-80"
           style={{
-            backgroundColor: isFollowing ? CARD : CORAL,
-            color: isFollowing ? INK : "#ffffff",
-            border: isFollowing ? `1px solid ${DIVIDER}` : "none",
+            backgroundColor: isFollowing ? "#f5e6e9" : CORAL,
+            color: isFollowing ? "#6e2438" : "#ffffff",
+            border: "none",
+            fontWeight: 600,
           }}
         >
           {isFollowing ? "Duke ndjekur" : "Ndiq"}

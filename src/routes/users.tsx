@@ -189,10 +189,10 @@ function UsersBrowsePage() {
                             padding: "6px 16px",
                             borderRadius: 999,
                             fontSize: 13,
-                            fontWeight: isFollowing ? 500 : 600,
-                            border: isFollowing ? `1px solid ${CHIP_BORDER}` : "none",
-                            backgroundColor: isFollowing ? CHIP_BG : CORAL,
-                            color: isFollowing ? INK : "#ffffff",
+                            fontWeight: 600,
+                            border: isFollowing ? "none" : "none",
+                            backgroundColor: isFollowing ? "#f5e6e9" : CORAL,
+                            color: isFollowing ? "#6e2438" : "#ffffff",
                             whiteSpace: "nowrap",
                           }}
                         >
