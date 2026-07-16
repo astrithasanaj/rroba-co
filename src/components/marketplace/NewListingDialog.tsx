@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
+import { CATEGORY_TAXONOMY } from "@/lib/category-taxonomy";
 
 const MIN_IMAGES = 3;
 const MAX_IMAGES = 10;
