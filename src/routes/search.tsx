@@ -123,6 +123,7 @@ function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [pickerInitialKey, setPickerInitialKey] = useState<string | undefined>(undefined);
+  const [pickerInitialGroupLabel, setPickerInitialGroupLabel] = useState<string | undefined>(undefined);
   const [pickerInitialBucket, setPickerInitialBucket] = useState(false);
   const [genderTab, setGenderTab] = useState<"Femra" | "Meshkuj" | "Fëmijë" | null>(null);
   const [filters, setFilters] = useState<Filters>({});
