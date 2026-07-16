@@ -834,89 +834,100 @@ function DetailsStep({
           })}
         </div>
 
-        <h2 className="mt-7 text-[22px] font-bold" style={{ color: INK }}>
-          Detajet
-        </h2>
+        <div
+          className="mt-7 rounded-2xl p-4"
+          style={{ border: "1px solid #e2e2de", background: CARD }}
+        >
+          <h2 className="text-[22px] font-bold" style={{ color: INK }}>
+            Detajet
+          </h2>
 
-        <h3 className="mt-5 text-[17px] font-bold" style={{ color: INK }}>
-          Çfarë është gjendja e artikullit?
-        </h3>
-        <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
-          {CONDITIONS.map((c) => {
-            const active = condition === c.value;
-            return (
-              <button
-                key={c.value}
-                type="button"
-                onClick={() => setCondition(c.value)}
-                className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                style={{ background: active ? INK : CARD, color: active ? "#fff" : INK }}
-              >
-                <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
-                <span
-                  className="text-[11px] leading-tight"
-                  style={{ color: active ? "rgba(255,255,255,0.7)" : MUTED }}
+          <h3 className="mt-5 text-[17px] font-bold" style={{ color: INK }}>
+            Çfarë është gjendja e artikullit?
+          </h3>
+          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+            {CONDITIONS.map((c) => {
+              const active = condition === c.value;
+              return (
+                <button
+                  key={c.value}
+                  type="button"
+                  onClick={() => setCondition(c.value)}
+                  className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
+                  style={{ background: active ? INK : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
                 >
-                  {c.subtitle}
-                </span>
+                  <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
+                  <span
+                    className="text-[11px] leading-tight"
+                    style={{ color: active ? "rgba(255,255,255,0.7)" : MUTED }}
+                  >
+                    {c.subtitle}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {!sizeHidden && (
+            <div className="mt-7">
+              <p
+                className="mb-2 text-[11px] font-semibold uppercase tracking-[0.15em]"
+                style={{ color: MUTED }}
+              >
+                Madhësia
+              </p>
+              <button
+                type="button"
+                onClick={onOpenSize}
+                className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
+                style={{
+                  background: CARD,
+                  color: INK,
+                  border: "1px solid #e2e2de",
+                  boxShadow: sizeError ? "0 0 0 1.5px #e53935 inset" : undefined,
+                }}
+              >
+                <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh madhësinë"}</span>
+                <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
               </button>
-            );
-          })}
+              {sizeError && sizeRequired && (
+                <p className="mt-1.5 text-[12px] font-medium" style={{ color: "#e53935" }}>
+                  Ju lutemi zgjidhni madhësinë
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
-        {!sizeHidden && (
-          <div className="mt-7">
-            <p
-              className="mb-2 text-[11px] font-semibold uppercase tracking-[0.15em]"
-              style={{ color: MUTED }}
-            >
-              Madhësia
-            </p>
-            <button
-              type="button"
-              onClick={onOpenSize}
-              className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
-              style={{
-                background: CARD,
-                color: INK,
-                boxShadow: sizeError ? "0 0 0 1.5px #e53935 inset" : undefined,
-              }}
-            >
-              <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh madhësinë"}</span>
-              <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
-            </button>
-            {sizeError && sizeRequired && (
-              <p className="mt-1.5 text-[12px] font-medium" style={{ color: "#e53935" }}>
-                Ju lutemi zgjidhni madhësinë
-              </p>
-            )}
-          </div>
-        )}
-
-        <h3 className="mt-7 text-[17px] font-bold" style={{ color: INK }}>
-          Përshkruaj artikullin
-        </h3>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Titulli"
-          maxLength={120}
-          className="mt-3 w-full rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
-          style={
-            { background: CARD, color: INK, ["--muted" as string]: MUTED } as React.CSSProperties
-          }
-        />
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Përshkrimi i artikullit"
-          maxLength={2000}
-          rows={5}
-          className="mt-3 w-full resize-none rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
-          style={
-            { background: CARD, color: INK, ["--muted" as string]: MUTED } as React.CSSProperties
-          }
-        />
+        <div
+          className="mt-7 rounded-2xl p-4"
+          style={{ border: "1px solid #e2e2de", background: CARD }}
+        >
+          <h3 className="text-[17px] font-bold" style={{ color: INK }}>
+            Përshkruaj artikullin
+          </h3>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Titulli"
+            maxLength={120}
+            className="mt-3 w-full rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
+            style={
+              { background: CARD, color: INK, ["--muted" as string]: MUTED, border: "1px solid #e2e2de" } as React.CSSProperties
+            }
+          />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Përshkrimi i artikullit"
+            maxLength={2000}
+            rows={5}
+            className="mt-3 w-full resize-none rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
+            style={
+              { background: CARD, color: INK, ["--muted" as string]: MUTED, border: "1px solid #e2e2de" } as React.CSSProperties
+            }
+          />
+        </div>
       </div>
 
       <div
