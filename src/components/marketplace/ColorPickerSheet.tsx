@@ -83,7 +83,7 @@ export function ColorPickerSheet({
             </button>
           </div>
           <div className="px-5 pb-3 text-center">
-            <DrawerTitle className="text-lg font-medium" style={{ color: "#1a1a1a" }}>
+            <DrawerTitle className="text-lg font-medium" style={{ color: "#2d1521" }}>
               Zgjedh ngjyrën
             </DrawerTitle>
             <p className="mt-1 text-xs" style={{ color: "#8a8478" }}>
