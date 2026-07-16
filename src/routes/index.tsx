@@ -268,8 +268,9 @@ function HomePage() {
               loading={loading}
               listings={listings}
               promoted={promoted}
-              trending={trending}
-              newThisWeek={newThisWeek}
+              trending={trendingListings}
+              newThisWeek={newThisWeekListings}
+
               followingPreview={followingPreview}
             />
           ) : (
