@@ -1463,7 +1463,7 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
           />
         </div>
       </div>
-      <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold disabled:opacity-50" style={{ backgroundColor: INK, color: "#ffffff" }}>
+      <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm disabled:opacity-50" style={{ background: "linear-gradient(120deg, #e8836a, #c65a7a)", color: "#ffffff", fontWeight: 600, border: "none" }}>
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
         Ruaj
       </button>
