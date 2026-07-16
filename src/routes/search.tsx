@@ -629,7 +629,10 @@ function EksploreList({
   onOpenPicker: (key?: string, initialBucket?: boolean, groupLabel?: string) => void;
 }) {
   const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
-  const rows = EKSPLORE_ROWS.filter((row) => row.key !== "femije");
+  const UNIVERSAL_KEYS = ["interior", "art", "elektronik", "hobi"];
+  const rows = EKSPLORE_ROWS.filter(
+    (row) => row.key !== "femije" && !UNIVERSAL_KEYS.includes(row.key)
+  );
   const childIcons: Record<string, typeof Baby> = {
     Vajza: Venus,
     Djem: Mars,
