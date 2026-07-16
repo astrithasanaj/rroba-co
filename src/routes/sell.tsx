@@ -662,7 +662,7 @@ function GenderPicker({
               type="button"
               onClick={() => onPick(g)}
               className="flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98]"
-              style={{ background: CARD, color: INK }}
+              style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
             >
               <span className="text-[28px]">{g === "Femra" || g === "Vajza" ? "♀" : "♂"}</span>
               <span className="text-[14px] font-bold">{g}</span>
@@ -675,7 +675,7 @@ function GenderPicker({
             type="button"
             onClick={() => onPick(extra)}
             className="rounded-full px-5 py-2.5 text-[13px] font-semibold"
-            style={{ background: CARD, color: INK }}
+            style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
           >
             {extra}
           </button>
@@ -719,7 +719,7 @@ function SubcategoryPicker({
               type="button"
               onClick={() => onPick(s)}
               className="rounded-full px-2 py-3 text-center text-[12px] font-semibold transition active:scale-[0.97]"
-              style={{ background: CARD, color: INK }}
+              style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
             >
               {s}
             </button>
