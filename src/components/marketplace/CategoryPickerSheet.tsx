@@ -6,11 +6,14 @@ import {
   Shirt,
   Mountain,
   Archive,
-  Baby,
   Frame,
   Speaker,
   Gamepad2,
   Sparkles,
+  LayoutGrid,
+  Venus,
+  Mars,
+  Baby,
 } from "lucide-react";
 import {
   CATEGORY_TAXONOMY,
@@ -21,14 +24,13 @@ import {
   type SubcategoryNode,
 } from "@/lib/category-taxonomy";
 
-// Rroba brand palette (white / burgundy / coral — see design direction notes)
 const BG = "#ffffff";
-const INK = "#2d1521"; // dark burgundy — default icon/text on white
+const INK = "#2d1521";
 const MUTED = "#a89f94";
 const DIVIDER = "#e2e2de";
 const HEADER_BG = "#2d1521";
 const HEADER_TEXT = "#ffffff";
-const ACCENT = "#c65a7a"; // pressed/active icon + chevron
+const ACCENT = "#c65a7a";
 const ROW_ACTIVE_BG = "#fbf6f2";
 const CHECK_BORDER = "#c8c3b9";
 const ACCENT_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
@@ -37,16 +39,21 @@ const NODE_ICONS: Record<string, typeof Shirt> = {
   mode: Shirt,
   outdoor: Mountain,
   interior: Archive,
-  femije: Baby,
   art: Frame,
   elektronik: Speaker,
   hobi: Gamepad2,
 };
 
+const UNIVERSAL_KEYS = ["interior", "art", "elektronik", "hobi"];
+const FEMIJE_KEY = "femije";
+
+type Gender = "Femra" | "Meshkuj" | "Fëmijë";
+
 type Level =
-  | { depth: 0 }
-  | { depth: 1; node: CategoryNode }
-  | { depth: 2; node: CategoryNode; group: SubcategoryNode };
+  | { kind: "root" }
+  | { kind: "bucket" }
+  | { kind: "groups"; node: CategoryNode }
+  | { kind: "leaves"; node: CategoryNode; group: SubcategoryNode };
 
 export function CategoryPickerSheet({
   open,
@@ -54,21 +61,25 @@ export function CategoryPickerSheet({
   value,
   onApply,
   initialNodeKey,
+  initialBucket = false,
+  gender = "Femra",
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   value: CategorySelection;
   onApply: (sel: CategorySelection) => void;
   initialNodeKey?: string;
+  initialBucket?: boolean;
+  gender?: Gender;
 }) {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
-  const [level, setLevel] = useState<Level>({ depth: 0 });
-  // Draft multi-select, only used at the leaf (depth 2) level — cleared
-  // every time a new group is entered.
+  const [level, setLevel] = useState<Level>({ kind: "root" });
   const [leafDraft, setLeafDraft] = useState<Set<string>>(new Set());
+  const [openedDirectly, setOpenedDirectly] = useState(false);
 
-  // Swipe-back (from left edge — goes up one level, or closes at root)
+  const femijeNode = CATEGORY_TAXONOMY.find((n) => n.key === FEMIJE_KEY)!;
+
   const pageRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const dragging = useRef(false);
@@ -76,11 +87,20 @@ export function CategoryPickerSheet({
   useEffect(() => {
     if (open) {
       setMounted(true);
+      setLeafDraft(new Set());
       const startNode = initialNodeKey
         ? CATEGORY_TAXONOMY.find((n) => n.key === initialNodeKey)
         : undefined;
-      setLevel(startNode ? { depth: 1, node: startNode } : { depth: 0 });
-      setLeafDraft(new Set());
+      if (startNode) {
+        setOpenedDirectly(true);
+        setLevel({ kind: "groups", node: startNode });
+      } else if (initialBucket && gender !== "Fëmijë") {
+        setOpenedDirectly(false);
+        setLevel({ kind: "bucket" });
+      } else {
+        setOpenedDirectly(false);
+        setLevel({ kind: "root" });
+      }
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setVisible(true));
       });
@@ -89,14 +109,31 @@ export function CategoryPickerSheet({
       const t = setTimeout(() => setMounted(false), 300);
       return () => clearTimeout(t);
     }
-  }, [open, mounted, initialNodeKey]);
+  }, [open, mounted, initialNodeKey, initialBucket, gender]);
 
   const close = () => onOpenChange(false);
 
   const goBack = () => {
-    if (level.depth === 2) setLevel({ depth: 1, node: level.node });
-    else if (level.depth === 1) setLevel({ depth: 0 });
-    else close();
+    if (level.kind === "leaves") {
+      if (level.node.key === FEMIJE_KEY) {
+        if (openedDirectly) close();
+        else setLevel({ kind: "root" });
+      } else {
+        setLevel({ kind: "groups", node: level.node });
+      }
+    } else if (level.kind === "groups") {
+      if (openedDirectly && level.node.key === initialNodeKey) {
+        close();
+      } else if (UNIVERSAL_KEYS.includes(level.node.key)) {
+        setLevel({ kind: "bucket" });
+      } else {
+        setLevel({ kind: "root" });
+      }
+    } else if (level.kind === "bucket") {
+      setLevel({ kind: "root" });
+    } else {
+      close();
+    }
   };
 
   const onTouchStart = (e: React.TouchEvent) => {
@@ -134,8 +171,6 @@ export function CategoryPickerSheet({
 
   if (!mounted) return null;
 
-  // Apply a selection and close — every leaf tap in the drill-down navigates
-  // straight to results, matching the Zalando "one choice, then go" model.
   const applyAndClose = (sel: CategorySelection) => {
     onApply(sel);
     close();
@@ -170,12 +205,22 @@ export function CategoryPickerSheet({
     });
   };
 
+  const enterGroup = (node: CategoryNode, group: SubcategoryNode) => {
+    const hasChildren = !!group.children && group.children.length > 0;
+    if (hasChildren) {
+      setLeafDraft(new Set());
+      setLevel({ kind: "leaves", node, group });
+    } else pickWholeGroup(node, group);
+  };
+
   const title =
-    level.depth === 0
+    level.kind === "root"
       ? "Kategoritë"
-      : level.depth === 1
-        ? level.node.label
-        : level.group.label;
+      : level.kind === "bucket"
+        ? "Për të gjithë"
+        : level.kind === "groups"
+          ? level.node.label
+          : level.group.label;
 
   return (
     <div
@@ -196,7 +241,6 @@ export function CategoryPickerSheet({
         touchAction: "pan-y",
       }}
     >
-      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -210,7 +254,7 @@ export function CategoryPickerSheet({
         <button
           type="button"
           onClick={goBack}
-          aria-label={level.depth === 0 ? "Mbyll" : "Kthehu"}
+          aria-label={level.kind === "root" ? "Mbyll" : "Kthehu"}
           style={{
             width: 36,
             height: 36,
@@ -237,7 +281,6 @@ export function CategoryPickerSheet({
         </span>
       </div>
 
-      {/* Scrollable list */}
       <div
         style={{
           flex: 1,
@@ -245,28 +288,35 @@ export function CategoryPickerSheet({
           WebkitOverflowScrolling: "touch",
         }}
       >
-        {level.depth === 0 && (
+        {level.kind === "root" && gender !== "Fëmijë" && (
           <RootList
             selection={value}
-            onPickNode={(node) => setLevel({ depth: 1, node })}
+            onPickNode={(node) => setLevel({ kind: "groups", node })}
+            onOpenBucket={() => setLevel({ kind: "bucket" })}
           />
         )}
 
-        {level.depth === 1 && (
+        {level.kind === "root" && gender === "Fëmijë" && (
+          <NodeGroupList
+            node={femijeNode}
+            onPickAll={() => pickWholeNode(femijeNode)}
+            onPickGroup={(group) => enterGroup(femijeNode, group)}
+          />
+        )}
+
+        {level.kind === "bucket" && (
+          <BucketList onPickNode={(node) => setLevel({ kind: "groups", node })} />
+        )}
+
+        {level.kind === "groups" && (
           <NodeGroupList
             node={level.node}
             onPickAll={() => pickWholeNode(level.node)}
-            onPickGroup={(group) => {
-              const hasChildren = !!group.children && group.children.length > 0;
-              if (hasChildren) {
-                setLeafDraft(new Set());
-                setLevel({ depth: 2, node: level.node, group });
-              } else pickWholeGroup(level.node, group);
-            }}
+            onPickGroup={(group) => enterGroup(level.node, group)}
           />
         )}
 
-        {level.depth === 2 && (
+        {level.kind === "leaves" && (
           <LeafList
             group={level.group}
             selected={leafDraft}
@@ -276,7 +326,7 @@ export function CategoryPickerSheet({
         )}
       </div>
 
-      {level.depth === 2 && leafDraft.size > 0 && (
+      {level.kind === "leaves" && leafDraft.size > 0 && (
         <div
           style={{
             position: "fixed",
@@ -313,10 +363,15 @@ export function CategoryPickerSheet({
 function RootList({
   selection,
   onPickNode,
+  onOpenBucket,
 }: {
   selection: CategorySelection;
   onPickNode: (node: CategoryNode) => void;
+  onOpenBucket: () => void;
 }) {
+  const genderSpecific = CATEGORY_TAXONOMY.filter(
+    (n) => n.key !== FEMIJE_KEY && !UNIVERSAL_KEYS.includes(n.key),
+  );
   return (
     <div>
       <Row
@@ -324,7 +379,7 @@ function RootList({
         icon={<Sparkles size={18} strokeWidth={1.6} color={ACCENT} />}
         onClick={() => {}}
       />
-      {CATEGORY_TAXONOMY.map((node) => {
+      {genderSpecific.map((node) => {
         const Icon = NODE_ICONS[node.key];
         const active = selection.categories.has(node.key);
         return (
@@ -345,9 +400,39 @@ function RootList({
           />
         );
       })}
+      <Row
+        label="Për të gjithë"
+        icon={<LayoutGrid size={18} strokeWidth={1.6} color={INK} />}
+        onClick={onOpenBucket}
+      />
     </div>
   );
 }
+
+function BucketList({ onPickNode }: { onPickNode: (node: CategoryNode) => void }) {
+  const universal = CATEGORY_TAXONOMY.filter((n) => UNIVERSAL_KEYS.includes(n.key));
+  return (
+    <div>
+      {universal.map((node) => {
+        const Icon = NODE_ICONS[node.key];
+        return (
+          <Row
+            key={node.key}
+            label={node.label}
+            icon={Icon ? <Icon size={18} strokeWidth={1.6} color={INK} /> : undefined}
+            onClick={() => onPickNode(node)}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+const FEMIJE_GROUP_ICONS: Record<string, typeof Venus> = {
+  Vajza: Venus,
+  Djem: Mars,
+  Bebe: Baby,
+};
 
 function NodeGroupList({
   node,
@@ -358,12 +443,21 @@ function NodeGroupList({
   onPickAll: () => void;
   onPickGroup: (group: SubcategoryNode) => void;
 }) {
+  const isFemije = node.key === FEMIJE_KEY;
   return (
     <div>
       <Row label={`Të gjitha ${node.label.toLowerCase()}`} bold onClick={onPickAll} />
-      {node.groups.map((g) => (
-        <Row key={g.label} label={g.label} onClick={() => onPickGroup(g)} />
-      ))}
+      {node.groups.map((g) => {
+        const Icon = isFemije ? FEMIJE_GROUP_ICONS[g.label] : undefined;
+        return (
+          <Row
+            key={g.label}
+            label={g.label}
+            icon={Icon ? <Icon size={18} strokeWidth={1.6} color={INK} /> : undefined}
+            onClick={() => onPickGroup(g)}
+          />
+        );
+      })}
     </div>
   );
 }
