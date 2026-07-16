@@ -154,17 +154,31 @@ function HomePage() {
           style={{ backgroundColor: `${PAGE_BG}f2` }}
         >
           <div className="flex items-center justify-between px-[18px] py-4">
-            <h1
-              className="text-3xl italic"
-              style={{
-                color: INK,
-                fontFamily: 'Georgia, "Times New Roman", serif',
-                fontWeight: 600,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Rroba
-            </h1>
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="grid place-items-center"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  background: "#2d1521",
+                }}
+              >
+                <Shirt size={18} strokeWidth={1.8} style={{ color: "#e8836a" }} />
+              </span>
+              <h1
+                className="text-3xl italic"
+                style={{
+                  color: INK,
+                  fontFamily: 'Georgia, "Times New Roman", serif',
+                  fontWeight: 600,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Rroba
+              </h1>
+            </div>
             <Link
               to="/notifications"
               className="grid h-10 w-10 place-items-center rounded-full"
