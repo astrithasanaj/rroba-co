@@ -61,6 +61,7 @@ function HomePage() {
         .from("listings")
         .select("*")
         .eq("status", "active")
+        .neq("category", "Fëmijë & bebe")
         .gte("created_at", weekAgoIso)
         .order("created_at", { ascending: false })
         .limit(10);
