@@ -570,9 +570,25 @@ function UserProfile() {
 
       {/* More sheet */}
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CARD }}>
-          <div className="mx-auto mt-3 h-1.5 w-12 rounded-full" style={{ backgroundColor: DIVIDER }} />
-          <div className="px-2 pb-6 pt-3">
+        <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ backgroundColor: CARD }}>
+          <div className="flex items-center gap-3 px-4 pt-5 pb-3">
+            <button
+              type="button"
+              onClick={() => setMoreOpen(false)}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{
+                width: 36,
+                height: 36,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            </button>
+          </div>
+          <div className="px-2 pb-6 pt-1">
             <button
               onClick={handleShare}
               className="flex w-full items-center gap-3 rounded-xl px-4 py-4 text-left text-[15px] font-medium"
@@ -593,8 +609,24 @@ function UserProfile() {
 
       {/* Sort sheet */}
       <Sheet open={sortOpen} onOpenChange={setSortOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CARD }}>
-          <div className="mx-auto mt-3 h-1.5 w-12 rounded-full" style={{ backgroundColor: DIVIDER }} />
+        <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ backgroundColor: CARD }}>
+          <div className="flex items-center gap-3 px-4 pt-5 pb-2">
+            <button
+              type="button"
+              onClick={() => setSortOpen(false)}
+              aria-label="Kthehu"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              style={{
+                width: 36,
+                height: 36,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            </button>
+          </div>
           <div className="px-5 pb-8 pt-4">
             <h2 className="mb-3 text-[17px] font-bold" style={{ color: INK }}>
               Rendit sipas
