@@ -34,16 +34,6 @@ const MAX_BYTES = 10 * 1024 * 1024;
 const MIN_DIM = 100;
 const MAX_DIM = 8000;
 
-const CATEGORIES = [
-  { value: "topp", label: "Topp" },
-  { value: "bukse", label: "Bukse" },
-  { value: "kjole", label: "Kjole" },
-  { value: "sko", label: "Sko" },
-  { value: "jakke", label: "Jakke" },
-  { value: "veske", label: "Veske" },
-  { value: "tilbehor", label: "Tilbehør" },
-  { value: "annet", label: "Annet" },
-];
 
 type PendingImage = { file: File; previewUrl: string; mime: string };
 
