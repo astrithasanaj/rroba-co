@@ -218,22 +218,20 @@ export function ReviewsSheet({
           >
             <div style={{ width: 72, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
               <button
+                type="button"
                 onClick={() => onOpenChange(false)}
-                aria-label="Mbrapa"
+                aria-label="Kthehu"
+                className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
                 style={{
-                  background: CARD,
-                  color: INK,
                   width: 36,
                   height: 36,
-                  borderRadius: 999,
-                  display: "grid",
-                  placeItems: "center",
-                  border: 0,
-                  WebkitTapHighlightColor: "transparent",
-                  cursor: "pointer",
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(226,226,222,0.8)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ArrowLeft size={20} />
+                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
