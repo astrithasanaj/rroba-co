@@ -6,9 +6,16 @@ import {
   SlidersHorizontal,
   Loader2,
   Clock,
-  LayoutGrid,
   Users,
   ChevronRight,
+  Sparkles,
+  Shirt,
+  Baby,
+  Archive,
+  Mountain,
+  Frame,
+  Speaker,
+  Gamepad2,
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,6 +119,8 @@ function SearchPage() {
   const [focused, setFocused] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [pickerInitialKey, setPickerInitialKey] = useState<string | undefined>(undefined);
+  const [genderTab, setGenderTab] = useState<"Femra" | "Meshkuj" | "Fëmijë" | null>(null);
   const [filters, setFilters] = useState<Filters>({});
   const [catSelection, setCatSelection] = useState<CategorySelection>(() => {
     const sel = emptySelection();
@@ -427,26 +436,9 @@ function SearchPage() {
             )}
           </div>
 
-          {/* Kategoritë trigger */}
-          <div className="mt-3 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowCategoryPicker(true)}
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
-              style={{ backgroundColor: CARD, color: INK, border: "1px solid #d8d8d2" }}
-            >
-              <LayoutGrid className="h-4 w-4" />
-              Kategoritë
-              {catChips.length > 0 && (
-                <span
-                  className="grid min-w-[20px] h-[20px] place-items-center rounded-full px-1.5 text-[10px] font-bold text-white"
-                  style={{ backgroundColor: CORAL }}
-                >
-                  {catChips.length}
-                </span>
-              )}
-            </button>
-          </div>
+          {/* Gender tabs — Femra / Meshkuj / Fëmijë */}
+          <GenderTabs value={genderTab} onChange={setGenderTab} />
+
 
           {/* Selected chip tags */}
           {catChips.length > 0 && (
@@ -503,7 +495,12 @@ function SearchPage() {
             onPickCategory={pickCategoryCard}
           />
         ) : (
-          <CategoriesSection onPick={pickCategoryCard} />
+          <EksploreList
+            onOpenPicker={(key) => {
+              setPickerInitialKey(key);
+              setShowCategoryPicker(true);
+            }}
+          />
         )}
 
         {showResults && (
@@ -529,9 +526,13 @@ function SearchPage() {
 
       <CategoryPickerSheet
         open={showCategoryPicker}
-        onOpenChange={setShowCategoryPicker}
+        onOpenChange={(v) => {
+          setShowCategoryPicker(v);
+          if (!v) setPickerInitialKey(undefined);
+        }}
         value={catSelection}
         onApply={setCatSelection}
+        initialNodeKey={pickerInitialKey}
       />
 
       <FiltersSheet
@@ -544,49 +545,120 @@ function SearchPage() {
   );
 }
 
-function CategoriesSection({ onPick }: { onPick: (key: string) => void }) {
+const EKSPLORE_ROWS: {
+  key: string;
+  label: string;
+  Icon: React.ComponentType<{ size?: number; strokeWidth?: number; style?: React.CSSProperties }>;
+}[] = [
+  { key: "mode", label: "Modë & aksesorë", Icon: Shirt },
+  { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
+  { key: "interior", label: "Interiør & mobilje", Icon: Archive },
+  { key: "outdoor", label: "Outdoor & sport", Icon: Mountain },
+  { key: "art", label: "Art & dizajn", Icon: Frame },
+  { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },
+  { key: "hobi", label: "Hobi", Icon: Gamepad2 },
+];
+
+function GenderTabs({
+  value,
+  onChange,
+}: {
+  value: "Femra" | "Meshkuj" | "Fëmijë" | null;
+  onChange: (v: "Femra" | "Meshkuj" | "Fëmijë" | null) => void;
+}) {
+  const tabs: ("Femra" | "Meshkuj" | "Fëmijë")[] = ["Femra", "Meshkuj", "Fëmijë"];
   return (
-    <section className="mt-8 px-5">
-      <h2 className="mb-4 text-[20px] font-bold" style={{ color: INK }}>
-        Kategoritë
-      </h2>
-      <div className="grid grid-cols-2 gap-3">
-        {HOME_CATEGORIES.map(({ key, label, Icon }) => (
+    <div
+      className="mt-4 flex items-center gap-6"
+      style={{ borderBottom: "1px solid #e2e2de" }}
+    >
+      {tabs.map((t) => {
+        const active = value === t;
+        return (
           <button
-            key={key}
+            key={t}
             type="button"
-            onClick={() => onPick(key)}
-            className="flex h-[140px] flex-col items-start justify-between rounded-2xl p-4 text-left tap-icon"
+            onClick={() => onChange(active ? null : t)}
+            className="relative pb-3 pt-1 text-[15px]"
             style={{
-              backgroundColor: CARD,
-              border: "0.5px solid #e2e2de",
-              borderRadius: "16px",
-              padding: "1rem",
+              color: active ? INK : MUTED,
+              fontWeight: active ? 600 : 500,
             }}
           >
-            <div
-              className="grid place-items-center"
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: "50%",
-                background: "#2d1521",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                border: "0.5px solid rgba(255,255,255,0.09)",
-              }}
-            >
-              <Icon size={22} strokeWidth={1.5} style={{ color: "#e8836a" }} />
-            </div>
-            <span
-              className="text-[15px] font-bold leading-tight"
-              style={{ color: INK }}
-            >
-              {label}
-            </span>
+            {t}
+            {active && (
+              <span
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  bottom: -1,
+                  height: 2,
+                  background: "#e8836a",
+                  borderRadius: 2,
+                }}
+              />
+            )}
           </button>
-        ))}
-      </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function EksploreList({ onOpenPicker }: { onOpenPicker: (key?: string) => void }) {
+  return (
+    <section className="mt-4">
+      <button
+        type="button"
+        onClick={() => onOpenPicker(undefined)}
+        className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+        style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+      >
+        <span
+          className="grid place-items-center"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "#fbeceb",
+            flexShrink: 0,
+          }}
+        >
+          <Sparkles size={18} strokeWidth={1.7} style={{ color: "#c65a7a" }} />
+        </span>
+        <span className="flex-1 text-[15px] font-semibold" style={{ color: "#c65a7a" }}>
+          Trending
+        </span>
+        <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
+      </button>
+
+      {EKSPLORE_ROWS.map(({ key, label, Icon }) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => onOpenPicker(key)}
+          className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+          style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+        >
+          <span
+            className="grid place-items-center"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              background: "#2d1521",
+              flexShrink: 0,
+            }}
+          >
+            <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+          </span>
+          <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
+            {label}
+          </span>
+          <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+        </button>
+      ))}
     </section>
   );
 }
