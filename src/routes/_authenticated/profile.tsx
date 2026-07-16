@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Star,
+  Trash2,
   User as UserIcon,
   X,
 } from "lucide-react";
