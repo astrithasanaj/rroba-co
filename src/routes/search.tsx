@@ -526,9 +526,13 @@ function SearchPage() {
 
       <CategoryPickerSheet
         open={showCategoryPicker}
-        onOpenChange={setShowCategoryPicker}
+        onOpenChange={(v) => {
+          setShowCategoryPicker(v);
+          if (!v) setPickerInitialKey(undefined);
+        }}
         value={catSelection}
         onApply={setCatSelection}
+        initialNodeKey={pickerInitialKey}
       />
 
       <FiltersSheet
