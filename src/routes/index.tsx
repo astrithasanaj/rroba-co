@@ -71,8 +71,10 @@ function HomePage() {
       if (wantsMen) allowedGenders.push("Meshkuj");
 
       const genderFilter = `gender.in.(${allowedGenders.map((g) => `"${g}"`).join(",")}),gender.is.null`;
+      const passesGenderFilter = (r: ListingRow) => r.gender == null || allowedGenders.includes(r.gender);
 
       const promosPromise = supabase
+
         .from("promotions")
         .select("listing_id, listings(*)")
         .eq("type", "feed_top")
