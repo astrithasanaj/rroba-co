@@ -8,8 +8,8 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 const BG = "#ffffff";
 const CARD = "#ffffff";
 const CHIP = "#ffffff";
-const INK = "#1a1a1a";
-const DISABLED = "#ddd8ce";
+const INK = "#2d1521";
+const DISABLED = "#e2e2de";
 
 export const Route = createFileRoute("/category/$slug/subcategory")({
   component: () => (<SwipeBackWrapper><SubcategorySelectPage /></SwipeBackWrapper>),

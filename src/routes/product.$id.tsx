@@ -185,19 +185,19 @@ function ProductDetail() {
       {/* Fixed header */}
       <div
         className="fixed top-0 left-1/2 z-50 flex w-full max-w-[480px] -translate-x-1/2 items-center justify-between border-b px-4 py-3"
-        style={{ backgroundColor: "#ffffff", borderColor: "#ddd8ce" }}
+        style={{ backgroundColor: "#ffffff", borderColor: "#e2e2de" }}
       >
         <button
           onClick={() => window.history.back()}
           className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
           style={{ borderColor: "#e2e2de", backgroundColor: "#ffffff" }}
         >
-          <ArrowLeft className="h-4 w-4" color="#1a1a1a" />
+          <ArrowLeft className="h-4 w-4" color="#2d1521" />
         </button>
         <div className="min-w-0 flex-1 px-2 text-center">
           <h1
             className="truncate font-display text-base font-semibold"
-            style={{ color: "#1a1a1a" }}
+            style={{ color: "#2d1521" }}
           >
             {listing.title}
           </h1>
@@ -211,7 +211,7 @@ function ProductDetail() {
           className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
           style={{ borderColor: "#e2e2de", backgroundColor: "#ffffff" }}
         >
-          <MoreHorizontal size={20} color="#1a1a1a" strokeWidth={1.6} />
+          <MoreHorizontal size={20} color="#2d1521" strokeWidth={1.6} />
         </button>
       </div>
 
@@ -222,7 +222,7 @@ function ProductDetail() {
       {seller && (
         <div
           className="flex items-center gap-3 border-b px-[18px] py-3"
-          style={{ borderColor: "#ddd8ce" }}
+          style={{ borderColor: "#e2e2de" }}
         >
           <img
             src={
@@ -233,7 +233,7 @@ function ProductDetail() {
             className="h-9 w-9 shrink-0 rounded-full object-cover"
           />
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold" style={{ color: "#1a1a1a" }}>
+            <p className="truncate text-sm font-semibold" style={{ color: "#2d1521" }}>
               {seller.name || "Përdorues"}
             </p>
             <p className="text-xs" style={{ color: "#a89f94" }}>
@@ -250,7 +250,7 @@ function ProductDetail() {
       {isSold && (
         <div
           className="w-full px-5 py-3 text-center text-sm font-bold text-white"
-          style={{ backgroundColor: "#e8826a" }}
+          style={{ backgroundColor: "#c65a7a" }}
         >
           Ky artikull është shitur
         </div>
@@ -259,7 +259,7 @@ function ProductDetail() {
       {/* Inline action bar */}
       <div
         className="flex items-center justify-between border-b px-[18px] py-3"
-        style={{ backgroundColor: "#ffffff", borderColor: "#ddd8ce" }}
+        style={{ backgroundColor: "#ffffff", borderColor: "#e2e2de" }}
       >
         <div className="flex items-center gap-5">
           <button
@@ -288,8 +288,8 @@ function ProductDetail() {
             <Bookmark
               size={24}
               strokeWidth={1.5}
-              color="#1a1a1a"
-              fill={saves.has(listing.id) ? "#1a1a1a" : "none"}
+              color="#2d1521"
+              fill={saves.has(listing.id) ? "#2d1521" : "none"}
             />
           </button>
           <button
@@ -298,7 +298,7 @@ function ProductDetail() {
             aria-label="Mesazh"
             className="grid h-11 w-11 place-items-center disabled:opacity-40"
           >
-            <MessageCircle size={24} strokeWidth={1.5} color="#1a1a1a" />
+            <MessageCircle size={24} strokeWidth={1.5} color="#2d1521" />
           </button>
         </div>
         <button
@@ -324,7 +324,7 @@ function ProductDetail() {
 
       {/* Social proof line */}
       {likeInfo.count > 0 && likeInfo.recentLiker && (
-        <p className="px-[18px] py-1 text-[13px]" style={{ color: "#1a1a1a" }}>
+        <p className="px-[18px] py-1 text-[13px]" style={{ color: "#2d1521" }}>
           Likt nga{" "}
           {likeInfo.recentLikerId ? (
             <Link
@@ -349,13 +349,13 @@ function ProductDetail() {
           <button
             onClick={() => setDescExpanded((v) => !v)}
             className="w-full px-[18px] pb-3 pt-1 text-left text-[13px]"
-            style={{ color: "#1a1a1a" }}
+            style={{ color: "#2d1521" }}
           >
             <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
             {descriptionPreview}
           </button>
           {descExpanded && (
-            <p className="px-[18px] py-3 text-[13px]" style={{ color: "#1a1a1a" }}>
+            <p className="px-[18px] py-3 text-[13px]" style={{ color: "#2d1521" }}>
               {listing.description}
             </p>
           )}
