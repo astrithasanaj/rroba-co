@@ -242,7 +242,7 @@ function TabButton({
       onClick={onClick}
       className="flex-1 py-2 text-sm font-semibold rounded-full transition-colors"
       style={{
-        backgroundColor: active ? INK : "transparent",
+        background: active ? "linear-gradient(120deg, #e8836a, #c65a7a)" : "transparent",
         color: active ? "#ffffff" : MUTED,
         flexBasis: 0,
         minWidth: 0,
