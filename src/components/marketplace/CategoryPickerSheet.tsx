@@ -53,11 +53,13 @@ export function CategoryPickerSheet({
   onOpenChange,
   value,
   onApply,
+  initialNodeKey,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   value: CategorySelection;
   onApply: (sel: CategorySelection) => void;
+  initialNodeKey?: string;
 }) {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
@@ -74,7 +76,10 @@ export function CategoryPickerSheet({
   useEffect(() => {
     if (open) {
       setMounted(true);
-      setLevel({ depth: 0 });
+      const startNode = initialNodeKey
+        ? CATEGORY_TAXONOMY.find((n) => n.key === initialNodeKey)
+        : undefined;
+      setLevel(startNode ? { depth: 1, node: startNode } : { depth: 0 });
       setLeafDraft(new Set());
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setVisible(true));
@@ -84,7 +89,7 @@ export function CategoryPickerSheet({
       const t = setTimeout(() => setMounted(false), 300);
       return () => clearTimeout(t);
     }
-  }, [open, mounted]);
+  }, [open, mounted, initialNodeKey]);
 
   const close = () => onOpenChange(false);
 
