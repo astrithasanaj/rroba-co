@@ -1341,7 +1341,7 @@ function TermsView() {
   );
 }
 
-function ProfileForm({ profile, email, onSaved }: { profile: Profile | null; email: string; onSaved: () => void }) {
+function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Profile | null; email: string; onSaved: () => void; onDirtyChange?: (dirty: boolean) => void }) {
   const navigate = useNavigate();
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
