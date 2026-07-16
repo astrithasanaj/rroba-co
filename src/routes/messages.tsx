@@ -253,7 +253,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           ) : <div className="w-10" />}
           <h1 className="text-[22px] font-bold" style={{ color: INK }}>{title}</h1>
           {mode === "inbox" ? (
-            <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: INK }}>
+            <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: "#2d1521" }}>
               <button onClick={() => navigate({ to: "/messages", search: { view: "archive", tab } })} aria-label="Arkiva" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
                 <InboxIcon />
               </button>
@@ -277,7 +277,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 style={{
                   left: 4,
                   width: "calc((100% - 8px) / 3)",
-                  backgroundColor: INK,
+                  background: "linear-gradient(120deg, #e8836a, #c65a7a)",
                   transform: `translateX(${tab === "all" ? 0 : tab === "buy" ? 100 : 200}%)`,
                 }}
               />
