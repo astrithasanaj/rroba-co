@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronRight, Loader2, Pencil, X, Grid3x3, Plus } from "lucide-react";
+import { ChevronRight, Loader2, Pencil, X, Grid3x3, Plus, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -33,7 +33,9 @@ const CARD = "#ffffff";
 const INK = "#1a1a1a";
 const MUTED = "#a89f94";
 const CORAL = "#e8826a";
+const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
 const DIVIDER = "#ddd8ce";
+const BORDER = "1px solid #e2e2de";
 
 const MAX_PHOTOS = 8;
 const ALLOWED: Record<string, string> = {
@@ -370,20 +372,21 @@ function EditListingPage() {
           className="sticky top-0 z-10 flex items-center justify-between px-4 py-3"
           style={{ background: CREAM }}
         >
-          <div className="w-20" />
-          <h1 className="text-[15px] font-bold" style={{ color: INK }}>
-            Ndrysho
-          </h1>
-          <div className="flex w-20 justify-end">
+          <div className="w-20">
             <button
               type="button"
               onClick={handleCancel}
-              className="rounded-full px-4 py-2 text-xs font-semibold"
-              style={{ background: INK, color: "#fff" }}
+              aria-label="Mbrapa"
+              className="grid h-9 w-9 place-items-center rounded-full"
+              style={{ background: "#ffffff", color: INK, border: BORDER }}
             >
-              Anulo
+              <ArrowLeft className="h-5 w-5" />
             </button>
           </div>
+          <h1 className="text-[15px] font-bold" style={{ color: INK }}>
+            Ndrysho
+          </h1>
+          <div className="w-20" />
         </header>
 
         <div className="flex-1 overflow-y-auto px-5 pb-36">
@@ -444,7 +447,7 @@ function EditListingPage() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 className="grid h-[100px] w-[100px] shrink-0 place-items-center rounded-xl"
-                style={{ background: CARD, color: INK }}
+                style={{ background: CARD, color: INK, border: BORDER }}
               >
                 <div className="flex flex-col items-center gap-1">
                   <Plus className="h-5 w-5" />
@@ -471,7 +474,7 @@ function EditListingPage() {
             type="button"
             onClick={() => setCatSheet("category")}
             className="flex w-full items-center justify-between rounded-full px-4 py-3.5 text-left text-sm"
-            style={{ background: CARD, color: INK }}
+            style={{ background: CARD, color: INK, border: BORDER }}
           >
             <span className="flex min-w-0 items-center gap-2">
               <Grid3x3 className="h-4 w-4 shrink-0" style={{ color: MUTED }} />
@@ -508,7 +511,7 @@ function EditListingPage() {
                   type="button"
                   onClick={() => setCondition(c.value)}
                   className="flex w-[150px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                  style={{ background: active ? INK : CARD, color: active ? "#fff" : INK }}
+                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? "none" : BORDER }}
                 >
                   <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
                   <span
@@ -530,7 +533,7 @@ function EditListingPage() {
             maxLength={120}
             placeholder="Titulli"
             className="w-full rounded-2xl border-none px-4 py-3.5 text-sm focus:outline-none"
-            style={{ background: CARD, color: INK }}
+            style={{ background: CARD, color: INK, border: BORDER }}
           />
           <SectionLabel>Përshkrimi i artikullit</SectionLabel>
           <textarea
@@ -540,7 +543,7 @@ function EditListingPage() {
             rows={5}
             placeholder="Përshkrimi i artikullit"
             className="w-full resize-none rounded-2xl border-none px-4 py-3.5 text-sm focus:outline-none"
-            style={{ background: CARD, color: INK }}
+            style={{ background: CARD, color: INK, border: BORDER }}
           />
           <p className="mt-1.5 text-[11px]" style={{ color: MUTED }}>
             Përshkruaj formën, defektet dhe mangësitë eventuale
@@ -554,7 +557,7 @@ function EditListingPage() {
                 type="button"
                 onClick={() => setSizeSheet(true)}
                 className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
-                style={{ background: CARD, color: INK }}
+                style={{ background: CARD, color: INK, border: BORDER }}
               >
                 <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh madhësinë"}</span>
                 <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
@@ -568,7 +571,7 @@ function EditListingPage() {
             type="button"
             onClick={() => setColorSheet(true)}
             className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
-            style={{ background: CARD, color: INK }}
+            style={{ background: CARD, color: INK, border: BORDER }}
           >
             <span className="flex min-w-0 items-center gap-2">
               {color.length === 0 ? (
@@ -609,14 +612,14 @@ function EditListingPage() {
             maxLength={60}
             placeholder="p.sh. Zara"
             className="w-full rounded-2xl border-none px-4 py-3.5 text-sm focus:outline-none"
-            style={{ background: CARD, color: INK }}
+            style={{ background: CARD, color: INK, border: BORDER }}
           />
 
           {/* Section 8: Price + city */}
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div>
               <SectionLabel className="mt-0">Çmimi (€)</SectionLabel>
-              <div className="rounded-2xl px-4 py-3.5" style={{ background: CARD }}>
+              <div className="rounded-2xl px-4 py-3.5" style={{ background: CARD, border: BORDER }}>
                 <input
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
@@ -652,7 +655,7 @@ function EditListingPage() {
                   type="button"
                   onClick={() => toggleDelivery(d)}
                   className="rounded-full px-4 py-2 text-sm transition"
-                  style={{ background: active ? INK : CARD, color: active ? "#fff" : INK }}
+                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? "none" : BORDER }}
                 >
                   {d}
                 </button>
@@ -674,7 +677,7 @@ function EditListingPage() {
             onClick={handleSave}
             disabled={saving}
             className="inline-flex w-full items-center justify-center gap-2 py-4 text-sm font-bold transition disabled:opacity-70"
-            style={{ background: CORAL, color: "#fff", borderRadius: 14, minHeight: 56 }}
+            style={{ background: CORAL_GRADIENT, color: "#fff", borderRadius: 14, minHeight: 56 }}
           >
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             {saving ? "Duke ruajtur…" : "Ruaj ndryshimet"}
@@ -703,7 +706,7 @@ function EditListingPage() {
           <SheetContent
             side="bottom"
             className="rounded-t-3xl border-0 p-0"
-            style={{ background: CREAM, maxHeight: "80dvh" }}
+            style={{ background: CREAM, height: "92dvh", maxHeight: "92dvh" }}
           >
             <div className="mx-auto mt-2 h-1 w-10 rounded-full" style={{ background: DIVIDER }} />
             <SheetHeader className="px-5 pt-3 text-left">
@@ -730,7 +733,7 @@ function EditListingPage() {
                         else setCatSheet("gender");
                       }}
                       className="rounded-2xl px-3 py-4 text-[13px] font-bold"
-                      style={{ background: CARD, color: INK }}
+                      style={{ background: CARD, color: INK, border: BORDER }}
                     >
                       {c.label}
                     </button>
@@ -749,7 +752,7 @@ function EditListingPage() {
                           setCatSheet("subcategory");
                         }}
                         className="rounded-full px-2 py-3 text-[12px] font-semibold"
-                        style={{ background: CARD, color: INK }}
+                        style={{ background: CARD, color: INK, border: BORDER }}
                       >
                         {g}
                       </button>
@@ -768,7 +771,7 @@ function EditListingPage() {
                         setCatSheet(null);
                       }}
                       className="rounded-full px-2 py-3 text-[12px] font-semibold"
-                      style={{ background: CARD, color: INK }}
+                      style={{ background: CARD, color: INK, border: BORDER }}
                     >
                       {s}
                     </button>
@@ -805,14 +808,14 @@ function EditListingPage() {
             <AlertDialogFooter>
               <AlertDialogCancel
                 className="rounded-full border-0"
-                style={{ background: CARD, color: INK }}
+                style={{ background: CARD, color: INK, border: BORDER }}
               >
                 Kthehu
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => window.history.back()}
                 className="rounded-full"
-                style={{ background: INK, color: "#fff" }}
+                style={{ background: CORAL_GRADIENT, color: "#fff" }}
               >
                 Po, largohu
               </AlertDialogAction>

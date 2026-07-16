@@ -776,7 +776,7 @@ function DetailsStep({
   const slots = Math.max(images.length + 1, 4);
   return (
     <div className="flex h-full flex-col">
-      <TopHeader title="Shto artikull të ri" rightLabel="Anulo" onRight={onCancel} />
+      <TopHeader title="Shto artikull të ri" onBack={onCancel} />
 
       <div className="flex-1 overflow-y-auto px-5 pb-32">
         {/* Category breadcrumb pill */}
@@ -791,7 +791,7 @@ function DetailsStep({
             <span
               aria-label="Ndrysho"
               className="grid h-4 w-4 shrink-0 place-items-center rounded-full"
-              style={{ background: INK, color: "#fff" }}
+              style={{ background: CORAL_GRADIENT, color: "#fff" }}
             >
               <X className="h-2.5 w-2.5" />
             </span>
@@ -1107,7 +1107,7 @@ function FinalStep({
                 type="button"
                 onClick={() => toggleDelivery(d)}
                 className="rounded-full px-4 py-2 text-sm transition"
-                style={{ background: active ? INK : CARD, color: active ? "#fff" : INK }}
+                style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? "none" : "1px solid #e2e2de" }}
               >
                 {d}
               </button>
