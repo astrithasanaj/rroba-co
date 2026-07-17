@@ -156,10 +156,13 @@ function HomePage() {
         trendingRows = [...trendingRows, ...fillers].slice(0, 5);
       }
 
-      const hydratedPromoted = await hydrateListings(promotedRows);
-      const hydratedRegular = await hydrateListings((regular ?? []) as ListingRow[]);
-      const hydratedTrending = await hydrateListings(trendingRows);
-      const hydratedNewWeek = await hydrateListings((newThisWeekRows ?? []) as ListingRow[]);
+      const [hydratedPromoted, hydratedRegular, hydratedTrending, hydratedNewWeek] =
+        await Promise.all([
+          hydrateListings(promotedRows),
+          hydrateListings((regular ?? []) as ListingRow[]),
+          hydrateListings(trendingRows),
+          hydrateListings((newThisWeekRows ?? []) as ListingRow[]),
+        ]);
       const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
 
       if (active) {
