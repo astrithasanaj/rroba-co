@@ -34,14 +34,38 @@ export function sortActiveFirst<T extends { sold?: boolean; status?: string; cre
 
 const SIGN_TTL = 60 * 60;
 
+const signedUrlCache = new Map<string, { url: string; expiresAt: number }>();
+
 export async function signPaths(paths: string[]): Promise<Record<string, string>> {
   const filtered = paths.filter((p) => p && !/^https?:\/\//i.test(p));
   if (filtered.length === 0) return {};
-  const { data } = await supabase.storage.from("photos").createSignedUrls(filtered, SIGN_TTL);
+
+  const now = Date.now();
   const map: Record<string, string> = {};
-  for (const item of data ?? []) {
-    if (item.path && item.signedUrl) map[item.path] = item.signedUrl;
+  const toFetch: string[] = [];
+
+  for (const p of filtered) {
+    const cached = signedUrlCache.get(p);
+    if (cached && cached.expiresAt > now) {
+      map[p] = cached.url;
+    } else {
+      toFetch.push(p);
+    }
   }
+
+  if (toFetch.length > 0) {
+    const { data } = await supabase.storage.from("photos").createSignedUrls(toFetch, SIGN_TTL);
+    for (const item of data ?? []) {
+      if (item.path && item.signedUrl) {
+        map[item.path] = item.signedUrl;
+        signedUrlCache.set(item.path, {
+          url: item.signedUrl,
+          expiresAt: now + (SIGN_TTL - 300) * 1000,
+        });
+      }
+    }
+  }
+
   return map;
 }
 
