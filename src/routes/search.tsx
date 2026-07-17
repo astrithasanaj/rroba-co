@@ -1237,7 +1237,6 @@ function FiltersSheet({
   filters: Filters;
   setFilters: (f: Filters | ((p: Filters) => Filters)) => void;
 }) {
-  console.log(cityNames);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
