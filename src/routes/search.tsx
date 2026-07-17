@@ -242,7 +242,7 @@ function SearchPage() {
         return bBoosted - aBoosted;
       });
 
-      const hydrated = await hydrateListings(sorted as ListingRow[]);
+      const hydrated = await hydrateListings(sorted as ListingRow[], { thumbnail: true });
       if (active) {
         setResults(hydrated);
         setLoading(false);
