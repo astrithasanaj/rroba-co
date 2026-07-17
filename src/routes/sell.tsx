@@ -54,12 +54,12 @@ const MAX_BYTES = 10 * 1024 * 1024;
 
 type PendingImage = { file: File; previewUrl: string; mime: string };
 
-const CONDITIONS: { value: string; subtitle: string }[] = [
-  { value: "I ri", subtitle: "Kurrë i përdorur" },
-  { value: "Mirë përdorur", subtitle: "Pa shenja përdorimi" },
-  { value: "Përdorur", subtitle: "Disa shenja përdorimi" },
-  { value: "Shumë përdorur", subtitle: "Shenja të qarta përdorimi" },
-];
+const CONDITION_SUBTITLES: Record<string, string> = {
+  "I ri": "Kurrë i përdorur",
+  "Mirë përdorur": "Pa shenja përdorimi",
+  "Përdorur": "Disa shenja përdorimi",
+  "Shumë përdorur": "Shenja të qarta përdorimi",
+};
 
 type GenderMode = "adult" | "kids" | false;
 
