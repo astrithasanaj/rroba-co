@@ -118,7 +118,7 @@ function saveRecent(list: string[]) {
 
 function SearchPage() {
   const { cities } = useCities();
-  const cityNames = cities.map((c) => c.name);
+  const cityNames: string[] = cities.map((c) => c.name);
   const navigate = useNavigate();
   const { q: initialQ, category: initialCategory, section } = Route.useSearch();
   const [q, setQ] = useState(initialQ ?? "");
