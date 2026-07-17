@@ -70,7 +70,7 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "interior",
     label: "Interiør & mobilje",
-    categories: ["Interier"],
+    categories: ["Interiør & mobilje"],
     groups: [
       {
         label: "Dhoma e ndenjes",
@@ -96,7 +96,7 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "outdoor",
     label: "Outdoor & sport",
-    categories: ["Outdoor"],
+    categories: ["Outdoor & sport"],
     groups: [
       { label: "Veshje sportive", children: ["Femra", "Meshkuj", "Fëmijë"] },
       { label: "Këpucë sportive", children: ["Vrapim", "Futboll", "Basketboll", "Të tjera"] },
@@ -112,7 +112,7 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "art",
     label: "Art & dizajn",
-    categories: ["Art"],
+    categories: ["Art & dizajn"],
     groups: [
       { label: "Pikturë & vizatim" },
       { label: "Print & poster" },
@@ -126,7 +126,7 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "elektronik",
     label: "Elektronikë & zë",
-    categories: ["Elektronikë"],
+    categories: ["Elektronikë & zë"],
     groups: [
       {
         label: "Apple",
