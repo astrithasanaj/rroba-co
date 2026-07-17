@@ -62,7 +62,7 @@ export async function signPaths(
       toFetch,
       SIGN_TTL,
       options?.thumbnail
-        ? { transform: { width: 400, height: 400, resize: "cover", quality: 70 } }
+        ? ({ transform: { width: 400, height: 400, resize: "cover", quality: 70 } } as any)
         : undefined
     );
     for (const item of data ?? []) {
