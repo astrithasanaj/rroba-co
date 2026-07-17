@@ -304,6 +304,13 @@ function SellPage() {
     setPickerStack(["subcategory"]);
   };
 
+  const handleRedirectToKids = () => {
+    setCatCategory("Fëmijë & bebe");
+    setCatGender("");
+    setCatSub("");
+    setPickerStack(["gender"]);
+  };
+
   const handlePickSub = (s: string) => {
     setCatSub(s);
     closePickers();
