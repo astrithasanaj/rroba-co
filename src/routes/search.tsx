@@ -226,7 +226,23 @@ function SearchPage() {
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
       query = query.order("created_at", { ascending: section !== "trending" });
       const { data } = await query.limit(60);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+
+      const { data: activeBoosts } = await supabase
+        .from("promotions")
+        .select("listing_id")
+        .eq("type", "search_top")
+        .eq("status", "active")
+        .gt("ends_at", new Date().toISOString());
+
+      const boostedIds = new Set((activeBoosts ?? []).map((p) => p.listing_id));
+
+      const sorted = [...(data ?? [])].sort((a, b) => {
+        const aBoosted = boostedIds.has(a.id) ? 1 : 0;
+        const bBoosted = boostedIds.has(b.id) ? 1 : 0;
+        return bBoosted - aBoosted;
+      });
+
+      const hydrated = await hydrateListings(sorted as ListingRow[]);
       if (active) {
         setResults(hydrated);
         setLoading(false);
