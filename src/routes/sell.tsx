@@ -410,6 +410,7 @@ function SellPage() {
                     popPicker();
                   }}
                   onPick={handlePickGender}
+                  onPickChild={handleRedirectToKids}
                 />
               )}
               {p === "subcategory" && selectedCategory && (
