@@ -58,23 +58,45 @@ export async function signPaths(
   }
 
   if (toFetch.length > 0) {
-    const { data } = await supabase.storage.from("photos").createSignedUrls(
-      toFetch,
-      SIGN_TTL,
-      options?.thumbnail
-        ? ({ transform: { width: 400, height: 400, resize: "cover", quality: 70 } } as any)
-        : undefined
-    );
-    for (const item of data ?? []) {
-      if (item.path && item.signedUrl) {
-        map[item.path] = item.signedUrl;
-        signedUrlCache.set(cacheKey(item.path), {
-          url: item.signedUrl,
-          expiresAt: now + (SIGN_TTL - 300) * 1000,
-        });
+    if (options?.thumbnail) {
+      // Batch createSignedUrls (plural) ignorerer transform i denne
+      // SDK-versjonen — kun singular createSignedUrl støtter det.
+      // Kjør derfor individuelle signeringer i parallell.
+      const results = await Promise.all(
+        toFetch.map(async (path) => {
+          const { data } = await supabase.storage
+            .from("photos")
+            .createSignedUrl(path, SIGN_TTL, {
+              transform: { width: 400, height: 400, resize: "cover", quality: 70 },
+            });
+          return { path, signedUrl: data?.signedUrl };
+        })
+      );
+      for (const item of results) {
+        if (item.signedUrl) {
+          map[item.path] = item.signedUrl;
+          signedUrlCache.set(cacheKey(item.path), {
+            url: item.signedUrl,
+            expiresAt: now + (SIGN_TTL - 300) * 1000,
+          });
+        }
+      }
+    } else {
+      const { data } = await supabase.storage
+        .from("photos")
+        .createSignedUrls(toFetch, SIGN_TTL);
+      for (const item of data ?? []) {
+        if (item.path && item.signedUrl) {
+          map[item.path] = item.signedUrl;
+          signedUrlCache.set(cacheKey(item.path), {
+            url: item.signedUrl,
+            expiresAt: now + (SIGN_TTL - 300) * 1000,
+          });
+        }
       }
     }
   }
+
 
   return map;
 }
