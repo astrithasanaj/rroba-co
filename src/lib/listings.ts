@@ -67,5 +67,5 @@ export const CATEGORIES = [
 ] as const;
 
 export const GENDERS = ["Femra", "Meshkuj", "Fëmijë", "Unisex"] as const;
-export const CONDITIONS = ["Si i ri", "Shumë i mirë", "I mirë", "I përdorur"] as const;
+export const CONDITIONS = ["I ri", "Mirë përdorur", "Përdorur", "Shumë përdorur"] as const;
 export const CITIES = ["Prishtinë", "Prizren", "Pejë", "Tiranë"] as const;
