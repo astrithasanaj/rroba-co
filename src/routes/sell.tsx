@@ -876,22 +876,22 @@ function DetailsStep({
             Çfarë është gjendja e artikullit?
           </h3>
           <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
-            {CONDITIONS.map((c) => {
-              const active = condition === c.value;
+            {CONDITIONS.map((value) => {
+              const active = condition === value;
               return (
                 <button
-                  key={c.value}
+                  key={value}
                   type="button"
-                  onClick={() => setCondition(c.value)}
+                  onClick={() => setCondition(value)}
                   className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
                   style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
                 >
-                  <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
+                  <span className="text-[13px] font-semibold leading-tight">{value}</span>
                   <span
                     className="text-[11px] leading-tight"
                     style={{ color: active ? "rgba(255,255,255,0.7)" : MUTED }}
                   >
-                    {c.subtitle}
+                    {CONDITION_SUBTITLES[value]}
                   </span>
                 </button>
               );
