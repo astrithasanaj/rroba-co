@@ -18,7 +18,7 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "mode",
     label: "Modë & aksesorë",
-    categories: ["Veshje", "Këpucë", "Aksesorë"],
+    categories: ["Veshje", "Këpucë", "Aksesorë", "Çanta"],
     groups: [
       {
         label: "Veshje",
@@ -51,15 +51,15 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "femije",
     label: "Fëmijë & bebe",
-    categories: ["Fëmijë"],
+    categories: ["Fëmijë & bebe"],
     groups: [
       {
         label: "Vajza",
-        children: ["Veshje", "Këpucë", "Libra & shkollë", "Sport", "Të tjera"],
+        children: ["Veshje", "Këpucë", "Lodra", "Karrocë", "Aksesorë bebeje", "Të tjera"],
       },
       {
         label: "Djem",
-        children: ["Veshje", "Këpucë", "Libra & shkollë", "Sport", "Të tjera"],
+        children: ["Veshje", "Këpucë", "Lodra", "Karrocë", "Aksesorë bebeje", "Të tjera"],
       },
       {
         label: "Bebe",
