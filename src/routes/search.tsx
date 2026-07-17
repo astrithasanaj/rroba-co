@@ -25,13 +25,13 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import {
-  CITIES,
   CONDITIONS,
   GENDERS,
   hydrateListings,
   type ListingRow,
   type ListingView,
 } from "@/lib/listings";
+import { useCities } from "@/hooks/useCities";
 import {
   Sheet,
   SheetContent,
@@ -1235,6 +1235,9 @@ function FiltersSheet({
   filters: Filters;
   setFilters: (f: Filters | ((p: Filters) => Filters)) => void;
 }) {
+  const { cities } = useCities();
+  const cityNames = cities.map((c) => c.name);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -1272,7 +1275,7 @@ function FiltersSheet({
             label="Qyteti"
             value={filters.city}
             onChange={(v) => setFilters((p) => ({ ...p, city: v }))}
-            options={[...CITIES]}
+            options={cityNames}
           />
           <FilterChips
             label="Gjinia"
