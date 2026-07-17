@@ -117,8 +117,6 @@ function saveRecent(list: string[]) {
 }
 
 function SearchPage() {
-  const { cities } = useCities();
-  const cityNames: string[] = cities.map((c) => c.name);
   const navigate = useNavigate();
   const { q: initialQ, category: initialCategory, section } = Route.useSearch();
   const [q, setQ] = useState(initialQ ?? "");
@@ -1237,6 +1235,8 @@ function FiltersSheet({
   filters: Filters;
   setFilters: (f: Filters | ((p: Filters) => Filters)) => void;
 }) {
+  const { cities } = useCities();
+  const cityNames = cities.map((c) => c.name);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
