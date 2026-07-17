@@ -17,6 +17,7 @@ import {
   Footprints,
   Gem,
   ShoppingBag,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -303,6 +304,13 @@ function SellPage() {
     setPickerStack(["subcategory"]);
   };
 
+  const handleRedirectToKids = () => {
+    setCatCategory("Fëmijë & bebe");
+    setCatGender("");
+    setCatSub("");
+    setPickerStack(["gender"]);
+  };
+
   const handlePickSub = (s: string) => {
     setCatSub(s);
     closePickers();
@@ -402,6 +410,7 @@ function SellPage() {
                     popPicker();
                   }}
                   onPick={handlePickGender}
+                  onPickChild={handleRedirectToKids}
                 />
               )}
               {p === "subcategory" && selectedCategory && (
@@ -646,14 +655,36 @@ function GenderPicker({
   category,
   onBack,
   onPick,
+  onPickChild,
 }: {
   category: Category;
   onBack: () => void;
   onPick: (g: string) => void;
+  onPickChild?: () => void;
 }) {
   const isKids = category.genderMode === "kids";
   const primary = isKids ? KIDS_GENDERS : ADULT_GENDERS;
   const extra = isKids ? KIDS_EXTRA : ADULT_EXTRA;
+
+  const tiles: { key: string; label: string; icon: React.ReactNode; onClick: () => void }[] = [
+    ...primary.map((g) => ({
+      key: g,
+      label: g,
+      icon: <span className="text-[28px]">{g === "Femra" || g === "Vajza" ? "♀" : "♂"}</span>,
+      onClick: () => onPick(g),
+    })),
+    ...(!isKids && onPickChild
+      ? [
+          {
+            key: "Fëmijë",
+            label: "Fëmijë",
+            icon: <Baby className="h-7 w-7" strokeWidth={1.4} />,
+            onClick: onPickChild,
+          },
+        ]
+      : []),
+    { key: extra, label: extra, icon: <Sparkles className="h-7 w-7" strokeWidth={1.4} />, onClick: () => onPick(extra) },
+  ];
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -664,29 +695,18 @@ function GenderPicker({
         </h2>
 
         <div className="mt-5 grid grid-cols-2 gap-3">
-          {primary.map((g) => (
+          {tiles.map((t) => (
             <button
-              key={g}
+              key={t.key}
               type="button"
-              onClick={() => onPick(g)}
+              onClick={t.onClick}
               className="flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98]"
               style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
             >
-              <span className="text-[28px]">{g === "Femra" || g === "Vajza" ? "♀" : "♂"}</span>
-              <span className="text-[14px] font-bold">{g}</span>
+              {t.icon}
+              <span className="text-[14px] font-bold">{t.label}</span>
             </button>
           ))}
-        </div>
-
-        <div className="mt-4 flex justify-center">
-          <button
-            type="button"
-            onClick={() => onPick(extra)}
-            className="rounded-full px-5 py-2.5 text-[13px] font-semibold"
-            style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
-          >
-            {extra}
-          </button>
         </div>
       </div>
     </div>
