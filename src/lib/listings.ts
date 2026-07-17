@@ -36,16 +36,20 @@ const SIGN_TTL = 60 * 60;
 
 const signedUrlCache = new Map<string, { url: string; expiresAt: number }>();
 
-export async function signPaths(paths: string[]): Promise<Record<string, string>> {
+export async function signPaths(
+  paths: string[],
+  options?: { thumbnail?: boolean }
+): Promise<Record<string, string>> {
   const filtered = paths.filter((p) => p && !/^https?:\/\//i.test(p));
   if (filtered.length === 0) return {};
 
   const now = Date.now();
+  const cacheKey = (p: string) => (options?.thumbnail ? `thumb:${p}` : p);
   const map: Record<string, string> = {};
   const toFetch: string[] = [];
 
   for (const p of filtered) {
-    const cached = signedUrlCache.get(p);
+    const cached = signedUrlCache.get(cacheKey(p));
     if (cached && cached.expiresAt > now) {
       map[p] = cached.url;
     } else {
@@ -54,11 +58,17 @@ export async function signPaths(paths: string[]): Promise<Record<string, string>
   }
 
   if (toFetch.length > 0) {
-    const { data } = await supabase.storage.from("photos").createSignedUrls(toFetch, SIGN_TTL);
+    const { data } = await supabase.storage.from("photos").createSignedUrls(
+      toFetch,
+      SIGN_TTL,
+      options?.thumbnail
+        ? ({ transform: { width: 400, height: 400, resize: "cover", quality: 70 } } as any)
+        : undefined
+    );
     for (const item of data ?? []) {
       if (item.path && item.signedUrl) {
         map[item.path] = item.signedUrl;
-        signedUrlCache.set(item.path, {
+        signedUrlCache.set(cacheKey(item.path), {
           url: item.signedUrl,
           expiresAt: now + (SIGN_TTL - 300) * 1000,
         });
@@ -69,9 +79,12 @@ export async function signPaths(paths: string[]): Promise<Record<string, string>
   return map;
 }
 
-export async function hydrateListings(rows: ListingRow[]): Promise<ListingView[]> {
+export async function hydrateListings(
+  rows: ListingRow[],
+  options?: { thumbnail?: boolean }
+): Promise<ListingView[]> {
   const all = rows.flatMap((r) => r.image_paths ?? []);
-  const urls = await signPaths(all);
+  const urls = await signPaths(all, options);
   return rows
     .map((r) => {
       const imageUrls = (r.image_paths ?? [])
