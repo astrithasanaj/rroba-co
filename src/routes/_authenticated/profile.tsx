@@ -1941,7 +1941,10 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 px-5 py-4" style={{ backgroundColor: CREAM }}>
+    <label
+      className="flex cursor-pointer items-center gap-3 px-5 py-4"
+      style={{ backgroundColor: CREAM, minHeight: 44 }}
+    >
       <div className="flex-1">
         <div className="text-[15px] font-semibold" style={{ color: INK }}>
           {title}
@@ -1953,14 +1956,24 @@ function ToggleRow({
         )}
       </div>
       <button
+        type="button"
         onClick={() => onChange(!value)}
         role="switch"
         aria-checked={value}
-        className="relative h-7 w-12 shrink-0 rounded-full transition-colors"
-        style={{ backgroundColor: value ? INK : DIVIDER }}
+        aria-label={title}
+        className="relative shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        style={{
+          height: 28,
+          width: 48,
+          minHeight: 44,
+          minWidth: 44,
+          padding: 0,
+          backgroundColor: value ? INK : DIVIDER,
+        }}
       >
         <span
-          className="absolute top-0.5 h-6 w-6 rounded-full transition-all"
+          aria-hidden="true"
+          className="absolute top-1/2 h-6 w-6 -translate-y-1/2 rounded-full transition-all"
           style={{
             left: value ? "calc(100% - 26px)" : "2px",
             backgroundColor: CREAM,
@@ -1968,7 +1981,7 @@ function ToggleRow({
           }}
         />
       </button>
-    </div>
+    </label>
   );
 }
 
