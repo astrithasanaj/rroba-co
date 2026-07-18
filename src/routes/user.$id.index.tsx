@@ -21,7 +21,6 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
-
 export const Route = createFileRoute("/user/$id/")({
   component: () => (
     <SwipeBackWrapper>
@@ -43,12 +42,14 @@ type Profile = {
 
 type SortMode = "new" | "low" | "high" | "popular";
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
+const BORDER_STRONG = "var(--brand-border-strong)";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 
 function Stat({
   value,
@@ -62,7 +63,15 @@ function Stat({
   const content = (
     <>
       <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
-      <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
+      <p
+        style={{
+          fontSize: 11,
+          fontWeight: 400,
+          color: MUTED,
+          marginTop: 2,
+          letterSpacing: "0.2px",
+        }}
+      >
         {label}
       </p>
     </>
@@ -92,7 +101,6 @@ function Stat({
   return <div style={{ textAlign: "center" }}>{content}</div>;
 }
 
-
 function UserProfile() {
   const { id } = useParams({ from: "/user/$id/" });
   const navigate = useNavigate();
@@ -112,7 +120,6 @@ function UserProfile() {
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
 
-
   const loadFollows = useCallback(async () => {
     const [{ count: fCount }, { count: gCount }] = await Promise.all([
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
@@ -130,7 +137,11 @@ function UserProfile() {
       const uid = auth?.user?.id ?? null;
 
       const [p, l] = await Promise.all([
-        supabase.from("public_profiles").select("id,name,avatar_url,city,bio,rating_avg,rating_count,created_at").eq("id", id).maybeSingle(),
+        supabase
+          .from("public_profiles")
+          .select("id,name,avatar_url,city,bio,rating_avg,rating_count,created_at")
+          .eq("id", id)
+          .maybeSingle(),
         supabase
           .from("listings")
           .select("*")
@@ -143,7 +154,7 @@ function UserProfile() {
 
       // likes totals for the "popular" sort
       const listingIds = rows.map((r) => r.id);
-      let likesMap: Record<string, number> = {};
+      const likesMap: Record<string, number> = {};
       let totalLikes = 0;
       if (listingIds.length) {
         const { data: lk } = await supabase
@@ -206,8 +217,7 @@ function UserProfile() {
     const cmp = (a: ListingView, b: ListingView) => {
       if (sort === "low") return a.price - b.price;
       if (sort === "high") return b.price - a.price;
-      if (sort === "popular")
-        return ((b as any)._likes ?? 0) - ((a as any)._likes ?? 0);
+      if (sort === "popular") return ((b as any)._likes ?? 0) - ((a as any)._likes ?? 0);
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     };
     return [...active.sort(cmp), ...sold.sort(cmp)];
@@ -260,7 +270,6 @@ function UserProfile() {
     setMoreOpen(false);
   };
 
-
   if (loading) {
     return (
       <MobileShell hideNav>
@@ -307,17 +316,17 @@ function UserProfile() {
             type="button"
             onClick={() => window.history.back()}
             aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className={`grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_CLASS}`}
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
           </button>
           <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
@@ -341,7 +350,9 @@ function UserProfile() {
 
         {/* Profile */}
         <section>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}>
+          <div
+            style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}
+          >
             <div style={{ position: "relative", flexShrink: 0 }}>
               <img
                 src={avatar}
@@ -387,7 +398,6 @@ function UserProfile() {
                 />
               </div>
 
-
               <div style={{ display: "flex", gap: 7 }}>
                 {!isOwn && (
                   <button
@@ -398,7 +408,9 @@ function UserProfile() {
                       height: 34,
                       borderRadius: 10,
                       border: "none",
-                      background: isFollowing ? "#f5e6e9" : "linear-gradient(120deg, #e8836a, #c65a7a)",
+                      background: isFollowing
+                        ? "#f5e6e9"
+                        : "linear-gradient(120deg, #e8836a, #c65a7a)",
                       color: isFollowing ? "#6e2438" : "#ffffff",
                       fontSize: 12,
                       fontWeight: 600,
@@ -427,7 +439,7 @@ function UserProfile() {
                     flex: 1,
                     height: 34,
                     borderRadius: 10,
-                    border: "1px solid #c8c3b9",
+                    border: "1px solid var(--brand-border-strong)",
                     backgroundColor: CREAM,
                     color: INK,
                     fontSize: 12,
@@ -441,7 +453,12 @@ function UserProfile() {
                     gap: 4,
                   }}
                 >
-                  <Star style={{ width: 12, height: 12 }} fill={CORAL} stroke={CORAL} strokeWidth={1.5} />
+                  <Star
+                    style={{ width: 12, height: 12 }}
+                    fill={CORAL}
+                    stroke={CORAL}
+                    strokeWidth={1.5}
+                  />
                   {ratingBtnText}
                 </button>
               </div>
@@ -464,7 +481,10 @@ function UserProfile() {
               <p style={{ marginTop: 4, fontSize: 13, color: MUTED }}>{memberSince}</p>
             )}
             {profile.bio && (
-              <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>
+              <p
+                className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed"
+                style={{ color: INK }}
+              >
                 {profile.bio}
               </p>
             )}
@@ -499,7 +519,10 @@ function UserProfile() {
               style={{ height: 40, background: "transparent", border: "none" }}
               aria-label="Rendit"
             >
-              <ArrowDownUp style={{ width: 20, height: 20, color: "#c8c3b9" }} strokeWidth={1.7} />
+              <ArrowDownUp
+                style={{ width: 20, height: 20, color: "var(--brand-border-strong)" }}
+                strokeWidth={1.7}
+              />
             </button>
           </div>
         </div>
@@ -562,22 +585,27 @@ function UserProfile() {
 
       {/* More sheet */}
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ backgroundColor: CARD }}>
+        <SheetContent
+          side="bottom"
+          hideClose
+          className="border-0 p-0"
+          style={{ backgroundColor: CARD }}
+        >
           <div className="flex items-center gap-3 px-4 pt-5 pb-3">
             <button
               type="button"
               onClick={() => setMoreOpen(false)}
               aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
               style={{
-                width: 36,
-                height: 36,
+                width: 44,
+                height: 44,
                 backgroundColor: "rgba(255,255,255,0.7)",
                 border: "1px solid rgba(226,226,222,0.8)",
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-2 pb-6 pt-1">
@@ -594,34 +622,41 @@ function UserProfile() {
 
       {/* Sort sheet */}
       <Sheet open={sortOpen} onOpenChange={setSortOpen}>
-        <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ backgroundColor: CARD }}>
+        <SheetContent
+          side="bottom"
+          hideClose
+          className="border-0 p-0"
+          style={{ backgroundColor: CARD }}
+        >
           <div className="flex items-center gap-3 px-4 pt-5 pb-2">
             <button
               type="button"
               onClick={() => setSortOpen(false)}
               aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
               style={{
-                width: 36,
-                height: 36,
+                width: 44,
+                height: 44,
                 backgroundColor: "rgba(255,255,255,0.7)",
                 border: "1px solid rgba(226,226,222,0.8)",
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-5 pb-8 pt-4">
             <h2 className="mb-3 text-[17px] font-bold" style={{ color: INK }}>
               Rendit sipas
             </h2>
-            {([
-              { id: "new", label: "Më të rejat" },
-              { id: "low", label: "Çmimi: ulët-lartë" },
-              { id: "high", label: "Çmimi: lartë-ulët" },
-              { id: "popular", label: "Më të popullarizuarat" },
-            ] as const).map((o) => (
+            {(
+              [
+                { id: "new", label: "Më të rejat" },
+                { id: "low", label: "Çmimi: ulët-lartë" },
+                { id: "high", label: "Çmimi: lartë-ulët" },
+                { id: "popular", label: "Më të popullarizuarat" },
+              ] as const
+            ).map((o) => (
               <button
                 key={o.id}
                 onClick={() => {
@@ -652,14 +687,22 @@ function UserProfile() {
 
       {/* Suppress unused var lint for likesTotal (surfaced via popular sort but unused otherwise) */}
       <span className="hidden">{likesTotal}</span>
-
     </MobileShell>
   );
 }
 
 function GridIcon({ color }: { color: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="3" y="3" width="7" height="7" rx="1" />
       <rect x="14" y="3" width="7" height="7" rx="1" />
       <rect x="3" y="14" width="7" height="7" rx="1" />

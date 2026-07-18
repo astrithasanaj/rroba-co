@@ -73,12 +73,14 @@ type OfferRow = {
   created_at: string;
 };
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const SOLD = "#c65a7a";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const DIVIDER = "var(--brand-border)";
+const SOLD = "var(--brand-rose)";
+const BORDER_STRONG = "var(--brand-border-strong)";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 
 function ProfilePage() {
   const { user } = Route.useRouteContext();
@@ -93,7 +95,6 @@ function ProfilePage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heightOpen, setHeightOpen] = useState(false);
 
-
   const [profile, setProfile] = useState<Profile | null>(null);
   const [myListings, setMyListings] = useState<ListingView[]>([]);
   const [likedListings, setLikedListings] = useState<ListingView[]>([]);
@@ -105,18 +106,35 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
-  
-
 
   const loadAll = useCallback(async () => {
     setLoading(true);
     const [prof, mine, offRec, offSent, fCount, gCount] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase.from("listings").select("*").eq("user_id", user.id).in("status", ["active", "sold"]).order("created_at", { ascending: false }),
-      supabase.from("offers").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("offers").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", user.id),
-      supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", user.id),
+      supabase
+        .from("listings")
+        .select("*")
+        .eq("user_id", user.id)
+        .in("status", ["active", "sold"])
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("offers")
+        .select("*")
+        .eq("seller_id", user.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("offers")
+        .select("*")
+        .eq("buyer_id", user.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("followers")
+        .select("*", { count: "exact", head: true })
+        .eq("following_id", user.id),
+      supabase
+        .from("followers")
+        .select("*", { count: "exact", head: true })
+        .eq("follower_id", user.id),
     ]);
     setFollowers(fCount.count ?? 0);
     setFollowing(gCount.count ?? 0);
@@ -148,39 +166,79 @@ function ProfilePage() {
 
   useEffect(() => {
     const ids = Array.from(likes);
-    if (ids.length === 0) { setLikedListings([]); return; }
+    if (ids.length === 0) {
+      setLikedListings([]);
+      return;
+    }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
+      const { data } = await supabase
+        .from("listings")
+        .select("*")
+        .in("id", ids)
+        .eq("status", "active")
+        .eq("sold", false);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (!cancelled) setLikedListings(hydrated);
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [likes]);
 
   useEffect(() => {
     const ids = Array.from(saves);
-    if (ids.length === 0) { setSavedListings([]); return; }
+    if (ids.length === 0) {
+      setSavedListings([]);
+      return;
+    }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
+      const { data } = await supabase
+        .from("listings")
+        .select("*")
+        .in("id", ids)
+        .eq("status", "active")
+        .eq("sold", false);
       const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
       if (!cancelled) setSavedListings(hydrated);
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [saves]);
 
   useEffect(() => {
     const ch = supabase
       .channel(`profile-live:${user.id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "listings", filter: `user_id=eq.${user.id}` }, () => loadAll())
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "listings", filter: `user_id=eq.${user.id}` },
+        () => loadAll(),
+      )
       // DELETE events don't include user_id in default REPLICA IDENTITY, so listen broadly and let loadAll reconcile.
-      .on("postgres_changes", { event: "DELETE", schema: "public", table: "listings" }, () => loadAll())
-      .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `seller_id=eq.${user.id}` }, () => loadAll())
-      .on("postgres_changes", { event: "*", schema: "public", table: "offers", filter: `buyer_id=eq.${user.id}` }, () => loadAll())
-      .on("postgres_changes", { event: "*", schema: "public", table: "ratings", filter: `seller_id=eq.${user.id}` }, () => loadAll())
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "listings" }, () =>
+        loadAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "offers", filter: `seller_id=eq.${user.id}` },
+        () => loadAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "offers", filter: `buyer_id=eq.${user.id}` },
+        () => loadAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "ratings", filter: `seller_id=eq.${user.id}` },
+        () => loadAll(),
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [user.id, loadAll]);
 
   const handleSignOut = async () => {
@@ -198,12 +256,17 @@ function ProfilePage() {
     const shareData = { url, title: displayName, text: "Shiko profilin tim në Rroba" };
     try {
       if (navigator.share) await navigator.share(shareData);
-      else { await navigator.clipboard.writeText(url); toast.success("Lidhja u kopjua!"); }
+      else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Lidhja u kopjua!");
+      }
     } catch {}
   };
 
   const displayName = profile?.name || user.email?.split("@")[0] || "Përdorues";
-  const avatar = profile?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
+  const avatar =
+    profile?.avatar_url ||
+    `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
   const username = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
 
   const sortFn = (a: ListingView, b: ListingView) => {
@@ -217,11 +280,17 @@ function ProfilePage() {
     const sold = myListings.filter((l) => l.status === "sold").sort(sortFn);
     return [...active, ...sold];
   }, [myListings, sort]);
-  const wardrobeListings = useMemo(() => myListings.filter((l) => l.status === "sold").sort(sortFn), [myListings, sort]);
+  const wardrobeListings = useMemo(
+    () => myListings.filter((l) => l.status === "sold").sort(sortFn),
+    [myListings, sort],
+  );
   const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
   const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
 
-  const salesCount = useMemo(() => myListings.filter((l) => l.status === "sold").length, [myListings]);
+  const salesCount = useMemo(
+    () => myListings.filter((l) => l.status === "sold").length,
+    [myListings],
+  );
   const tier = salesCount >= 20 ? "top" : salesCount >= 5 ? "trusted" : "starter";
 
   const tabs: { id: Tab; icon: typeof Grid2x2 }[] = [
@@ -232,10 +301,13 @@ function ProfilePage() {
   ];
 
   const currentGrid =
-    tab === "mine" ? mineListings :
-    tab === "liked" ? sortedLiked :
-    tab === "saved" ? sortedSaved :
-    wardrobeListings;
+    tab === "mine"
+      ? mineListings
+      : tab === "liked"
+        ? sortedLiked
+        : tab === "saved"
+          ? sortedSaved
+          : wardrobeListings;
 
   return (
     <MobileShell>
@@ -309,7 +381,9 @@ function ProfilePage() {
 
         {/* Profile section */}
         <section>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}>
+          <div
+            style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}
+          >
             <img
               src={avatar}
               alt=""
@@ -324,7 +398,10 @@ function ProfilePage() {
             />
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <Stat value={myListings.filter((l) => l.status === "active").length} label="artikuj" />
+                <Stat
+                  value={myListings.filter((l) => l.status === "active").length}
+                  label="artikuj"
+                />
                 <Stat
                   value={followers}
                   label="ndjekës"
@@ -335,8 +412,6 @@ function ProfilePage() {
                   label="ndjek"
                   onClick={() => navigate({ to: "/user/$id/following", params: { id: user.id } })}
                 />
-
-
               </div>
               <div style={{ display: "flex", gap: 7 }}>
                 <button
@@ -346,7 +421,7 @@ function ProfilePage() {
                     flex: 1,
                     height: 34,
                     borderRadius: 10,
-                    border: "1px solid #c8c3b9",
+                    border: "1px solid var(--brand-border-strong)",
                     backgroundColor: CREAM,
                     color: INK,
                     fontSize: 12,
@@ -370,7 +445,7 @@ function ProfilePage() {
                     flex: 1,
                     height: 34,
                     borderRadius: 10,
-                    border: "1px solid #c8c3b9",
+                    border: "1px solid var(--brand-border-strong)",
                     backgroundColor: CREAM,
                     color: INK,
                     fontSize: 12,
@@ -447,7 +522,10 @@ function ProfilePage() {
               </button>
             </div>
             {profile?.bio && (
-              <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: INK }}>
+              <p
+                className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed"
+                style={{ color: INK }}
+              >
                 {profile.bio}
               </p>
             )}
@@ -471,7 +549,11 @@ function ProfilePage() {
                   style={{ height: 40, background: "transparent", border: "none" }}
                 >
                   <Icon
-                    style={{ width: 20, height: 20, color: active ? INK : "#c8c3b9" }}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      color: active ? INK : "var(--brand-border-strong)",
+                    }}
                     strokeWidth={active ? 2 : 1.7}
                   />
                   {active && (
@@ -503,33 +585,50 @@ function ProfilePage() {
             <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
           )}
         </section>
-
       </div>
 
       {/* Sort sheet */}
       <Sheet open={sortOpen} onOpenChange={setSortOpen}>
-        <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ backgroundColor: CARD }}>
+        <SheetContent
+          side="bottom"
+          hideClose
+          className="border-0 p-0"
+          style={{ backgroundColor: CARD }}
+        >
           <div className="flex items-center gap-3 px-5 pt-4 pb-2">
             <button
               type="button"
               onClick={() => setSortOpen(false)}
               aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-              style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
+              style={{
+                width: 44,
+                height: 44,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+                backdropFilter: "blur(8px)",
+              }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
             </button>
-            <h2 className="text-[17px] font-bold" style={{ color: INK }}>Rendit sipas</h2>
+            <h2 className="text-[17px] font-bold" style={{ color: INK }}>
+              Rendit sipas
+            </h2>
           </div>
           <div className="px-5 pb-8 pt-2">
-            {([
-              { id: "new", label: "Më të rejat" },
-              { id: "low", label: "Çmimi: ulët-lartë" },
-              { id: "high", label: "Çmimi: lartë-ulët" },
-            ] as const).map((o) => (
+            {(
+              [
+                { id: "new", label: "Më të rejat" },
+                { id: "low", label: "Çmimi: ulët-lartë" },
+                { id: "high", label: "Çmimi: lartë-ulët" },
+              ] as const
+            ).map((o) => (
               <button
                 key={o.id}
-                onClick={() => { setSort(o.id); setSortOpen(false); }}
+                onClick={() => {
+                  setSort(o.id);
+                  setSortOpen(false);
+                }}
                 className="flex w-full items-center justify-between py-3 text-left text-[15px]"
                 style={{ color: INK, borderBottom: `1px solid ${DIVIDER}` }}
               >
@@ -547,7 +646,11 @@ function ProfilePage() {
           side="right"
           hideClose
           className="h-[100dvh] w-full !max-w-none p-0 border-0"
-          style={{ backgroundColor: CREAM, WebkitFontSmoothing: "antialiased", overscrollBehavior: "contain" }}
+          style={{
+            backgroundColor: CREAM,
+            WebkitFontSmoothing: "antialiased",
+            overscrollBehavior: "contain",
+          }}
         >
           {/* Header — matches Vlerësimet */}
           <div
@@ -560,22 +663,29 @@ function ProfilePage() {
               backgroundColor: CREAM,
             }}
           >
-            <div style={{ width: 72, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+            <div
+              style={{
+                width: 72,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setBenefitsOpen(false)}
                 aria-label="Kthehu"
-                className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+                className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 44,
+                  height: 44,
                   backgroundColor: "rgba(255,255,255,0.7)",
                   border: "1px solid rgba(226,226,222,0.8)",
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
@@ -586,16 +696,42 @@ function ProfilePage() {
           </div>
 
           <div style={{ overflowY: "auto", height: "calc(100dvh - 60px)", paddingBottom: 40 }}>
-            <p style={{ fontSize: 13, color: MUTED, textAlign: "center", padding: "16px 24px 20px", lineHeight: 1.5, margin: 0 }}>
+            <p
+              style={{
+                fontSize: 13,
+                color: MUTED,
+                textAlign: "center",
+                padding: "16px 24px 20px",
+                lineHeight: 1.5,
+                margin: 0,
+              }}
+            >
               Sa më shumë shet, aq më shumë përfitime.
             </p>
-            <TierCard emoji="🥉" title="Fillestar" range="0–4 shitje" body="Akses bazë në listim dhe shitje." active={tier === "starter"} />
-            <TierCard emoji="🥈" title="I besueshëm" range="5–19 shitje" body="Prioritet në kërkim dhe shenjë e verifikuar." active={tier === "trusted"} />
-            <TierCard emoji="🥇" title="Top shitës" range="20+ shitje" body="Promovim falas, shenjë e artë dhe shfaqje në kryefaqe." active={tier === "top"} />
+            <TierCard
+              emoji="🥉"
+              title="Fillestar"
+              range="0–4 shitje"
+              body="Akses bazë në listim dhe shitje."
+              active={tier === "starter"}
+            />
+            <TierCard
+              emoji="🥈"
+              title="I besueshëm"
+              range="5–19 shitje"
+              body="Prioritet në kërkim dhe shenjë e verifikuar."
+              active={tier === "trusted"}
+            />
+            <TierCard
+              emoji="🥇"
+              title="Top shitës"
+              range="20+ shitje"
+              body="Promovim falas, shenjë e artë dhe shfaqje në kryefaqe."
+              active={tier === "top"}
+            />
           </div>
         </SheetContent>
       </Sheet>
-
 
       {/* Reviews dialog */}
       <ReviewsSheet
@@ -610,15 +746,24 @@ function ProfilePage() {
 
       {/* Offers sheet */}
       <Sheet open={offersOpen} onOpenChange={setOffersOpen}>
-        <SheetContent side="bottom" className="h-[85vh] overflow-y-auto" style={{ backgroundColor: CREAM }}>
-          <SheetHeader><SheetTitle>Ofertat</SheetTitle></SheetHeader>
+        <SheetContent
+          side="bottom"
+          className="h-[85vh] overflow-y-auto"
+          style={{ backgroundColor: CREAM }}
+        >
+          <SheetHeader>
+            <SheetTitle>Ofertat</SheetTitle>
+          </SheetHeader>
           <div className="mt-4 flex gap-2">
             {(["received", "sent"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setOfferSub(s)}
                 className="rounded-full px-3 py-1.5 text-xs"
-                style={{ backgroundColor: offerSub === s ? INK : CARD, color: offerSub === s ? "white" : INK }}
+                style={{
+                  backgroundColor: offerSub === s ? INK : CARD,
+                  color: offerSub === s ? "white" : INK,
+                }}
               >
                 {s === "received" ? "Të marra" : "Të dërguara"}
               </button>
@@ -654,8 +799,6 @@ function ProfilePage() {
         onSaved={loadAll}
       />
     </MobileShell>
-
-
   );
 }
 
@@ -685,14 +828,21 @@ function HeightSheet({
     setSaving(true);
     const { error } = await supabase.from("profiles").update({ height_cm: value }).eq("id", userId);
     setSaving(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     onOpenChange(false);
     onSaved();
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl border-0 p-0" style={{ backgroundColor: CREAM }}>
+      <SheetContent
+        side="bottom"
+        className="rounded-t-3xl border-0 p-0"
+        style={{ backgroundColor: CREAM }}
+      >
         <SheetHeader className="px-5 pt-5">
           <SheetTitle style={{ color: INK }}>Gjatësia (cm)</SheetTitle>
         </SheetHeader>
@@ -734,13 +884,19 @@ function HeightSheet({
   );
 }
 
-
-
 function Stat({ value, label, onClick }: { value: number; label: string; onClick?: () => void }) {
   const inner = (
     <>
       <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
-      <p style={{ fontSize: 11, fontWeight: 400, color: MUTED, marginTop: 2, letterSpacing: "0.2px" }}>
+      <p
+        style={{
+          fontSize: 11,
+          fontWeight: 400,
+          color: MUTED,
+          marginTop: 2,
+          letterSpacing: "0.2px",
+        }}
+      >
         {label}
       </p>
     </>
@@ -767,9 +923,19 @@ function Stat({ value, label, onClick }: { value: number; label: string; onClick
   return <div style={{ textAlign: "center" }}>{inner}</div>;
 }
 
-
-
-function TierCard({ emoji, title, range, body, active }: { emoji: string; title: string; range: string; body: string; active: boolean }) {
+function TierCard({
+  emoji,
+  title,
+  range,
+  body,
+  active,
+}: {
+  emoji: string;
+  title: string;
+  range: string;
+  body: string;
+  active: boolean;
+}) {
   return (
     <div
       style={{
@@ -779,7 +945,14 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
         margin: "0 16px 10px",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 8,
+        }}
+      >
         <span style={{ fontSize: 15, fontWeight: 700, color: active ? CREAM : INK }}>
           {emoji} {title}
         </span>
@@ -795,20 +968,23 @@ function TierCard({ emoji, title, range, body, active }: { emoji: string; title:
           {range}
         </span>
       </div>
-      <p style={{ fontSize: 13, color: active ? "rgba(255,255,255,0.65)" : MUTED, lineHeight: 1.5, margin: 0 }}>
+      <p
+        style={{
+          fontSize: 13,
+          color: active ? "rgba(255,255,255,0.65)" : MUTED,
+          lineHeight: 1.5,
+          margin: 0,
+        }}
+      >
         {body}
       </p>
     </div>
   );
 }
 
-
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div
-      className="grid grid-cols-2"
-      style={{ gap: 1.5, backgroundColor: "#ffffff" }}
-    >
+    <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#ffffff" }}>
       {listings.map((l) => (
         <ListingGridTile key={l.id} listing={l} manage={manage} />
       ))}
@@ -891,7 +1067,6 @@ function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?
   );
 }
 
-
 function SoldRibbon() {
   return (
     <div
@@ -919,20 +1094,24 @@ function SoldRibbon() {
 
 function TabEmptyState({ tab }: { tab: Tab }) {
   const Icon =
-    tab === "mine" ? Grid2x2 :
-    tab === "liked" ? Heart :
-    tab === "saved" ? Bookmark :
-    Shirt;
+    tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : tab === "saved" ? Bookmark : Shirt;
   const subtitle =
-    tab === "mine" ? "Artikujt që liston do të shfaqen këtu" :
-    tab === "liked" ? "Artikujt që i pëlqen do të shfaqen këtu" :
-    tab === "saved" ? "Artikujt që i ruan do të shfaqen këtu" :
-    "Artikujt e shitur do të shfaqen këtu";
+    tab === "mine"
+      ? "Artikujt që liston do të shfaqen këtu"
+      : tab === "liked"
+        ? "Artikujt që i pëlqen do të shfaqen këtu"
+        : tab === "saved"
+          ? "Artikujt që i ruan do të shfaqen këtu"
+          : "Artikujt e shitur do të shfaqen këtu";
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
       <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
-      <p className="mt-4 text-[15px] font-bold" style={{ color: INK }}>Asnjë artikull ende</p>
-      <p className="mt-1 text-[13px]" style={{ color: MUTED }}>{subtitle}</p>
+      <p className="mt-4 text-[15px] font-bold" style={{ color: INK }}>
+        Asnjë artikull ende
+      </p>
+      <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+        {subtitle}
+      </p>
     </div>
   );
 }
@@ -940,7 +1119,9 @@ function TabEmptyState({ tab }: { tab: Tab }) {
 function EmptyMsg({ text, actionLabel, to }: { text: string; actionLabel?: string; to?: string }) {
   return (
     <div className="mx-5 mt-8 rounded-2xl p-8 text-center" style={{ backgroundColor: CARD }}>
-      <p className="text-sm" style={{ color: MUTED }}>{text}</p>
+      <p className="text-sm" style={{ color: MUTED }}>
+        {text}
+      </p>
       {actionLabel && to && (
         <Link
           to={to}
@@ -955,7 +1136,10 @@ function EmptyMsg({ text, actionLabel, to }: { text: string; actionLabel?: strin
 }
 
 function OffersList({
-  offers, titles, canRespond, onRespond,
+  offers,
+  titles,
+  canRespond,
+  onRespond,
 }: {
   offers: OfferRow[];
   titles: Record<string, string>;
@@ -963,31 +1147,63 @@ function OffersList({
   onRespond: (o: OfferRow, status: "accepted" | "declined") => void;
 }) {
   if (offers.length === 0)
-    return <p className="py-6 text-center text-sm" style={{ color: MUTED }}>Asnjë ofertë.</p>;
+    return (
+      <p className="py-6 text-center text-sm" style={{ color: MUTED }}>
+        Asnjë ofertë.
+      </p>
+    );
   return (
     <ul className="space-y-2">
       {offers.map((o) => (
         <li key={o.id} className="rounded-2xl p-3" style={{ backgroundColor: CARD }}>
           <div className="flex items-center justify-between">
             <Link to="/product/$id" params={{ id: o.listing_id }} className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold" style={{ color: INK }}>{titles[o.listing_id] ?? "Artikull"}</p>
-              <p className="text-xs" style={{ color: MUTED }}>{new Date(o.created_at).toLocaleString()}</p>
+              <p className="truncate text-sm font-semibold" style={{ color: INK }}>
+                {titles[o.listing_id] ?? "Artikull"}
+              </p>
+              <p className="text-xs" style={{ color: MUTED }}>
+                {new Date(o.created_at).toLocaleString()}
+              </p>
             </Link>
-            <p className="shrink-0 text-xl font-bold" style={{ color: INK }}>€{o.amount}</p>
+            <p className="shrink-0 text-xl font-bold" style={{ color: INK }}>
+              €{o.amount}
+            </p>
           </div>
           <div className="mt-2 flex items-center justify-between">
-            <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{
-              backgroundColor: o.status === "accepted" ? "#d1f4e0" : o.status === "declined" ? "#f4d1d1" : DIVIDER,
-              color: INK,
-            }}>
-              {o.status === "pending" ? "Në pritje" : o.status === "accepted" ? "Pranuar" : "Refuzuar"}
+            <span
+              className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              style={{
+                backgroundColor:
+                  o.status === "accepted"
+                    ? "#d1f4e0"
+                    : o.status === "declined"
+                      ? "#f4d1d1"
+                      : DIVIDER,
+                color: INK,
+              }}
+            >
+              {o.status === "pending"
+                ? "Në pritje"
+                : o.status === "accepted"
+                  ? "Pranuar"
+                  : "Refuzuar"}
             </span>
             {canRespond && o.status === "pending" && (
               <div className="flex gap-2">
-                <button onClick={() => onRespond(o, "declined")} className="grid h-11 w-11 place-items-center rounded-full" style={{ backgroundColor: DIVIDER }} aria-label="Refuzo">
+                <button
+                  onClick={() => onRespond(o, "declined")}
+                  className="grid h-11 w-11 place-items-center rounded-full"
+                  style={{ backgroundColor: DIVIDER }}
+                  aria-label="Refuzo"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => onRespond(o, "accepted")} className="grid h-11 w-11 place-items-center rounded-full text-white" style={{ backgroundColor: INK }} aria-label="Prano">
+                <button
+                  onClick={() => onRespond(o, "accepted")}
+                  className="grid h-11 w-11 place-items-center rounded-full text-white"
+                  style={{ backgroundColor: INK }}
+                  aria-label="Prano"
+                >
                   <Check className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -1000,11 +1216,22 @@ function OffersList({
 }
 
 type SettingsView =
-  | "main" | "profile" | "notifications" | "preferences"
-  | "faq" | "support" | "privacy" | "terms";
+  | "main"
+  | "profile"
+  | "notifications"
+  | "preferences"
+  | "faq"
+  | "support"
+  | "privacy"
+  | "terms";
 
 function SettingsSheet({
-  open, onOpenChange, profile, email, onSaved, onSignOut,
+  open,
+  onOpenChange,
+  profile,
+  email,
+  onSaved,
+  onSignOut,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -1019,8 +1246,15 @@ function SettingsSheet({
   const [profileDirty, setProfileDirty] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
 
-  useEffect(() => { if (open) { setView("main"); setProfileDirty(false); } }, [open]);
-  useEffect(() => { if (view !== "profile") setProfileDirty(false); }, [view]);
+  useEffect(() => {
+    if (open) {
+      setView("main");
+      setProfileDirty(false);
+    }
+  }, [open]);
+  useEffect(() => {
+    if (view !== "profile") setProfileDirty(false);
+  }, [view]);
 
   const handleBack = () => {
     if (view === "profile" && profileDirty) {
@@ -1030,7 +1264,6 @@ function SettingsSheet({
     if (view !== "main") setView("main");
     else onOpenChange(false);
   };
-
 
   const titles: Record<SettingsView, string> = {
     main: "Cilësimet",
@@ -1068,8 +1301,8 @@ function SettingsSheet({
               background: CARD,
               border: "none",
               borderRadius: "50%",
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -1105,7 +1338,12 @@ function SettingsSheet({
           )}
           {view === "profile" && (
             <div className="px-5 pt-2">
-              <ProfileForm profile={profile} email={email} onSaved={onSaved} onDirtyChange={setProfileDirty} />
+              <ProfileForm
+                profile={profile}
+                email={email}
+                onSaved={onSaved}
+                onDirtyChange={setProfileDirty}
+              />
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
@@ -1119,7 +1357,10 @@ function SettingsSheet({
         <LogoutConfirm
           open={confirmLogout}
           onOpenChange={setConfirmLogout}
-          onConfirm={() => { setConfirmLogout(false); onSignOut(); }}
+          onConfirm={() => {
+            setConfirmLogout(false);
+            onSignOut();
+          }}
         />
 
         <UnsavedChangesDialog
@@ -1131,8 +1372,6 @@ function SettingsSheet({
             setView("main");
           }}
         />
-
-
       </SheetContent>
     </Sheet>
   );
@@ -1157,7 +1396,11 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 }
 
 function Row({
-  icon, title, subtitle, onClick, isLast,
+  icon,
+  title,
+  subtitle,
+  onClick,
+  isLast,
 }: {
   icon: string;
   title: string;
@@ -1166,7 +1409,11 @@ function Row({
   isLast?: boolean;
 }) {
   return (
-    <button onClick={onClick} className="settings-row" style={{ borderBottom: isLast ? "none" : `1px solid ${DIVIDER}` }}>
+    <button
+      onClick={onClick}
+      className="settings-row"
+      style={{ borderBottom: isLast ? "none" : `1px solid ${DIVIDER}` }}
+    >
       <i className={`ti ${icon} settings-icon`} aria-hidden />
       <div className="settings-text">
         <div className="settings-title">{title}</div>
@@ -1185,32 +1432,64 @@ function SectionDivider() {
 }
 
 function SettingsMain({
-  onNavigate, onLogout, onDeleteAccount,
+  onNavigate,
+  onLogout,
+  onDeleteAccount,
 }: {
   onNavigate: (v: SettingsView) => void;
   onLogout: () => void;
   onDeleteAccount: () => void;
 }) {
-
   return (
     <div>
       <SectionHeader>Konto</SectionHeader>
       <div>
-        <Row icon="ti-user" title="Ndrysho profilin" subtitle="Emri, bio, foto, qyteti" onClick={() => onNavigate("profile")} />
-        <Row icon="ti-bell" title="Njoftimet" subtitle="Menaxho njoftimet push dhe email" onClick={() => onNavigate("notifications")} />
-        <Row icon="ti-adjustments-horizontal" title="Preferencat" subtitle="Kategoritë dhe madhësitë e preferuara" onClick={() => onNavigate("preferences")} isLast />
+        <Row
+          icon="ti-user"
+          title="Ndrysho profilin"
+          subtitle="Emri, bio, foto, qyteti"
+          onClick={() => onNavigate("profile")}
+        />
+        <Row
+          icon="ti-bell"
+          title="Njoftimet"
+          subtitle="Menaxho njoftimet push dhe email"
+          onClick={() => onNavigate("notifications")}
+        />
+        <Row
+          icon="ti-adjustments-horizontal"
+          title="Preferencat"
+          subtitle="Kategoritë dhe madhësitë e preferuara"
+          onClick={() => onNavigate("preferences")}
+          isLast
+        />
       </div>
 
       <SectionHeader>Ndihmë</SectionHeader>
       <div>
         <Row icon="ti-help-circle" title="Pyetjet e shpeshta" onClick={() => onNavigate("faq")} />
-        <Row icon="ti-message" title="Kontakto mbështetjen" onClick={() => onNavigate("support")} isLast />
+        <Row
+          icon="ti-message"
+          title="Kontakto mbështetjen"
+          onClick={() => onNavigate("support")}
+          isLast
+        />
       </div>
 
       <SectionHeader>Tjetër</SectionHeader>
       <div>
-        <Row icon="ti-shield" title="Privatësia" subtitle="Politikat dhe të dhënat e tua" onClick={() => onNavigate("privacy")} />
-        <Row icon="ti-file-text" title="Kushtet e shërbimit" onClick={() => onNavigate("terms")} isLast />
+        <Row
+          icon="ti-shield"
+          title="Privatësia"
+          subtitle="Politikat dhe të dhënat e tua"
+          onClick={() => onNavigate("privacy")}
+        />
+        <Row
+          icon="ti-file-text"
+          title="Kushtet e shërbimit"
+          onClick={() => onNavigate("terms")}
+          isLast
+        />
       </div>
 
       {/* Logout */}
@@ -1262,7 +1541,7 @@ function SettingsMain({
           textAlign: "center",
           padding: "16px 0 24px",
           fontSize: 11,
-          color: "#c8c3b9",
+          color: "var(--brand-border-strong)",
           letterSpacing: "0.3px",
         }}
       >
@@ -1275,10 +1554,22 @@ function SettingsMain({
 function LegalPage({ title, paragraphs }: { title: string; paragraphs: string[] }) {
   return (
     <div className="px-5 pt-2 pb-6">
-      <h2 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 22, color: INK, marginBottom: 12 }}>{title}</h2>
+      <h2
+        style={{
+          fontFamily: "var(--font-display)",
+          fontStyle: "italic",
+          fontSize: 22,
+          color: INK,
+          marginBottom: 12,
+        }}
+      >
+        {title}
+      </h2>
       <div className="space-y-3">
         {paragraphs.map((p, i) => (
-          <p key={i} style={{ fontSize: 14, lineHeight: 1.55, color: INK }}>{p}</p>
+          <p key={i} style={{ fontSize: 14, lineHeight: 1.55, color: INK }}>
+            {p}
+          </p>
         ))}
       </div>
     </div>
@@ -1311,7 +1602,17 @@ function TermsView() {
   );
 }
 
-function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Profile | null; email: string; onSaved: () => void; onDirtyChange?: (dirty: boolean) => void }) {
+function ProfileForm({
+  profile,
+  email,
+  onSaved,
+  onDirtyChange,
+}: {
+  profile: Profile | null;
+  email: string;
+  onSaved: () => void;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const navigate = useNavigate();
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
@@ -1346,7 +1647,6 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
     onDirtyChange(dirty);
   }, [name, bio, city, cityId, height, avatarUrl, profile, onDirtyChange]);
 
-
   const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
@@ -1355,9 +1655,16 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
       const compressed = await compressImage(file, AVATAR_OPTIONS);
       const ext = compressed.type === "image/webp" ? "webp" : "jpg";
       const path = `${profile.id}/avatars/${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("photos").upload(path, compressed, { contentType: compressed.type, upsert: false });
-      if (error) { toast.error(error.message); return; }
-      const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60 * 24 * 365);
+      const { error } = await supabase.storage
+        .from("photos")
+        .upload(path, compressed, { contentType: compressed.type, upsert: false });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      const { data: signed } = await supabase.storage
+        .from("photos")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
       if (signed?.signedUrl) setAvatarUrl(signed.signedUrl);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Ngarkimi dështoi");
@@ -1385,7 +1692,10 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
         const { error: removeError } = await supabase.storage.from("photos").remove([path]);
         if (removeError) console.error("Fotoja në storage nuk u fshi:", removeError.message);
       }
-      const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", profile.id);
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_url: null })
+        .eq("id", profile.id);
       if (error) throw error;
       setAvatarUrl("");
       toast.success("Fotoja e profilit u hoq");
@@ -1408,7 +1718,10 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
       .eq("id", profile.id);
     setSaving(false);
     if (error) toast.error(error.message);
-    else { toast.success("Profili u ruajt"); onSaved(); }
+    else {
+      toast.success("Profili u ruajt");
+      onSaved();
+    }
   };
 
   const inputStyle = { backgroundColor: CARD, color: INK, borderColor: DIVIDER } as const;
@@ -1416,9 +1729,25 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
   return (
     <div className="space-y-4 pb-6">
       <div className="flex flex-col items-center gap-3">
-        <img src={avatarUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`} alt="" className="h-16 w-16 rounded-full object-cover" style={{ boxShadow: `0 0 0 2px ${DIVIDER}` }} />
+        <img
+          src={
+            avatarUrl ||
+            `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name || "U")}`
+          }
+          alt=""
+          className="h-16 w-16 rounded-full object-cover"
+          style={{ boxShadow: `0 0 0 2px ${DIVIDER}` }}
+        />
         <div className="flex items-center gap-2" style={{ width: 280 }}>
-          <label className="cursor-pointer inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium" style={{ backgroundColor: "#f4f4f2", color: "#1c1a16", border: "1px solid #e2e2de", borderRadius: 9999 }}>
+          <label
+            className="cursor-pointer inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
+            style={{
+              backgroundColor: "#f4f4f2",
+              color: "#1c1a16",
+              border: "1px solid #e2e2de",
+              borderRadius: 9999,
+            }}
+          >
             {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
             <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
           </label>
@@ -1427,7 +1756,13 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
               type="button"
               onClick={() => setRemovePhotoOpen(true)}
               className="inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
-              style={{ backgroundColor: "#fbeceb", color: "#b3392f", border: "1px solid #f3d4d1", borderRadius: 9999, cursor: "pointer" }}
+              style={{
+                backgroundColor: "#fbeceb",
+                color: "#b3392f",
+                border: "1px solid #f3d4d1",
+                borderRadius: 9999,
+                cursor: "pointer",
+              }}
             >
               Hiq foton
             </button>
@@ -1447,18 +1782,51 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
             type="button"
             onClick={() => navigate({ to: "/profile/change-email" })}
             className="text-xs font-semibold"
-            style={{ color: "#ffffff", background: "linear-gradient(120deg, #e8836a, #c65a7a)", border: "none", borderRadius: 9999, padding: "5px 12px", cursor: "pointer" }}
+            style={{
+              color: "#ffffff",
+              background: "linear-gradient(120deg, #e8836a, #c65a7a)",
+              border: "none",
+              borderRadius: 9999,
+              padding: "5px 12px",
+              cursor: "pointer",
+            }}
           >
             Ndrysho email-in
           </button>
         </div>
         <Input value={email} disabled style={inputStyle} />
       </div>
-      <div><Label style={{ color: INK }}>Emri</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} style={inputStyle} /></div>
-      <div><Label style={{ color: INK }}>Bio</Label><Textarea value={bio} onChange={(e) => setBio(e.target.value)} maxLength={300} rows={3} style={inputStyle} /></div>
+      <div>
+        <Label style={{ color: INK }}>Emri</Label>
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={60}
+          style={inputStyle}
+        />
+      </div>
+      <div>
+        <Label style={{ color: INK }}>Bio</Label>
+        <Textarea
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          maxLength={300}
+          rows={3}
+          style={inputStyle}
+        />
+      </div>
       <div>
         <Label style={{ color: INK }}>Lartësia (cm)</Label>
-        <Input type="number" inputMode="numeric" min={0} max={260} value={height} onChange={(e) => setHeight(e.target.value)} placeholder="p.sh. 175" style={inputStyle} />
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={260}
+          value={height}
+          onChange={(e) => setHeight(e.target.value)}
+          placeholder="p.sh. 175"
+          style={inputStyle}
+        />
       </div>
       <div>
         <Label style={{ color: INK }}>Qyteti</Label>
@@ -1472,7 +1840,17 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
           />
         </div>
       </div>
-      <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm disabled:opacity-50" style={{ background: "linear-gradient(120deg, #e8836a, #c65a7a)", color: "#ffffff", fontWeight: 600, border: "none" }}>
+      <button
+        onClick={save}
+        disabled={saving}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm disabled:opacity-50"
+        style={{
+          background: "linear-gradient(120deg, #e8836a, #c65a7a)",
+          color: "#ffffff",
+          fontWeight: 600,
+          border: "none",
+        }}
+      >
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
         Ruaj
       </button>
@@ -1480,12 +1858,28 @@ function ProfileForm({ profile, email, onSaved, onDirtyChange }: { profile: Prof
   );
 }
 
-function ToggleRow({ title, subtitle, value, onChange }: { title: string; subtitle?: string; value: boolean; onChange: (v: boolean) => void }) {
+function ToggleRow({
+  title,
+  subtitle,
+  value,
+  onChange,
+}: {
+  title: string;
+  subtitle?: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
     <div className="flex items-center gap-3 px-5 py-4" style={{ backgroundColor: CREAM }}>
       <div className="flex-1">
-        <div className="text-[15px] font-semibold" style={{ color: INK }}>{title}</div>
-        {subtitle && <div className="mt-0.5 text-[13px]" style={{ color: MUTED }}>{subtitle}</div>}
+        <div className="text-[15px] font-semibold" style={{ color: INK }}>
+          {title}
+        </div>
+        {subtitle && (
+          <div className="mt-0.5 text-[13px]" style={{ color: MUTED }}>
+            {subtitle}
+          </div>
+        )}
       </div>
       <button
         onClick={() => onChange(!value)}
@@ -1496,7 +1890,11 @@ function ToggleRow({ title, subtitle, value, onChange }: { title: string; subtit
       >
         <span
           className="absolute top-0.5 h-6 w-6 rounded-full transition-all"
-          style={{ left: value ? "calc(100% - 26px)" : "2px", backgroundColor: CREAM, boxShadow: "0 1px 2px rgba(0,0,0,0.15)" }}
+          style={{
+            left: value ? "calc(100% - 26px)" : "2px",
+            backgroundColor: CREAM,
+            boxShadow: "0 1px 2px rgba(0,0,0,0.15)",
+          }}
         />
       </button>
     </div>
@@ -1512,16 +1910,31 @@ function NotificationsView() {
   return (
     <div>
       <SectionHeader>Kanalet</SectionHeader>
-      <ToggleRow title="Njoftime push" subtitle="Në telefonin tënd" value={push} onChange={setPush} />
+      <ToggleRow
+        title="Njoftime push"
+        subtitle="Në telefonin tënd"
+        value={push}
+        onChange={setPush}
+      />
       <RowDivider />
-      <ToggleRow title="Email" subtitle="Përmbledhje në email" value={emailNotif} onChange={setEmailNotif} />
+      <ToggleRow
+        title="Email"
+        subtitle="Përmbledhje në email"
+        value={emailNotif}
+        onChange={setEmailNotif}
+      />
       <SectionDivider />
       <SectionHeader>Llojet</SectionHeader>
       <ToggleRow title="Oferta të reja" value={offers} onChange={setOffers} />
       <RowDivider />
       <ToggleRow title="Mesazhe" value={messages} onChange={setMessages} />
       <RowDivider />
-      <ToggleRow title="Promovime" subtitle="Lajme dhe oferta speciale" value={marketing} onChange={setMarketing} />
+      <ToggleRow
+        title="Promovime"
+        subtitle="Lajme dhe oferta speciale"
+        value={marketing}
+        onChange={setMarketing}
+      />
     </div>
   );
 }
@@ -1529,7 +1942,15 @@ function NotificationsView() {
 const PREF_CATEGORIES = ["Topp", "Bukse", "Fustan", "Këpucë", "Xhup", "Aksesorë", "Çantë"];
 const PREF_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
-function Chip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+function Chip({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
@@ -1554,13 +1975,23 @@ function PreferencesView() {
       <SectionHeader>Kategoritë e preferuara</SectionHeader>
       <div className="flex flex-wrap gap-2 px-5 pt-2">
         {PREF_CATEGORIES.map((c) => (
-          <Chip key={c} label={c} selected={cats.includes(c)} onClick={() => toggle(cats, setCats, c)} />
+          <Chip
+            key={c}
+            label={c}
+            selected={cats.includes(c)}
+            onClick={() => toggle(cats, setCats, c)}
+          />
         ))}
       </div>
       <SectionHeader>Madhësitë</SectionHeader>
       <div className="flex flex-wrap gap-2 px-5 pt-2">
         {PREF_SIZES.map((s) => (
-          <Chip key={s} label={s} selected={sizes.includes(s)} onClick={() => toggle(sizes, setSizes, s)} />
+          <Chip
+            key={s}
+            label={s}
+            selected={sizes.includes(s)}
+            onClick={() => toggle(sizes, setSizes, s)}
+          />
         ))}
       </div>
     </div>
@@ -1568,32 +1999,80 @@ function PreferencesView() {
 }
 
 const FAQS = [
-  { q: "Si mund të shes një artikull?", a: "Shko te butonin \"+\" në fund të ekranit, ngarko deri në 10 foto, plotëso detajet (kategoria, madhësia, çmimi, gjendja) dhe publiko. Artikulli yt do të shfaqet menjëherë në feed." },
-  { q: "Si funksionojnë ofertat?", a: "Blerësit mund të dërgojnë një ofertë më të ulët se çmimi. Ti mund ta pranosh, refuzosh ose të kundërpërgjigjesh me një çmim tjetër nëpërmjet mesazheve." },
-  { q: "Si bëhet pagesa?", a: "Blerësi dhe shitësi takohen personalisht dhe pagesa bëhet me para në dorë. Rroba nuk përpunon pagesa — çdo transaksion ndodh drejtpërdrejt midis palëve." },
-  { q: "Si organizohet takimi?", a: "Pasi blerësi shfaq interes, komunikoni nëpërmjet mesazheve në aplikacion dhe vendosni vendin dhe orën e takimit. Rekomandojmë takime në vende publike dhe të sigurta." },
-  { q: "Çfarë ndodh nëse artikulli nuk është siç përshkruhet?", a: "Na kontakto nga \"Mbështetje\" brenda 7 ditëve nga takimi dhe ne do të hetojmë rastin." },
-  { q: "A është e sigurt të takohem me blerës/shitës të panjohur?", a: "Rekomandojmë gjithmonë takime në vende publike si qendra tregtare, kafene ose zona të frekuentuara. Mos u takoni kurrë në vende të izoluara." },
-  { q: "Si të raportoj një përdorues problematik?", a: "Shko te profili i përdoruesit ose njoftimi, trokit \"⋯\" dhe zgjidh \"Raporto\". Ekipi ynë do të shqyrtojë rastin brenda 24 orëve." },
-  { q: "Si funksionon sistemi i vlerësimeve?", a: "Pas çdo shitjeje të konfirmuar, blerësi mund të lërë një vlerësim me yje (1-5) dhe koment për shitësin. Vlerësimet ndihmojnë komunitetin të blejë me besim." },
-  { q: "A mund të anuloj një shitje?", a: "Po, mund të anulosh një shitje para takimit duke e njoftuar blerësin nëpërmjet mesazheve. Rekomandojmë komunikim të hapur dhe të respektosh blerësin." },
-  { q: "Sa kohë mbetet aktiv një njoftim?", a: "Njoftimet mbeten aktive 60 ditë (90 ditë për Designer/Premium dhe 45 ditë për Elektronikë). Pas kësaj, mund ta rinovosh falas deri në 3 herë." },
+  {
+    q: "Si mund të shes një artikull?",
+    a: 'Shko te butonin "+" në fund të ekranit, ngarko deri në 10 foto, plotëso detajet (kategoria, madhësia, çmimi, gjendja) dhe publiko. Artikulli yt do të shfaqet menjëherë në feed.',
+  },
+  {
+    q: "Si funksionojnë ofertat?",
+    a: "Blerësit mund të dërgojnë një ofertë më të ulët se çmimi. Ti mund ta pranosh, refuzosh ose të kundërpërgjigjesh me një çmim tjetër nëpërmjet mesazheve.",
+  },
+  {
+    q: "Si bëhet pagesa?",
+    a: "Blerësi dhe shitësi takohen personalisht dhe pagesa bëhet me para në dorë. Rroba nuk përpunon pagesa — çdo transaksion ndodh drejtpërdrejt midis palëve.",
+  },
+  {
+    q: "Si organizohet takimi?",
+    a: "Pasi blerësi shfaq interes, komunikoni nëpërmjet mesazheve në aplikacion dhe vendosni vendin dhe orën e takimit. Rekomandojmë takime në vende publike dhe të sigurta.",
+  },
+  {
+    q: "Çfarë ndodh nëse artikulli nuk është siç përshkruhet?",
+    a: 'Na kontakto nga "Mbështetje" brenda 7 ditëve nga takimi dhe ne do të hetojmë rastin.',
+  },
+  {
+    q: "A është e sigurt të takohem me blerës/shitës të panjohur?",
+    a: "Rekomandojmë gjithmonë takime në vende publike si qendra tregtare, kafene ose zona të frekuentuara. Mos u takoni kurrë në vende të izoluara.",
+  },
+  {
+    q: "Si të raportoj një përdorues problematik?",
+    a: 'Shko te profili i përdoruesit ose njoftimi, trokit "⋯" dhe zgjidh "Raporto". Ekipi ynë do të shqyrtojë rastin brenda 24 orëve.',
+  },
+  {
+    q: "Si funksionon sistemi i vlerësimeve?",
+    a: "Pas çdo shitjeje të konfirmuar, blerësi mund të lërë një vlerësim me yje (1-5) dhe koment për shitësin. Vlerësimet ndihmojnë komunitetin të blejë me besim.",
+  },
+  {
+    q: "A mund të anuloj një shitje?",
+    a: "Po, mund të anulosh një shitje para takimit duke e njoftuar blerësin nëpërmjet mesazheve. Rekomandojmë komunikim të hapur dhe të respektosh blerësin.",
+  },
+  {
+    q: "Sa kohë mbetet aktiv një njoftim?",
+    a: "Njoftimet mbeten aktive 60 ditë (90 ditë për Designer/Premium dhe 45 ditë për Elektronikë). Pas kësaj, mund ta rinovosh falas deri në 3 herë.",
+  },
 ];
 
-function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
+function FaqItem({
+  q,
+  a,
+  open,
+  onToggle,
+}: {
+  q: string;
+  a: string;
+  open: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <div style={{ backgroundColor: open ? "#ffffff" : CREAM, borderRadius: open ? "0 0 10px 10px" : 0, transition: "background-color 160ms ease" }}>
+    <div
+      style={{
+        backgroundColor: open ? "#ffffff" : CREAM,
+        borderRadius: open ? "0 0 10px 10px" : 0,
+        transition: "background-color 160ms ease",
+      }}
+    >
       <button
         onClick={onToggle}
         className="flex w-full items-center gap-3 text-left"
         style={{ padding: "16px 20px", WebkitTapHighlightColor: "transparent" }}
       >
-        <div className="flex-1 text-[14px] font-bold" style={{ color: "#2d1521" }}>{q}</div>
+        <div className="flex-1 text-[14px] font-bold" style={{ color: "var(--brand-ink)" }}>
+          {q}
+        </div>
         <ChevronRight
           className="h-4 w-4 shrink-0"
           strokeWidth={2}
           style={{
-            color: "#c8c3b9",
+            color: "var(--brand-border-strong)",
             transform: open ? "rotate(90deg)" : "rotate(0deg)",
             transition: "transform 200ms ease",
           }}
@@ -1606,7 +2085,9 @@ function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean
           transition: "max-height 200ms ease",
         }}
       >
-        <div style={{ padding: "0 20px 16px", fontSize: 13, color: "#a89f94", lineHeight: 1.6 }}>{a}</div>
+        <div style={{ padding: "0 20px 16px", fontSize: 13, color: "#a89f94", lineHeight: 1.6 }}>
+          {a}
+        </div>
       </div>
     </div>
   );
@@ -1641,11 +2122,15 @@ function SupportView() {
   const placeholderStyle = { ["--tw-placeholder-color" as never]: MUTED };
 
   const send = async () => {
-    if (!subject.trim() || !body.trim()) { toast.error("Plotëso të gjitha fushat"); return; }
+    if (!subject.trim() || !body.trim()) {
+      toast.error("Plotëso të gjitha fushat");
+      return;
+    }
     setSending(true);
     await new Promise((r) => setTimeout(r, 600));
     setSending(false);
-    setSubject(""); setBody("");
+    setSubject("");
+    setBody("");
     toast.success("Mesazhi u dërgua");
   };
 
@@ -1680,7 +2165,15 @@ function SupportView() {
   );
 }
 
-function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpenChange: (v: boolean) => void; onConfirm: () => void }) {
+function LogoutConfirm({
+  open,
+  onOpenChange,
+  onConfirm,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onConfirm: () => void;
+}) {
   if (!open) return null;
   return (
     <div
@@ -1699,7 +2192,7 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "#2d1521",
+          background: "var(--brand-ink)",
           flexShrink: 0,
         }}
       >
@@ -1707,10 +2200,10 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
           type="button"
           onClick={() => onOpenChange(false)}
           aria-label="Kthehu"
-          className="transition-transform duration-150 active:scale-90"
+          className="transition-transform duration-150 active:scale-[0.97]"
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+            height: 44,
             background: "rgba(255,255,255,0.12)",
             border: "none",
             borderRadius: "50%",
@@ -1723,9 +2216,7 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
         >
           <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
-          A jeni i sigurt?
-        </span>
+        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>A jeni i sigurt?</span>
       </div>
       <div
         style={{
@@ -1742,13 +2233,30 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
         <div className="flex flex-col gap-2">
           <button
             onClick={onConfirm}
-            style={{ backgroundColor: INK, color: "#ffffff", height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
+            style={{
+              backgroundColor: INK,
+              color: "#ffffff",
+              height: 50,
+              borderRadius: 12,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+            }}
           >
             Po, dilni
           </button>
           <button
             onClick={() => onOpenChange(false)}
-            style={{ backgroundColor: "#ffffff", color: INK, border: `1px solid ${DIVIDER}`, height: 50, borderRadius: 12, fontSize: 14, fontWeight: 600, width: "100%" }}
+            style={{
+              backgroundColor: "#ffffff",
+              color: INK,
+              border: `1px solid ${DIVIDER}`,
+              height: 50,
+              borderRadius: 12,
+              fontSize: 14,
+              fontWeight: 600,
+              width: "100%",
+            }}
           >
             Anulo
           </button>
@@ -1802,7 +2310,7 @@ function RemovePhotoDialog({
           style={{
             fontSize: 16,
             fontWeight: 600,
-            color: "#2d1521",
+            color: "var(--brand-ink)",
             marginTop: 16,
           }}
         >
@@ -1842,7 +2350,7 @@ function RemovePhotoDialog({
             disabled={loading}
             style={{
               backgroundColor: "#f4f4f2",
-              color: "#2d1521",
+              color: "var(--brand-ink)",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
@@ -1892,7 +2400,7 @@ function UnsavedChangesDialog({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: 16, fontWeight: 600, color: "#2d1521" }}>
+        <div style={{ fontSize: 16, fontWeight: 600, color: "var(--brand-ink)" }}>
           Ndryshimet e paruajtura
         </div>
         <div style={{ fontSize: 13, color: "#a89f94", lineHeight: 1.5, marginTop: 8 }}>
@@ -1919,7 +2427,7 @@ function UnsavedChangesDialog({
             onClick={() => onOpenChange(false)}
             style={{
               backgroundColor: "#f4f4f2",
-              color: "#2d1521",
+              color: "var(--brand-ink)",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
@@ -1936,8 +2444,3 @@ function UnsavedChangesDialog({
     </div>
   );
 }
-
-
-
-
-
