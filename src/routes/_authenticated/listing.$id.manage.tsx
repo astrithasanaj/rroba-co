@@ -108,23 +108,95 @@ function ManageListingPage() {
 
   const toggleSold = async () => {
     if (!listing) return;
-    setWorking(true);
     const next = !listing.sold;
+
+    // Reactivation: keep existing behavior
+    if (!next) {
+      setWorking(true);
+      const { error } = await supabase
+        .from("listings")
+        .update({
+          sold: false,
+          status: "active",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      setWorking(false);
+      setConfirmSold(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Artikulli u rikthye si aktiv");
+      load();
+      return;
+    }
+
+    // Marking sold: look up buyer candidates first
+    setWorking(true);
+    const { data: convos } = await supabase
+      .from("conversations")
+      .select("buyer_id")
+      .eq("listing_id", id);
+    const buyerIds = Array.from(new Set((convos ?? []).map((c) => c.buyer_id)));
+
+    if (buyerIds.length === 0) {
+      const { error } = await supabase
+        .from("listings")
+        .update({
+          sold: true,
+          status: "sold",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      setWorking(false);
+      setConfirmSold(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Artikulli u shënua si i shitur");
+      load();
+      return;
+    }
+
+    const { data: profs } = await supabase
+      .from("public_profiles")
+      .select("id,name,avatar_url")
+      .in("id", buyerIds);
+    const byId = new Map((profs ?? []).map((p: any) => [p.id, p]));
+    setBuyerCandidates(
+      buyerIds.map((bid) => byId.get(bid) ?? { id: bid, name: null, avatar_url: null }),
+    );
+    setWorking(false);
+    setConfirmSold(false);
+    setBuyerPickerOpen(true);
+  };
+
+  const confirmBuyerAndSold = async (buyer: {
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+  }) => {
+    setWorking(true);
     const { error } = await supabase
       .from("listings")
       .update({
-        sold: next,
-        status: next ? "sold" : "active",
+        sold: true,
+        status: "sold",
+        sold_to_user_id: buyer.id,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
     setWorking(false);
-    setConfirmSold(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success(next ? "Artikulli u shënua si i shitur" : "Artikulli u rikthye si aktiv");
+    setBuyerPickerOpen(false);
+    toast.success("Artikulli u shënua si i shitur");
+    setRateBuyer(buyer);
+    setReviewOpen(true);
     load();
   };
 
