@@ -50,8 +50,8 @@
   --secondary-foreground: oklch(0.18 0.01 60);
   --muted: oklch(0.94 0.012 78);
   --muted-foreground: oklch(0.5 0.012 65);
-  --accent: oklch(0.78 0.12 45); /* warm terracotta */
-  --accent-foreground: oklch(0.16 0.01 60);
+  --accent: oklch(0.94 0.02 350); /* tilsvarer #f5e6e9, myk dust-rosa */
+  --accent-foreground: oklch(0.32 0.08 350); /* tilsvarer #6e2438 */
   --destructive: oklch(0.58 0.21 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.9 0.012 75);
@@ -72,8 +72,8 @@
   --secondary-foreground: oklch(0.975 0.012 80);
   --muted: oklch(0.25 0.01 60);
   --muted-foreground: oklch(0.7 0.012 65);
-  --accent: oklch(0.78 0.12 45);
-  --accent-foreground: oklch(0.16 0.01 60);
+  --accent: oklch(0.94 0.02 350); /* tilsvarer #f5e6e9, myk dust-rosa */
+  --accent-foreground: oklch(0.32 0.08 350); /* tilsvarer #6e2438 */
   --destructive: oklch(0.58 0.21 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
