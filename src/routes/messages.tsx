@@ -398,7 +398,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 <li key={t.id} className="relative overflow-hidden" style={{ borderBottom: `1px solid ${DIVIDER}`, minHeight: 72 }}>
                   <button
                     type="button"
-                    onClick={() => { setSwipeId(null); mode === "archive" ? setArchived(t, false) : setArchived(t, true); }}
+                    onClick={() => { setSwipeId(null); setArchived(t, mode !== "archive"); }}
                     aria-label={mode === "archive" ? "Zharkivo bisedën" : "Arkivo bisedën"}
                     className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
                     style={{ backgroundColor: ROSE, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
