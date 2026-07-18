@@ -63,25 +63,25 @@ export const Route = createFileRoute("/api/public/notify-new-report")({
 
           const r = report as any;
           const reasonLabel = REASON_LABELS[r.reason] ?? r.reason;
-          const productTitle = r.product?.title ?? "(unknown listing)";
+          const productTitle = r.product?.title ?? "(artikull i panjohur)";
           const reporterName = r.reporter?.name ?? r.reporter_id;
 
           const html = `
             <div style="font-family:Arial,sans-serif;color:#2d1521;max-width:560px;margin:0 auto;padding:24px;">
-              <h2 style="margin:0 0 12px 0;">New report submitted</h2>
-              <p style="margin:0 0 16px 0;color:#555;">A user reported a listing on Rroba.</p>
+              <h2 style="margin:0 0 12px 0;">Raportim i ri</h2>
+              <p style="margin:0 0 16px 0;color:#555;">Një përdorues raportoi një artikull në Rroba.</p>
               <table style="width:100%;border-collapse:collapse;font-size:14px;">
-                <tr><td style="padding:6px 0;color:#777;width:120px;">Listing</td><td style="padding:6px 0;">${escapeHtml(productTitle)}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Listing ID</td><td style="padding:6px 0;font-family:monospace;">${escapeHtml(r.product_id)}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Reason</td><td style="padding:6px 0;">${escapeHtml(reasonLabel)}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Reporter</td><td style="padding:6px 0;">${escapeHtml(String(reporterName))}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Submitted</td><td style="padding:6px 0;">${escapeHtml(new Date(r.created_at).toISOString())}</td></tr>
-                ${r.details ? `<tr><td style="padding:6px 0;color:#777;vertical-align:top;">Details</td><td style="padding:6px 0;white-space:pre-wrap;">${escapeHtml(r.details)}</td></tr>` : ""}
+                <tr><td style="padding:6px 0;color:#777;width:120px;">Artikulli</td><td style="padding:6px 0;">${escapeHtml(productTitle)}</td></tr>
+                <tr><td style="padding:6px 0;color:#777;">ID e artikullit</td><td style="padding:6px 0;font-family:monospace;">${escapeHtml(r.product_id)}</td></tr>
+                <tr><td style="padding:6px 0;color:#777;">Arsyeja</td><td style="padding:6px 0;">${escapeHtml(reasonLabel)}</td></tr>
+                <tr><td style="padding:6px 0;color:#777;">Raportuesi</td><td style="padding:6px 0;">${escapeHtml(String(reporterName))}</td></tr>
+                <tr><td style="padding:6px 0;color:#777;">Dërguar më</td><td style="padding:6px 0;">${escapeHtml(new Date(r.created_at).toISOString())}</td></tr>
+                ${r.details ? `<tr><td style="padding:6px 0;color:#777;vertical-align:top;">Detaje</td><td style="padding:6px 0;white-space:pre-wrap;">${escapeHtml(r.details)}</td></tr>` : ""}
               </table>
               <p style="margin:20px 0 0 0;">
                 <a href="https://rroba-style-discover.lovable.app/admin/reports"
                    style="display:inline-block;background:#c65a7a;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;">
-                  Review in admin
+                  Shqyrto në panel
                 </a>
               </p>
             </div>
@@ -94,9 +94,9 @@ export const Route = createFileRoute("/api/public/notify-new-report")({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              from: "Rroba reports <onboarding@resend.dev>",
+              from: "Rroba raportime <onboarding@resend.dev>",
               to: [ADMIN_EMAIL],
-              subject: `New report: ${productTitle} — ${reasonLabel}`,
+              subject: `Raportim i ri: ${productTitle} — ${reasonLabel}`,
               html,
             }),
           });
