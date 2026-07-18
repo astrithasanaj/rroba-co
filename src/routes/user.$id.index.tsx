@@ -260,14 +260,6 @@ function UserProfile() {
     setMoreOpen(false);
   };
 
-  const handleReport = async () => {
-    if (!currentUserId) {
-      navigate({ to: "/auth" });
-      return;
-    }
-    toast.success("Faleminderit, raporti u dërgua");
-    setMoreOpen(false);
-  };
 
   if (loading) {
     return (
