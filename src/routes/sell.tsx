@@ -58,6 +58,9 @@ const ALLOWED: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
+  // HEIC/HEIF from iOS: normalized to JPEG by compressImage() via heic2any before upload.
+  "image/heic": "heic",
+  "image/heif": "heif",
 };
 const MAX_BYTES = 10 * 1024 * 1024;
 
