@@ -41,6 +41,7 @@ type Profile = {
 };
 
 type SortMode = "new" | "low" | "high" | "popular";
+type ListingWithLikes = ListingView & { _likes: number };
 
 const CREAM = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
