@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, Loader2, SlidersHorizontal, PackageSearch, LayoutGrid } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
-import { LikeButton } from "@/components/marketplace/LikeButton";
+
 import { supabase } from "@/integrations/supabase/client";
 import { getCategory } from "@/lib/categories";
 import {
@@ -282,7 +282,7 @@ function ResultCard({ listing, eager = false }: { listing: ListingView; eager?: 
             E re
           </span>
         )}
-        <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
+        
       </div>
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">

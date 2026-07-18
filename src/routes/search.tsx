@@ -34,7 +34,7 @@ import { useCities } from "@/hooks/useCities";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LikeButton } from "@/components/marketplace/LikeButton";
+
 import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
 import {
   emptySelection,
@@ -1208,7 +1208,7 @@ function CreamListingCard({ listing, eager = false }: { listing: ListingView; ea
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
-        <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
+        
       </div>
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">

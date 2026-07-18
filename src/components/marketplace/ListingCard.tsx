@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import type { ListingView } from "@/lib/listings";
-import { LikeButton } from "@/components/marketplace/LikeButton";
+
 import { prefetchListing, warmImage } from "@/lib/prefetch";
 
 export function ListingCard({
@@ -112,9 +112,6 @@ export function ListingCard({
           </div>
         )}
 
-        {!isSold && (
-          <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
-        )}
 
         {isSold && isOnProfileGrid && (
           <span
