@@ -141,7 +141,7 @@ function BuyPage() {
     setSubmitting(false);
     setConfirmOpen(false);
     toast.success("Kërkesa u dërgua te shitësi");
-    navigate({ to: "/messages", search: (prev) => ({ ...prev, thread: convId }) });
+    navigate({ to: "/messages", search: (prev: { thread?: string; view: "list" | "archive" | "new"; tab: "all" | "buy" | "sell" }) => ({ ...prev, thread: convId }) });
   };
 
   if (!listing) {
