@@ -202,8 +202,8 @@ input, textarea, select {
   transition: background-color 120ms ease, transform 80ms ease;
 }
 .profile-btn:active {
-  transform: scale(0.97);
-  background-color: #ffffff;
+  transform: scale(0.98);
+  background-color: var(--brand-cream);
 }
 
 .settings-row {
@@ -213,13 +213,13 @@ input, textarea, select {
   padding: 14px 20px;
   width: 100%;
   text-align: left;
-  background: #ffffff;
-  border-bottom: 1px solid #ddd8ce;
+  background: var(--brand-surface);
+  border-bottom: 1px solid var(--brand-border);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 80ms ease;
+  transition: background 120ms ease;
 }
-.settings-row:active { background: #ffffff; }
+.settings-row:active { background: var(--brand-cream); }
 
 /* Tap feedback for round icon tiles (categories + bottom nav) */
 .tap-icon {
