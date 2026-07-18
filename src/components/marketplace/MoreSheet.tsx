@@ -20,14 +20,15 @@ type Reason = {
 };
 
 const REASONS: Reason[] = [
-  { key: "scam", label: "Mashtrim ose përmbajtje e dyshimtë" },
-  { key: "counterfeit", label: "Artikull i falsifikuar" },
-  { key: "misleading", label: "Çmim ose përshkrim mashtrues" },
-  { key: "inappropriate", label: "Përmbajtje e papërshtatshme ose ofenduese" },
-  { key: "spam", label: "Spam ose njoftim i përsëritur" },
-  { key: "prohibited", label: "Artikull i ndaluar ose i paligjshëm" },
-  { key: "other", label: "Shqetësim tjetër" },
+  { key: "scam", label: "Mashtrim" },
+  { key: "counterfeit", label: "Forfalskning" },
+  { key: "misleading", label: "Villedende" },
+  { key: "inappropriate", label: "Upassende" },
+  { key: "spam", label: "Spam" },
+  { key: "prohibited", label: "Forbudt vare" },
+  { key: "other", label: "Annet" },
 ];
+
 
 export function MoreSheet({
   open,
