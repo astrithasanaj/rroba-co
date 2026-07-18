@@ -434,29 +434,45 @@ function StepProfile({
 
         <div className="mt-6 flex flex-col items-center">
           <button
+            type="button"
             onClick={pickAvatar}
             disabled={uploading}
-            className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full"
-            style={{ background: CHIP_BG }}
+            aria-label={avatarPreview ? "Ndrysho fotografinë e profilit" : "Ngarko fotografinë e profilit"}
+            aria-busy={uploading || undefined}
+            className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)] disabled:opacity-70"
+            style={{ background: CHIP_BG, border: `1px solid ${DIVIDER}` }}
           >
             {avatarPreview ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={avatarPreview}
-                alt="Avatar"
+                alt=""
                 className="h-full w-full object-cover"
               />
             ) : initials ? (
               <span
+                aria-hidden="true"
                 className="text-2xl font-semibold"
                 style={{ color: DARK, opacity: 0.75 }}
               >
                 {initials}
               </span>
             ) : (
-              <Camera size={26} color={MUTED} />
+              <Camera size={26} color={MUTED} aria-hidden="true" />
+            )}
+            {uploading && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "rgba(255,255,255,0.65)" }}
+              >
+                <span
+                  className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"
+                  style={{ borderColor: DARK, borderTopColor: "transparent" }}
+                />
+              </span>
             )}
             <span
+              aria-hidden="true"
               className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border-2"
               style={{ background: DARK, borderColor: CREAM }}
             >
@@ -469,6 +485,8 @@ function StepProfile({
             accept="image/jpeg,image/png,image/webp"
             className="hidden"
             onChange={onFile}
+            aria-hidden="true"
+            tabIndex={-1}
           />
           <div className="mt-2 text-xs" style={{ color: MUTED }}>
             {uploading ? "Duke ngarkuar..." : "Opsionale"}
@@ -477,24 +495,36 @@ function StepProfile({
 
         <div className="mt-6 space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label htmlFor="ob-display-name" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
               Emri i shfaqur
             </label>
             <input
+              id="ob-display-name"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value.slice(0, 40))}
               placeholder="Emri yt"
-              className="w-full rounded-2xl border-0 px-4 py-3 text-sm outline-none"
-              style={{ background: CHIP_BG, color: DARK }}
+              autoComplete="name"
+              enterKeyHint="next"
+              className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{
+                background: CHIP_BG,
+                color: DARK,
+                height: 52,
+                borderRadius: 12,
+                padding: "0 16px",
+                border: `1px solid ${DIVIDER}`,
+                transition: "border-color 120ms ease, box-shadow 120ms ease",
+              }}
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label htmlFor="ob-username" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
               Emri i përdoruesit
             </label>
             <div className="relative">
               <input
+                id="ob-username"
                 value={username}
                 onChange={(e) =>
                   setUsername(e.target.value.replace(/[^a-zA-Z0-9_.@]/g, "").slice(0, 25))
@@ -502,10 +532,37 @@ function StepProfile({
                 placeholder="@emri_yt"
                 autoCapitalize="none"
                 autoCorrect="off"
-                className="w-full rounded-2xl border-0 px-4 py-3 pr-10 text-sm outline-none"
-                style={{ background: CHIP_BG, color: DARK }}
+                autoComplete="username"
+                enterKeyHint="next"
+                aria-invalid={usernameStatus === "taken" || usernameStatus === "invalid" || undefined}
+                aria-describedby={
+                  usernameStatus === "invalid"
+                    ? "ob-username-err-invalid"
+                    : usernameStatus === "taken"
+                      ? "ob-username-err-taken"
+                      : undefined
+                }
+                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: CHIP_BG,
+                  color: DARK,
+                  height: 52,
+                  borderRadius: 12,
+                  padding: "0 44px 0 16px",
+                  border: `1px solid ${
+                    usernameStatus === "taken" || usernameStatus === "invalid"
+                      ? ERR
+                      : usernameStatus === "available"
+                        ? SUCCESS
+                        : DIVIDER
+                  }`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
+                }}
               />
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+              >
                 {usernameStatus === "checking" && (
                   <span
                     className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-t-transparent"
@@ -513,39 +570,60 @@ function StepProfile({
                   />
                 )}
                 {usernameStatus === "available" && (
-                  <Check size={18} color="#2f9e6b" />
+                  <Check size={18} color={SUCCESS} />
                 )}
                 {(usernameStatus === "taken" || usernameStatus === "invalid") && (
-                  <X size={18} color="#c94a3b" />
+                  <X size={18} color={ERR} />
                 )}
               </div>
             </div>
             {usernameStatus === "invalid" && (
-              <div className="mt-1 text-xs" style={{ color: "#c94a3b" }}>
+              <div
+                id="ob-username-err-invalid"
+                role="alert"
+                className="mt-1 text-xs"
+                style={{ color: ERR }}
+              >
                 3–24 karaktere: a-z, 0-9, _ ose .
               </div>
             )}
             {usernameStatus === "taken" && (
-              <div className="mt-1 text-xs" style={{ color: "#c94a3b" }}>
+              <div
+                id="ob-username-err-taken"
+                role="alert"
+                className="mt-1 text-xs"
+                style={{ color: ERR }}
+              >
                 Ky emër është i zënë
               </div>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label htmlFor="ob-bio" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
               Bio <span style={{ color: MUTED }}>(opsionale)</span>
             </label>
             <div className="relative">
               <textarea
+                id="ob-bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value.slice(0, 150))}
                 placeholder="Trego diçka për veten..."
                 rows={3}
-                className="w-full resize-none rounded-2xl border-0 px-4 py-3 text-sm outline-none"
-                style={{ background: CHIP_BG, color: DARK }}
+                aria-describedby="ob-bio-count"
+                className="w-full resize-none text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: CHIP_BG,
+                  color: DARK,
+                  borderRadius: 12,
+                  padding: "12px 16px 24px 16px",
+                  border: `1px solid ${DIVIDER}`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
+                }}
               />
               <div
+                id="ob-bio-count"
+                aria-live="polite"
                 className="pointer-events-none absolute bottom-2 right-3 text-[11px]"
                 style={{ color: MUTED }}
               >
@@ -555,24 +633,36 @@ function StepProfile({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label htmlFor="ob-height" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
               Gjatësia <span style={{ color: MUTED }}>(opsionale)</span>
             </label>
             <div className="flex items-center gap-3">
               <input
+                id="ob-height"
                 inputMode="numeric"
+                enterKeyHint="done"
                 value={height}
                 onChange={(e) => setHeight(e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
                 placeholder="170"
-                className="w-24 rounded-2xl border-0 px-4 py-3 text-sm outline-none"
-                style={{ background: CHIP_BG, color: DARK }}
+                aria-label="Gjatësia në centimetra"
+                className="w-24 text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: CHIP_BG,
+                  color: DARK,
+                  height: 52,
+                  borderRadius: 12,
+                  padding: "0 16px",
+                  border: `1px solid ${DIVIDER}`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
+                }}
               />
-              <span className="text-sm" style={{ color: MUTED }}>
+              <span className="text-sm" style={{ color: MUTED }} aria-hidden="true">
                 cm
               </span>
             </div>
           </div>
         </div>
+
       </div>
       <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={!canContinue} onClick={onNext}>
