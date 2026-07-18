@@ -268,7 +268,9 @@ function ProfilePage() {
         await navigator.clipboard.writeText(url);
         toast.success("Lidhja u kopjua!");
       }
-    } catch {}
+    } catch {
+      // Bruker avbrøt native share-dialog – ignorer.
+    }
   };
 
   const displayName = profile?.name || user.email?.split("@")[0] || "Përdorues";
