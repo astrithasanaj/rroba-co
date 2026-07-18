@@ -9,7 +9,6 @@ import {
   Frame,
   Speaker,
   Gamepad2,
-  Sparkles,
   LayoutGrid,
   Venus,
   Mars,
@@ -391,11 +390,6 @@ function RootList({
   );
   return (
     <div>
-      <Row
-        label="Trending"
-        icon={<Sparkles size={18} strokeWidth={1.6} color={ACCENT} />}
-        onClick={() => {}}
-      />
       {genderSpecific.map((node) => {
         const Icon = NODE_ICONS[node.key];
         const active = selection.categories.has(node.key);
