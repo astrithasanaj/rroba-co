@@ -83,12 +83,12 @@ const BORDER_STRONG = "var(--brand-border-strong)";
 const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 // Lokale semantiske farge-konstanter (kun brukt i profil).
 const OVERLAY_GLYPH = "#ffffff";
-const GLASS_BG = "rgba(255,255,255,0.7)";
+const GLASS_BG = GLASS_BG;
 const GLASS_BORDER = "rgba(226,226,222,0.8)";
-const DARK_GLASS_BG = "rgba(255,255,255,0.12)";
-const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
-const OFFER_ACCEPTED_BG = "#d1f4e0";
-const OFFER_DECLINED_BG = "#f4d1d1";
+const DARK_GLASS_BG = DARK_GLASS_BG;
+const DARK_GLASS_INK_SOFT = DARK_GLASS_INK_SOFT;
+const OFFER_ACCEPTED_BG = OFFER_ACCEPTED_BG;
+const OFFER_DECLINED_BG = OFFER_DECLINED_BG;
 
 function ProfilePage() {
   const { user } = Route.useRouteContext();
@@ -640,8 +640,8 @@ function ProfilePage() {
               style={{
                 width: 44,
                 height: 44,
-                backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                backgroundColor: GLASS_BG,
+                border: `1px solid ${GLASS_BORDER}`,
                 backdropFilter: "blur(8px)",
               }}
             >
@@ -715,8 +715,8 @@ function ProfilePage() {
                 style={{
                   width: 44,
                   height: 44,
-                  backgroundColor: "rgba(255,255,255,0.7)",
-                  border: "1px solid rgba(226,226,222,0.8)",
+                  backgroundColor: GLASS_BG,
+                  border: `1px solid ${GLASS_BORDER}`,
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
                 }}
@@ -996,7 +996,7 @@ function TierCard({
           style={{
             fontSize: 12,
             color: active ? CREAM : MUTED,
-            background: active ? "rgba(255,255,255,0.12)" : CREAM,
+            background: active ? DARK_GLASS_BG : CREAM,
             padding: "4px 10px",
             borderRadius: 10,
           }}
@@ -1007,7 +1007,7 @@ function TierCard({
       <p
         style={{
           fontSize: 13,
-          color: active ? "rgba(255,255,255,0.65)" : MUTED,
+          color: active ? DARK_GLASS_INK_SOFT : MUTED,
           lineHeight: 1.5,
           margin: 0,
         }}
@@ -1211,9 +1211,9 @@ function OffersList({
               style={{
                 backgroundColor:
                   o.status === "accepted"
-                    ? "#d1f4e0"
+                    ? OFFER_ACCEPTED_BG
                     : o.status === "declined"
-                      ? "#f4d1d1"
+                      ? OFFER_DECLINED_BG
                       : DIVIDER,
                 color: INK,
               }}
@@ -1560,9 +1560,9 @@ function SettingsMain({
           WebkitTapHighlightColor: "transparent",
         }}
       >
-        <i className="ti ti-trash" style={{ fontSize: 20, color: "#e53935", width: 22 }} />
+        <i className="ti ti-trash" style={{ fontSize: 20, color: "var(--brand-danger)", width: 22 }} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: "#e53935", lineHeight: 1.3 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-danger)", lineHeight: 1.3 }}>
             Fshij llogarinë
           </div>
           <div style={{ fontSize: 12, color: MUTED, marginTop: 2, lineHeight: 1.3 }}>
@@ -2240,7 +2240,7 @@ function LogoutConfirm({
           style={{
             width: 44,
             height: 44,
-            background: "rgba(255,255,255,0.12)",
+            background: DARK_GLASS_BG,
             border: "none",
             borderRadius: "50%",
             display: "flex",
