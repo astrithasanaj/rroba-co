@@ -599,8 +599,15 @@ function SignupFullPage() {
               autoComplete="new-password"
               error={!!step1Err.password}
               right={
-                <button type="button" onClick={() => setShowP((v) => !v)} style={{ color: MUTED }}>
-                  {showP ? <EyeOff size={18} /> : <Eye size={18} />}
+                <button
+                  type="button"
+                  onClick={() => setShowP((v) => !v)}
+                  aria-label={showP ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
+                  aria-pressed={showP}
+                  className="grid h-11 w-11 place-items-center rounded-full transition active:scale-90"
+                  style={{ color: MUTED }}
+                >
+                  {showP ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
                 </button>
               }
             />
