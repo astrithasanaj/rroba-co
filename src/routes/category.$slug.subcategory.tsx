@@ -12,7 +12,11 @@ const INK = "var(--brand-ink)";
 const DISABLED = "var(--brand-border)";
 
 export const Route = createFileRoute("/category/$slug/subcategory")({
-  component: () => (<SwipeBackWrapper><SubcategorySelectPage /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <SubcategorySelectPage />
+    </SwipeBackWrapper>
+  ),
 });
 
 function SubcategorySelectPage() {
@@ -30,8 +34,7 @@ function SubcategorySelectPage() {
   const toggle = (s: string) =>
     setSelected((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
-  const goAll = () =>
-    navigate({ to: "/category/$slug/$gender", params: { slug, gender: "all" } });
+  const goAll = () => navigate({ to: "/category/$slug/$gender", params: { slug, gender: "all" } });
 
   const applyFilters = () => {
     if (selected.length === 0) return;
@@ -52,7 +55,9 @@ function SubcategorySelectPage() {
             aria-label="Kthehu"
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 44,              height: 44,              backgroundColor: "rgba(255,255,255,0.7)",
+              width: 44,
+              height: 44,
+              backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",

@@ -31,12 +31,7 @@ import {
   type ListingView,
 } from "@/lib/listings";
 import { useCities } from "@/hooks/useCities";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LikeButton } from "@/components/marketplace/LikeButton";
@@ -68,8 +63,7 @@ export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
-    section:
-      s.section === "new" || s.section === "trending" ? s.section : undefined,
+    section: s.section === "new" || s.section === "trending" ? s.section : undefined,
   }),
   component: SearchPage,
 });
@@ -123,7 +117,9 @@ function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [pickerInitialKey, setPickerInitialKey] = useState<string | undefined>(undefined);
-  const [pickerInitialGroupLabel, setPickerInitialGroupLabel] = useState<string | undefined>(undefined);
+  const [pickerInitialGroupLabel, setPickerInitialGroupLabel] = useState<string | undefined>(
+    undefined,
+  );
   const [pickerInitialBucket, setPickerInitialBucket] = useState(false);
   const [genderTab, setGenderTab] = useState<"Femra" | "Meshkuj" | "Fëmijë" | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -196,9 +192,7 @@ function SearchPage() {
       let query = supabase.from("listings").select("*").eq("status", "active");
       if (q.trim()) {
         const term = `%${q.trim()}%`;
-        query = query.or(
-          `title.ilike.${term},description.ilike.${term},brand.ilike.${term}`,
-        );
+        query = query.or(`title.ilike.${term},description.ilike.${term},brand.ilike.${term}`);
       }
       if (dbCategories.length > 0) query = query.in("category", dbCategories);
       if (subLabels.length > 0) {
@@ -206,9 +200,7 @@ function SearchPage() {
         // set by the sell form). Fall back to title ilike for legacy rows.
         const orExpr = [
           `subcategory.in.(${subLabels.map((s) => `"${s.replace(/"/g, "")}"`).join(",")})`,
-          ...subLabels.map(
-            (s) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`,
-          ),
+          ...subLabels.map((s) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`),
         ].join(",");
         query = query.or(orExpr);
       }
@@ -419,10 +411,7 @@ function SearchPage() {
     <MobileShell>
       <div style={{ backgroundColor: BG, minHeight: "100vh" }} className="pb-32">
         <header className="px-5 pt-10">
-          <h1
-            className="text-[32px] font-bold leading-none tracking-tight"
-            style={{ color: INK }}
-          >
+          <h1 className="text-[32px] font-bold leading-none tracking-tight" style={{ color: INK }}>
             Eksploro
           </h1>
 
@@ -470,7 +459,6 @@ function SearchPage() {
           {/* Gender tabs — Femra / Meshkuj / Fëmijë */}
           <GenderTabs value={genderTab} onChange={setGenderTab} />
 
-
           {/* Selected chip tags */}
           {catChips.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
@@ -481,11 +469,7 @@ function SearchPage() {
                   style={{ backgroundColor: CORAL }}
                 >
                   {c.label}
-                  <button
-                    type="button"
-                    onClick={() => removeChip(c.id)}
-                    aria-label="Hiq"
-                  >
+                  <button type="button" onClick={() => removeChip(c.id)} aria-label="Hiq">
                     <X className="h-3 w-3" />
                   </button>
                 </span>
@@ -493,9 +477,7 @@ function SearchPage() {
             </div>
           )}
           {/* Tab bar — only visible when the user is actively searching */}
-          {hasQuery && (
-            <TabBar tab={tab} setTab={setTab} />
-          )}
+          {hasQuery && <TabBar tab={tab} setTab={setTab} />}
         </header>
 
         {focused && !hasQuery ? (
@@ -662,7 +644,7 @@ function EksploreList({
   const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
   const UNIVERSAL_KEYS = ["interior", "art", "elektronik", "hobi"];
   const rows = EKSPLORE_ROWS.filter(
-    (row) => row.key !== "femije" && !UNIVERSAL_KEYS.includes(row.key)
+    (row) => row.key !== "femije" && !UNIVERSAL_KEYS.includes(row.key),
   );
   const childIcons: Record<string, typeof Baby> = {
     Vajza: Venus,
@@ -698,7 +680,11 @@ function EksploreList({
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
+              <ChevronRight
+                aria-hidden="true"
+                className="h-5 w-5"
+                style={{ color: "var(--brand-ink-muted)" }}
+              />
             </button>
           );
         })
@@ -727,7 +713,11 @@ function EksploreList({
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
+              <ChevronRight
+                aria-hidden="true"
+                className="h-5 w-5"
+                style={{ color: "var(--brand-ink-muted)" }}
+              />
             </button>
           ))}
           <button
@@ -746,12 +736,21 @@ function EksploreList({
                 flexShrink: 0,
               }}
             >
-              <LayoutGrid aria-hidden="true" size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
+              <LayoutGrid
+                aria-hidden="true"
+                size={18}
+                strokeWidth={1.7}
+                style={{ color: "var(--brand-coral)" }}
+              />
             </span>
             <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
               Për të gjithë
             </span>
-            <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
+            <ChevronRight
+              aria-hidden="true"
+              className="h-5 w-5"
+              style={{ color: "var(--brand-ink-muted)" }}
+            />
           </button>
         </>
       )}
@@ -788,12 +787,7 @@ function RecentSearches({
         <h2 className="text-[20px] font-bold" style={{ color: INK }}>
           Kërkimet e fundit
         </h2>
-        <button
-          type="button"
-          onClick={onClear}
-          className="text-sm"
-          style={{ color: MUTED }}
-        >
+        <button type="button" onClick={onClear} className="text-sm" style={{ color: MUTED }}>
           Pastro të gjitha
         </button>
       </div>
@@ -841,7 +835,11 @@ function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
     { key: "category", label: "Kategori" },
   ];
   return (
-    <div role="tablist" aria-label="Filtro rezultatet" className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+    <div
+      role="tablist"
+      aria-label="Filtro rezultatet"
+      className="mt-3 flex gap-2 overflow-x-auto no-scrollbar"
+    >
       {items.map((it) => {
         const active = tab === it.key;
         return (
@@ -953,7 +951,11 @@ function TabbedResults({
             <span className="sr-only">Po ngarkohet</span>
           </div>
         ) : profiles.length === 0 ? (
-          <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div
+            role="status"
+            className="rounded-2xl p-10 text-center text-sm"
+            style={{ backgroundColor: CARD, color: MUTED }}
+          >
             Asnjë profil u gjet
           </div>
         ) : (
@@ -982,7 +984,11 @@ function TabbedResults({
           {brands.length} marka
         </p>
         {brands.length === 0 ? (
-          <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div
+            role="status"
+            className="rounded-2xl p-10 text-center text-sm"
+            style={{ backgroundColor: CARD, color: MUTED }}
+          >
             Asnjë markë u gjet
           </div>
         ) : (
@@ -1009,7 +1015,11 @@ function TabbedResults({
     return (
       <section className="mt-6 px-5">
         {matchedCategories.length === 0 ? (
-          <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div
+            role="status"
+            className="rounded-2xl p-10 text-center text-sm"
+            style={{ backgroundColor: CARD, color: MUTED }}
+          >
             Asnjë kategori
           </div>
         ) : (
@@ -1099,17 +1109,17 @@ function ProfileListRow({
 }) {
   const label = profile.display_name || profile.name || profile.username || "Përdorues";
   return (
-    <li
-      className="flex items-center gap-3 border-b py-3"
-      style={{ borderColor: DIVIDER }}
-    >
+    <li className="flex items-center gap-3 border-b py-3" style={{ borderColor: DIVIDER }}>
       <Link
         to="/user/$id"
         params={{ id: profile.id }}
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         <img
-          src={profile.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(label)}`}
+          src={
+            profile.avatar_url ||
+            `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(label)}`
+          }
           alt=""
           className="h-11 w-11 shrink-0 rounded-full object-cover"
           style={{ backgroundColor: CARD }}
@@ -1148,13 +1158,7 @@ function ProfileListRow({
   );
 }
 
-function ResultsSection({
-  loading,
-  results,
-}: {
-  loading: boolean;
-  results: ListingView[];
-}) {
+function ResultsSection({ loading, results }: { loading: boolean; results: ListingView[] }) {
   return (
     <section className="mt-6 px-5" aria-busy={loading}>
       <p className="mb-3 text-xs" style={{ color: MUTED }} aria-live="polite">
@@ -1186,11 +1190,7 @@ function ResultsSection({
 
 function CreamListingCard({ listing }: { listing: ListingView }) {
   return (
-    <Link
-      to="/product/$id"
-      params={{ id: listing.id }}
-      className="group block"
-    >
+    <Link to="/product/$id" params={{ id: listing.id }} className="group block">
       <div
         className="relative aspect-[3/4] overflow-hidden rounded-2xl"
         style={{ backgroundColor: CARD }}
@@ -1203,10 +1203,7 @@ function CreamListingCard({ listing }: { listing: ListingView }) {
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
-        <LikeButton
-          listingId={listing.id}
-          className="absolute right-2 top-2 h-8 w-8 shadow-sm"
-        />
+        <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
       </div>
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">
@@ -1259,7 +1256,9 @@ function FiltersSheet({
             aria-label="Kthehu"
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 44,              height: 44,              backgroundColor: "rgba(255,255,255,0.7)",
+              width: 44,
+              height: 44,
+              backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
             }}

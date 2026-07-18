@@ -5,14 +5,19 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
 import { getCategory } from "@/lib/categories";
-import { hydrateListings, type ListingRow, type ListingView, CITIES, CONDITIONS } from "@/lib/listings";
+import {
+  hydrateListings,
+  type ListingRow,
+  type ListingView,
+  CITIES,
+  CONDITIONS,
+} from "@/lib/listings";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
 import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
-
 
 const BG = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
@@ -22,7 +27,11 @@ const MUTED = "var(--brand-ink-secondary)";
 type SearchParams = { subcategories?: string };
 
 export const Route = createFileRoute("/category/$slug/$gender")({
-  component: () => (<SwipeBackWrapper><CategoryResultsPage /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <CategoryResultsPage />
+    </SwipeBackWrapper>
+  ),
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
     subcategories: typeof search.subcategories === "string" ? search.subcategories : undefined,
   }),
@@ -51,7 +60,6 @@ function CategoryResultsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [filters, setFilters] = useState<Filters>({});
-
 
   const genderOption = useMemo(
     () => def?.genderOptions?.find((g) => g.slug === gender),
@@ -86,9 +94,7 @@ function CategoryResultsPage() {
       if (subcategoryList.length > 0) {
         const orExpr = [
           `subcategory.in.(${subcategoryList.map((s: string) => `"${s.replace(/"/g, "")}"`).join(",")})`,
-          ...subcategoryList.map(
-            (s: string) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`,
-          ),
+          ...subcategoryList.map((s: string) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`),
         ].join(",");
         query = query.or(orExpr);
       }
@@ -109,7 +115,10 @@ function CategoryResultsPage() {
   if (!def) {
     return (
       <MobileShell>
-        <div style={{ backgroundColor: BG, minHeight: "100vh", color: INK }} className="p-10 text-center">
+        <div
+          style={{ backgroundColor: BG, minHeight: "100vh", color: INK }}
+          className="p-10 text-center"
+        >
           Kategoria nuk u gjet
         </div>
       </MobileShell>
@@ -130,7 +139,9 @@ function CategoryResultsPage() {
             aria-label="Kthehu"
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 44,              height: 44,              backgroundColor: "rgba(255,255,255,0.7)",
+              width: 44,
+              height: 44,
+              backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
@@ -138,7 +149,10 @@ function CategoryResultsPage() {
           >
             <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
-          <h1 className="px-12 text-center text-[15px] font-bold leading-tight" style={{ color: INK }}>
+          <h1
+            className="px-12 text-center text-[15px] font-bold leading-tight"
+            style={{ color: INK }}
+          >
             {title}
           </h1>
         </header>
@@ -158,11 +172,14 @@ function CategoryResultsPage() {
           </button>
         </div>
 
-
         <section className="mt-4 px-5" aria-busy={loading}>
           {loading ? (
             <div role="status" aria-live="polite" className="grid place-items-center py-16">
-              <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+              <Loader2
+                aria-hidden="true"
+                className="h-6 w-6 animate-spin"
+                style={{ color: MUTED }}
+              />
               <span className="sr-only">Po ngarkohet</span>
             </div>
           ) : results.length === 0 ? (
@@ -202,7 +219,12 @@ function CategoryResultsPage() {
         </button>
       </div>
 
-      <FiltersSheet open={showFilters} onOpenChange={setShowFilters} filters={filters} setFilters={setFilters} />
+      <FiltersSheet
+        open={showFilters}
+        onOpenChange={setShowFilters}
+        filters={filters}
+        setFilters={setFilters}
+      />
 
       <CategoryPickerSheet
         open={showCategoryPicker}
@@ -217,14 +239,15 @@ function CategoryResultsPage() {
                 subcategories: [...sel.subcategories],
               }),
             );
-          } catch { /* ignore */ }
+          } catch {
+            /* ignore */
+          }
           navigate({ to: "/search" });
         }}
       />
     </MobileShell>
   );
 }
-
 
 function ResultCard({ listing }: { listing: ListingView }) {
   const isNew = useMemo(() => {
@@ -234,7 +257,10 @@ function ResultCard({ listing }: { listing: ListingView }) {
 
   return (
     <Link to="/product/$id" params={{ id: listing.id }} className="group block">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl" style={{ backgroundColor: CARD }}>
+      <div
+        className="relative aspect-[4/5] overflow-hidden rounded-2xl"
+        style={{ backgroundColor: CARD }}
+      >
         {listing.coverUrl && (
           <img
             src={listing.coverUrl}
@@ -301,7 +327,9 @@ function FiltersSheet({
             aria-label="Kthehu"
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 44,              height: 44,              backgroundColor: "rgba(255,255,255,0.7)",
+              width: 44,
+              height: 44,
+              backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
             }}
@@ -411,7 +439,11 @@ function Chips({
               aria-pressed={active}
               onClick={() => onChange(active ? "" : o)}
               className="rounded-full px-3 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
-              style={{ backgroundColor: active ? INK : CARD, color: active ? "var(--brand-surface)" : INK, border: active ? "none" : "1px solid var(--brand-border)" }}
+              style={{
+                backgroundColor: active ? INK : CARD,
+                color: active ? "var(--brand-surface)" : INK,
+                border: active ? "none" : "1px solid var(--brand-border)",
+              }}
             >
               {o}
             </button>
