@@ -46,7 +46,8 @@
      Disse matcher de faktiske hex-verdiene som brukes gjennom frontend,
      slik at fremtidig migrering til token-klasser gir identisk output. */
   --brand-ink: #2d1521;           /* mørk burgunder, primærtekst */
-  --brand-ink-muted: #a89f94;     /* varm grå, sekundærtekst */
+  --brand-ink-muted: #a89f94;     /* varm grå, dekorativ/støttetekst (bruk kun for stor tekst eller ikke-tekst) */
+  --brand-ink-secondary: #6e665c; /* tilgjengelig sekundærtekst (AA mot cream/surface for 11–14 px) */
   --brand-surface: #ffffff;       /* kort/bakgrunn */
   --brand-cream: #fbf6f2;         /* subtil surface-variant */
   --brand-border: #e2e2de;        /* standard border */
