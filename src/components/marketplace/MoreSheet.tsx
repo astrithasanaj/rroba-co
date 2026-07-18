@@ -45,10 +45,12 @@ export function MoreSheet({
   productTitle: string;
   reporterId: string | null;
 }) {
+  const navigate = useNavigate();
   const [view, setView] = useState<"more" | "report">("more");
   const [reason, setReason] = useState<Reason["key"] | null>(null);
   const [details, setDetails] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
 
   const close = () => {
     onOpenChange(false);
