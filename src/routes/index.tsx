@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Bell, UserPlus, Shirt } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -239,7 +239,6 @@ function HomePage() {
     };
   }, []);
 
-  const followingPreview = useMemo(() => followingListings.slice(0, 5), [followingListings]);
 
 
   return (
@@ -307,8 +306,6 @@ function HomePage() {
               promoted={promoted}
               trending={trendingListings}
               newThisWeek={newThisWeekListings}
-
-              followingPreview={followingPreview}
             />
           ) : (
             <FollowingFeed
@@ -356,14 +353,12 @@ function ForYou({
   promoted,
   trending,
   newThisWeek,
-  followingPreview,
 }: {
   loading: boolean;
   listings: ListingView[];
   promoted: ListingView[];
   trending: ListingView[];
   newThisWeek: ListingView[];
-  followingPreview: ListingView[];
 }) {
   return (
     <>
@@ -427,24 +422,6 @@ function ForYou({
         </div>
       ) : (
         <>
-          {followingPreview.length > 0 && (
-            <section className="mt-7">
-              <div className="px-5">
-                <SectionHeader title="Nga profilet që ndjek" />
-              </div>
-              <div
-                className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
-                style={{ scrollbarWidth: "none" }}
-              >
-                {followingPreview.map((l) => (
-                  <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                    <ListingCard listing={l} />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
           {promoted.length > 0 && (
             <section className="mt-7">
               <div className="px-5">
