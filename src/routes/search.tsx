@@ -841,15 +841,17 @@ function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
     { key: "category", label: "Kategori" },
   ];
   return (
-    <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+    <div role="tablist" aria-label="Filtro rezultatet" className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
       {items.map((it) => {
         const active = tab === it.key;
         return (
           <button
             key={it.key}
             type="button"
+            role="tab"
+            aria-selected={active}
             onClick={() => setTab(it.key)}
-            className="rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap"
+            className="rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
             style={{
               backgroundColor: active ? INK : CARD,
               color: active ? "var(--brand-surface)" : INK,
