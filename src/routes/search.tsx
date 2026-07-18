@@ -610,6 +610,8 @@ function GenderTabs({
   const tabs: ("Femra" | "Meshkuj" | "Fëmijë")[] = ["Femra", "Meshkuj", "Fëmijë"];
   return (
     <div
+      role="tablist"
+      aria-label="Filtro sipas gjinisë"
       className="mt-4 flex items-center gap-6"
       style={{ borderBottom: "1px solid var(--brand-border)" }}
     >
@@ -619,8 +621,10 @@ function GenderTabs({
           <button
             key={t}
             type="button"
+            role="tab"
+            aria-selected={active}
             onClick={() => onChange(active ? null : t)}
-            className="relative pb-3 pt-1 text-[15px]"
+            className="relative pb-3 pt-1 text-[15px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] rounded-sm"
             style={{
               color: active ? INK : MUTED,
               fontWeight: active ? 600 : 500,
@@ -629,6 +633,7 @@ function GenderTabs({
             {t}
             {active && (
               <span
+                aria-hidden="true"
                 style={{
                   position: "absolute",
                   left: 0,
