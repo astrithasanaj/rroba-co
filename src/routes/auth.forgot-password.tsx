@@ -43,7 +43,7 @@ function ForgotPage() {
   return (
     <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
 
-      <div className="mx-auto w-full max-w-[420px] px-6 pb-10 pt-4">
+      <div className="mx-auto w-full max-w-[420px] px-6 pt-4" style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}>
         <button
           type="button"
           onClick={() => window.history.back()}
