@@ -25,31 +25,31 @@ export const SignupEmail = ({
   recipient,
   confirmationUrl,
 }: SignupEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="sq" dir="ltr">
     <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
+    <Preview>Konfirmo email-in tënd për {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm your email</Heading>
+        <Heading style={h1}>Konfirmo email-in tënd</Heading>
         <Text style={text}>
-          Thanks for signing up for{' '}
+          Faleminderit që u regjistrove në{' '}
           <Link href={siteUrl} style={link}>
             <strong>{siteName}</strong>
           </Link>
           !
         </Text>
         <Text style={text}>
-          Please confirm your email address (
+          Të lutem konfirmo adresën tënde të email-it (
           <Link href={`mailto:${recipient}`} style={link}>
             {recipient}
           </Link>
-          ) by clicking the button below:
+          ) duke klikuar butonin më poshtë:
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Verify Email
+          Verifiko email-in
         </Button>
         <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
+          Nëse nuk e ke krijuar këtë llogari, mund ta injorosh këtë email.
         </Text>
       </Container>
     </Body>
