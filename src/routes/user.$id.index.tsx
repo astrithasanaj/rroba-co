@@ -570,7 +570,7 @@ function UserProfile() {
               type="button"
               onClick={() => setMoreOpen(false)}
               aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
               style={{
                 width: 36,
                 height: 36,
@@ -602,7 +602,7 @@ function UserProfile() {
               type="button"
               onClick={() => setSortOpen(false)}
               aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
               style={{
                 width: 36,
                 height: 36,
