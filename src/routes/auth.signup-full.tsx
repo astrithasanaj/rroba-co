@@ -10,13 +10,13 @@ export const Route = createFileRoute("/auth/signup-full")({
   component: SignupFullPage,
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const DIVIDER = "#e2e2de";
-const ERR = "#e53935";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
+const DIVIDER = "var(--brand-border)";
+const ERR = "var(--brand-danger)";
 
 const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
   { code: "+383", flag: "🇽🇰", name: "Kosovo" },
