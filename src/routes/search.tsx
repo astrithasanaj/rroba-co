@@ -950,6 +950,7 @@ function TabbedResults({
         {profileLoading ? (
           <div role="status" aria-live="polite" className="grid place-items-center py-10">
             <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            <span className="sr-only">Po ngarkohet</span>
           </div>
         ) : profiles.length === 0 ? (
           <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
