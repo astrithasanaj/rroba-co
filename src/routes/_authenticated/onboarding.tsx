@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ChevronLeft, ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
+import { ChevronLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -17,6 +17,11 @@ const CHIP_BG = "#ffffff";
 const DARK = "#2d1521";
 const MUTED = "#a89f94";
 const CORAL = "#c65a7a";
+const DIVIDER = "#e2e2de";
+const ERR = "#c94a3b";
+const SUCCESS = "#2f9e6b";
+const FOCUS_RING = "0 0 0 3px rgba(198,90,122,0.35)";
+const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
 
 // City list moved to DB — see CityPicker/useCities
 const GENDERS = [
