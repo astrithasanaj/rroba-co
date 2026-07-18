@@ -551,7 +551,7 @@ function TopHeader({
             type="button"
             onClick={onBack}
             aria-label="Kthehu"
-            className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-90 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-90 ${FOCUS_CLASS}`}
             style={{
               background: CARD,
               border: `1px solid ${DIVIDER}`,
@@ -574,7 +574,7 @@ function TopHeader({
           <button
             type="button"
             onClick={onRight}
-            className="min-h-11 rounded-full px-4 text-xs font-semibold focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`min-h-11 rounded-full px-4 text-xs font-semibold ${FOCUS_CLASS}`}
             style={{ background: INK, color: OVERLAY_GLYPH }}
           >
             {rightLabel}
@@ -612,7 +612,7 @@ function MediaCategoryStep({
           <button
             type="button"
             onClick={onPickFiles}
-            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4 transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4 transition active:scale-[0.98] ${FOCUS_CLASS}`}
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
             <Images className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
@@ -621,7 +621,7 @@ function MediaCategoryStep({
           <button
             type="button"
             onClick={onOpenCamera}
-            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4 transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4 transition active:scale-[0.98] ${FOCUS_CLASS}`}
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
             <Camera className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
@@ -648,7 +648,7 @@ function MediaCategoryStep({
                 <button
                   type="button"
                   onClick={() => onRemoveImage(i)}
-                  className="absolute left-0 top-0 grid h-6 w-6 place-items-center rounded-br-xl rounded-tl-xl focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                  className={`absolute left-0 top-0 grid h-6 w-6 place-items-center rounded-br-xl rounded-tl-xl ${FOCUS_CLASS}`}
                   style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
                   aria-label={`Fshij foton ${i + 1}`}
                 >
@@ -677,7 +677,7 @@ function MediaCategoryStep({
               key={cat.id}
               type="button"
               onClick={() => onPickCategory(cat)}
-              className="flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl p-4 transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              className={`flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl p-4 transition active:scale-[0.98] ${FOCUS_CLASS}`}
               style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               <cat.Icon className="h-7 w-7" strokeWidth={1.4} aria-hidden="true" />
@@ -752,7 +752,7 @@ function GenderPicker({
               key={t.key}
               type="button"
               onClick={t.onClick}
-              className="flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              className={`flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98] ${FOCUS_CLASS}`}
               style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               {t.icon}
@@ -798,7 +798,7 @@ function SubcategoryPicker({
               key={s}
               type="button"
               onClick={() => onPick(s)}
-              className="min-h-11 rounded-full px-2 text-center text-[12px] font-semibold transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              className={`min-h-11 rounded-full px-2 text-center text-[12px] font-semibold transition active:scale-[0.97] ${FOCUS_CLASS}`}
               style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               {s}
@@ -865,7 +865,7 @@ function DetailsStep({
             type="button"
             onClick={onEditCategory}
             aria-label={`Ndrysho kategorinë: ${fullCategoryLabel}`}
-            className="mt-1 inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`mt-1 inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold ${FOCUS_CLASS}`}
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
             <span className="truncate">{fullCategoryLabel}</span>
@@ -897,7 +897,7 @@ function DetailsStep({
                   <button
                     type="button"
                     onClick={() => onRemoveImage(i)}
-                    className="absolute left-0 top-0 grid h-8 w-8 place-items-center rounded-br-xl rounded-tl-2xl focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                    className={`absolute left-0 top-0 grid h-8 w-8 place-items-center rounded-br-xl rounded-tl-2xl ${FOCUS_CLASS}`}
                     style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
                     aria-label={`Fshij foton ${i + 1}`}
                   >
@@ -912,7 +912,7 @@ function DetailsStep({
                   type="button"
                   onClick={onAddMore}
                   aria-label="Shto foto"
-                  className="grid h-[100px] w-[100px] place-items-center rounded-2xl transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                  className={`grid h-[100px] w-[100px] place-items-center rounded-2xl transition active:scale-[0.98] ${FOCUS_CLASS}`}
                   style={{ background: CARD, color: MUTED, border: `1px solid ${DIVIDER}` }}
                 >
                   <Images className="h-7 w-7" strokeWidth={1.5} aria-hidden="true" />
@@ -947,7 +947,7 @@ function DetailsStep({
                   role="radio"
                   aria-checked={active}
                   onClick={() => setCondition(value)}
-                  className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                  className={`flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left transition active:scale-[0.98] ${FOCUS_CLASS}`}
                   style={{
                     background: active ? CORAL_GRADIENT : CARD,
                     color: active ? OVERLAY_GLYPH : INK,
@@ -981,7 +981,7 @@ function DetailsStep({
                 onClick={onOpenSize}
                 aria-invalid={sizeError || undefined}
                 aria-describedby={sizeError && sizeRequired ? "sell-size-error" : undefined}
-                className="flex min-h-[52px] w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm transition active:scale-[0.99] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                className={`flex min-h-[52px] w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
                 style={{
                   background: CARD,
                   color: INK,
@@ -1023,7 +1023,7 @@ function DetailsStep({
             maxLength={120}
             autoComplete="off"
             enterKeyHint="next"
-            className="mt-3 h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`mt-3 h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           />
           <label htmlFor="sell-description" className="sr-only">
@@ -1036,7 +1036,7 @@ function DetailsStep({
             placeholder="Përshkrimi i artikullit"
             maxLength={2000}
             rows={5}
-            className="mt-3 w-full resize-none rounded-2xl px-4 py-3.5 text-sm placeholder:text-[color:var(--brand-ink-muted)] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            className={`mt-3 w-full resize-none rounded-2xl px-4 py-3.5 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}`, minHeight: 120 }}
           />
         </div>
@@ -1053,7 +1053,7 @@ function DetailsStep({
           type="button"
           onClick={onNext}
           disabled={!canNext}
-          className="h-[54px] w-full rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          className={`h-[54px] w-full rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 ${FOCUS_CLASS}`}
           style={{
             background: canNext ? CORAL_GRADIENT : DIVIDER,
             color: canNext ? OVERLAY_GLYPH : MUTED,
@@ -1119,7 +1119,7 @@ function FinalStep({
           maxLength={60}
           autoComplete="off"
           enterKeyHint="next"
-          className="h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          className={`h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
           style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
         />
 
@@ -1130,7 +1130,7 @@ function FinalStep({
               id="sell-size-final"
               type="button"
               onClick={onOpenSize}
-              className="flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              className={`flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
               style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               <span className="truncate" style={{ color: size ? INK : MUTED }}>
@@ -1149,7 +1149,7 @@ function FinalStep({
               id="sell-color"
               type="button"
               onClick={onOpenColor}
-              className="flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              className={`flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
               style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               <span className="flex min-w-0 items-center gap-2">
@@ -1248,7 +1248,7 @@ function FinalStep({
                 type="button"
                 aria-pressed={active}
                 onClick={() => toggleDelivery(d)}
-                className="min-h-11 rounded-full px-4 text-sm transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                className={`min-h-11 rounded-full px-4 text-sm transition active:scale-[0.97] ${FOCUS_CLASS}`}
                 style={{
                   background: active ? CORAL_GRADIENT : CARD,
                   color: active ? OVERLAY_GLYPH : INK,
@@ -1274,7 +1274,7 @@ function FinalStep({
           onClick={onPublish}
           disabled={!canPublish || submitting}
           aria-busy={submitting || undefined}
-          className="relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          className={`relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 ${FOCUS_CLASS}`}
           style={{
             background: canPublish ? CORAL_GRADIENT : DIVIDER,
             color: canPublish ? OVERLAY_GLYPH : MUTED,
