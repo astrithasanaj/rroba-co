@@ -106,7 +106,7 @@ function UserProfile() {
   const { id } = useParams({ from: "/user/$id/" });
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [listings, setListings] = useState<ListingView[]>([]);
+  const [listings, setListings] = useState<ListingWithLikes[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
