@@ -238,8 +238,9 @@ function LoginPage() {
           </div>
         </div>
 
-        <form onSubmit={submit} className="mt-8 space-y-3">
+        <form onSubmit={submit} className="mt-8 space-y-3" noValidate>
           <AuthField
+            id="login-email"
             type="email"
             value={email}
             onChange={(v) => {
@@ -247,15 +248,20 @@ function LoginPage() {
               setEmailErr("");
             }}
             placeholder="adresa@email.com"
+            ariaLabel="Adresa e emailit"
             error={!!emailErr}
+            errorId="login-email-err"
             autoComplete="email"
+            inputMode="email"
+            enterKeyHint="next"
           />
           {emailErr && (
-            <p className="px-1 text-xs" style={{ color: ERR }}>
+            <p id="login-email-err" role="alert" className="px-1 text-xs" style={{ color: ERR }}>
               {emailErr}
             </p>
           )}
           <AuthField
+            id="login-password"
             type={showPass ? "text" : "password"}
             value={password}
             onChange={(v) => {
@@ -263,21 +269,26 @@ function LoginPage() {
               setPassErr("");
             }}
             placeholder="Fjalëkalimi"
+            ariaLabel="Fjalëkalimi"
             error={!!passErr}
+            errorId="login-pass-err"
             autoComplete="current-password"
+            enterKeyHint="go"
             right={
               <button
                 type="button"
                 onClick={() => setShowPass((v) => !v)}
-                aria-label="Toggle"
+                aria-label={showPass ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
+                aria-pressed={showPass}
+                className="grid h-11 w-11 place-items-center rounded-full transition active:scale-90"
                 style={{ color: MUTED }}
               >
-                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPass ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
               </button>
             }
           />
           {passErr && (
-            <p className="px-1 text-xs" style={{ color: ERR }}>
+            <p id="login-pass-err" role="alert" className="px-1 text-xs" style={{ color: ERR }}>
               {passErr}
             </p>
           )}
