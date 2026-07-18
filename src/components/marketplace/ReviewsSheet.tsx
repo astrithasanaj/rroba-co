@@ -157,12 +157,13 @@ export function ReviewsSheet({
           setStars(0);
           setComment("");
         }
-        // Eligibility: conversation with this seller as buyer + at least one sold listing between them
+        // Eligibility: any conversation between the two users (either direction)
         const { data: convo } = await supabase
           .from("conversations")
           .select("id")
-          .eq("seller_id", sellerId)
-          .eq("buyer_id", currentUserId)
+          .or(
+            `and(seller_id.eq.${sellerId},buyer_id.eq.${currentUserId}),and(buyer_id.eq.${sellerId},seller_id.eq.${currentUserId})`,
+          )
           .limit(1);
         if (active) setCanRate(!!(convo && convo.length > 0));
       }
