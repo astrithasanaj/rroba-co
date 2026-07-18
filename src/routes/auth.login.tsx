@@ -36,6 +36,11 @@ function AuthField({
   error,
   right,
   autoComplete,
+  ariaLabel,
+  id,
+  errorId,
+  inputMode,
+  enterKeyHint,
 }: {
   type?: string;
   value: string;
@@ -44,17 +49,31 @@ function AuthField({
   error?: boolean;
   right?: React.ReactNode;
   autoComplete?: string;
+  ariaLabel?: string;
+  id?: string;
+  errorId?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  enterKeyHint?: React.HTMLAttributes<HTMLInputElement>["enterKeyHint"];
 }) {
+  const [focused, setFocused] = useState(false);
   return (
     <div className="relative">
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        inputMode={inputMode}
+        enterKeyHint={enterKeyHint}
         autoCapitalize="none"
         autoCorrect="off"
+        aria-label={ariaLabel ?? placeholder}
+        aria-invalid={error || undefined}
+        aria-describedby={error && errorId ? errorId : undefined}
         className="w-full text-[15px] outline-none"
         style={{
           background: CARD,
@@ -62,7 +81,9 @@ function AuthField({
           height: 52,
           borderRadius: 12,
           padding: right ? "0 44px 0 16px" : "0 16px",
-          outline: error ? `2px solid ${ERR}` : undefined,
+          border: `1px solid ${error ? ERR : focused ? INK : DIVIDER}`,
+          boxShadow: focused && !error ? `0 0 0 3px ${CORAL}33` : "none",
+          transition: "border-color 120ms ease, box-shadow 120ms ease",
         }}
       />
       {right ? (
