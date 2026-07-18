@@ -5,7 +5,13 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
 import { getCategory } from "@/lib/categories";
-import { hydrateListings, type ListingRow, type ListingView, CITIES, CONDITIONS } from "@/lib/listings";
+import {
+  hydrateListings,
+  type ListingRow,
+  type ListingView,
+  CITIES,
+  CONDITIONS,
+} from "@/lib/listings";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,16 +19,19 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
 import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
 
-
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-secondary)";
 
 type SearchParams = { subcategories?: string };
 
 export const Route = createFileRoute("/category/$slug/$gender")({
-  component: () => (<SwipeBackWrapper><CategoryResultsPage /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <CategoryResultsPage />
+    </SwipeBackWrapper>
+  ),
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
     subcategories: typeof search.subcategories === "string" ? search.subcategories : undefined,
   }),
@@ -51,7 +60,6 @@ function CategoryResultsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [filters, setFilters] = useState<Filters>({});
-
 
   const genderOption = useMemo(
     () => def?.genderOptions?.find((g) => g.slug === gender),
@@ -86,9 +94,7 @@ function CategoryResultsPage() {
       if (subcategoryList.length > 0) {
         const orExpr = [
           `subcategory.in.(${subcategoryList.map((s: string) => `"${s.replace(/"/g, "")}"`).join(",")})`,
-          ...subcategoryList.map(
-            (s: string) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`,
-          ),
+          ...subcategoryList.map((s: string) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`),
         ].join(",");
         query = query.or(orExpr);
       }
@@ -109,7 +115,10 @@ function CategoryResultsPage() {
   if (!def) {
     return (
       <MobileShell>
-        <div style={{ backgroundColor: BG, minHeight: "100vh", color: INK }} className="p-10 text-center">
+        <div
+          style={{ backgroundColor: BG, minHeight: "100vh", color: INK }}
+          className="p-10 text-center"
+        >
           Kategoria nuk u gjet
         </div>
       </MobileShell>
@@ -128,19 +137,22 @@ function CategoryResultsPage() {
             type="button"
             onClick={backTo}
             aria-label="Kthehu"
-            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
-          <h1 className="px-12 text-center text-[15px] font-bold leading-tight" style={{ color: INK }}>
+          <h1
+            className="px-12 text-center text-[15px] font-bold leading-tight"
+            style={{ color: INK }}
+          >
             {title}
           </h1>
         </header>
@@ -155,23 +167,28 @@ function CategoryResultsPage() {
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
             style={{ backgroundColor: CARD, color: INK }}
           >
-            <LayoutGrid className="h-3.5 w-3.5" />
+            <LayoutGrid aria-hidden="true" className="h-3.5 w-3.5" />
             Kategoritë
           </button>
         </div>
 
-
-        <section className="mt-4 px-5">
+        <section className="mt-4 px-5" aria-busy={loading}>
           {loading ? (
-            <div className="grid place-items-center py-16">
-              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            <div role="status" aria-live="polite" className="grid place-items-center py-16">
+              <Loader2
+                aria-hidden="true"
+                className="h-6 w-6 animate-spin"
+                style={{ color: MUTED }}
+              />
+              <span className="sr-only">Po ngarkohet</span>
             </div>
           ) : results.length === 0 ? (
             <div
+              role="status"
               className="flex flex-col items-center gap-3 rounded-2xl p-10 text-center text-sm"
               style={{ backgroundColor: CARD, color: MUTED }}
             >
-              <PackageSearch className="h-10 w-10" strokeWidth={1.4} />
+              <PackageSearch aria-hidden="true" className="h-10 w-10" strokeWidth={1.4} />
               Asnjë artikull u gjet për këtë kategori
             </div>
           ) : (
@@ -186,10 +203,10 @@ function CategoryResultsPage() {
         <button
           type="button"
           onClick={() => setShowFilters(true)}
-          className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
-          style={{ backgroundColor: INK, color: "#fff" }}
+          className="fixed bottom-28 left-1/2 z-40 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
+          style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
           <span className="text-sm font-semibold">Filtro</span>
           {activeCount > 0 && (
             <span
@@ -202,7 +219,12 @@ function CategoryResultsPage() {
         </button>
       </div>
 
-      <FiltersSheet open={showFilters} onOpenChange={setShowFilters} filters={filters} setFilters={setFilters} />
+      <FiltersSheet
+        open={showFilters}
+        onOpenChange={setShowFilters}
+        filters={filters}
+        setFilters={setFilters}
+      />
 
       <CategoryPickerSheet
         open={showCategoryPicker}
@@ -217,14 +239,15 @@ function CategoryResultsPage() {
                 subcategories: [...sel.subcategories],
               }),
             );
-          } catch { /* ignore */ }
+          } catch {
+            /* ignore */
+          }
           navigate({ to: "/search" });
         }}
       />
     </MobileShell>
   );
 }
-
 
 function ResultCard({ listing }: { listing: ListingView }) {
   const isNew = useMemo(() => {
@@ -234,7 +257,10 @@ function ResultCard({ listing }: { listing: ListingView }) {
 
   return (
     <Link to="/product/$id" params={{ id: listing.id }} className="group block">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl" style={{ backgroundColor: CARD }}>
+      <div
+        className="relative aspect-[4/5] overflow-hidden rounded-2xl"
+        style={{ backgroundColor: CARD }}
+      >
         {listing.coverUrl && (
           <img
             src={listing.coverUrl}
@@ -246,7 +272,7 @@ function ResultCard({ listing }: { listing: ListingView }) {
         {isNew && (
           <span
             className="absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold"
-            style={{ backgroundColor: INK, color: "#fff" }}
+            style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
             E re
           </span>
@@ -299,16 +325,16 @@ function FiltersSheet({
             type="button"
             onClick={() => onOpenChange(false)}
             aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </div>
@@ -378,7 +404,7 @@ function FiltersSheet({
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
-              style={{ backgroundColor: INK, color: "#fff" }}
+              style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
               Apliko
             </button>
@@ -410,9 +436,14 @@ function Chips({
             <button
               key={o}
               type="button"
+              aria-pressed={active}
               onClick={() => onChange(active ? "" : o)}
-              className="rounded-full px-3 py-1.5 text-xs font-medium"
-              style={{ backgroundColor: active ? INK : CARD, color: active ? "#fff" : INK }}
+              className="rounded-full px-3 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
+              style={{
+                backgroundColor: active ? INK : CARD,
+                color: active ? "var(--brand-surface)" : INK,
+                border: active ? "none" : "1px solid var(--brand-border)",
+              }}
             >
               {o}
             </button>

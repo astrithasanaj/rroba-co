@@ -5,14 +5,18 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, CATEGORY_SUBCATEGORIES } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const CHIP = "#ffffff";
-const INK = "#2d1521";
-const DISABLED = "#e2e2de";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const CHIP = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const DISABLED = "var(--brand-border)";
 
 export const Route = createFileRoute("/category/$slug/subcategory")({
-  component: () => (<SwipeBackWrapper><SubcategorySelectPage /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <SubcategorySelectPage />
+    </SwipeBackWrapper>
+  ),
 });
 
 function SubcategorySelectPage() {
@@ -30,8 +34,7 @@ function SubcategorySelectPage() {
   const toggle = (s: string) =>
     setSelected((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
-  const goAll = () =>
-    navigate({ to: "/category/$slug/$gender", params: { slug, gender: "all" } });
+  const goAll = () => navigate({ to: "/category/$slug/$gender", params: { slug, gender: "all" } });
 
   const applyFilters = () => {
     if (selected.length === 0) return;
@@ -50,17 +53,17 @@ function SubcategorySelectPage() {
             type="button"
             onClick={() => window.history.back()}
             aria-label="Kthehu"
-            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
             {def.label}
@@ -83,8 +86,8 @@ function SubcategorySelectPage() {
                   className="rounded-full px-3 py-2 text-[13px] font-medium transition-colors"
                   style={{
                     backgroundColor: active ? INK : "transparent",
-                    color: active ? "#fff" : INK,
-                    border: active ? "none" : "1px solid #d8d8d2",
+                    color: active ? "var(--brand-surface)" : INK,
+                    border: active ? "none" : "1px solid var(--brand-border)",
                   }}
                 >
                   {s}
@@ -109,7 +112,7 @@ function SubcategorySelectPage() {
             className="mt-3 flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors"
             style={{
               backgroundColor: selected.length === 0 ? DISABLED : INK,
-              color: selected.length === 0 ? "#8a8275" : "#fff",
+              color: selected.length === 0 ? "var(--brand-ink-secondary)" : "var(--brand-surface)",
             }}
           >
             Apliko filtrat

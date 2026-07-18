@@ -31,12 +31,7 @@ import {
   type ListingView,
 } from "@/lib/listings";
 import { useCities } from "@/hooks/useCities";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LikeButton } from "@/components/marketplace/LikeButton";
@@ -51,12 +46,12 @@ import {
   type CategorySelection,
 } from "@/lib/category-taxonomy";
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-secondary)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
 
 type Search = {
   q?: string;
@@ -68,8 +63,7 @@ export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
-    section:
-      s.section === "new" || s.section === "trending" ? s.section : undefined,
+    section: s.section === "new" || s.section === "trending" ? s.section : undefined,
   }),
   component: SearchPage,
 });
@@ -123,7 +117,9 @@ function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [pickerInitialKey, setPickerInitialKey] = useState<string | undefined>(undefined);
-  const [pickerInitialGroupLabel, setPickerInitialGroupLabel] = useState<string | undefined>(undefined);
+  const [pickerInitialGroupLabel, setPickerInitialGroupLabel] = useState<string | undefined>(
+    undefined,
+  );
   const [pickerInitialBucket, setPickerInitialBucket] = useState(false);
   const [genderTab, setGenderTab] = useState<"Femra" | "Meshkuj" | "Fëmijë" | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -196,9 +192,7 @@ function SearchPage() {
       let query = supabase.from("listings").select("*").eq("status", "active");
       if (q.trim()) {
         const term = `%${q.trim()}%`;
-        query = query.or(
-          `title.ilike.${term},description.ilike.${term},brand.ilike.${term}`,
-        );
+        query = query.or(`title.ilike.${term},description.ilike.${term},brand.ilike.${term}`);
       }
       if (dbCategories.length > 0) query = query.in("category", dbCategories);
       if (subLabels.length > 0) {
@@ -206,9 +200,7 @@ function SearchPage() {
         // set by the sell form). Fall back to title ilike for legacy rows.
         const orExpr = [
           `subcategory.in.(${subLabels.map((s) => `"${s.replace(/"/g, "")}"`).join(",")})`,
-          ...subLabels.map(
-            (s) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`,
-          ),
+          ...subLabels.map((s) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`),
         ].join(",");
         query = query.or(orExpr);
       }
@@ -419,19 +411,16 @@ function SearchPage() {
     <MobileShell>
       <div style={{ backgroundColor: BG, minHeight: "100vh" }} className="pb-32">
         <header className="px-5 pt-10">
-          <h1
-            className="text-[32px] font-bold leading-none tracking-tight"
-            style={{ color: INK }}
-          >
+          <h1 className="text-[32px] font-bold leading-none tracking-tight" style={{ color: INK }}>
             Eksploro
           </h1>
 
           <div
             className="mt-5 flex h-[52px] items-center gap-3 rounded-full px-5"
-            style={{ backgroundColor: CARD, border: "1px solid #d8d8d2" }}
+            style={{ backgroundColor: CARD, border: "1px solid var(--brand-border)" }}
             onClick={() => inputRef.current?.focus()}
           >
-            <SearchIcon className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
+            <SearchIcon aria-hidden="true" className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
             <input
               ref={inputRef}
               value={q}
@@ -445,6 +434,10 @@ function SearchPage() {
                 }
               }}
               placeholder="Kërko"
+              enterKeyHint="search"
+              inputMode="search"
+              autoComplete="off"
+              aria-label="Kërko"
               className="flex-1 bg-transparent text-[16px] outline-none placeholder:font-normal"
               style={{ color: INK }}
             />
@@ -455,16 +448,16 @@ function SearchPage() {
                   setQ("");
                   inputRef.current?.focus();
                 }}
-                aria-label="Pastro"
+                aria-label="Pastro kërkimin"
+                className="-mr-2 grid h-11 w-11 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
               >
-                <X className="h-5 w-5" style={{ color: MUTED }} />
+                <X aria-hidden="true" className="h-5 w-5" style={{ color: MUTED }} />
               </button>
             )}
           </div>
 
           {/* Gender tabs — Femra / Meshkuj / Fëmijë */}
           <GenderTabs value={genderTab} onChange={setGenderTab} />
-
 
           {/* Selected chip tags */}
           {catChips.length > 0 && (
@@ -476,11 +469,7 @@ function SearchPage() {
                   style={{ backgroundColor: CORAL }}
                 >
                   {c.label}
-                  <button
-                    type="button"
-                    onClick={() => removeChip(c.id)}
-                    aria-label="Hiq"
-                  >
+                  <button type="button" onClick={() => removeChip(c.id)} aria-label="Hiq">
                     <X className="h-3 w-3" />
                   </button>
                 </span>
@@ -488,9 +477,7 @@ function SearchPage() {
             </div>
           )}
           {/* Tab bar — only visible when the user is actively searching */}
-          {hasQuery && (
-            <TabBar tab={tab} setTab={setTab} />
-          )}
+          {hasQuery && <TabBar tab={tab} setTab={setTab} />}
         </header>
 
         {focused && !hasQuery ? (
@@ -536,10 +523,10 @@ function SearchPage() {
           <button
             type="button"
             onClick={() => setShowFilters(true)}
-            className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
-            style={{ backgroundColor: INK, color: "#ffffff" }}
+            className="fixed bottom-28 left-1/2 z-40 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
+            style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
-            <SlidersHorizontal className="h-4 w-4" />
+            <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
             <span className="text-sm font-semibold">Filtro</span>
             {activeCount > 0 && (
               <span
@@ -605,8 +592,10 @@ function GenderTabs({
   const tabs: ("Femra" | "Meshkuj" | "Fëmijë")[] = ["Femra", "Meshkuj", "Fëmijë"];
   return (
     <div
+      role="tablist"
+      aria-label="Filtro sipas gjinisë"
       className="mt-4 flex items-center gap-6"
-      style={{ borderBottom: "1px solid #e2e2de" }}
+      style={{ borderBottom: "1px solid var(--brand-border)" }}
     >
       {tabs.map((t) => {
         const active = value === t;
@@ -614,8 +603,10 @@ function GenderTabs({
           <button
             key={t}
             type="button"
+            role="tab"
+            aria-selected={active}
             onClick={() => onChange(active ? null : t)}
-            className="relative pb-3 pt-1 text-[15px]"
+            className="relative pb-3 pt-1 text-[15px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] rounded-sm"
             style={{
               color: active ? INK : MUTED,
               fontWeight: active ? 600 : 500,
@@ -624,13 +615,14 @@ function GenderTabs({
             {t}
             {active && (
               <span
+                aria-hidden="true"
                 style={{
                   position: "absolute",
                   left: 0,
                   right: 0,
                   bottom: -1,
                   height: 2,
-                  background: "#e8836a",
+                  background: "var(--brand-coral)",
                   borderRadius: 2,
                 }}
               />
@@ -652,7 +644,7 @@ function EksploreList({
   const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
   const UNIVERSAL_KEYS = ["interior", "art", "elektronik", "hobi"];
   const rows = EKSPLORE_ROWS.filter(
-    (row) => row.key !== "femije" && !UNIVERSAL_KEYS.includes(row.key)
+    (row) => row.key !== "femije" && !UNIVERSAL_KEYS.includes(row.key),
   );
   const childIcons: Record<string, typeof Baby> = {
     Vajza: Venus,
@@ -671,7 +663,7 @@ function EksploreList({
               type="button"
               onClick={() => onOpenPicker("femije", false, label)}
               className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-              style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+              style={{ borderBottom: "1px solid var(--brand-border)", background: BG }}
             >
               <span
                 className="grid place-items-center"
@@ -679,16 +671,20 @@ function EksploreList({
                   width: 40,
                   height: 40,
                   borderRadius: "50%",
-                  background: "#2d1521",
+                  background: "var(--brand-ink)",
                   flexShrink: 0,
                 }}
               >
-                <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+                <Icon size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
               </span>
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+              <ChevronRight
+                aria-hidden="true"
+                className="h-5 w-5"
+                style={{ color: "var(--brand-ink-muted)" }}
+              />
             </button>
           );
         })
@@ -700,7 +696,7 @@ function EksploreList({
               type="button"
               onClick={() => onOpenPicker(key)}
               className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-              style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+              style={{ borderBottom: "1px solid var(--brand-border)", background: BG }}
             >
               <span
                 className="grid place-items-center"
@@ -708,23 +704,27 @@ function EksploreList({
                   width: 40,
                   height: 40,
                   borderRadius: "50%",
-                  background: "#2d1521",
+                  background: "var(--brand-ink)",
                   flexShrink: 0,
                 }}
               >
-                <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+                <Icon size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
               </span>
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+              <ChevronRight
+                aria-hidden="true"
+                className="h-5 w-5"
+                style={{ color: "var(--brand-ink-muted)" }}
+              />
             </button>
           ))}
           <button
             type="button"
             onClick={() => onOpenPicker(undefined, true)}
             className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-            style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+            style={{ borderBottom: "1px solid var(--brand-border)", background: BG }}
           >
             <span
               className="grid place-items-center"
@@ -732,16 +732,25 @@ function EksploreList({
                 width: 40,
                 height: 40,
                 borderRadius: "50%",
-                background: "#2d1521",
+                background: "var(--brand-ink)",
                 flexShrink: 0,
               }}
             >
-              <LayoutGrid size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+              <LayoutGrid
+                aria-hidden="true"
+                size={18}
+                strokeWidth={1.7}
+                style={{ color: "var(--brand-coral)" }}
+              />
             </span>
             <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
               Për të gjithë
             </span>
-            <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+            <ChevronRight
+              aria-hidden="true"
+              className="h-5 w-5"
+              style={{ color: "var(--brand-ink-muted)" }}
+            />
           </button>
         </>
       )}
@@ -778,12 +787,7 @@ function RecentSearches({
         <h2 className="text-[20px] font-bold" style={{ color: INK }}>
           Kërkimet e fundit
         </h2>
-        <button
-          type="button"
-          onClick={onClear}
-          className="text-sm"
-          style={{ color: MUTED }}
-        >
+        <button type="button" onClick={onClear} className="text-sm" style={{ color: MUTED }}>
           Pastro të gjitha
         </button>
       </div>
@@ -794,7 +798,7 @@ function RecentSearches({
             className="flex items-center gap-3 border-b py-3"
             style={{ borderColor: DIVIDER }}
           >
-            <Clock className="h-4 w-4" style={{ color: MUTED }} />
+            <Clock aria-hidden="true" className="h-4 w-4" style={{ color: MUTED }} />
             <button
               type="button"
               onMouseDown={(e) => {
@@ -831,18 +835,24 @@ function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
     { key: "category", label: "Kategori" },
   ];
   return (
-    <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+    <div
+      role="tablist"
+      aria-label="Filtro rezultatet"
+      className="mt-3 flex gap-2 overflow-x-auto no-scrollbar"
+    >
       {items.map((it) => {
         const active = tab === it.key;
         return (
           <button
             key={it.key}
             type="button"
+            role="tab"
+            aria-selected={active}
             onClick={() => setTab(it.key)}
-            className="rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap"
+            className="rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
             style={{
               backgroundColor: active ? INK : CARD,
-              color: active ? "#ffffff" : INK,
+              color: active ? "var(--brand-surface)" : INK,
             }}
           >
             {it.label}
@@ -880,9 +890,9 @@ function BrowseAndRecent({
         >
           <div
             className="grid h-11 w-11 place-items-center rounded-full"
-            style={{ backgroundColor: "#efe7d6" }}
+            style={{ backgroundColor: "var(--brand-cream)" }}
           >
-            <Users className="h-5 w-5" style={{ color: INK }} />
+            <Users aria-hidden="true" className="h-5 w-5" style={{ color: INK }} />
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold" style={{ color: INK }}>
@@ -892,7 +902,7 @@ function BrowseAndRecent({
               Shfleto profilet e Rroba
             </p>
           </div>
-          <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
+          <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: MUTED }} />
         </button>
       </section>
       <RecentSearches items={recent} onPick={onPick} onRemove={onRemove} onClear={onClear} />
@@ -936,11 +946,16 @@ function TabbedResults({
           {profileLoading ? "Po kërkon..." : `${profiles.length} profile`}
         </p>
         {profileLoading ? (
-          <div className="grid place-items-center py-10">
-            <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+          <div role="status" aria-live="polite" className="grid place-items-center py-10">
+            <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            <span className="sr-only">Po ngarkohet</span>
           </div>
         ) : profiles.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div
+            role="status"
+            className="rounded-2xl p-10 text-center text-sm"
+            style={{ backgroundColor: CARD, color: MUTED }}
+          >
             Asnjë profil u gjet
           </div>
         ) : (
@@ -969,7 +984,11 @@ function TabbedResults({
           {brands.length} marka
         </p>
         {brands.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div
+            role="status"
+            className="rounded-2xl p-10 text-center text-sm"
+            style={{ backgroundColor: CARD, color: MUTED }}
+          >
             Asnjë markë u gjet
           </div>
         ) : (
@@ -996,7 +1015,11 @@ function TabbedResults({
     return (
       <section className="mt-6 px-5">
         {matchedCategories.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div
+            role="status"
+            className="rounded-2xl p-10 text-center text-sm"
+            style={{ backgroundColor: CARD, color: MUTED }}
+          >
             Asnjë kategori
           </div>
         ) : (
@@ -1086,17 +1109,17 @@ function ProfileListRow({
 }) {
   const label = profile.display_name || profile.name || profile.username || "Përdorues";
   return (
-    <li
-      className="flex items-center gap-3 border-b py-3"
-      style={{ borderColor: DIVIDER }}
-    >
+    <li className="flex items-center gap-3 border-b py-3" style={{ borderColor: DIVIDER }}>
       <Link
         to="/user/$id"
         params={{ id: profile.id }}
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         <img
-          src={profile.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(label)}`}
+          src={
+            profile.avatar_url ||
+            `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(label)}`
+          }
           alt=""
           className="h-11 w-11 shrink-0 rounded-full object-cover"
           style={{ backgroundColor: CARD }}
@@ -1122,8 +1145,8 @@ function ProfileListRow({
           }}
           className="shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-opacity active:opacity-80"
           style={{
-            backgroundColor: isFollowing ? "#f5e6e9" : CORAL,
-            color: isFollowing ? "#6e2438" : "#ffffff",
+            backgroundColor: isFollowing ? "var(--brand-rose-soft)" : CORAL,
+            color: isFollowing ? "var(--brand-rose-ink)" : "var(--brand-surface)",
             border: "none",
             fontWeight: 600,
           }}
@@ -1135,24 +1158,20 @@ function ProfileListRow({
   );
 }
 
-function ResultsSection({
-  loading,
-  results,
-}: {
-  loading: boolean;
-  results: ListingView[];
-}) {
+function ResultsSection({ loading, results }: { loading: boolean; results: ListingView[] }) {
   return (
-    <section className="mt-6 px-5">
-      <p className="mb-3 text-xs" style={{ color: MUTED }}>
+    <section className="mt-6 px-5" aria-busy={loading}>
+      <p className="mb-3 text-xs" style={{ color: MUTED }} aria-live="polite">
         {loading ? "Po kërkon..." : `${results.length} rezultate`}
       </p>
       {loading ? (
-        <div className="grid place-items-center py-10">
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+        <div role="status" aria-live="polite" className="grid place-items-center py-10">
+          <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+          <span className="sr-only">Po kërkon</span>
         </div>
       ) : results.length === 0 ? (
         <div
+          role="status"
           className="rounded-2xl p-10 text-center text-sm"
           style={{ backgroundColor: CARD, color: MUTED }}
         >
@@ -1171,11 +1190,7 @@ function ResultsSection({
 
 function CreamListingCard({ listing }: { listing: ListingView }) {
   return (
-    <Link
-      to="/product/$id"
-      params={{ id: listing.id }}
-      className="group block"
-    >
+    <Link to="/product/$id" params={{ id: listing.id }} className="group block">
       <div
         className="relative aspect-[3/4] overflow-hidden rounded-2xl"
         style={{ backgroundColor: CARD }}
@@ -1188,10 +1203,7 @@ function CreamListingCard({ listing }: { listing: ListingView }) {
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
-        <LikeButton
-          listingId={listing.id}
-          className="absolute right-2 top-2 h-8 w-8 shadow-sm"
-        />
+        <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
       </div>
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">
@@ -1242,16 +1254,16 @@ function FiltersSheet({
             type="button"
             onClick={() => onOpenChange(false)}
             aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </div>
@@ -1317,7 +1329,7 @@ function FiltersSheet({
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
-              style={{ backgroundColor: INK, color: "#ffffff" }}
+              style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
               Apliko
             </button>
@@ -1342,18 +1354,20 @@ function FilterChips({
   return (
     <div>
       <Label style={{ color: INK }}>{label}</Label>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div role="group" aria-label={label} className="mt-2 flex flex-wrap gap-2">
         {options.map((o) => {
           const active = value === o;
           return (
             <button
               key={o}
               type="button"
+              aria-pressed={active}
               onClick={() => onChange(active ? "" : o)}
-              className="rounded-full px-3 py-1.5 text-xs font-medium"
+              className="rounded-full px-3 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
               style={{
                 backgroundColor: active ? INK : CARD,
-                color: active ? "#ffffff" : INK,
+                color: active ? "var(--brand-surface)" : INK,
+                border: active ? "none" : "1px solid var(--brand-border)",
               }}
             >
               {o}

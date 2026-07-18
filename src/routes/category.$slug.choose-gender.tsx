@@ -5,15 +5,19 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, SUBCATEGORY_OPTIONS, type GenderSlug } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const CHIP = "#ffffff";
-const INK = "#2d1521";
-const CORAL = "#c65a7a";
-const DISABLED = "#e2e2de";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const CHIP = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const CORAL = "var(--brand-rose)";
+const DISABLED = "var(--brand-border)";
 
 export const Route = createFileRoute("/category/$slug/choose-gender")({
-  component: () => (<SwipeBackWrapper><GenderSelectPage /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <GenderSelectPage />
+    </SwipeBackWrapper>
+  ),
 });
 
 function GenderSelectPage() {
@@ -28,12 +32,10 @@ function GenderSelectPage() {
     return null;
   }
 
-  const subcategories = selectedGender ? SUBCATEGORY_OPTIONS[selectedGender] ?? [] : [];
+  const subcategories = selectedGender ? (SUBCATEGORY_OPTIONS[selectedGender] ?? []) : [];
 
   const toggleSub = (s: string) => {
-    setSelectedSubs((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s],
-    );
+    setSelectedSubs((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
   };
 
   const pickGender = (g: GenderSlug) => {
@@ -68,17 +70,17 @@ function GenderSelectPage() {
             type="button"
             onClick={() => window.history.back()}
             aria-label="Kthehu"
-            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
             {def.label}
@@ -121,10 +123,7 @@ function GenderSelectPage() {
               className="animate-fade-in"
               style={{ animationDuration: "200ms" }}
             >
-              <h3
-                className="mt-5 text-[18px] font-bold"
-                style={{ color: INK }}
-              >
+              <h3 className="mt-5 text-[18px] font-bold" style={{ color: INK }}>
                 Çfarë je duke kërkuar?
               </h3>
 
@@ -139,7 +138,7 @@ function GenderSelectPage() {
                       className="rounded-full px-3 py-2 text-[13px] font-medium transition-colors"
                       style={{
                         backgroundColor: active ? INK : CHIP,
-                        color: active ? "#fff" : INK,
+                        color: active ? "var(--brand-surface)" : INK,
                       }}
                     >
                       {s}
@@ -168,7 +167,8 @@ function GenderSelectPage() {
               className="mt-3 flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors"
               style={{
                 backgroundColor: selectedSubs.length === 0 ? DISABLED : INK,
-                color: selectedSubs.length === 0 ? "#8a8275" : "#fff",
+                color:
+                  selectedSubs.length === 0 ? "var(--brand-ink-secondary)" : "var(--brand-surface)",
               }}
             >
               Apliko filtrat
