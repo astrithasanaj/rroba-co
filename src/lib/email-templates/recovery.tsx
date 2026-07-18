@@ -20,22 +20,22 @@ export const RecoveryEmail = ({
   siteName,
   confirmationUrl,
 }: RecoveryEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="sq" dir="ltr">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>Rivendos fjalëkalimin tënd për {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Reset your password</Heading>
+        <Heading style={h1}>Rivendos fjalëkalimin</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
+          Kemi marrë një kërkesë për rivendosjen e fjalëkalimit tënd në {siteName}.
+          Kliko butonin më poshtë për të zgjedhur një fjalëkalim të ri.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Reset Password
+          Rivendos fjalëkalimin
         </Button>
         <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
+          Nëse nuk e ke kërkuar rivendosjen e fjalëkalimit, mund ta injorosh këtë
+          email. Fjalëkalimi yt nuk do të ndryshojë.
         </Text>
       </Container>
     </Body>
