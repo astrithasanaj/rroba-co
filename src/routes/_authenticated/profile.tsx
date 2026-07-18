@@ -547,18 +547,36 @@ function ProfilePage() {
 
         {/* Tabs */}
         <div>
-          <div className="grid grid-cols-4" style={{ backgroundColor: CREAM }}>
+          <div
+            role="tablist"
+            aria-label="Seksionet e profilit"
+            className="grid grid-cols-4"
+            style={{ backgroundColor: CREAM }}
+          >
             {tabs.map((t) => {
               const Icon = t.icon;
               const active = tab === t.id;
+              const tabLabels: Record<Tab, string> = {
+                mine: "Artikujt e mi",
+                liked: "Të pëlqyera",
+                saved: "Të ruajtura",
+                wardrobe: "Të shitura",
+              };
               return (
                 <button
                   key={t.id}
+                  id={`profile-tab-${t.id}`}
+                  role="tab"
+                  aria-selected={active}
+                  aria-controls={`profile-panel-${t.id}`}
+                  tabIndex={active ? 0 : -1}
+                  aria-label={tabLabels[t.id]}
                   onClick={() => setTab(t.id)}
-                  className="profile-btn relative flex items-center justify-center"
-                  style={{ height: 40, background: "transparent", border: "none" }}
+                  className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
+                  style={{ height: 44, background: "transparent", border: "none" }}
                 >
                   <Icon
+                    aria-hidden="true"
                     style={{
                       width: 20,
                       height: 20,
@@ -568,6 +586,7 @@ function ProfilePage() {
                   />
                   {active && (
                     <span
+                      aria-hidden="true"
                       style={{
                         position: "absolute",
                         bottom: 0,
@@ -584,10 +603,17 @@ function ProfilePage() {
         </div>
 
         {/* Grid */}
-        <section className="pt-0">
+        <section
+          id={`profile-panel-${tab}`}
+          role="tabpanel"
+          aria-labelledby={`profile-tab-${tab}`}
+          aria-busy={loading && tab === "mine"}
+          className="pt-0"
+        >
           {loading && tab === "mine" ? (
-            <div className="grid place-items-center py-10">
-              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            <div className="grid place-items-center py-10" role="status" aria-live="polite">
+              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} aria-hidden="true" />
+              <span className="sr-only">Duke ngarkuar…</span>
             </div>
           ) : currentGrid.length === 0 ? (
             <TabEmptyState tab={tab} />
