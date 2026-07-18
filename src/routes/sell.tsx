@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft,
-  ArrowLeft,
   Camera,
   ChevronRight,
   Images,
@@ -36,14 +35,19 @@ export const Route = createFileRoute("/sell")({
   component: SellPage,
 });
 
-// Palette
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
-const DIVIDER = "#e2e2de";
+// Brand tokens — mapped once, used everywhere.
+const PAGE = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL_GRADIENT = "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))";
+const DIVIDER = "var(--brand-border)";
+const DANGER = "var(--brand-danger)";
+const FOCUS_RING = "0 0 0 3px rgba(198,90,122,0.35)";
+const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
+const OVERLAY_GLYPH = "#ffffff"; // intentional white glyph on dark/gradient badges & CTAs
+const OVERLAY_MUTED = "rgba(255,255,255,0.72)"; // muted glyph on gradient (condition subtitle)
+const OVERLAY_SCRIM = "rgba(0,0,0,0.6)"; // scrim behind delete icon on images
 
 const MAX_PHOTOS = 8;
 const ALLOWED: Record<string, string> = {
@@ -321,11 +325,11 @@ function SellPage() {
   return (
     <div
       className="fixed inset-0 flex justify-center"
-      style={{ background: CREAM, height: "100dvh", overflow: "hidden" }}
+      style={{ background: PAGE, height: "100dvh", overflow: "hidden" }}
     >
       <div
         className="relative w-full max-w-[480px] overflow-hidden"
-        style={{ background: CREAM, height: "100dvh" }}
+        style={{ background: PAGE, height: "100dvh" }}
       >
 
         <Layer visible={view === "media"}>
@@ -433,6 +437,8 @@ function SellPage() {
           multiple
           className="hidden"
           onChange={pickFiles}
+          tabIndex={-1}
+          aria-hidden="true"
         />
         <input
           ref={cameraRef}
@@ -441,6 +447,8 @@ function SellPage() {
           capture="environment"
           className="hidden"
           onChange={pickFiles}
+          tabIndex={-1}
+          aria-hidden="true"
         />
 
         <SizePickerSheet
@@ -481,9 +489,10 @@ function Layer({
       style={{
         transform: visible ? "translateX(0)" : "translateX(100%)",
         zIndex: z,
-        background: CREAM,
+        background: PAGE,
         pointerEvents: visible ? "auto" : "none",
       }}
+      aria-hidden={!visible}
     >
       {children}
     </div>
@@ -506,25 +515,21 @@ function TopHeader({
   return (
     <header
       className="sticky top-0 z-10 flex items-center justify-between px-4 py-3"
-      style={{ background: CREAM }}
+      style={{ background: PAGE }}
     >
-      <div className="w-20">
+      <div className="flex w-20 justify-start">
         {onBack && (
           <button
             type="button"
             onClick={onBack}
             aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-90 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
             style={{
-              width: 36,
-              height: 36,
-              backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
+              background: CARD,
+              border: `1px solid ${DIVIDER}`,
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" style={{ color: "var(--brand-ink)" }} />
           </button>
         )}
       </div>
@@ -536,8 +541,8 @@ function TopHeader({
           <button
             type="button"
             onClick={onRight}
-            className="rounded-full px-4 py-2 text-xs font-semibold"
-            style={{ background: INK, color: "#fff" }}
+            className="min-h-11 rounded-full px-4 text-xs font-semibold focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            style={{ background: INK, color: OVERLAY_GLYPH }}
           >
             {rightLabel}
           </button>
@@ -565,7 +570,7 @@ function MediaCategoryStep({
   onPickCategory: (c: Category) => void;
 }) {
   return (
-    <div className="flex h-full flex-col overflow-y-auto pb-10">
+    <div className="flex h-full flex-col overflow-y-auto" style={{ paddingBottom: SAFE_BOTTOM }}>
       <TopHeader title="Shto artikull të ri" onBack={onClose} />
 
       <div className="px-5 pt-1">
@@ -574,19 +579,19 @@ function MediaCategoryStep({
           <button
             type="button"
             onClick={onPickFiles}
-            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4"
-            style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
+            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4 transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
-            <Images className="h-5 w-5" strokeWidth={1.5} />
+            <Images className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
             <span className="text-[12px] font-semibold">Ngarko media</span>
           </button>
           <button
             type="button"
             onClick={onOpenCamera}
-            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4"
-            style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
+            className="flex h-[80px] flex-col items-center justify-center gap-1 rounded-2xl p-4 transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
-            <Camera className="h-5 w-5" strokeWidth={1.5} />
+            <Camera className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
             <span className="text-[12px] font-semibold">Hap kamerën</span>
           </button>
         </div>
@@ -596,25 +601,29 @@ function MediaCategoryStep({
         </p>
 
         {images.length > 0 && (
-          <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5">
+          <ul
+            aria-label="Fotot e ngarkuara"
+            className="no-scrollbar -mx-5 mt-3 flex list-none gap-2 overflow-x-auto px-5"
+          >
             {images.map((img, i) => (
-              <div
+              <li
                 key={img.previewUrl}
                 className="relative h-[64px] w-[64px] shrink-0 overflow-hidden rounded-xl"
-                style={{ background: CARD }}
+                style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
               >
                 <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => onRemoveImage(i)}
-                  className="absolute left-1 top-1 grid h-4 w-4 place-items-center rounded-full bg-black/60 text-white"
-                  aria-label="Fshij"
+                  className="absolute left-0 top-0 grid h-6 w-6 place-items-center rounded-br-xl rounded-tl-xl focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                  style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
+                  aria-label={`Fshij foton ${i + 1}`}
                 >
-                  <X className="h-2.5 w-2.5" />
+                  <X className="h-3 w-3" aria-hidden="true" />
                 </button>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
 
         {/* Heading */}
@@ -635,10 +644,10 @@ function MediaCategoryStep({
               key={cat.id}
               type="button"
               onClick={() => onPickCategory(cat)}
-              className="flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl p-4 transition active:scale-[0.98]"
-              style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
+              className="flex h-[100px] flex-col items-center justify-center gap-2 rounded-2xl p-4 transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
-              <cat.Icon className="h-7 w-7" strokeWidth={1.4} />
+              <cat.Icon className="h-7 w-7" strokeWidth={1.4} aria-hidden="true" />
               <span className="px-2 text-center text-[13px] font-bold leading-tight">
                 {cat.label}
               </span>
@@ -671,7 +680,11 @@ function GenderPicker({
     ...primary.map((g) => ({
       key: g,
       label: g,
-      icon: <span className="text-[28px]">{g === "Femra" || g === "Vajza" ? "♀" : "♂"}</span>,
+      icon: (
+        <span className="text-[28px]" aria-hidden="true">
+          {g === "Femra" || g === "Vajza" ? "♀" : "♂"}
+        </span>
+      ),
       onClick: () => onPick(g),
     })),
     ...(!isKids && onPickChild
@@ -679,18 +692,23 @@ function GenderPicker({
           {
             key: "Fëmijë",
             label: "Fëmijë",
-            icon: <Baby className="h-7 w-7" strokeWidth={1.4} />,
+            icon: <Baby className="h-7 w-7" strokeWidth={1.4} aria-hidden="true" />,
             onClick: onPickChild,
           },
         ]
       : []),
-    { key: extra, label: extra, icon: <Sparkles className="h-7 w-7" strokeWidth={1.4} />, onClick: () => onPick(extra) },
+    {
+      key: extra,
+      label: extra,
+      icon: <Sparkles className="h-7 w-7" strokeWidth={1.4} aria-hidden="true" />,
+      onClick: () => onPick(extra),
+    },
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
+    <div className="flex h-full flex-col overflow-y-auto" style={{ paddingBottom: SAFE_BOTTOM }}>
       <TopHeader title={category.label} onBack={onBack} />
-      <div className="px-5 pb-10">
+      <div className="px-5">
         <h2 className="mt-2 text-[24px] font-bold" style={{ color: INK }}>
           Për kend është?
         </h2>
@@ -701,8 +719,8 @@ function GenderPicker({
               key={t.key}
               type="button"
               onClick={t.onClick}
-              className="flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98]"
-              style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
+              className="flex h-[120px] flex-col items-center justify-center gap-2 rounded-2xl transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               {t.icon}
               <span className="text-[14px] font-bold">{t.label}</span>
@@ -731,9 +749,9 @@ function SubcategoryPicker({
   const crumb = gender ? `${category.label} / ${gender}` : category.label;
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
+    <div className="flex h-full flex-col overflow-y-auto" style={{ paddingBottom: SAFE_BOTTOM }}>
       <TopHeader title={crumb} onBack={onBack} />
-      <div className="px-5 pb-10">
+      <div className="px-5">
         <h2 className="mt-2 text-[24px] font-bold" style={{ color: INK }}>
           Çfarë saktësisht?
         </h2>
@@ -747,8 +765,8 @@ function SubcategoryPicker({
               key={s}
               type="button"
               onClick={() => onPick(s)}
-              className="rounded-full px-2 py-3 text-center text-[12px] font-semibold transition active:scale-[0.97]"
-              style={{ background: CARD, color: INK, border: "1px solid #e2e2de" }}
+              className="min-h-11 rounded-full px-2 text-center text-[12px] font-semibold transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               {s}
             </button>
@@ -813,14 +831,15 @@ function DetailsStep({
           <button
             type="button"
             onClick={onEditCategory}
-            className="mt-1 inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold"
-            style={{ background: CARD, color: INK }}
+            aria-label={`Ndrysho kategorinë: ${fullCategoryLabel}`}
+            className="mt-1 inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
             <span className="truncate">{fullCategoryLabel}</span>
             <span
-              aria-label="Ndrysho"
+              aria-hidden="true"
               className="grid h-4 w-4 shrink-0 place-items-center rounded-full"
-              style={{ background: CORAL_GRADIENT, color: "#fff" }}
+              style={{ background: CORAL_GRADIENT, color: OVERLAY_GLYPH }}
             >
               <X className="h-2.5 w-2.5" />
             </span>
@@ -828,45 +847,51 @@ function DetailsStep({
         )}
 
         {/* Thumbnails row */}
-        <div className="no-scrollbar -mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
+        <ul
+          aria-label="Fotot"
+          className="no-scrollbar -mx-5 mt-4 flex list-none gap-2 overflow-x-auto px-5 pb-1"
+        >
           {Array.from({ length: slots }).map((_, i) => {
             const img = images[i];
             if (img) {
               return (
-                <div
+                <li
                   key={img.previewUrl}
                   className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-2xl"
-                  style={{ background: CARD, border: "1px solid #e2e2de" }}
+                  style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
                 >
                   <img src={img.previewUrl} alt="" className="h-full w-full object-cover" />
                   <button
                     type="button"
                     onClick={() => onRemoveImage(i)}
-                    className="absolute left-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white"
-                    aria-label="Fshij"
+                    className="absolute left-0 top-0 grid h-8 w-8 place-items-center rounded-br-xl rounded-tl-2xl focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                    style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
+                    aria-label={`Fshij foton ${i + 1}`}
                   >
-                    <X className="h-3 w-3" />
+                    <X className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
-                </div>
+                </li>
               );
             }
             return (
-              <button
-                key={i}
-                type="button"
-                onClick={onAddMore}
-                className="grid h-[100px] w-[100px] shrink-0 place-items-center rounded-2xl"
-                style={{ background: CARD, color: MUTED, border: "1px solid #e2e2de" }}
-              >
-                <Images className="h-7 w-7" strokeWidth={1.5} />
-              </button>
+              <li key={i} className="shrink-0">
+                <button
+                  type="button"
+                  onClick={onAddMore}
+                  aria-label="Shto foto"
+                  className="grid h-[100px] w-[100px] place-items-center rounded-2xl transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                  style={{ background: CARD, color: MUTED, border: `1px solid ${DIVIDER}` }}
+                >
+                  <Images className="h-7 w-7" strokeWidth={1.5} aria-hidden="true" />
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
 
         <div
           className="mt-7 rounded-2xl p-4"
-          style={{ border: "1px solid #e2e2de", background: CARD }}
+          style={{ border: `1px solid ${DIVIDER}`, background: CARD }}
         >
           <h2 className="text-[22px] font-bold" style={{ color: INK }}>
             Detajet
@@ -875,21 +900,31 @@ function DetailsStep({
           <h3 className="mt-5 text-[17px] font-bold" style={{ color: INK }}>
             Çfarë është gjendja e artikullit?
           </h3>
-          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div
+            role="radiogroup"
+            aria-label="Gjendja e artikullit"
+            className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1"
+          >
             {CONDITIONS.map((value) => {
               const active = condition === value;
               return (
                 <button
                   key={value}
                   type="button"
+                  role="radio"
+                  aria-checked={active}
                   onClick={() => setCondition(value)}
-                  className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? undefined : "1px solid #e2e2de" }}
+                  className="flex w-[140px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left transition active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                  style={{
+                    background: active ? CORAL_GRADIENT : CARD,
+                    color: active ? OVERLAY_GLYPH : INK,
+                    border: active ? "1px solid transparent" : `1px solid ${DIVIDER}`,
+                  }}
                 >
                   <span className="text-[13px] font-semibold leading-tight">{value}</span>
                   <span
                     className="text-[11px] leading-tight"
-                    style={{ color: active ? "rgba(255,255,255,0.7)" : MUTED }}
+                    style={{ color: active ? OVERLAY_MUTED : MUTED }}
                   >
                     {CONDITION_SUBTITLES[value]}
                   </span>
@@ -900,28 +935,36 @@ function DetailsStep({
 
           {!sizeHidden && (
             <div className="mt-7">
-              <p
-                className="mb-2 text-[11px] font-semibold uppercase tracking-[0.15em]"
+              <label
+                htmlFor="sell-size-trigger"
+                className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.15em]"
                 style={{ color: MUTED }}
               >
                 Madhësia
-              </p>
+              </label>
               <button
+                id="sell-size-trigger"
                 type="button"
                 onClick={onOpenSize}
-                className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
+                aria-invalid={sizeError || undefined}
+                aria-describedby={sizeError && sizeRequired ? "sell-size-error" : undefined}
+                className="flex min-h-[52px] w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm transition active:scale-[0.99] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                 style={{
                   background: CARD,
                   color: INK,
-                  border: "1px solid #e2e2de",
-                  boxShadow: sizeError ? "0 0 0 1.5px #e53935 inset" : undefined,
+                  border: `1px solid ${sizeError ? DANGER : DIVIDER}`,
                 }}
               >
                 <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh madhësinë"}</span>
-                <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
+                <ChevronRight className="h-4 w-4" style={{ color: MUTED }} aria-hidden="true" />
               </button>
               {sizeError && sizeRequired && (
-                <p className="mt-1.5 text-[12px] font-medium" style={{ color: "#e53935" }}>
+                <p
+                  id="sell-size-error"
+                  role="alert"
+                  className="mt-1.5 text-[12px] font-medium"
+                  style={{ color: DANGER }}
+                >
                   Ju lutemi zgjidhni madhësinë
                 </p>
               )}
@@ -931,45 +974,57 @@ function DetailsStep({
 
         <div
           className="mt-7 rounded-2xl p-4"
-          style={{ border: "1px solid #e2e2de", background: CARD }}
+          style={{ border: `1px solid ${DIVIDER}`, background: CARD }}
         >
           <h3 className="text-[17px] font-bold" style={{ color: INK }}>
             Përshkruaj artikullin
           </h3>
+          <label htmlFor="sell-title" className="sr-only">
+            Titulli
+          </label>
           <input
+            id="sell-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Titulli"
             maxLength={120}
-            className="mt-3 w-full rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
-            style={
-              { background: CARD, color: INK, ["--muted" as string]: MUTED, border: "1px solid #e2e2de" } as React.CSSProperties
-            }
+            autoComplete="off"
+            enterKeyHint="next"
+            className="mt-3 h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           />
+          <label htmlFor="sell-description" className="sr-only">
+            Përshkrimi
+          </label>
           <textarea
+            id="sell-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Përshkrimi i artikullit"
             maxLength={2000}
             rows={5}
-            className="mt-3 w-full resize-none rounded-2xl border-none px-4 py-3.5 text-sm placeholder:text-[color:var(--muted)] focus:outline-none"
-            style={
-              { background: CARD, color: INK, ["--muted" as string]: MUTED, border: "1px solid #e2e2de" } as React.CSSProperties
-            }
+            className="mt-3 w-full resize-none rounded-2xl px-4 py-3.5 text-sm placeholder:text-[color:var(--brand-ink-muted)] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}`, minHeight: 120 }}
           />
         </div>
       </div>
 
       <div
-        className="sticky bottom-0 px-5 pb-6 pt-3"
-        style={{ background: `linear-gradient(to top, ${CREAM} 70%, transparent)` }}
+        className="sticky bottom-0 px-5 pt-3"
+        style={{
+          background: `linear-gradient(to top, var(--brand-surface) 70%, transparent)`,
+          paddingBottom: SAFE_BOTTOM,
+        }}
       >
         <button
           type="button"
           onClick={onNext}
           disabled={!canNext}
-          className="w-full rounded-2xl py-4 text-sm font-bold transition"
-          style={{ background: canNext ? CORAL_GRADIENT : DIVIDER, color: canNext ? "#fff" : MUTED }}
+          className="h-[54px] w-full rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          style={{
+            background: canNext ? CORAL_GRADIENT : DIVIDER,
+            color: canNext ? OVERLAY_GLYPH : MUTED,
+          }}
         >
           Tjetër
         </button>
@@ -1022,44 +1077,50 @@ function FinalStep({
     <div className="flex h-full flex-col">
       <TopHeader title="Detaje shtesë" onBack={onBack} />
       <div className="flex-1 overflow-y-auto px-5 pb-32">
-        <Label>Marka</Label>
-        <Field>
-          <input
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            placeholder="p.sh. Zara"
-            maxLength={60}
-            className="w-full bg-transparent text-sm focus:outline-none"
-            style={{ color: INK }}
-          />
-        </Field>
+        <Label htmlFor="sell-brand">Marka</Label>
+        <input
+          id="sell-brand"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          placeholder="p.sh. Zara"
+          maxLength={60}
+          autoComplete="off"
+          enterKeyHint="next"
+          className="h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
+        />
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
-            <Label>Madhësia</Label>
+            <Label htmlFor="sell-size-final">Madhësia</Label>
             <button
+              id="sell-size-final"
               type="button"
               onClick={onOpenSize}
-              className="flex w-full items-center justify-start rounded-2xl px-4 py-3.5 text-left text-sm"
-              style={{ background: CARD, color: INK }}
+              className="flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
-              <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh"}</span>
+              <span className="truncate" style={{ color: size ? INK : MUTED }}>
+                {size || "Zgjidh"}
+              </span>
+              <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
             </button>
           </div>
           <div>
-            <Label>Ngjyra</Label>
+            <Label htmlFor="sell-color">Ngjyra</Label>
             <button
+              id="sell-color"
               type="button"
               onClick={onOpenColor}
-              className="flex w-full items-center justify-start rounded-2xl px-4 py-3.5 text-left text-sm"
-              style={{ background: CARD, color: INK }}
+              className="flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
             >
               <span className="flex min-w-0 items-center gap-2">
                 {color.length === 0 ? (
                   <span style={{ color: MUTED }}>Zgjidh</span>
                 ) : (
                   <>
-                    <span className="flex -space-x-1.5">
+                    <span className="flex -space-x-1.5" aria-hidden="true">
                       {color.map((c) => {
                         const opt = COLOR_OPTIONS.find((o) => o.name === c);
                         if (!opt) return null;
@@ -1097,28 +1158,41 @@ function FinalStep({
                   </>
                 )}
               </span>
+              <ChevronRight className="ml-2 h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
             </button>
           </div>
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
-            <Label>Çmimi (€)</Label>
-            <Field>
+            <Label htmlFor="sell-price">Çmimi (€)</Label>
+            <div
+              className="flex h-[52px] w-full items-center rounded-2xl px-4"
+              style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
+            >
+              <span
+                aria-hidden="true"
+                className="mr-2 text-sm font-semibold"
+                style={{ color: MUTED }}
+              >
+                €
+              </span>
               <input
+                id="sell-price"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="45"
-                type="number"
+                type="text"
                 inputMode="decimal"
-                min={0}
+                autoComplete="off"
+                enterKeyHint="done"
                 className="no-spinner w-full bg-transparent text-sm focus:outline-none"
                 style={{ color: INK }}
               />
-            </Field>
+            </div>
           </div>
           <div>
-            <Label>Qyteti</Label>
+            <Label htmlFor="sell-city">Qyteti</Label>
             <CityPicker
               value={cityId}
               onChange={(id, c) => onCityChange(id, c.name)}
@@ -1127,16 +1201,25 @@ function FinalStep({
         </div>
 
         <Label className="mt-4">Dorëzimi</Label>
-        <div className="flex flex-wrap gap-2">
+        <div
+          role="group"
+          aria-label="Opsionet e dorëzimit"
+          className="flex flex-wrap gap-2"
+        >
           {DELIVERY.map((d) => {
             const active = delivery.includes(d);
             return (
               <button
                 key={d}
                 type="button"
+                aria-pressed={active}
                 onClick={() => toggleDelivery(d)}
-                className="rounded-full px-4 py-2 text-sm transition"
-                style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? "none" : "1px solid #e2e2de" }}
+                className="min-h-11 rounded-full px-4 text-sm transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: active ? CORAL_GRADIENT : CARD,
+                  color: active ? OVERLAY_GLYPH : INK,
+                  border: active ? "1px solid transparent" : `1px solid ${DIVIDER}`,
+                }}
               >
                 {d}
               </button>
@@ -1146,18 +1229,38 @@ function FinalStep({
       </div>
 
       <div
-        className="sticky bottom-0 px-5 pb-6 pt-3"
-        style={{ background: `linear-gradient(to top, ${CREAM} 70%, transparent)` }}
+        className="sticky bottom-0 px-5 pt-3"
+        style={{
+          background: `linear-gradient(to top, var(--brand-surface) 70%, transparent)`,
+          paddingBottom: SAFE_BOTTOM,
+        }}
       >
         <button
           type="button"
           onClick={onPublish}
           disabled={!canPublish || submitting}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition"
-          style={{ background: canPublish ? CORAL_GRADIENT : DIVIDER, color: canPublish ? "#fff" : MUTED }}
+          aria-busy={submitting || undefined}
+          className="relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          style={{
+            background: canPublish ? CORAL_GRADIENT : DIVIDER,
+            color: canPublish ? OVERLAY_GLYPH : MUTED,
+          }}
         >
-          {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-          {submitting ? "Po publikon..." : "Publiko"}
+          <span
+            className="inline-flex items-center gap-2"
+            style={{ visibility: submitting ? "hidden" : "visible" }}
+          >
+            Publiko
+          </span>
+          {submitting && (
+            <span
+              className="absolute inset-0 inline-flex items-center justify-center gap-2"
+              aria-hidden="true"
+            >
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Po publikon…</span>
+            </span>
+          )}
         </button>
       </div>
     </div>
@@ -1167,24 +1270,19 @@ function FinalStep({
 function Label({
   children,
   className = "",
+  htmlFor,
 }: {
   children: React.ReactNode;
   className?: string;
+  htmlFor?: string;
 }) {
   return (
-    <p
-      className={`mb-2 text-[11px] font-semibold uppercase tracking-[0.15em] ${className}`}
+    <label
+      htmlFor={htmlFor}
+      className={`mb-2 block text-[11px] font-semibold uppercase tracking-[0.15em] ${className}`}
       style={{ color: MUTED }}
     >
       {children}
-    </p>
-  );
-}
-
-function Field({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl px-4 py-3.5" style={{ background: CARD }}>
-      {children}
-    </div>
+    </label>
   );
 }
