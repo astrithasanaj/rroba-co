@@ -564,9 +564,9 @@ function UserProfile() {
           </div>
         ) : (
           <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#ffffff" }}>
-            {sorted.map((l) => (
+            {sorted.map((l, i) => (
               <div key={l.id} className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }}>
-                <ListingCard listing={l} aspect="1/1" isOnProfileGrid />
+                <ListingCard listing={l} aspect="1/1" isOnProfileGrid eager={i < 4} />
               </div>
             ))}
           </div>

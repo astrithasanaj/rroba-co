@@ -84,8 +84,8 @@ function Favorites() {
         />
       ) : (
         <div className="grid grid-cols-2 gap-3 px-5 py-3">
-          {items.map((l) => (
-            <ListingCard key={l.id} listing={l} />
+          {items.map((l, i) => (
+            <ListingCard key={l.id} listing={l} eager={i < 4} />
           ))}
         </div>
       )}
