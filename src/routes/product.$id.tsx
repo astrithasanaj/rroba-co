@@ -96,7 +96,7 @@ function ProductDetail() {
         .eq("status", "active")
         .eq("sold", false)
         .limit(8);
-      const simHydrated = await hydrateListings((sim ?? []) as ListingRow[]);
+      const simHydrated = await hydrateListings((sim ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
       if (!active) return;
       setListing(hydrated);
       setSeller(prof as Seller | null);
