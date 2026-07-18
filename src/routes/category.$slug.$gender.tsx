@@ -187,7 +187,7 @@ function CategoryResultsPage() {
           type="button"
           onClick={() => setShowFilters(true)}
           className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
-          style={{ backgroundColor: INK, color: "#fff" }}
+          style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
         >
           <SlidersHorizontal className="h-4 w-4" />
           <span className="text-sm font-semibold">Filtro</span>
@@ -246,7 +246,7 @@ function ResultCard({ listing }: { listing: ListingView }) {
         {isNew && (
           <span
             className="absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold"
-            style={{ backgroundColor: INK, color: "#fff" }}
+            style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
             E re
           </span>
@@ -378,7 +378,7 @@ function FiltersSheet({
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
-              style={{ backgroundColor: INK, color: "#fff" }}
+              style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
               Apliko
             </button>
@@ -412,7 +412,7 @@ function Chips({
               type="button"
               onClick={() => onChange(active ? "" : o)}
               className="rounded-full px-3 py-1.5 text-xs font-medium"
-              style={{ backgroundColor: active ? INK : CARD, color: active ? "#fff" : INK }}
+              style={{ backgroundColor: active ? INK : CARD, color: active ? "var(--brand-surface)" : INK }}
             >
               {o}
             </button>

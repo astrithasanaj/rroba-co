@@ -83,7 +83,7 @@ function SubcategorySelectPage() {
                   className="rounded-full px-3 py-2 text-[13px] font-medium transition-colors"
                   style={{
                     backgroundColor: active ? INK : "transparent",
-                    color: active ? "#fff" : INK,
+                    color: active ? "var(--brand-surface)" : INK,
                     border: active ? "none" : "1px solid var(--brand-border)",
                   }}
                 >
@@ -109,7 +109,7 @@ function SubcategorySelectPage() {
             className="mt-3 flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors"
             style={{
               backgroundColor: selected.length === 0 ? DISABLED : INK,
-              color: selected.length === 0 ? "var(--brand-ink-secondary)" : "#fff",
+              color: selected.length === 0 ? "var(--brand-ink-secondary)" : "var(--brand-surface)",
             }}
           >
             Apliko filtrat

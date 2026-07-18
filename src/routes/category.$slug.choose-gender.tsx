@@ -139,7 +139,7 @@ function GenderSelectPage() {
                       className="rounded-full px-3 py-2 text-[13px] font-medium transition-colors"
                       style={{
                         backgroundColor: active ? INK : CHIP,
-                        color: active ? "#fff" : INK,
+                        color: active ? "var(--brand-surface)" : INK,
                       }}
                     >
                       {s}
@@ -168,7 +168,7 @@ function GenderSelectPage() {
               className="mt-3 flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors"
               style={{
                 backgroundColor: selectedSubs.length === 0 ? DISABLED : INK,
-                color: selectedSubs.length === 0 ? "var(--brand-ink-secondary)" : "#fff",
+                color: selectedSubs.length === 0 ? "var(--brand-ink-secondary)" : "var(--brand-surface)",
               }}
             >
               Apliko filtrat
