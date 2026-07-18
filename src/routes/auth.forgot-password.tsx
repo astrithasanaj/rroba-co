@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronLeft, ArrowLeft, MailCheck } from "lucide-react";
+import { ChevronLeft, MailCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/forgot-password")({
@@ -27,10 +27,9 @@ function ForgotPage() {
     setErr("");
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        email.trim().toLowerCase(),
-        { redirectTo: window.location.origin + "/reset-password" },
-      );
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+        redirectTo: window.location.origin + "/reset-password",
+      });
       if (error) throw error;
       setSent(true);
     } catch (e2) {
@@ -41,9 +40,14 @@ function ForgotPage() {
   };
 
   return (
-    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
-
-      <div className="mx-auto w-full max-w-[420px] px-6 pb-10 pt-4">
+    <div
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
+    >
+      <div
+        className="mx-auto w-full max-w-[420px] px-6 pt-4"
+        style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+      >
         <button
           type="button"
           onClick={() => window.history.back()}
@@ -70,7 +74,7 @@ function ForgotPage() {
             <p className="mt-2 text-sm" style={{ color: MUTED }}>
               Dërguam një link në {email}. Kliko linkun për të rivendosur fjalëkalimin tënd.
             </p>
-<Link
+            <Link
               to="/auth/login"
               search={{ next: undefined }}
               className="mt-8 flex h-[54px] w-full items-center justify-center text-[15px] font-bold"
@@ -98,8 +102,9 @@ function ForgotPage() {
               </p>
             </div>
 
-            <form onSubmit={submit} className="mt-8 space-y-3">
+            <form onSubmit={submit} className="mt-8 space-y-3" noValidate>
               <input
+                id="forgot-email"
                 type="email"
                 required
                 value={email}
@@ -109,19 +114,30 @@ function ForgotPage() {
                 }}
                 placeholder="adresa@email.com"
                 autoComplete="email"
+                inputMode="email"
+                enterKeyHint="send"
                 autoCapitalize="none"
-                className="w-full text-[15px] outline-none"
+                aria-label="Adresa e emailit"
+                aria-invalid={err ? true : undefined}
+                aria-describedby={err ? "forgot-email-err" : undefined}
+                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                 style={{
                   background: CARD,
                   color: INK,
                   height: 52,
                   borderRadius: 12,
                   padding: "0 16px",
-                  outline: err ? `2px solid ${ERR}` : undefined,
+                  border: `1px solid ${err ? ERR : "#e2e2de"}`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
                 }}
               />
               {err && (
-                <p className="px-1 text-xs" style={{ color: ERR }}>
+                <p
+                  id="forgot-email-err"
+                  role="alert"
+                  className="px-1 text-xs"
+                  style={{ color: ERR }}
+                >
                   {err}
                 </p>
               )}
