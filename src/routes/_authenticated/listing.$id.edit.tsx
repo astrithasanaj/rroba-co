@@ -1,14 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-  Pencil,
-  X,
-  Grid3x3,
-  Plus,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Pencil, X, Grid3x3, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -95,28 +87,62 @@ function getSubcategories(category: string, gender: string): string[] {
   switch (category) {
     case "Veshje":
       if (gender === "Femra")
-        return ["Bluza","Fustane","T-shirt","Këmisha","Pantallona","Funde","Xhaketa","Pallto","Triko","Shorte","Kostume banje","Pizhame"];
+        return [
+          "Bluza",
+          "Fustane",
+          "T-shirt",
+          "Këmisha",
+          "Pantallona",
+          "Funde",
+          "Xhaketa",
+          "Pallto",
+          "Triko",
+          "Shorte",
+          "Kostume banje",
+          "Pizhame",
+        ];
       if (gender === "Meshkuj")
-        return ["Bluza","T-shirt","Këmisha","Pantallona","Xhaketa","Pallto","Triko","Shorte","Kostume banje","Pizhame"];
-      return ["Bluza","T-shirt","Pantallona","Xhaketa","Triko","Shorte","Pizhame"];
+        return [
+          "Bluza",
+          "T-shirt",
+          "Këmisha",
+          "Pantallona",
+          "Xhaketa",
+          "Pallto",
+          "Triko",
+          "Shorte",
+          "Kostume banje",
+          "Pizhame",
+        ];
+      return ["Bluza", "T-shirt", "Pantallona", "Xhaketa", "Triko", "Shorte", "Pizhame"];
     case "Këpucë":
-      if (gender === "Femra") return ["Të përditshme","Sportet","Me taka","Sandale","Çizme","Të tjera"];
-      if (gender === "Meshkuj") return ["Të përditshme","Sportet","Elegante","Sandale","Çizme","Të tjera"];
-      return ["Të përditshme","Sportet","Sandale","Çizme","Të tjera"];
+      if (gender === "Femra")
+        return ["Të përditshme", "Sportet", "Me taka", "Sandale", "Çizme", "Të tjera"];
+      if (gender === "Meshkuj")
+        return ["Të përditshme", "Sportet", "Elegante", "Sandale", "Çizme", "Të tjera"];
+      return ["Të përditshme", "Sportet", "Sandale", "Çizme", "Të tjera"];
     case "Çanta":
-      return ["Çanta dore","Çanta shpine","Portofol","Çanta udhëtimi","Të tjera"];
+      return ["Çanta dore", "Çanta shpine", "Portofol", "Çanta udhëtimi", "Të tjera"];
     case "Aksesorë":
-      return ["Kapele","Shall & doreza","Rripa","Syze","Bizhuteri","Ora","Të tjera"];
+      return ["Kapele", "Shall & doreza", "Rripa", "Syze", "Bizhuteri", "Ora", "Të tjera"];
     case "Fëmijë & bebe":
-      return ["Veshje","Këpucë","Lodra","Karrocë","Aksesorë bebeje","Të tjera"];
+      return ["Veshje", "Këpucë", "Lodra", "Karrocë", "Aksesorë bebeje", "Të tjera"];
     case "Outdoor & sport":
-      return ["Veshje sportive","Këpucë sportive","Bicikletë","Kampim","Ski & dëborë","Fitness","Të tjera"];
+      return [
+        "Veshje sportive",
+        "Këpucë sportive",
+        "Bicikletë",
+        "Kampim",
+        "Ski & dëborë",
+        "Fitness",
+        "Të tjera",
+      ];
     case "Art & dizajn":
-      return ["Pikturë","Print & poster","Fotografi","Skulpturë","Dekor","Të tjera"];
+      return ["Pikturë", "Print & poster", "Fotografi", "Skulpturë", "Dekor", "Të tjera"];
     case "Elektronikë & zë":
-      return ["Telefona","Kompjuterë","Audio","Kamera","Aksesorë","Të tjera"];
+      return ["Telefona", "Kompjuterë", "Audio", "Kamera", "Aksesorë", "Të tjera"];
     case "Interier & mobilie":
-      return ["Mobilje","Dekor","Ndriçim","Kuzhinë","Tekstil","Të tjera"];
+      return ["Mobilje", "Dekor", "Ndriçim", "Kuzhinë", "Tekstil", "Të tjera"];
     default:
       return [];
   }
@@ -171,18 +197,20 @@ function EditListingPage() {
       }
       const paths: string[] = row.image_paths ?? [];
       const filtered = paths.filter((p) => p && !/^https?:\/\//i.test(p));
-      const { data: signed } = await supabase.storage.from("photos").createSignedUrls(filtered, 3600);
+      const { data: signed } = await supabase.storage
+        .from("photos")
+        .createSignedUrls(filtered, 3600);
       const map: Record<string, string> = {};
       for (const s of signed ?? []) if (s.path && s.signedUrl) map[s.path] = s.signedUrl;
       setPhotos(
         paths.map<Photo>((p) => ({
           kind: "existing",
           path: p,
-          url: /^https?:\/\//i.test(p) ? p : map[p] ?? "",
+          url: /^https?:\/\//i.test(p) ? p : (map[p] ?? ""),
         })),
       );
       setCatCategory(row.category ?? "");
-      setCatGender(row.gender && row.gender !== "Unisex" ? row.gender : row.gender ?? "");
+      setCatGender(row.gender && row.gender !== "Unisex" ? row.gender : (row.gender ?? ""));
       setCatSub(row.subcategory ?? "");
       setCondition(row.condition ?? "");
       setTitle(row.title ?? "");
@@ -197,7 +225,7 @@ function EditListingPage() {
       );
       setPrice(String(row.price ?? ""));
       setCity(row.city ?? "");
-      setCityId(((row as unknown) as { city_id?: string | null }).city_id ?? null);
+      setCityId((row as unknown as { city_id?: string | null }).city_id ?? null);
       // Drop "Posta" if previously saved
       setDelivery(((row.delivery ?? []) as string[]).filter((d) => d !== "Posta"));
       setLoading(false);
@@ -352,7 +380,7 @@ function EditListingPage() {
           image_paths: cleanPaths,
           delivery,
           updated_at: new Date().toISOString(),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any)
         .eq("id", id)
         .eq("user_id", user.id)
@@ -486,7 +514,11 @@ function EditListingPage() {
                     >
                       <span aria-hidden="true">‹</span>
                     </button>
-                    <span className="text-[10px]" style={{ color: OVERLAY_MUTED }} aria-hidden="true">
+                    <span
+                      className="text-[10px]"
+                      style={{ color: OVERLAY_MUTED }}
+                      aria-hidden="true"
+                    >
                       ⠿
                     </span>
                     <button
@@ -537,7 +569,11 @@ function EditListingPage() {
                 {fullCategoryLabel || "Zgjidh kategorinë"}
               </span>
             </span>
-            <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
+            <ChevronRight
+              className="h-4 w-4 shrink-0"
+              style={{ color: MUTED }}
+              aria-hidden="true"
+            />
           </button>
           {fullCategoryLabel && (
             <button
@@ -678,7 +714,11 @@ function EditListingPage() {
                 </>
               )}
             </span>
-            <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
+            <ChevronRight
+              className="h-4 w-4 shrink-0"
+              style={{ color: MUTED }}
+              aria-hidden="true"
+            />
           </button>
 
           {/* Section 7: Brand */}
@@ -820,7 +860,12 @@ function EditListingPage() {
 
         {/* Category picker sheets */}
         <Sheet open={catSheet !== null} onOpenChange={(o) => !o && setCatSheet(null)}>
-          <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ background: PAGE }}>
+          <SheetContent
+            side="bottom"
+            hideClose
+            className="border-0 p-0"
+            style={{ background: PAGE }}
+          >
             <div className="flex items-center gap-3 px-5 pb-3 pt-4">
               <button
                 type="button"
