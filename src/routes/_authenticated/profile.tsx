@@ -1469,16 +1469,17 @@ function Row({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className="settings-row"
       style={{ borderBottom: isLast ? "none" : `1px solid ${DIVIDER}` }}
     >
-      <i className={`ti ${icon} settings-icon`} aria-hidden />
+      <i className={`ti ${icon} settings-icon`} aria-hidden="true" />
       <div className="settings-text">
         <div className="settings-title">{title}</div>
         {subtitle && <div className="settings-subtitle">{subtitle}</div>}
       </div>
-      <i className="ti ti-chevron-right settings-chevron" aria-hidden />
+      <i className="ti ti-chevron-right settings-chevron" aria-hidden="true" />
     </button>
   );
 }
