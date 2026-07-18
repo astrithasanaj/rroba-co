@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ImageOff } from "lucide-react";
 import type { ListingView } from "@/lib/listings";
 import { LikeButton } from "@/components/marketplace/LikeButton";
 import { prefetchListing, warmImage } from "@/lib/prefetch";
@@ -18,12 +19,18 @@ export function ListingCard({
   const aspectClass =
     aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
   const isSold = listing.sold || listing.status === "sold";
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [imageBroken, setImageBroken] = useState(false);
   const prefetch = () => {
     prefetchListing(listing.id);
-    warmImage(listing.coverUrl);
+    if (listing.coverUrl) warmImage(listing.coverUrl);
   };
-  if (!listing.coverUrl || imageBroken) return null;
+
+  // Bruk imageCount når tilgjengelig, fall tilbake til imageUrls (bakover-
+  // kompatibel med rader hydrert i "all"-modus).
+  const totalImages = listing.imageCount ?? listing.imageUrls.length;
+  const hasCover = !!listing.coverUrl && !imageBroken;
+
   return (
     <Link
       to="/product/$id"
@@ -34,39 +41,69 @@ export function ListingCard({
       className="group block"
     >
       <div
-        className={`relative ${aspectClass} overflow-hidden rounded-2xl bg-muted`}
-        style={{ position: "relative" }}
+        className={`relative ${aspectClass} overflow-hidden rounded-2xl`}
+        style={{ position: "relative", backgroundColor: "var(--brand-cream, #f3ede4)" }}
       >
-        <img
-          src={listing.coverUrl}
-          alt={listing.title}
-          loading={eager ? "eager" : "lazy"}
-          decoding="async"
-          onError={() => setImageBroken(true)}
-          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+        {/* Stabil placeholder — reserverer alltid plassen, ingen layout shift */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
           style={{
-            filter: isSold && isOnProfileGrid ? "brightness(0.82) saturate(0.65)" : "none",
+            backgroundColor: "var(--brand-cream, #f3ede4)",
+            opacity: hasCover && imageLoaded ? 0 : 1,
+            transition: "opacity 200ms ease-out",
           }}
         />
 
-        {/* Rroba watermark */}
-        <span
-          className="pointer-events-none absolute left-2 top-2 select-none italic"
-          style={{
-            fontFamily: 'Georgia, "Times New Roman", serif',
-            fontSize: 10,
-            color: "#ffffff",
-            opacity: 0.85,
-            letterSpacing: "0.02em",
-            textShadow: "0 1px 2px rgba(0,0,0,0.25)",
-          }}
-        >
-          Rroba
-        </span>
+        {hasCover && (
+          <img
+            src={listing.coverUrl}
+            alt={listing.title}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={eager ? "high" : "auto"}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageBroken(true)}
+            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            style={{
+              opacity: imageLoaded ? 1 : 0,
+              transition: "opacity 220ms ease-out, transform 500ms",
+              filter: isSold && isOnProfileGrid ? "brightness(0.82) saturate(0.65)" : "none",
+            }}
+          />
+        )}
 
-        {listing.imageUrls.length > 1 && !isSold && (
+        {!hasCover && (
+          <div
+            role="img"
+            aria-label={listing.title}
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ color: "var(--brand-ink-muted, #a89f94)" }}
+          >
+            <ImageOff aria-hidden="true" className="h-8 w-8" strokeWidth={1.4} />
+          </div>
+        )}
+
+        {/* Rroba watermark */}
+        {hasCover && (
+          <span
+            className="pointer-events-none absolute left-2 top-2 select-none italic"
+            style={{
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontSize: 10,
+              color: "#ffffff",
+              opacity: 0.85,
+              letterSpacing: "0.02em",
+              textShadow: "0 1px 2px rgba(0,0,0,0.25)",
+            }}
+          >
+            Rroba
+          </span>
+        )}
+
+        {totalImages > 1 && !isSold && hasCover && (
           <div className="pointer-events-none absolute inset-x-2 top-2 flex gap-1">
-            {listing.imageUrls.map((_, i) => (
+            {Array.from({ length: totalImages }).map((_, i) => (
               <div
                 key={i}
                 className={`h-0.5 flex-1 rounded-full ${i === 0 ? "bg-white opacity-100" : "bg-white opacity-30"}`}
