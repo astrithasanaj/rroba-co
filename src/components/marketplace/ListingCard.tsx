@@ -113,10 +113,7 @@ export function ListingCard({
         )}
 
         {!isSold && (
-          <LikeButton
-            listingId={listing.id}
-            className="absolute right-2 top-2 h-8 w-8 shadow-sm"
-          />
+          <LikeButton listingId={listing.id} className="absolute right-2 top-2 h-8 w-8 shadow-sm" />
         )}
 
         {isSold && isOnProfileGrid && (
@@ -179,9 +176,7 @@ export function ListingCard({
         <p className="mt-0.5 text-xs text-muted-foreground">
           {listing.brand || listing.category} · {listing.size}
         </p>
-        {listing.city && (
-          <p className="text-xs text-muted-foreground">{listing.city}</p>
-        )}
+        {listing.city && <p className="text-xs text-muted-foreground">{listing.city}</p>}
       </div>
     </Link>
   );

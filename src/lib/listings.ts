@@ -29,7 +29,9 @@ export type ListingView = ListingRow & {
   is_promoted?: boolean;
 };
 
-export function sortActiveFirst<T extends { sold?: boolean; status?: string; created_at?: string }>(rows: T[]): T[] {
+export function sortActiveFirst<T extends { sold?: boolean; status?: string; created_at?: string }>(
+  rows: T[],
+): T[] {
   return [...rows].sort((a, b) => {
     const aSold = a.sold || a.status === "sold" || a.status === "removed" ? 1 : 0;
     const bSold = b.sold || b.status === "sold" || b.status === "removed" ? 1 : 0;
@@ -50,8 +52,7 @@ const signedUrlCache = new Map<string, CacheEntry>();
 // parallelt. Fjernes etter resolve/reject.
 const inFlight = new Map<string, Promise<string | undefined>>();
 
-const cacheKeyFor = (path: string, thumbnail: boolean) =>
-  thumbnail ? `thumb:${path}` : path;
+const cacheKeyFor = (path: string, thumbnail: boolean) => (thumbnail ? `thumb:${path}` : path);
 
 const now = () => Date.now();
 
@@ -76,7 +77,7 @@ function writeCache(path: string, thumbnail: boolean, url: string) {
 async function mapWithConcurrency<T, R>(
   items: T[],
   limit: number,
-  worker: (item: T, index: number) => Promise<R>
+  worker: (item: T, index: number) => Promise<R>,
 ): Promise<(R | undefined)[]> {
   const results: (R | undefined)[] = new Array(items.length);
   let cursor = 0;
@@ -100,16 +101,12 @@ async function mapWithConcurrency<T, R>(
 
 async function signOne(path: string, thumbnail: boolean): Promise<string | undefined> {
   if (thumbnail) {
-    const { data } = await supabase.storage
-      .from("photos")
-      .createSignedUrl(path, SIGN_TTL, {
-        transform: { width: 400, height: 400, resize: "cover", quality: 70 },
-      });
+    const { data } = await supabase.storage.from("photos").createSignedUrl(path, SIGN_TTL, {
+      transform: { width: 400, height: 400, resize: "cover", quality: 70 },
+    });
     return data?.signedUrl;
   }
-  const { data } = await supabase.storage
-    .from("photos")
-    .createSignedUrl(path, SIGN_TTL);
+  const { data } = await supabase.storage.from("photos").createSignedUrl(path, SIGN_TTL);
   return data?.signedUrl;
 }
 
@@ -124,7 +121,7 @@ async function signOne(path: string, thumbnail: boolean): Promise<string | undef
  */
 export async function signPaths(
   paths: string[],
-  options?: { thumbnail?: boolean }
+  options?: { thumbnail?: boolean },
 ): Promise<Record<string, string>> {
   const thumbnail = !!options?.thumbnail;
   const map: Record<string, string> = {};
@@ -198,15 +195,13 @@ export async function signPaths(
     const key = cacheKeyFor(path, false);
     inFlight.set(
       key,
-      batchPromise.then((urls) => urls[path])
+      batchPromise.then((urls) => urls[path]),
     );
   }
 
   try {
     if (needsBatch.length > 0) {
-      const { data } = await supabase.storage
-        .from("photos")
-        .createSignedUrls(needsBatch, SIGN_TTL);
+      const { data } = await supabase.storage.from("photos").createSignedUrls(needsBatch, SIGN_TTL);
       const batchMap: Record<string, string> = {};
       for (const item of data ?? []) {
         if (item.path && item.signedUrl) {
@@ -236,7 +231,7 @@ export async function signPaths(
         } catch {
           /* ignore — placeholder overtar */
         }
-      })
+      }),
     );
   }
 
@@ -254,7 +249,7 @@ export type HydrateOptions = {
 
 export async function hydrateListings(
   rows: ListingRow[],
-  options?: HydrateOptions
+  options?: HydrateOptions,
 ): Promise<ListingView[]> {
   const mode = options?.mode ?? "all";
 
@@ -272,35 +267,37 @@ export async function hydrateListings(
 
   const urls = await signPaths(paths, { thumbnail: options?.thumbnail });
 
-  return rows
-    .map((r) => {
-      const raw = r.image_paths ?? [];
-      const imageCount = raw.filter(Boolean).length;
+  return (
+    rows
+      .map((r) => {
+        const raw = r.image_paths ?? [];
+        const imageCount = raw.filter(Boolean).length;
 
-      if (mode === "cover") {
-        const first = raw.find((p) => !!p) ?? "";
-        const coverUrl = /^https?:\/\//i.test(first) ? first : urls[first] ?? "";
+        if (mode === "cover") {
+          const first = raw.find((p) => !!p) ?? "";
+          const coverUrl = /^https?:\/\//i.test(first) ? first : (urls[first] ?? "");
+          return {
+            ...r,
+            coverUrl,
+            imageUrls: coverUrl ? [coverUrl] : [],
+            imageCount,
+          };
+        }
+
+        const imageUrls = raw
+          .map((p) => (/^https?:\/\//i.test(p) ? p : (urls[p] ?? "")))
+          .filter(Boolean);
         return {
           ...r,
-          coverUrl,
-          imageUrls: coverUrl ? [coverUrl] : [],
+          coverUrl: imageUrls[0] ?? "",
+          imageUrls,
           imageCount,
         };
-      }
-
-      const imageUrls = raw
-        .map((p) => (/^https?:\/\//i.test(p) ? p : urls[p] ?? ""))
-        .filter(Boolean);
-      return {
-        ...r,
-        coverUrl: imageUrls[0] ?? "",
-        imageUrls,
-        imageCount,
-      };
-    })
-    // Skjul listings uten cover — ListingCard viser placeholder for broken images
-    // som kommer etter render, men rader helt uten paths har ingenting å vise.
-    .filter((l) => !!l.coverUrl);
+      })
+      // Skjul listings uten cover — ListingCard viser placeholder for broken images
+      // som kommer etter render, men rader helt uten paths har ingenting å vise.
+      .filter((l) => !!l.coverUrl)
+  );
 }
 
 export const CATEGORIES = [
