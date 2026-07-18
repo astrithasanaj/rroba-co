@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronLeft, ArrowLeft, MailCheck } from "lucide-react";
+import { ChevronLeft, MailCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/forgot-password")({
