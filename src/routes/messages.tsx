@@ -14,7 +14,7 @@ const DIVIDER = "#e2e2de";
 const CORAL = "#c65a7a";
 
 type View = "list" | "archive" | "new";
-type MessagesSearch = { thread?: string; view: View; tab: "all" | "buy" | "sell" };
+type MessagesSearch = { thread: string | undefined; view: View; tab: "all" | "buy" | "sell" };
 
 export const Route = createFileRoute("/messages")({
   validateSearch: (s: Record<string, unknown>) => ({
