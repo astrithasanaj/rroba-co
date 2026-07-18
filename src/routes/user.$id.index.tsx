@@ -5,13 +5,13 @@ import {
   ArrowDownUp,
   ArrowLeft,
   Check,
-  Flag,
   Loader2,
   MoreHorizontal,
   Share2,
   Star,
   X,
 } from "lucide-react";
+
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
