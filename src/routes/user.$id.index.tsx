@@ -234,30 +234,36 @@ function UserProfile() {
       return;
     }
     if (currentUserId === id) return;
+    if (followBusy) return;
     const prev = isFollowing;
+    setFollowBusy(true);
     // optimistic
     setIsFollowing(!prev);
     setFollowers((n) => n + (prev ? -1 : 1));
-    if (prev) {
-      const { error } = await supabase
-        .from("followers")
-        .delete()
-        .eq("follower_id", currentUserId)
-        .eq("following_id", id);
-      if (error) {
-        setIsFollowing(true);
-        setFollowers((n) => n + 1);
-        toast.error(error.message);
+    try {
+      if (prev) {
+        const { error } = await supabase
+          .from("followers")
+          .delete()
+          .eq("follower_id", currentUserId)
+          .eq("following_id", id);
+        if (error) {
+          setIsFollowing(true);
+          setFollowers((n) => n + 1);
+          toast.error(error.message);
+        }
+      } else {
+        const { error } = await supabase
+          .from("followers")
+          .insert({ follower_id: currentUserId, following_id: id });
+        if (error) {
+          setIsFollowing(false);
+          setFollowers((n) => n - 1);
+          toast.error(error.message);
+        }
       }
-    } else {
-      const { error } = await supabase
-        .from("followers")
-        .insert({ follower_id: currentUserId, following_id: id });
-      if (error) {
-        setIsFollowing(false);
-        setFollowers((n) => n - 1);
-        toast.error(error.message);
-      }
+    } finally {
+      setFollowBusy(false);
     }
   };
 
