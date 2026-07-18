@@ -2397,19 +2397,25 @@ function RemovePhotoDialog({
   if (!open) return null;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="remove-photo-title"
+      aria-describedby="remove-photo-desc"
       className="fixed inset-0 z-[100] flex items-center justify-center px-6"
       style={{
         backgroundColor: "rgba(20,18,15,0.55)",
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
       }}
-      onClick={() => onOpenChange(false)}
+      onClick={() => {
+        if (!loading) onOpenChange(false);
+      }}
     >
       <div
         className="w-full"
         style={{
           maxWidth: 280,
-          backgroundColor: "#ffffff",
+          backgroundColor: CARD,
           borderRadius: 22,
           boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
           padding: "24px 20px 20px",
@@ -2419,36 +2425,35 @@ function RemovePhotoDialog({
       >
         <div
           className="mx-auto grid h-[52px] w-[52px] place-items-center rounded-full"
-          style={{ backgroundColor: "#fbeceb" }}
+          style={{ backgroundColor: "var(--brand-danger-soft)" }}
         >
-          <Trash2 style={{ width: 22, height: 22, color: "#b3392f" }} strokeWidth={2} />
+          <Trash2
+            aria-hidden="true"
+            style={{ width: 22, height: 22, color: "var(--brand-danger)" }}
+            strokeWidth={2}
+          />
         </div>
         <div
-          style={{
-            fontSize: 16,
-            fontWeight: 600,
-            color: "var(--brand-ink)",
-            marginTop: 16,
-          }}
+          id="remove-photo-title"
+          style={{ fontSize: 16, fontWeight: 600, color: INK, marginTop: 16 }}
         >
           Hiq foton e profilit?
         </div>
         <div
-          style={{
-            fontSize: 13,
-            color: "#a89f94",
-            lineHeight: 1.5,
-            marginTop: 6,
-          }}
+          id="remove-photo-desc"
+          style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 6 }}
         >
           Do të kthehesh te avatari standard. Kjo veprim nuk mund të kthehet.
         </div>
         <div className="mt-5 flex flex-col gap-2">
           <button
+            type="button"
             onClick={onConfirm}
             disabled={loading}
+            aria-busy={loading}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#b3392f",
+              backgroundColor: "var(--brand-danger)",
               color: "#ffffff",
               height: 48,
               borderRadius: 999,
@@ -2463,11 +2468,14 @@ function RemovePhotoDialog({
             {loading ? "Duke hequr..." : "Hiq foton"}
           </button>
           <button
+            type="button"
+            autoFocus
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#f4f4f2",
-              color: "var(--brand-ink)",
+              backgroundColor: CREAM,
+              color: INK,
               height: 48,
               borderRadius: 999,
               fontSize: 14,
@@ -2497,6 +2505,10 @@ function UnsavedChangesDialog({
   if (!open) return null;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="unsaved-title"
+      aria-describedby="unsaved-desc"
       className="fixed inset-0 z-[100] flex items-center justify-center px-6"
       style={{
         backgroundColor: "rgba(20,18,15,0.55)",
@@ -2509,7 +2521,7 @@ function UnsavedChangesDialog({
         className="w-full"
         style={{
           maxWidth: 280,
-          backgroundColor: "#ffffff",
+          backgroundColor: CARD,
           borderRadius: 22,
           boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
           padding: "24px 20px 20px",
@@ -2517,34 +2529,42 @@ function UnsavedChangesDialog({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: 16, fontWeight: 600, color: "var(--brand-ink)" }}>
+        <div id="unsaved-title" style={{ fontSize: 16, fontWeight: 600, color: INK }}>
           Ndryshimet e paruajtura
         </div>
-        <div style={{ fontSize: 13, color: "#a89f94", lineHeight: 1.5, marginTop: 8 }}>
+        <div
+          id="unsaved-desc"
+          style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 8 }}
+        >
           Ke ndryshime që nuk janë ruajtur ende. A dëshiron të largohesh pa i ruajtur?
         </div>
         <div className="mt-5 flex flex-col gap-2">
           <button
+            type="button"
             onClick={onDiscard}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#fbeceb",
-              color: "#b3392f",
+              backgroundColor: "var(--brand-danger-soft)",
+              color: "var(--brand-danger)",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
               fontWeight: 600,
               width: "100%",
-              border: "1px solid #f3d4d1",
+              border: `1px solid ${DIVIDER}`,
               cursor: "pointer",
             }}
           >
             Largohu pa ruajtur
           </button>
           <button
+            type="button"
+            autoFocus
             onClick={() => onOpenChange(false)}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#f4f4f2",
-              color: "var(--brand-ink)",
+              backgroundColor: CREAM,
+              color: INK,
               height: 48,
               borderRadius: 999,
               fontSize: 14,
