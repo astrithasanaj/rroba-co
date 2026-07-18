@@ -5,12 +5,12 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, SUBCATEGORY_OPTIONS, type GenderSlug } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const CHIP = "#ffffff";
-const INK = "#2d1521";
-const CORAL = "#c65a7a";
-const DISABLED = "#e2e2de";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const CHIP = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const CORAL = "var(--brand-rose)";
+const DISABLED = "var(--brand-border)";
 
 export const Route = createFileRoute("/category/$slug/choose-gender")({
   component: () => (<SwipeBackWrapper><GenderSelectPage /></SwipeBackWrapper>),
@@ -78,7 +78,7 @@ function GenderSelectPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
             {def.label}
@@ -168,7 +168,7 @@ function GenderSelectPage() {
               className="mt-3 flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors"
               style={{
                 backgroundColor: selectedSubs.length === 0 ? DISABLED : INK,
-                color: selectedSubs.length === 0 ? "#8a8275" : "#fff",
+                color: selectedSubs.length === 0 ? "var(--brand-ink-secondary)" : "#fff",
               }}
             >
               Apliko filtrat

@@ -51,12 +51,12 @@ import {
   type CategorySelection,
 } from "@/lib/category-taxonomy";
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-secondary)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
 
 type Search = {
   q?: string;
@@ -428,7 +428,7 @@ function SearchPage() {
 
           <div
             className="mt-5 flex h-[52px] items-center gap-3 rounded-full px-5"
-            style={{ backgroundColor: CARD, border: "1px solid #d8d8d2" }}
+            style={{ backgroundColor: CARD, border: "1px solid var(--brand-border)" }}
             onClick={() => inputRef.current?.focus()}
           >
             <SearchIcon className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
@@ -537,7 +537,7 @@ function SearchPage() {
             type="button"
             onClick={() => setShowFilters(true)}
             className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
-            style={{ backgroundColor: INK, color: "#ffffff" }}
+            style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span className="text-sm font-semibold">Filtro</span>
@@ -606,7 +606,7 @@ function GenderTabs({
   return (
     <div
       className="mt-4 flex items-center gap-6"
-      style={{ borderBottom: "1px solid #e2e2de" }}
+      style={{ borderBottom: "1px solid var(--brand-border)" }}
     >
       {tabs.map((t) => {
         const active = value === t;
@@ -630,7 +630,7 @@ function GenderTabs({
                   right: 0,
                   bottom: -1,
                   height: 2,
-                  background: "#e8836a",
+                  background: "var(--brand-coral)",
                   borderRadius: 2,
                 }}
               />
@@ -671,7 +671,7 @@ function EksploreList({
               type="button"
               onClick={() => onOpenPicker("femije", false, label)}
               className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-              style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+              style={{ borderBottom: "1px solid var(--brand-border)", background: BG }}
             >
               <span
                 className="grid place-items-center"
@@ -679,16 +679,16 @@ function EksploreList({
                   width: 40,
                   height: 40,
                   borderRadius: "50%",
-                  background: "#2d1521",
+                  background: "var(--brand-ink)",
                   flexShrink: 0,
                 }}
               >
-                <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+                <Icon size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
               </span>
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+              <ChevronRight className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
             </button>
           );
         })
@@ -700,7 +700,7 @@ function EksploreList({
               type="button"
               onClick={() => onOpenPicker(key)}
               className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-              style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+              style={{ borderBottom: "1px solid var(--brand-border)", background: BG }}
             >
               <span
                 className="grid place-items-center"
@@ -708,23 +708,23 @@ function EksploreList({
                   width: 40,
                   height: 40,
                   borderRadius: "50%",
-                  background: "#2d1521",
+                  background: "var(--brand-ink)",
                   flexShrink: 0,
                 }}
               >
-                <Icon size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+                <Icon size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
               </span>
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+              <ChevronRight className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
             </button>
           ))}
           <button
             type="button"
             onClick={() => onOpenPicker(undefined, true)}
             className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-            style={{ borderBottom: "1px solid #e2e2de", background: BG }}
+            style={{ borderBottom: "1px solid var(--brand-border)", background: BG }}
           >
             <span
               className="grid place-items-center"
@@ -732,16 +732,16 @@ function EksploreList({
                 width: 40,
                 height: 40,
                 borderRadius: "50%",
-                background: "#2d1521",
+                background: "var(--brand-ink)",
                 flexShrink: 0,
               }}
             >
-              <LayoutGrid size={18} strokeWidth={1.7} style={{ color: "#e8836a" }} />
+              <LayoutGrid size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
             </span>
             <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
               Për të gjithë
             </span>
-            <ChevronRight className="h-5 w-5" style={{ color: "#a89f94" }} />
+            <ChevronRight className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
           </button>
         </>
       )}
@@ -842,7 +842,7 @@ function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
             className="rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap"
             style={{
               backgroundColor: active ? INK : CARD,
-              color: active ? "#ffffff" : INK,
+              color: active ? "var(--brand-surface)" : INK,
             }}
           >
             {it.label}
@@ -880,7 +880,7 @@ function BrowseAndRecent({
         >
           <div
             className="grid h-11 w-11 place-items-center rounded-full"
-            style={{ backgroundColor: "#efe7d6" }}
+            style={{ backgroundColor: "var(--brand-cream)" }}
           >
             <Users className="h-5 w-5" style={{ color: INK }} />
           </div>
@@ -1122,8 +1122,8 @@ function ProfileListRow({
           }}
           className="shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-opacity active:opacity-80"
           style={{
-            backgroundColor: isFollowing ? "#f5e6e9" : CORAL,
-            color: isFollowing ? "#6e2438" : "#ffffff",
+            backgroundColor: isFollowing ? "var(--brand-rose-soft)" : CORAL,
+            color: isFollowing ? "var(--brand-rose-ink)" : "var(--brand-surface)",
             border: "none",
             fontWeight: 600,
           }}
@@ -1251,7 +1251,7 @@ function FiltersSheet({
               backdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </div>
@@ -1317,7 +1317,7 @@ function FiltersSheet({
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
-              style={{ backgroundColor: INK, color: "#ffffff" }}
+              style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
               Apliko
             </button>
@@ -1353,7 +1353,7 @@ function FilterChips({
               className="rounded-full px-3 py-1.5 text-xs font-medium"
               style={{
                 backgroundColor: active ? INK : CARD,
-                color: active ? "#ffffff" : INK,
+                color: active ? "var(--brand-surface)" : INK,
               }}
             >
               {o}

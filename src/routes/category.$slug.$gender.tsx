@@ -14,10 +14,10 @@ import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerShee
 import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
 
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-secondary)";
 
 type SearchParams = { subcategories?: string };
 
@@ -138,7 +138,7 @@ function CategoryResultsPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="px-12 text-center text-[15px] font-bold leading-tight" style={{ color: INK }}>
             {title}
@@ -308,7 +308,7 @@ function FiltersSheet({
               backdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </div>

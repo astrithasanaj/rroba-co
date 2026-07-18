@@ -5,11 +5,11 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, CATEGORY_SUBCATEGORIES } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
-const BG = "#ffffff";
-const CARD = "#ffffff";
-const CHIP = "#ffffff";
-const INK = "#2d1521";
-const DISABLED = "#e2e2de";
+const BG = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const CHIP = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const DISABLED = "var(--brand-border)";
 
 export const Route = createFileRoute("/category/$slug/subcategory")({
   component: () => (<SwipeBackWrapper><SubcategorySelectPage /></SwipeBackWrapper>),
@@ -60,7 +60,7 @@ function SubcategorySelectPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
             {def.label}
@@ -84,7 +84,7 @@ function SubcategorySelectPage() {
                   style={{
                     backgroundColor: active ? INK : "transparent",
                     color: active ? "#fff" : INK,
-                    border: active ? "none" : "1px solid #d8d8d2",
+                    border: active ? "none" : "1px solid var(--brand-border)",
                   }}
                 >
                   {s}
@@ -109,7 +109,7 @@ function SubcategorySelectPage() {
             className="mt-3 flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors"
             style={{
               backgroundColor: selected.length === 0 ? DISABLED : INK,
-              color: selected.length === 0 ? "#8a8275" : "#fff",
+              color: selected.length === 0 ? "var(--brand-ink-secondary)" : "#fff",
             }}
           >
             Apliko filtrat
