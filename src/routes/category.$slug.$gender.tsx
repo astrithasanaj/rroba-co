@@ -161,13 +161,15 @@ function CategoryResultsPage() {
         </div>
 
 
-        <section className="mt-4 px-5">
+        <section className="mt-4 px-5" aria-busy={loading}>
           {loading ? (
             <div role="status" aria-live="polite" className="grid place-items-center py-16">
               <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+              <span className="sr-only">Po ngarkohet</span>
             </div>
           ) : results.length === 0 ? (
             <div
+              role="status"
               className="flex flex-col items-center gap-3 rounded-2xl p-10 text-center text-sm"
               style={{ backgroundColor: CARD, color: MUTED }}
             >
