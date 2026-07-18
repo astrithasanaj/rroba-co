@@ -1182,8 +1182,8 @@ function ResultsSection({ loading, results }: { loading: boolean; results: Listi
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          {results.map((r) => (
-            <CreamListingCard key={r.id} listing={r} />
+          {results.map((r, i) => (
+            <CreamListingCard key={r.id} listing={r} eager={i < 4} />
           ))}
         </div>
       )}
@@ -1191,7 +1191,7 @@ function ResultsSection({ loading, results }: { loading: boolean; results: Listi
   );
 }
 
-function CreamListingCard({ listing }: { listing: ListingView }) {
+function CreamListingCard({ listing, eager = false }: { listing: ListingView; eager?: boolean }) {
   return (
     <Link to="/product/$id" params={{ id: listing.id }} className="group block">
       <div
@@ -1202,7 +1202,9 @@ function CreamListingCard({ listing }: { listing: ListingView }) {
           <img
             src={listing.coverUrl}
             alt={listing.title}
-            loading="lazy"
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : "auto"}
+            decoding="async"
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
