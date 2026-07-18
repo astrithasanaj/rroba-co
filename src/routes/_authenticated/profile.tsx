@@ -1061,7 +1061,7 @@ function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?
           padding: "6px 7px",
           fontFamily: "var(--font-voice), Georgia, serif",
           fontSize: 9,
-          color: "#ffffff",
+          color: OVERLAY_GLYPH,
           opacity: 0.75,
           textShadow: "0 1px 2px rgba(0,0,0,0.35)",
         }}
@@ -1081,7 +1081,7 @@ function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?
           style={{
             fontSize: 11,
             fontWeight: 600,
-            color: "#ffffff",
+            color: OVERLAY_GLYPH,
             letterSpacing: "0.1px",
             opacity: isSold ? 0.85 : 1,
           }}
@@ -1112,7 +1112,7 @@ function SoldRibbon() {
         right: -23,
         width: 82,
         background: SOLD,
-        color: "#ffffff",
+        color: OVERLAY_GLYPH,
         fontSize: 9,
         fontWeight: 700,
         textAlign: "center",
