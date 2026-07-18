@@ -36,7 +36,7 @@ function Favorites() {
         return;
       }
       const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[]);
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
       if (active) {
         setItems(hydrated);
         setLoading(false);

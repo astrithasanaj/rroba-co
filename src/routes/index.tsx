@@ -159,9 +159,9 @@ function HomePage() {
       const [hydratedPromoted, hydratedRegular, hydratedTrending, hydratedNewWeek] =
         await Promise.all([
           hydrateListings(promotedRows, { thumbnail: true, mode: "cover" }),
-          hydrateListings((regular ?? []) as ListingRow[], { thumbnail: true }),
+          hydrateListings((regular ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }),
           hydrateListings(trendingRows, { thumbnail: true, mode: "cover" }),
-          hydrateListings((newThisWeekRows ?? []) as ListingRow[], { thumbnail: true }),
+          hydrateListings((newThisWeekRows ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }),
         ]);
       const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
 
@@ -220,7 +220,7 @@ function HomePage() {
         .in("user_id", ids)
         .order("created_at", { ascending: false })
         .limit(60);
-      const hydrated = await hydrateListings((rows ?? []) as ListingRow[]);
+      const hydrated = await hydrateListings((rows ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
       if (active) {
         setFollowingIds(ids);
         setFollowingListings(hydrated);

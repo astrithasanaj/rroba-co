@@ -56,7 +56,7 @@ function MyPromotionsPage() {
     setTier(p.membership_tier ?? null);
     setTopCredits(p.top_of_list_credits ?? 0);
     setPpDays(p.paid_placement_days ?? 0);
-    setListings(await hydrateListings((rows ?? []) as ListingRow[]));
+    setListings(await hydrateListings((rows ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }));
     setLoading(false);
   };
 
