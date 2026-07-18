@@ -2126,24 +2126,27 @@ function FaqItem({
   return (
     <div
       style={{
-        backgroundColor: open ? "#ffffff" : CREAM,
+        backgroundColor: open ? "var(--brand-surface)" : CREAM,
         borderRadius: open ? "0 0 10px 10px" : 0,
         transition: "background-color 160ms ease",
       }}
     >
       <button
+        type="button"
         onClick={onToggle}
-        className="flex w-full items-center gap-3 text-left"
-        style={{ padding: "16px 20px", WebkitTapHighlightColor: "transparent" }}
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        style={{ padding: "16px 20px", minHeight: 44, WebkitTapHighlightColor: "transparent" }}
       >
-        <div className="flex-1 text-[14px] font-bold" style={{ color: "var(--brand-ink)" }}>
+        <div className="flex-1 text-[14px] font-bold" style={{ color: INK }}>
           {q}
         </div>
         <ChevronRight
+          aria-hidden="true"
           className="h-4 w-4 shrink-0"
           strokeWidth={2}
           style={{
-            color: "var(--brand-border-strong)",
+            color: BORDER_STRONG,
             transform: open ? "rotate(90deg)" : "rotate(0deg)",
             transition: "transform 200ms ease",
           }}
@@ -2156,7 +2159,7 @@ function FaqItem({
           transition: "max-height 200ms ease",
         }}
       >
-        <div style={{ padding: "0 20px 16px", fontSize: 13, color: "#a89f94", lineHeight: 1.6 }}>
+        <div style={{ padding: "0 20px 16px", fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
           {a}
         </div>
       </div>
@@ -2176,7 +2179,7 @@ function FaqView() {
             open={openIdx === i}
             onToggle={() => setOpenIdx((cur) => (cur === i ? null : i))}
           />
-          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: "#e2e2de" }} />}
+          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: DIVIDER }} />}
         </div>
       ))}
     </div>
