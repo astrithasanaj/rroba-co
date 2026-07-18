@@ -630,7 +630,7 @@ function SignupFullPage() {
                     onClick={() => setShowP((v) => !v)}
                     aria-label={showP ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showP}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-90"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                     style={{ color: MUTED }}
                   >
                     {showP ? (
