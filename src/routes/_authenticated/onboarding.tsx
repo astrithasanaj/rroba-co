@@ -820,7 +820,7 @@ function StepHow({
                 className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
                 style={{ background: CREAM }}
               >
-                <r.Icon size={22} color={DARK} />
+                <r.Icon size={22} style={{ color: DARK }} aria-hidden="true" />
               </div>
               <div className="pt-0.5">
                 <div className="text-[15px] font-semibold" style={{ color: DARK }}>
