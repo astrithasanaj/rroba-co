@@ -309,17 +309,17 @@ function UserProfile() {
             type="button"
             onClick={() => window.history.back()}
             aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className={`grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_CLASS}`}
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
           </button>
           <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
