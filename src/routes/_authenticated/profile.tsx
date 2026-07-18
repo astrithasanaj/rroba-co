@@ -1554,6 +1554,7 @@ function SettingsMain({
 
       {/* Logout */}
       <button
+        type="button"
         onClick={onLogout}
         className="settings-row"
         style={{
@@ -1570,12 +1571,16 @@ function SettingsMain({
       {/* Delete account */}
       <div style={{ height: 1, backgroundColor: DIVIDER, margin: "24px 20px 0" }} />
       <button
+        type="button"
         onClick={onDeleteAccount}
+        aria-label="Fshij llogarinë"
+        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         style={{
           display: "flex",
           alignItems: "center",
           gap: 14,
           padding: "16px 20px",
+          minHeight: 44,
           width: "100%",
           background: "transparent",
           border: "none",
@@ -1586,6 +1591,7 @@ function SettingsMain({
       >
         <i
           className="ti ti-trash"
+          aria-hidden="true"
           style={{ fontSize: 20, color: "var(--brand-danger)", width: 22 }}
         />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1606,7 +1612,7 @@ function SettingsMain({
           textAlign: "center",
           padding: "16px 0 24px",
           fontSize: 11,
-          color: "var(--brand-border-strong)",
+          color: BORDER_STRONG,
           letterSpacing: "0.3px",
         }}
       >
