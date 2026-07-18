@@ -955,15 +955,18 @@ function SignupFullPage() {
             <label className="flex items-start gap-3 px-1 pt-2">
               <button
                 type="button"
+                role="checkbox"
+                aria-checked={terms}
+                aria-label="Pranoj kushtet e shërbimit dhe politikën e privatësisë"
                 onClick={() => setTerms((v) => !v)}
-                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center"
+                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-90"
                 style={{
                   background: terms ? INK : "transparent",
                   border: `1.5px solid ${terms ? INK : DIVIDER}`,
                   borderRadius: 5,
                 }}
               >
-                {terms && <Check size={14} color="#fff" />}
+                {terms && <Check size={14} color="#fff" aria-hidden="true" />}
               </button>
               <span className="text-[13px]" style={{ color: INK }}>
                 Pranoj{" "}
