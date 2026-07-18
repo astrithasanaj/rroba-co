@@ -178,8 +178,10 @@ function ProductDetail() {
   const isSold = listing.sold || listing.status === "sold";
   const isOwn = me === listing.user_id;
   const firstLine = listing.description.split("\n")[0].slice(0, 100);
-  const descriptionPreview =
-    firstLine.length < listing.description.length ? `${firstLine}…` : firstLine;
+
+  const isDescriptionTruncated = firstLine.length < listing.description.length;
+
+  const descriptionPreview = isDescriptionTruncated ? `${firstLine}…` : firstLine;
 
   return (
     <MobileShell>
