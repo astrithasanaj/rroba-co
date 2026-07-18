@@ -2261,9 +2261,17 @@ function LogoutConfirm({
   onOpenChange: (v: boolean) => void;
   onConfirm: () => void;
 }) {
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (!open) setBusy(false);
+  }, [open]);
   if (!open) return null;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="logout-title"
+      aria-describedby="logout-desc"
       style={{
         position: "fixed",
         inset: 0,
@@ -2279,15 +2287,16 @@ function LogoutConfirm({
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "var(--brand-ink)",
+          background: INK,
           flexShrink: 0,
         }}
       >
         <button
           type="button"
           onClick={() => onOpenChange(false)}
+          disabled={busy}
           aria-label="Kthehu"
-          className="transition-transform duration-150 active:scale-[0.97]"
+          className="transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{
             width: 44,
             height: 44,
@@ -2297,13 +2306,18 @@ function LogoutConfirm({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer",
+            cursor: busy ? "default" : "pointer",
             flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft aria-hidden="true" size={18} color="#ffffff" strokeWidth={2} />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>A jeni i sigurt?</span>
+        <span
+          id="logout-title"
+          style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}
+        >
+          A jeni i sigurt?
+        </span>
       </div>
       <div
         style={{
@@ -2314,12 +2328,20 @@ function LogoutConfirm({
           color: INK,
         }}
       >
-        <div style={{ fontSize: 13, color: MUTED, marginBottom: 20 }}>
+        <div id="logout-desc" style={{ fontSize: 13, color: MUTED, marginBottom: 20 }}>
           Do të dilni nga llogaria juaj.
         </div>
         <div className="flex flex-col gap-2">
           <button
-            onClick={onConfirm}
+            type="button"
+            onClick={() => {
+              if (busy) return;
+              setBusy(true);
+              onConfirm();
+            }}
+            disabled={busy}
+            aria-busy={busy}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
               backgroundColor: INK,
               color: "#ffffff",
@@ -2328,14 +2350,21 @@ function LogoutConfirm({
               fontSize: 14,
               fontWeight: 600,
               width: "100%",
+              opacity: busy ? 0.7 : 1,
+              cursor: busy ? "default" : "pointer",
+              border: "none",
             }}
           >
-            Po, dilni
+            {busy ? "Duke dalë…" : "Po, dilni"}
           </button>
           <button
+            type="button"
+            autoFocus
             onClick={() => onOpenChange(false)}
+            disabled={busy}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#ffffff",
+              backgroundColor: CARD,
               color: INK,
               border: `1px solid ${DIVIDER}`,
               height: 50,
@@ -2343,6 +2372,7 @@ function LogoutConfirm({
               fontSize: 14,
               fontWeight: 600,
               width: "100%",
+              cursor: busy ? "default" : "pointer",
             }}
           >
             Anulo
