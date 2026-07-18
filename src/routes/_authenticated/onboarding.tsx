@@ -569,9 +569,11 @@ function StepProfile({
                     style={{ borderColor: MUTED, borderTopColor: "transparent" }}
                   />
                 )}
-                {usernameStatus === "available" && <Check size={18} color={SUCCESS} />}
+                {usernameStatus === "available" && (
+                  <Check size={18} style={{ color: SUCCESS }} aria-hidden="true" />
+                )}
                 {(usernameStatus === "taken" || usernameStatus === "invalid") && (
-                  <X size={18} color={ERR} />
+                  <X size={18} style={{ color: ERR }} aria-hidden="true" />
                 )}
               </div>
             </div>
