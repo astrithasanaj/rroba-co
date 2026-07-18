@@ -196,7 +196,7 @@ function ResendButton({ email }: { email: string }) {
         {label}
       </button>
       {err && (
-        <p className="mt-2 text-xs" style={{ color: "#e53935" }}>
+        <p className="mt-2 text-xs" style={{ color: "var(--brand-danger)" }}>
           {err}
         </p>
       )}
