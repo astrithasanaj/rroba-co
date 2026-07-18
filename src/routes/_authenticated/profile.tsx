@@ -1590,7 +1590,7 @@ function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean
         className="flex w-full items-center gap-3 text-left"
         style={{ padding: "16px 20px", WebkitTapHighlightColor: "transparent" }}
       >
-        <div className="flex-1 text-[14px] font-bold" style={{ color: "#2d1521" }}>{q}</div>
+        <div className="flex-1 text-[14px] font-bold" style={{ color: "var(--brand-ink)" }}>{q}</div>
         <ChevronRight
           className="h-4 w-4 shrink-0"
           strokeWidth={2}
@@ -1701,7 +1701,7 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "#2d1521",
+          background: "var(--brand-ink)",
           flexShrink: 0,
         }}
       >
@@ -1804,7 +1804,7 @@ function RemovePhotoDialog({
           style={{
             fontSize: 16,
             fontWeight: 600,
-            color: "#2d1521",
+            color: "var(--brand-ink)",
             marginTop: 16,
           }}
         >
@@ -1844,7 +1844,7 @@ function RemovePhotoDialog({
             disabled={loading}
             style={{
               backgroundColor: "#f4f4f2",
-              color: "#2d1521",
+              color: "var(--brand-ink)",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
@@ -1894,7 +1894,7 @@ function UnsavedChangesDialog({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: 16, fontWeight: 600, color: "#2d1521" }}>
+        <div style={{ fontSize: 16, fontWeight: 600, color: "var(--brand-ink)" }}>
           Ndryshimet e paruajtura
         </div>
         <div style={{ fontSize: 13, color: "#a89f94", lineHeight: 1.5, marginTop: 8 }}>
@@ -1921,7 +1921,7 @@ function UnsavedChangesDialog({
             onClick={() => onOpenChange(false)}
             style={{
               backgroundColor: "#f4f4f2",
-              color: "#2d1521",
+              color: "var(--brand-ink)",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
