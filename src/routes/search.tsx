@@ -1202,7 +1202,9 @@ function CreamListingCard({ listing, eager = false }: { listing: ListingView; ea
           <img
             src={listing.coverUrl}
             alt={listing.title}
-            loading="lazy"
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : "auto"}
+            decoding="async"
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
