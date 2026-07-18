@@ -76,11 +76,19 @@ type OfferRow = {
 const CREAM = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
 const INK = "var(--brand-ink)";
-const MUTED = "var(--brand-ink-muted)";
+const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const SOLD = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
 const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
+// Lokale semantiske farge-konstanter (kun brukt i profil).
+const OVERLAY_GLYPH = "#ffffff";
+const GLASS_BG = "rgba(255,255,255,0.7)";
+const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const DARK_GLASS_BG = "rgba(255,255,255,0.12)";
+const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
+const OFFER_ACCEPTED_BG = "#d1f4e0";
+const OFFER_DECLINED_BG = "#f4d1d1";
 
 function ProfilePage() {
   const { user } = Route.useRouteContext();
