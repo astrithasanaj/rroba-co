@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import {
   ChevronLeft,
-  ArrowLeft,
   MessageCircle,
   Star,
   BadgeCheck,
@@ -39,6 +38,12 @@ type Seller = {
   rating_avg: number;
   rating_count: number;
 };
+
+// Delte klasse-strenger for konsekvent stil
+const ICON_BTN =
+  "grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
+const META_TEXT_INK = { color: "var(--brand-ink)" } as const;
+const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
 
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
@@ -154,9 +159,13 @@ function ProductDetail() {
   if (!listing) {
     return (
       <MobileShell>
-        <div className="p-10 text-center">
+        <div className="p-10 text-center" style={META_TEXT_INK}>
           <p>Artikulli nuk u gjet.</p>
-          <Link to="/" className="text-accent underline">
+          <Link
+            to="/"
+            className="underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2 rounded"
+            style={{ color: "var(--brand-rose)" }}
+          >
             Kthehu në kreu
           </Link>
         </div>
@@ -188,42 +197,41 @@ function ProductDetail() {
       {/* Fixed header */}
       <div
         className="fixed top-0 left-1/2 z-50 flex w-full max-w-[480px] -translate-x-1/2 items-center justify-between border-b px-4 py-3"
-        style={{ backgroundColor: "#ffffff", borderColor: "#e2e2de" }}
+        style={{ backgroundColor: "var(--brand-surface)", borderColor: "var(--brand-border)" }}
       >
         <button
           type="button"
           onClick={() => window.history.back()}
           aria-label="Kthehu"
-          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          className={ICON_BTN}
           style={{
-            width: 36,
-            height: 36,
             backgroundColor: "rgba(255,255,255,0.7)",
             border: "1px solid rgba(226,226,222,0.8)",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+          <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
         </button>
         <div className="min-w-0 flex-1 px-2 text-center">
           <h1
             className="truncate font-display text-base font-semibold"
-            style={{ color: "#2d1521" }}
+            style={META_TEXT_INK}
           >
             {listing.title}
           </h1>
-          <p className="text-sm font-semibold" style={{ color: "#c65a7a" }}>
+          <p className="text-sm font-semibold" style={{ color: "var(--brand-rose)" }}>
             €{listing.price}
           </p>
         </div>
         <button
+          type="button"
           onClick={() => setMoreOpen(true)}
           aria-label="Më shumë"
-          className="grid h-10 w-10 place-items-center rounded-full border backdrop-blur"
-          style={{ borderColor: "#e2e2de", backgroundColor: "#ffffff" }}
+          className={`${ICON_BTN} border`}
+          style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
         >
-          <MoreHorizontal size={20} color="#2d1521" strokeWidth={1.6} />
+          <MoreHorizontal size={20} color="var(--brand-ink)" strokeWidth={1.6} aria-hidden="true" />
         </button>
       </div>
 
@@ -234,21 +242,22 @@ function ProductDetail() {
       {seller && (
         <div
           className="flex items-center gap-3 border-b px-[18px] py-3"
-          style={{ borderColor: "#e2e2de" }}
+          style={{ borderColor: "var(--brand-border)" }}
         >
           <img
             src={
               seller.avatar_url ||
               `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
             }
-            alt={seller.name}
+            alt=""
+            aria-hidden="true"
             className="h-9 w-9 shrink-0 rounded-full object-cover"
           />
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold" style={{ color: "#2d1521" }}>
+            <p className="truncate text-sm font-semibold" style={META_TEXT_INK}>
               {seller.name || "Përdorues"}
             </p>
-            <p className="text-xs" style={{ color: "#a89f94" }}>
+            <p className="text-xs" style={META_TEXT_MUTED}>
               {listing.city || "—"}
             </p>
           </div>
@@ -261,8 +270,8 @@ function ProductDetail() {
       {/* Sold banner */}
       {isSold && (
         <div
-          className="w-full px-5 py-3 text-center text-sm font-bold text-white"
-          style={{ backgroundColor: "#c65a7a" }}
+          className="w-full px-5 py-3 text-center text-sm font-bold"
+          style={{ backgroundColor: "var(--brand-rose)", color: "#ffffff" }}
         >
           Ky artikull është shitur
         </div>
@@ -271,63 +280,72 @@ function ProductDetail() {
       {/* Inline action bar */}
       <div
         className="flex items-center justify-between border-b px-[18px] py-3"
-        style={{ backgroundColor: "#ffffff", borderColor: "#e2e2de" }}
+        style={{ backgroundColor: "var(--brand-surface)", borderColor: "var(--brand-border)" }}
       >
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => {
               if (!me) return navigate({ to: "/auth" });
               toggleLike(listing.id);
             }}
-            aria-label="Pëlqe"
-            className="grid h-11 w-11 place-items-center rounded-full border border-[#d6dae6] transition active:scale-95"
+            aria-label={likes.has(listing.id) ? "Hiq pëlqimin" : "Pëlqe"}
+            aria-pressed={likes.has(listing.id)}
+            className={`${ICON_BTN} border`}
+            style={{ borderColor: "var(--brand-border)" }}
           >
             <Heart
-              size={24}
+              size={22}
               strokeWidth={1.5}
-              color="#c65a7a"
-              fill={likes.has(listing.id) ? "#c65a7a" : "none"}
+              color="var(--brand-rose)"
+              fill={likes.has(listing.id) ? "var(--brand-rose)" : "none"}
+              aria-hidden="true"
             />
           </button>
           <button
+            type="button"
             onClick={() => {
               if (!me) return navigate({ to: "/auth" });
               toggleSave(listing.id);
             }}
-            aria-label="Ruaj"
-            className="grid h-11 w-11 place-items-center"
+            aria-label={saves.has(listing.id) ? "Hiq nga të ruajturat" : "Ruaj"}
+            aria-pressed={saves.has(listing.id)}
+            className={ICON_BTN}
           >
             <Bookmark
-              size={24}
+              size={22}
               strokeWidth={1.5}
-              color="#2d1521"
-              fill={saves.has(listing.id) ? "#2d1521" : "none"}
+              color="var(--brand-ink)"
+              fill={saves.has(listing.id) ? "var(--brand-ink)" : "none"}
+              aria-hidden="true"
             />
           </button>
           <button
+            type="button"
             onClick={sendMessage}
             disabled={isOwn}
-            aria-label="Mesazh"
-            className="grid h-11 w-11 place-items-center disabled:opacity-40"
+            aria-label="Dërgo mesazh"
+            className={`${ICON_BTN} disabled:opacity-40 disabled:active:scale-100`}
           >
-            <MessageCircle size={24} strokeWidth={1.5} color="#2d1521" />
+            <MessageCircle size={22} strokeWidth={1.5} color="var(--brand-ink)" aria-hidden="true" />
           </button>
         </div>
         <button
+          type="button"
           onClick={() => {
             if (!me) return navigate({ to: "/auth" });
             if (isOwn) return;
             navigate({ to: "/buy/$id", params: { id: listing.id } });
           }}
           disabled={isSold || isOwn}
-          className="px-4 text-base font-bold transition active:scale-95 disabled:opacity-50"
+          className="px-5 text-base font-bold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
           style={{
-            background: "linear-gradient(120deg, #e8836a, #c65a7a)",
-            color: "#fff",
-            minWidth: 90,
+            background: "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))",
+            color: "#ffffff",
+            minWidth: 96,
             height: 44,
             borderRadius: 14,
-            boxShadow: "0 2px 8px rgba(198,90,122,0.35)",
+            boxShadow: "0 2px 8px color-mix(in oklab, var(--brand-rose) 35%, transparent)",
           }}
         >
           {isSold ? "Shitur" : "Bli"}
@@ -336,14 +354,14 @@ function ProductDetail() {
 
       {/* Social proof line */}
       {likeInfo.count > 0 && likeInfo.recentLiker && (
-        <p className="px-[18px] py-1 text-[13px]" style={{ color: "#2d1521" }}>
+        <p className="px-[18px] py-1 text-[13px]" style={META_TEXT_INK}>
           Likt nga{" "}
           {likeInfo.recentLikerId ? (
             <Link
               to="/user/$id"
               params={{ id: likeInfo.recentLikerId }}
               onClick={(e) => e.stopPropagation()}
-              className="font-semibold hover:underline active:opacity-70"
+              className="font-semibold hover:underline active:opacity-70 focus-visible:outline-none focus-visible:underline"
               style={{ WebkitTapHighlightColor: "transparent" }}
             >
               {likeInfo.recentLiker}
@@ -360,21 +378,23 @@ function ProductDetail() {
         <>
           {isDescriptionTruncated ? (
             <button
+              type="button"
               onClick={() => setDescExpanded((v) => !v)}
-              className="w-full px-[18px] pb-3 pt-1 text-left text-[13px]"
-              style={{ color: "#2d1521" }}
+              className="w-full px-[18px] pb-3 pt-1 text-left text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2 rounded"
+              style={META_TEXT_INK}
+              aria-expanded={descExpanded}
             >
               <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
               {descriptionPreview}
             </button>
           ) : (
-            <p className="px-[18px] pb-3 pt-1 text-left text-[13px]" style={{ color: "#2d1521" }}>
+            <p className="px-[18px] pb-3 pt-1 text-left text-[13px]" style={META_TEXT_INK}>
               <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
               {listing.description}
             </p>
           )}
           {descExpanded && (
-            <p className="px-[18px] py-3 text-[13px]" style={{ color: "#2d1521" }}>
+            <p className="px-[18px] py-3 text-[13px]" style={META_TEXT_INK}>
               {listing.description}
             </p>
           )}
@@ -382,34 +402,56 @@ function ProductDetail() {
       )}
 
       {/* Product details card */}
-      <dl className="mx-[18px] my-3 grid grid-cols-2 gap-y-3 rounded-2xl border border-[#e2e2de] bg-white p-4 text-sm">
+      <dl
+        className="mx-[18px] my-3 grid grid-cols-2 gap-y-3 rounded-2xl border p-4 text-sm"
+        style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
+      >
         {meta.map(([k, v]) => (
-          <div key={k}>
-            <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
-            <dd className="mt-0.5">{v}</dd>
+          <div key={k} className="min-w-0">
+            <dt
+              className="text-[11px] uppercase tracking-wide"
+              style={META_TEXT_MUTED}
+            >
+              {k}
+            </dt>
+            <dd className="mt-0.5 break-words" style={META_TEXT_INK}>
+              {v}
+            </dd>
           </div>
         ))}
       </dl>
 
       {/* Seller profile card */}
       {seller && (
-        <div className="mx-[18px] my-3 flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
+        <div
+          className="mx-[18px] my-3 flex items-center gap-3 rounded-2xl border p-3"
+          style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
+        >
           <img
             src={
               seller.avatar_url ||
               `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
             }
-            alt={seller.name}
+            alt=""
+            aria-hidden="true"
             className="h-12 w-12 shrink-0 rounded-full object-cover"
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1">
-              <p className="truncate text-sm font-semibold">{seller.name || "Përdorues"}</p>
-              <BadgeCheck className="h-4 w-4 text-accent" fill="currentColor" />
+              <p className="truncate text-sm font-semibold" style={META_TEXT_INK}>
+                {seller.name || "Përdorues"}
+              </p>
+              <BadgeCheck
+                className="h-4 w-4 shrink-0"
+                style={{ color: "var(--brand-rose)" }}
+                fill="currentColor"
+                aria-hidden="true"
+              />
             </div>
-            <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="mt-0.5 flex items-center gap-2 text-xs" style={META_TEXT_MUTED}>
               <span className="inline-flex items-center gap-0.5">
-                <Star className="h-3 w-3" fill="currentColor" /> {seller.rating_avg.toFixed(1)}
+                <Star className="h-3 w-3" fill="currentColor" aria-hidden="true" />{" "}
+                {seller.rating_avg.toFixed(1)}
               </span>
               <span>· {seller.rating_count} vlerësime</span>
             </div>
@@ -417,7 +459,12 @@ function ProductDetail() {
           <Link
             to="/user/$id"
             params={{ id: seller.id }}
-            className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+            className="shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
+            style={{
+              borderColor: "var(--brand-border)",
+              color: "var(--brand-ink)",
+              backgroundColor: "var(--brand-surface)",
+            }}
           >
             Shiko profilin
           </Link>
@@ -427,7 +474,12 @@ function ProductDetail() {
       {/* Similar items horizontal scroll */}
       {similar.length > 0 && (
         <section id="similar-section" className="mt-8">
-          <h3 className="mb-3 px-[18px] font-display text-2xl">Artikuj të ngjashëm</h3>
+          <h3
+            className="mb-3 px-[18px] font-display text-2xl"
+            style={META_TEXT_INK}
+          >
+            Artikuj të ngjashëm
+          </h3>
           <div className="flex gap-3 overflow-x-auto px-[18px] pb-4 no-scrollbar snap-x snap-mandatory">
             {similar.map((p) => (
               <div key={p.id} className="w-[160px] min-w-[160px] snap-start">
