@@ -284,8 +284,15 @@ function UserProfile() {
   if (loading) {
     return (
       <MobileShell hideNav>
-        <div className="grid h-screen place-items-center" style={{ backgroundColor: CREAM }}>
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+        <div
+          className="grid h-dvh place-items-center"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          style={{ backgroundColor: CREAM }}
+        >
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} aria-hidden="true" />
+          <span className="sr-only">Duke ngarkuar profilin…</span>
         </div>
       </MobileShell>
     );
@@ -294,7 +301,7 @@ function UserProfile() {
   if (!profile) {
     return (
       <MobileShell>
-        <div className="p-10 text-center text-sm" style={{ color: MUTED }}>
+        <div role="alert" className="p-10 text-center text-sm" style={{ color: MUTED }}>
           Përdoruesi nuk u gjet.
         </div>
       </MobileShell>
