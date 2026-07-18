@@ -155,7 +155,7 @@ function CategoryResultsPage() {
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
             style={{ backgroundColor: CARD, color: INK }}
           >
-            <LayoutGrid className="h-3.5 w-3.5" />
+            <LayoutGrid aria-hidden="true" className="h-3.5 w-3.5" />
             Kategoritë
           </button>
         </div>
@@ -164,14 +164,14 @@ function CategoryResultsPage() {
         <section className="mt-4 px-5">
           {loading ? (
             <div className="grid place-items-center py-16">
-              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+              <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
             </div>
           ) : results.length === 0 ? (
             <div
               className="flex flex-col items-center gap-3 rounded-2xl p-10 text-center text-sm"
               style={{ backgroundColor: CARD, color: MUTED }}
             >
-              <PackageSearch className="h-10 w-10" strokeWidth={1.4} />
+              <PackageSearch aria-hidden="true" className="h-10 w-10" strokeWidth={1.4} />
               Asnjë artikull u gjet për këtë kategori
             </div>
           ) : (
@@ -189,7 +189,7 @@ function CategoryResultsPage() {
           className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
           style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
           <span className="text-sm font-semibold">Filtro</span>
           {activeCount > 0 && (
             <span

@@ -544,7 +544,7 @@ function SearchPage() {
             className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
             style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
-            <SlidersHorizontal className="h-4 w-4" />
+            <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
             <span className="text-sm font-semibold">Filtro</span>
             {activeCount > 0 && (
               <span
@@ -698,7 +698,7 @@ function EksploreList({
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
+              <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
             </button>
           );
         })
@@ -727,7 +727,7 @@ function EksploreList({
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
                 {label}
               </span>
-              <ChevronRight className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
+              <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
             </button>
           ))}
           <button
@@ -746,12 +746,12 @@ function EksploreList({
                 flexShrink: 0,
               }}
             >
-              <LayoutGrid size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
+              <LayoutGrid aria-hidden="true" size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
             </span>
             <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
               Për të gjithë
             </span>
-            <ChevronRight className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
+            <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: "var(--brand-ink-muted)" }} />
           </button>
         </>
       )}
@@ -804,7 +804,7 @@ function RecentSearches({
             className="flex items-center gap-3 border-b py-3"
             style={{ borderColor: DIVIDER }}
           >
-            <Clock className="h-4 w-4" style={{ color: MUTED }} />
+            <Clock aria-hidden="true" className="h-4 w-4" style={{ color: MUTED }} />
             <button
               type="button"
               onMouseDown={(e) => {
@@ -894,7 +894,7 @@ function BrowseAndRecent({
             className="grid h-11 w-11 place-items-center rounded-full"
             style={{ backgroundColor: "var(--brand-cream)" }}
           >
-            <Users className="h-5 w-5" style={{ color: INK }} />
+            <Users aria-hidden="true" className="h-5 w-5" style={{ color: INK }} />
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold" style={{ color: INK }}>
@@ -904,7 +904,7 @@ function BrowseAndRecent({
               Shfleto profilet e Rroba
             </p>
           </div>
-          <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
+          <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: MUTED }} />
         </button>
       </section>
       <RecentSearches items={recent} onPick={onPick} onRemove={onRemove} onClear={onClear} />
@@ -949,7 +949,7 @@ function TabbedResults({
         </p>
         {profileLoading ? (
           <div className="grid place-items-center py-10">
-            <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
           </div>
         ) : profiles.length === 0 ? (
           <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
@@ -1161,7 +1161,7 @@ function ResultsSection({
       </p>
       {loading ? (
         <div className="grid place-items-center py-10">
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+          <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
         </div>
       ) : results.length === 0 ? (
         <div
