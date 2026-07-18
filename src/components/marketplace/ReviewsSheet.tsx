@@ -181,10 +181,16 @@ export function ReviewsSheet({
   const submitReview = async () => {
     if (!currentUserId || stars < 1 || submitting) return;
     setSubmitting(true);
-    const { error } = await supabase.from("ratings").upsert(
-      { rater_id: currentUserId, seller_id: sellerId, stars, comment: comment.trim() },
-      { onConflict: "rater_id,seller_id" },
-    );
+    const payload: Record<string, unknown> = {
+      rater_id: currentUserId,
+      seller_id: sellerId,
+      stars,
+      comment: comment.trim(),
+    };
+    if (listingId) payload.listing_id = listingId;
+    const { error } = await supabase
+      .from("ratings")
+      .upsert(payload, { onConflict: "rater_id,seller_id" });
     setSubmitting(false);
     if (error) {
       toast.error(error.message);
