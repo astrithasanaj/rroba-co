@@ -195,7 +195,6 @@ function LoginPage() {
           <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
         </button>
 
-
         <div className="mt-4">
           <h1
             className="italic"
