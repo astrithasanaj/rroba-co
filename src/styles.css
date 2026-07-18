@@ -256,7 +256,7 @@ input, textarea, select {
 }
 .settings-subtitle {
   font-size: 12px;
-  color: var(--brand-ink-muted);
+  color: var(--brand-ink-secondary);
   margin-top: 2px;
   line-height: 1.3;
 }
