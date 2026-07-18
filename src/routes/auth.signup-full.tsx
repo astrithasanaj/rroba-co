@@ -767,7 +767,8 @@ function SignupFullPage() {
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="appearance-none text-[15px] outline-none"
+                  aria-label="Kodi i vendit"
+                  className="appearance-none text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[color:#c65a7a]/40"
                   style={{
                     background: CARD,
                     color: INK,
@@ -775,6 +776,7 @@ function SignupFullPage() {
                     borderRadius: 12,
                     padding: "0 32px 0 12px",
                     minWidth: 110,
+                    border: `1px solid ${DIVIDER}`,
                   }}
                 >
                   {COUNTRY_CODES.map((c) => (
