@@ -196,8 +196,8 @@ function CategoryResultsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {results.map((r) => (
-                <ResultCard key={r.id} listing={r} />
+              {results.map((r, i) => (
+                <ResultCard key={r.id} listing={r} eager={i < 4} />
               ))}
             </div>
           )}
@@ -252,7 +252,7 @@ function CategoryResultsPage() {
   );
 }
 
-function ResultCard({ listing }: { listing: ListingView }) {
+function ResultCard({ listing, eager = false }: { listing: ListingView; eager?: boolean }) {
   const isNew = useMemo(() => {
     const created = new Date(listing.created_at).getTime();
     return Date.now() - created < 7 * 24 * 60 * 60 * 1000;
@@ -268,7 +268,9 @@ function ResultCard({ listing }: { listing: ListingView }) {
           <img
             src={listing.coverUrl}
             alt={listing.title}
-            loading="lazy"
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : "auto"}
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         )}

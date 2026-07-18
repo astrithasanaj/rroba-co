@@ -1034,14 +1034,22 @@ function TierCard({
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
     <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#ffffff" }}>
-      {listings.map((l) => (
-        <ListingGridTile key={l.id} listing={l} manage={manage} />
+      {listings.map((l, i) => (
+        <ListingGridTile key={l.id} listing={l} manage={manage} eager={i < 4} />
       ))}
     </div>
   );
 }
 
-function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?: boolean }) {
+function ListingGridTile({
+  listing: l,
+  manage,
+  eager = false,
+}: {
+  listing: ListingView;
+  manage?: boolean;
+  eager?: boolean;
+}) {
   const [broken, setBroken] = useState(false);
   if (!l.coverUrl || broken) return null;
   const linkProps = manage
@@ -1058,7 +1066,9 @@ function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?
         src={l.coverUrl}
         alt={l.title}
         className="h-full w-full"
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        decoding="async"
         onError={() => setBroken(true)}
         style={{
           objectFit: "cover",
