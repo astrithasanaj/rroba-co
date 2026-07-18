@@ -111,6 +111,7 @@ function UserProfile() {
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
   const [followers, setFollowers] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [likesTotal, setLikesTotal] = useState(0);
