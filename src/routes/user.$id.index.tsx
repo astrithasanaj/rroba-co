@@ -588,13 +588,6 @@ function UserProfile() {
             >
               <Share2 className="h-5 w-5" strokeWidth={1.8} /> Ndaj profilin
             </button>
-            <button
-              onClick={handleReport}
-              className="flex w-full items-center gap-3 rounded-xl px-4 py-4 text-left text-[15px] font-medium"
-              style={{ color: INK }}
-            >
-              <Flag className="h-5 w-5" strokeWidth={1.8} /> Raporto përdoruesin
-            </button>
           </div>
         </SheetContent>
       </Sheet>
