@@ -216,7 +216,11 @@ function SellPage() {
     const remaining = MAX_PHOTOS - images.length;
     const added: PendingImage[] = [];
     for (const file of Array.from(files).slice(0, remaining)) {
-      if (!ALLOWED[file.type]) {
+      // Some iOS/Safari versions report an empty MIME type for HEIC/HEIF —
+      // fall back to the filename extension so those files aren't rejected
+      // before compressImage() has a chance to normalize them.
+      const isHeicByName = /\.(heic|heif)$/i.test(file.name);
+      if (!ALLOWED[file.type] && !isHeicByName) {
         toast.error(`${file.name}: format i palejuar`);
         continue;
       }
