@@ -50,7 +50,15 @@ const ALLOWED_MIME: Record<string, string> = {
 
 function StepIndicator({ n }: { n: number }) {
   return (
-    <span className="text-xs font-medium" style={{ color: MUTED }}>
+    <span
+      role="progressbar"
+      aria-valuenow={n}
+      aria-valuemin={1}
+      aria-valuemax={5}
+      aria-label={`Hapi ${n} nga 5`}
+      className="text-xs font-medium"
+      style={{ color: MUTED }}
+    >
       {n} / 5
     </span>
   );
@@ -72,28 +80,30 @@ function TopBar({
           type="button"
           onClick={onBack}
           aria-label="Kthehu"
-          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+            height: 44,
             backgroundColor: "rgba(255,255,255,0.7)",
-            border: "1px solid rgba(226,226,222,0.8)",
+            border: `1px solid ${DIVIDER}`,
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+          <ChevronLeft size={18} color={DARK} strokeWidth={2} aria-hidden="true" />
         </button>
       ) : (
-        <div className="h-9 w-9" />
+        <div className="h-11 w-11" />
       )}
       <div className="flex items-center gap-4">
         <StepIndicator n={step} />
         {onSkip ? (
           <button
+            type="button"
             onClick={onSkip}
-            className="text-sm font-medium"
-            style={{ color: MUTED }}
+            aria-label="Kalo këtë hap"
+            className="min-h-11 px-2 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)] rounded-md"
+            style={{ color: MUTED, background: "transparent" }}
           >
             Kalo
           </button>
