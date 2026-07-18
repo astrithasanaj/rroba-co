@@ -137,12 +137,10 @@ export function CityPicker({
                             onChange(city.id, city);
                             setOpen(false);
                           }}
-                          className="mx-1 my-0.5 flex cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-[15px] aria-selected:bg-[color:var(--picker-hover)]"
+                          className="mx-1 my-0.5 flex cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-[15px]"
                           style={
                             {
                               color: INK,
-                              // Tailwind color-arbitrary via css var so we don't ship raw palette
-                              ["--picker-hover" as never]: "#e4dfd3",
                             } as React.CSSProperties
                           }
                         >
