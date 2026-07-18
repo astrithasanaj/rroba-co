@@ -43,12 +43,14 @@ type Profile = {
 
 type SortMode = "new" | "low" | "high" | "popular";
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
+const BORDER_STRONG = "var(--brand-border-strong)";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 
 function Stat({
   value,
