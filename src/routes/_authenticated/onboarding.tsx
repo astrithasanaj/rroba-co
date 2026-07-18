@@ -876,7 +876,7 @@ function StepNotify({
             className="flex h-20 w-20 items-center justify-center rounded-full"
             style={{ background: CHIP_BG }}
           >
-            <Bell size={40} color={DARK} />
+            <Bell size={40} style={{ color: DARK }} aria-hidden="true" />
           </div>
         </div>
         <div className="mt-6 text-center">
