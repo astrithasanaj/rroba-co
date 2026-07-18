@@ -62,7 +62,7 @@ type PendingImage = { file: File; previewUrl: string; mime: string };
 const CONDITION_SUBTITLES: Record<string, string> = {
   "I ri": "Kurrë i përdorur",
   "Mirë përdorur": "Pa shenja përdorimi",
-  "Përdorur": "Disa shenja përdorimi",
+  Përdorur: "Disa shenja përdorimi",
   "Shumë përdorur": "Shenja të qarta përdorimi",
 };
 
@@ -96,28 +96,62 @@ function getSubcategories(category: string, gender: string): string[] {
   switch (category) {
     case "Veshje":
       if (gender === "Femra")
-        return ["Bluza","Fustane","T-shirt","Këmisha","Pantallona","Funde","Xhaketa","Pallto","Triko","Shorte","Kostume banje","Pizhame"];
+        return [
+          "Bluza",
+          "Fustane",
+          "T-shirt",
+          "Këmisha",
+          "Pantallona",
+          "Funde",
+          "Xhaketa",
+          "Pallto",
+          "Triko",
+          "Shorte",
+          "Kostume banje",
+          "Pizhame",
+        ];
       if (gender === "Meshkuj")
-        return ["Bluza","T-shirt","Këmisha","Pantallona","Xhaketa","Pallto","Triko","Shorte","Kostume banje","Pizhame"];
-      return ["Bluza","T-shirt","Pantallona","Xhaketa","Triko","Shorte","Pizhame"];
+        return [
+          "Bluza",
+          "T-shirt",
+          "Këmisha",
+          "Pantallona",
+          "Xhaketa",
+          "Pallto",
+          "Triko",
+          "Shorte",
+          "Kostume banje",
+          "Pizhame",
+        ];
+      return ["Bluza", "T-shirt", "Pantallona", "Xhaketa", "Triko", "Shorte", "Pizhame"];
     case "Këpucë":
-      if (gender === "Femra") return ["Të përditshme","Sportet","Me taka","Sandale","Çizme","Të tjera"];
-      if (gender === "Meshkuj") return ["Të përditshme","Sportet","Elegante","Sandale","Çizme","Të tjera"];
-      return ["Të përditshme","Sportet","Sandale","Çizme","Të tjera"];
+      if (gender === "Femra")
+        return ["Të përditshme", "Sportet", "Me taka", "Sandale", "Çizme", "Të tjera"];
+      if (gender === "Meshkuj")
+        return ["Të përditshme", "Sportet", "Elegante", "Sandale", "Çizme", "Të tjera"];
+      return ["Të përditshme", "Sportet", "Sandale", "Çizme", "Të tjera"];
     case "Çanta":
-      return ["Çanta dore","Çanta shpine","Portofol","Çanta udhëtimi","Të tjera"];
+      return ["Çanta dore", "Çanta shpine", "Portofol", "Çanta udhëtimi", "Të tjera"];
     case "Aksesorë":
-      return ["Kapele","Shall & doreza","Rripa","Syze","Bizhuteri","Ora","Të tjera"];
+      return ["Kapele", "Shall & doreza", "Rripa", "Syze", "Bizhuteri", "Ora", "Të tjera"];
     case "Fëmijë & bebe":
-      return ["Veshje","Këpucë","Lodra","Karrocë","Aksesorë bebeje","Të tjera"];
+      return ["Veshje", "Këpucë", "Lodra", "Karrocë", "Aksesorë bebeje", "Të tjera"];
     case "Outdoor & sport":
-      return ["Veshje sportive","Këpucë sportive","Bicikletë","Kampim","Ski & dëborë","Fitness","Të tjera"];
+      return [
+        "Veshje sportive",
+        "Këpucë sportive",
+        "Bicikletë",
+        "Kampim",
+        "Ski & dëborë",
+        "Fitness",
+        "Të tjera",
+      ];
     case "Art & dizajn":
-      return ["Pikturë","Print & poster","Fotografi","Skulpturë","Dekor","Të tjera"];
+      return ["Pikturë", "Print & poster", "Fotografi", "Skulpturë", "Dekor", "Të tjera"];
     case "Elektronikë & zë":
-      return ["Telefona","Kompjuterë","Audio","Kamera","Aksesorë","Të tjera"];
+      return ["Telefona", "Kompjuterë", "Audio", "Kamera", "Aksesorë", "Të tjera"];
     case "Interier & mobilie":
-      return ["Mobilje","Dekor","Ndriçim","Kuzhinë","Tekstil","Të tjera"];
+      return ["Mobilje", "Dekor", "Ndriçim", "Kuzhinë", "Tekstil", "Të tjera"];
     default:
       return [];
   }
@@ -219,7 +253,6 @@ function SellPage() {
     setSizeError(false);
     if (sizeKind === "accessory") setSize("Universal");
     else setSize("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sizeKind]);
 
   const step2Valid =
@@ -231,11 +264,7 @@ function SellPage() {
 
   const priceNum = Number(price.replace(",", "."));
   const finalValid =
-    step2Valid &&
-    price.trim().length > 0 &&
-    Number.isFinite(priceNum) &&
-    priceNum >= 0 &&
-    !!cityId;
+    step2Valid && price.trim().length > 0 && Number.isFinite(priceNum) && priceNum >= 0 && !!cityId;
 
   const publish = async () => {
     if (!userId || submitting || !finalValid) return;
@@ -331,7 +360,6 @@ function SellPage() {
         className="relative w-full max-w-[480px] overflow-hidden"
         style={{ background: PAGE, height: "100dvh" }}
       >
-
         <Layer visible={view === "media"}>
           <MediaCategoryStep
             images={images}
@@ -529,7 +557,12 @@ function TopHeader({
               border: `1px solid ${DIVIDER}`,
             }}
           >
-            <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" style={{ color: "var(--brand-ink)" }} />
+            <ChevronLeft
+              size={18}
+              strokeWidth={2}
+              aria-hidden="true"
+              style={{ color: "var(--brand-ink)" }}
+            />
           </button>
         )}
       </div>
@@ -1103,7 +1136,11 @@ function FinalStep({
               <span className="truncate" style={{ color: size ? INK : MUTED }}>
                 {size || "Zgjidh"}
               </span>
-              <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
+              <ChevronRight
+                className="h-4 w-4 shrink-0"
+                style={{ color: MUTED }}
+                aria-hidden="true"
+              />
             </button>
           </div>
           <div>
@@ -1158,7 +1195,11 @@ function FinalStep({
                   </>
                 )}
               </span>
-              <ChevronRight className="ml-2 h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
+              <ChevronRight
+                className="ml-2 h-4 w-4 shrink-0"
+                style={{ color: MUTED }}
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>
@@ -1193,19 +1234,12 @@ function FinalStep({
           </div>
           <div>
             <Label htmlFor="sell-city">Qyteti</Label>
-            <CityPicker
-              value={cityId}
-              onChange={(id, c) => onCityChange(id, c.name)}
-            />
+            <CityPicker value={cityId} onChange={(id, c) => onCityChange(id, c.name)} />
           </div>
         </div>
 
         <Label className="mt-4">Dorëzimi</Label>
-        <div
-          role="group"
-          aria-label="Opsionet e dorëzimit"
-          className="flex flex-wrap gap-2"
-        >
+        <div role="group" aria-label="Opsionet e dorëzimit" className="flex flex-wrap gap-2">
           {DELIVERY.map((d) => {
             const active = delivery.includes(d);
             return (
