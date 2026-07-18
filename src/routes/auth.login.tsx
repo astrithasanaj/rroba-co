@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useState } from "react";
 import { ChevronLeft, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+
 
 export const Route = createFileRoute("/auth/login")({
   ssr: false,
@@ -22,7 +24,9 @@ const CARD = "#ffffff";
 const INK = "#2d1521";
 const MUTED = "#a89f94";
 const CORAL = "#c65a7a";
+const DIVIDER = "#e2e2de";
 const ERR = "#e53935";
+
 
 function AuthField({
   type = "text",
@@ -79,8 +83,31 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [emailErr, setEmailErr] = useState("");
   const [passErr, setPassErr] = useState("");
+  const [appleErr, setAppleErr] = useState("");
+  const [appleLoading, setAppleLoading] = useState(false);
+
+  const handleApple = async () => {
+    setAppleErr("");
+    setAppleLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: `${window.location.origin}/auth/callback`,
+      });
+      if (result.error) {
+        setAppleErr("Diçka shkoi keq me hyrjen përmes Apple. Provo përsëri.");
+        setAppleLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      navigate({ to: "/auth/callback", replace: true });
+    } catch {
+      setAppleErr("Diçka shkoi keq me hyrjen përmes Apple. Provo përsëri.");
+      setAppleLoading(false);
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
+
     e.preventDefault();
     setEmailErr("");
     setPassErr("");
