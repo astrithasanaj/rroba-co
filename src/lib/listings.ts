@@ -222,14 +222,45 @@ export async function signPaths(
   }
 
   // Vent på samtidige kall som allerede hadde in-flight for disse pathene.
+  // Race: sibling-batchen kan ha rukket å resolve + rydde inFlight før vi kom hit,
+  // så vi må falle tilbake til URL-cachen, og som siste utvei signere selv.
   if (alreadyPending.length > 0) {
     await Promise.all(
       alreadyPending.map(async (path) => {
+        const key = cacheKeyFor(path, false);
         try {
-          const url = await inFlight.get(cacheKeyFor(path, false));
-          if (url) map[path] = url;
+          const pending = inFlight.get(key);
+          if (pending) {
+            const url = await pending;
+            if (url) {
+              map[path] = url;
+              return;
+            }
+          }
         } catch {
-          /* ignore — placeholder overtar */
+          /* ignore — fall videre til cache/re-sign */
+        }
+        const cached = readCache(path, false);
+        if (cached) {
+          map[path] = cached;
+          return;
+        }
+        // Siste utvei: signer selv, med samme in-flight-dedup som ellers.
+        let own = inFlight.get(key);
+        if (!own) {
+          own = signOne(path, false).finally(() => {
+            inFlight.delete(key);
+          });
+          inFlight.set(key, own);
+        }
+        try {
+          const url = await own;
+          if (url) {
+            map[path] = url;
+            writeCache(path, false, url);
+          }
+        } catch {
+          /* feilisolert — path faller kontrollert ut */
         }
       }),
     );
