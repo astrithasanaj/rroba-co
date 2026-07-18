@@ -68,9 +68,9 @@ type PendingImage = { file: File; previewUrl: string; mime: string };
 
 const CONDITION_SUBTITLES: Record<string, string> = {
   "I ri": "Kurrë i përdorur",
-  "Mirë përdorur": "Pa shenja përdorimi",
-  Përdorur: "Disa shenja përdorimi",
-  "Shumë përdorur": "Shenja të qarta përdorimi",
+  "Mirë përdorur": "Shenja të lehta përdorimi",
+  Përdorur: "Shenja të dukshme përdorimi",
+  "Shumë përdorur": "Shenja të forta përdorimi",
 };
 
 type GenderMode = "adult" | "kids" | false;
