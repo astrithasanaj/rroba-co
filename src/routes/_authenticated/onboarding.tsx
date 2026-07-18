@@ -116,37 +116,59 @@ function TopBar({
 function BigButton({
   children,
   disabled,
+  loading,
   onClick,
   variant = "primary",
+  type = "button",
 }: {
   children: React.ReactNode;
   disabled?: boolean;
+  loading?: boolean;
   onClick?: () => void;
   variant?: "primary" | "ghost";
+  type?: "button" | "submit";
 }) {
+  const isDisabled = disabled || loading;
   const base =
-    "w-full rounded-full py-4 text-[15px] font-semibold transition disabled:opacity-40";
+    "relative w-full rounded-full text-[15px] font-semibold transition disabled:opacity-40 disabled:active:scale-100 enabled:active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
+  const height = { height: 54, minHeight: 54 } as const;
   if (variant === "ghost") {
     return (
       <button
+        type={type}
         onClick={onClick}
-        disabled={disabled}
+        disabled={isDisabled}
+        aria-busy={loading || undefined}
         className={base}
-        style={{ background: "transparent", color: MUTED }}
+        style={{ background: "transparent", color: MUTED, ...height }}
       >
-        {children}
+        <span style={{ visibility: loading ? "hidden" : "visible" }}>{children}</span>
+        {loading && <Spinner colorHex={MUTED} />}
       </button>
     );
   }
   return (
     <button
+      type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={isDisabled}
+      aria-busy={loading || undefined}
       className={base}
-      style={{ background: DARK, color: "#fff" }}
+      style={{ background: DARK, color: "#fff", ...height }}
     >
-      {children}
+      <span style={{ visibility: loading ? "hidden" : "visible" }}>{children}</span>
+      {loading && <Spinner colorHex="#ffffff" />}
     </button>
+  );
+}
+
+function Spinner({ colorHex }: { colorHex: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute left-1/2 top-1/2 inline-block h-5 w-5 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2"
+      style={{ borderColor: colorHex, borderTopColor: "transparent" }}
+    />
   );
 }
 
@@ -154,24 +176,31 @@ function Chip({
   active,
   onClick,
   children,
+  ariaLabel,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  ariaLabel?: string;
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="rounded-full px-4 py-2.5 text-sm font-medium transition"
+      aria-pressed={active}
+      aria-label={ariaLabel}
+      className="min-h-11 rounded-full px-4 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
       style={{
         background: active ? DARK : CHIP_BG,
         color: active ? "#fff" : DARK,
+        border: `1px solid ${active ? DARK : DIVIDER}`,
       }}
     >
       {children}
     </button>
   );
 }
+
 
 function Heading({ children }: { children: React.ReactNode }) {
   return (
