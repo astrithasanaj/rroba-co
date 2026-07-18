@@ -163,7 +163,7 @@ function CategoryResultsPage() {
 
         <section className="mt-4 px-5">
           {loading ? (
-            <div className="grid place-items-center py-16">
+            <div role="status" aria-live="polite" className="grid place-items-center py-16">
               <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
             </div>
           ) : results.length === 0 ? (

@@ -948,11 +948,11 @@ function TabbedResults({
           {profileLoading ? "Po kërkon..." : `${profiles.length} profile`}
         </p>
         {profileLoading ? (
-          <div className="grid place-items-center py-10">
+          <div role="status" aria-live="polite" className="grid place-items-center py-10">
             <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
           </div>
         ) : profiles.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
             Asnjë profil u gjet
           </div>
         ) : (
@@ -981,7 +981,7 @@ function TabbedResults({
           {brands.length} marka
         </p>
         {brands.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
             Asnjë markë u gjet
           </div>
         ) : (
@@ -1008,7 +1008,7 @@ function TabbedResults({
     return (
       <section className="mt-6 px-5">
         {matchedCategories.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
+          <div role="status" className="rounded-2xl p-10 text-center text-sm" style={{ backgroundColor: CARD, color: MUTED }}>
             Asnjë kategori
           </div>
         ) : (
@@ -1160,7 +1160,7 @@ function ResultsSection({
         {loading ? "Po kërkon..." : `${results.length} rezultate`}
       </p>
       {loading ? (
-        <div className="grid place-items-center py-10">
+        <div role="status" aria-live="polite" className="grid place-items-center py-10">
           <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
         </div>
       ) : results.length === 0 ? (
