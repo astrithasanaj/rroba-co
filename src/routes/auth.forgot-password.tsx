@@ -8,12 +8,12 @@ export const Route = createFileRoute("/auth/forgot-password")({
   component: ForgotPage,
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const ERR = "#e53935";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
+const ERR = "var(--brand-danger)";
 
 function ForgotPage() {
   const navigate = useNavigate();
