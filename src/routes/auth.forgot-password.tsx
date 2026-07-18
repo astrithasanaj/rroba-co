@@ -98,8 +98,9 @@ function ForgotPage() {
               </p>
             </div>
 
-            <form onSubmit={submit} className="mt-8 space-y-3">
+            <form onSubmit={submit} className="mt-8 space-y-3" noValidate>
               <input
+                id="forgot-email"
                 type="email"
                 required
                 value={email}
@@ -109,19 +110,25 @@ function ForgotPage() {
                 }}
                 placeholder="adresa@email.com"
                 autoComplete="email"
+                inputMode="email"
+                enterKeyHint="send"
                 autoCapitalize="none"
-                className="w-full text-[15px] outline-none"
+                aria-label="Adresa e emailit"
+                aria-invalid={err ? true : undefined}
+                aria-describedby={err ? "forgot-email-err" : undefined}
+                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                 style={{
                   background: CARD,
                   color: INK,
                   height: 52,
                   borderRadius: 12,
                   padding: "0 16px",
-                  outline: err ? `2px solid ${ERR}` : undefined,
+                  border: `1px solid ${err ? ERR : "#e2e2de"}`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
                 }}
               />
               {err && (
-                <p className="px-1 text-xs" style={{ color: ERR }}>
+                <p id="forgot-email-err" role="alert" className="px-1 text-xs" style={{ color: ERR }}>
                   {err}
                 </p>
               )}
