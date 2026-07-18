@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
+import { Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { CityPicker } from "@/components/marketplace/CityPicker";
