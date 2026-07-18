@@ -612,7 +612,11 @@ function ProfilePage() {
         >
           {loading && tab === "mine" ? (
             <div className="grid place-items-center py-10" role="status" aria-live="polite">
-              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} aria-hidden="true" />
+              <Loader2
+                className="h-6 w-6 animate-spin"
+                style={{ color: MUTED }}
+                aria-hidden="true"
+              />
               <span className="sr-only">Duke ngarkuar…</span>
             </div>
           ) : currentGrid.length === 0 ? (
@@ -1560,9 +1564,14 @@ function SettingsMain({
           WebkitTapHighlightColor: "transparent",
         }}
       >
-        <i className="ti ti-trash" style={{ fontSize: 20, color: "var(--brand-danger)", width: 22 }} />
+        <i
+          className="ti ti-trash"
+          style={{ fontSize: 20, color: "var(--brand-danger)", width: 22 }}
+        />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-danger)", lineHeight: 1.3 }}>
+          <div
+            style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-danger)", lineHeight: 1.3 }}
+          >
             Fshij llogarinë
           </div>
           <div style={{ fontSize: 12, color: MUTED, marginTop: 2, lineHeight: 1.3 }}>
