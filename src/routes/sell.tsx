@@ -522,6 +522,10 @@ function Layer({
   z?: number;
   children: React.ReactNode;
 }) {
+  // `inert` removes descendants from the tab order, prevents pointer/keyboard
+  // interaction and hides them from AT — a stronger guarantee than aria-hidden
+  // alone, which still leaves focusable descendants reachable.
+  const inertProps = visible ? {} : ({ inert: "" } as { inert?: string });
   return (
     <div
       className="absolute inset-0 transition-transform duration-300 ease-out"
@@ -532,6 +536,7 @@ function Layer({
         pointerEvents: visible ? "auto" : "none",
       }}
       aria-hidden={!visible}
+      {...inertProps}
     >
       {children}
     </div>
