@@ -588,7 +588,7 @@ const EKSPLORE_ROWS: {
 }[] = [
   { key: "mode", label: "Modë & aksesorë", Icon: Shirt },
   { key: "femije", label: "Fëmijë & bebe", Icon: Baby },
-  { key: "interior", label: "Interiør & mobilje", Icon: Archive },
+  { key: "interior", label: "Interier & mobilie", Icon: Archive },
   { key: "outdoor", label: "Outdoor & sport", Icon: Mountain },
   { key: "art", label: "Art & dizajn", Icon: Frame },
   { key: "elektronik", label: "Elektronikë & zë", Icon: Speaker },

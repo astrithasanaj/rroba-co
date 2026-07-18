@@ -64,7 +64,7 @@ const CATEGORIES: Category[] = [
   { id: "Outdoor & sport", label: "Outdoor & sport", genderMode: false },
   { id: "Art & dizajn", label: "Art & dizajn", genderMode: false },
   { id: "Elektronikë & zë", label: "Elektronikë & zë", genderMode: false },
-  { id: "Interiør & mobilje", label: "Interiør & mobilje", genderMode: false },
+  { id: "Interier & mobilie", label: "Interier & mobilie", genderMode: false },
 ];
 
 const ADULT_GENDERS = ["Femra", "Meshkuj", "Uniseks"];
@@ -94,7 +94,7 @@ function getSubcategories(category: string, gender: string): string[] {
       return ["Pikturë","Print & poster","Fotografi","Skulpturë","Dekor","Të tjera"];
     case "Elektronikë & zë":
       return ["Telefona","Kompjuterë","Audio","Kamera","Aksesorë","Të tjera"];
-    case "Interiør & mobilje":
+    case "Interier & mobilie":
       return ["Mobilje","Dekor","Ndriçim","Kuzhinë","Tekstil","Të tjera"];
     default:
       return [];
