@@ -201,7 +201,6 @@ function Chip({
   );
 }
 
-
 function Heading({ children }: { children: React.ReactNode }) {
   return (
     <h1
@@ -284,10 +283,7 @@ function StepCity({
           <div className="mb-3 text-sm font-semibold" style={{ color: DARK }}>
             Ku jeton?
           </div>
-          <CityPicker
-            value={value}
-            onChange={(id, c) => onChange(id, c.name)}
-          />
+          <CityPicker value={value} onChange={(id, c) => onChange(id, c.name)} />
         </div>
       </div>
       <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
@@ -298,7 +294,6 @@ function StepCity({
     </div>
   );
 }
-
 
 /* ---------- Step 2: Profile ---------- */
 function StepProfile({
@@ -391,9 +386,7 @@ function StepProfile({
         .upload(path, compressed, { contentType: compressed.type, upsert: false });
       if (error) throw error;
       setAvatarUrl(path);
-      const { data: signed } = await supabase.storage
-        .from("photos")
-        .createSignedUrl(path, 60 * 60);
+      const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60);
       if (signed?.signedUrl) setAvatarPreview(signed.signedUrl);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Ngarkimi dështoi");
@@ -437,17 +430,15 @@ function StepProfile({
             type="button"
             onClick={pickAvatar}
             disabled={uploading}
-            aria-label={avatarPreview ? "Ndrysho fotografinë e profilit" : "Ngarko fotografinë e profilit"}
+            aria-label={
+              avatarPreview ? "Ndrysho fotografinë e profilit" : "Ngarko fotografinë e profilit"
+            }
             aria-busy={uploading || undefined}
             className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)] disabled:opacity-70"
             style={{ background: CHIP_BG, border: `1px solid ${DIVIDER}` }}
           >
             {avatarPreview ? (
-              <img
-                src={avatarPreview}
-                alt=""
-                className="h-full w-full object-cover"
-              />
+              <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
             ) : initials ? (
               <span
                 aria-hidden="true"
@@ -495,7 +486,11 @@ function StepProfile({
 
         <div className="mt-6 space-y-4">
           <div>
-            <label htmlFor="ob-display-name" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-display-name"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Emri i shfaqur
             </label>
             <input
@@ -519,7 +514,11 @@ function StepProfile({
           </div>
 
           <div>
-            <label htmlFor="ob-username" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-username"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Emri i përdoruesit
             </label>
             <div className="relative">
@@ -534,7 +533,9 @@ function StepProfile({
                 autoCorrect="off"
                 autoComplete="username"
                 enterKeyHint="next"
-                aria-invalid={usernameStatus === "taken" || usernameStatus === "invalid" || undefined}
+                aria-invalid={
+                  usernameStatus === "taken" || usernameStatus === "invalid" || undefined
+                }
                 aria-describedby={
                   usernameStatus === "invalid"
                     ? "ob-username-err-invalid"
@@ -569,9 +570,7 @@ function StepProfile({
                     style={{ borderColor: MUTED, borderTopColor: "transparent" }}
                   />
                 )}
-                {usernameStatus === "available" && (
-                  <Check size={18} color={SUCCESS} />
-                )}
+                {usernameStatus === "available" && <Check size={18} color={SUCCESS} />}
                 {(usernameStatus === "taken" || usernameStatus === "invalid") && (
                   <X size={18} color={ERR} />
                 )}
@@ -600,7 +599,11 @@ function StepProfile({
           </div>
 
           <div>
-            <label htmlFor="ob-bio" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-bio"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Bio <span style={{ color: MUTED }}>(opsionale)</span>
             </label>
             <div className="relative">
@@ -633,7 +636,11 @@ function StepProfile({
           </div>
 
           <div>
-            <label htmlFor="ob-height" className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-height"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Gjatësia <span style={{ color: MUTED }}>(opsionale)</span>
             </label>
             <div className="flex items-center gap-3">
@@ -662,7 +669,6 @@ function StepProfile({
             </div>
           </div>
         </div>
-
       </div>
       <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={!canContinue} onClick={onNext}>
@@ -710,11 +716,7 @@ function StepStyle({
           </div>
           <div className="flex flex-wrap gap-2">
             {GENDERS.map((g) => (
-              <Chip
-                key={g.id}
-                active={genders.includes(g.id)}
-                onClick={() => toggleGender(g.id)}
-              >
+              <Chip key={g.id} active={genders.includes(g.id)} onClick={() => toggleGender(g.id)}>
                 {g.label}
               </Chip>
             ))}
@@ -1019,12 +1021,9 @@ function OnboardingFlow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const toggleFrom = useCallback(
-    (arr: string[], setArr: (v: string[]) => void, v: string) => {
-      setArr(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-    },
-    [],
-  );
+  const toggleFrom = useCallback((arr: string[], setArr: (v: string[]) => void, v: string) => {
+    setArr(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  }, []);
 
   const finish = async () => {
     if (!userId) return;
@@ -1122,20 +1121,10 @@ function OnboardingFlow() {
         );
       case 4:
         return (
-          <StepHow
-            onBack={() => setStep(3)}
-            onSkip={() => setStep(5)}
-            onNext={() => setStep(5)}
-          />
+          <StepHow onBack={() => setStep(3)} onSkip={() => setStep(5)} onNext={() => setStep(5)} />
         );
       case 5:
-        return (
-          <StepNotify
-            onBack={() => setStep(4)}
-            onSkip={finish}
-            onEnable={finish}
-          />
-        );
+        return <StepNotify onBack={() => setStep(4)} onSkip={finish} onEnable={finish} />;
       case 6:
       default:
         return <StepDone onDone={() => navigate({ to: "/", replace: true })} />;
