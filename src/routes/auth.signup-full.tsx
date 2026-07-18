@@ -1006,7 +1006,7 @@ function SignupFullPage() {
                 aria-checked={terms}
                 aria-label="Pranoj kushtet e shërbimit dhe politikën e privatësisë"
                 onClick={() => setTerms((v) => !v)}
-                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-90"
+                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                 style={{
                   background: terms ? INK : "transparent",
                   border: `1.5px solid ${terms ? INK : DIVIDER}`,
