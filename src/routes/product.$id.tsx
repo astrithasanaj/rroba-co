@@ -358,14 +358,21 @@ function ProductDetail() {
       {/* Seller description preview */}
       {listing.description && (
         <>
-          <button
-            onClick={() => setDescExpanded((v) => !v)}
-            className="w-full px-[18px] pb-3 pt-1 text-left text-[13px]"
-            style={{ color: "#2d1521" }}
-          >
-            <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
-            {descriptionPreview}
-          </button>
+          {isDescriptionTruncated ? (
+            <button
+              onClick={() => setDescExpanded((v) => !v)}
+              className="w-full px-[18px] pb-3 pt-1 text-left text-[13px]"
+              style={{ color: "#2d1521" }}
+            >
+              <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
+              {descriptionPreview}
+            </button>
+          ) : (
+            <p className="px-[18px] pb-3 pt-1 text-left text-[13px]" style={{ color: "#2d1521" }}>
+              <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
+              {listing.description}
+            </p>
+          )}
           {descExpanded && (
             <p className="px-[18px] py-3 text-[13px]" style={{ color: "#2d1521" }}>
               {listing.description}
