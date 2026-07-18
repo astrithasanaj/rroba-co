@@ -26,7 +26,7 @@ function roundHalf(n: number) {
 
 function BuyPage() {
   const { id } = useParams({ from: "/_authenticated/buy/$id" });
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [listing, setListing] = useState<ListingView | null>(null);
   const [seller, setSeller] = useState<Seller | null>(null);
   const [me, setMe] = useState<string | null>(null);
@@ -141,7 +141,7 @@ function BuyPage() {
     setSubmitting(false);
     setConfirmOpen(false);
     toast.success("Kërkesa u dërgua te shitësi");
-    navigate({ to: "/messages", search: { thread: convId } });
+    navigate({ to: "/messages", search: (prev: { thread: string | undefined; view: "list" | "archive" | "new"; tab: "all" | "buy" | "sell" }) => ({ ...prev, thread: convId }) });
   };
 
   if (!listing) {

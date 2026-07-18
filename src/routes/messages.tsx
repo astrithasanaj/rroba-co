@@ -14,6 +14,7 @@ const DIVIDER = "#e2e2de";
 const CORAL = "#c65a7a";
 
 type View = "list" | "archive" | "new";
+type MessagesSearch = { thread: string | undefined; view: View; tab: "all" | "buy" | "sell" };
 
 export const Route = createFileRoute("/messages")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -54,7 +55,7 @@ type ThreadView = {
 
 function MessagesPage() {
   const { thread, view, tab } = useSearch({ from: "/messages" });
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [me, setMe] = useState<string | null>(null);
 
   useEffect(() => {
@@ -102,7 +103,7 @@ function ComposeIcon({ size = 18, color = CREAM }: { size?: number; color?: stri
 }
 
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [threads, setThreads] = useState<ThreadView[]>([]);
   const [loading, setLoading] = useState(true);
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
@@ -249,7 +250,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           {mode === "archive" ? (
             <button
               type="button"
-              onClick={() => navigate({ to: "/messages", search: { view: "list", tab } })}
+              onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "list", tab }) })}
               aria-label="Kthehu"
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{
@@ -267,10 +268,10 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           <h1 className="text-[22px] font-bold" style={{ color: INK }}>{title}</h1>
           {mode === "inbox" ? (
             <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: "#2d1521" }}>
-              <button onClick={() => navigate({ to: "/messages", search: { view: "archive", tab } })} aria-label="Arkiva" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
+              <button onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "archive", tab }) })} aria-label="Arkiva" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
                 <InboxIcon />
               </button>
-              <button onClick={() => navigate({ to: "/messages", search: { view: "new", tab } })} aria-label="Mesazh i ri" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
+              <button onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "new", tab }) })} aria-label="Mesazh i ri" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
                 <ComposeIcon />
               </button>
             </div>
@@ -300,7 +301,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 return (
                   <button
                     key={t}
-                    onClick={() => navigate({ to: "/messages", search: { tab: t, view: "list" } })}
+                    onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, tab: t, view: "list" }) })}
                     className="relative z-10 flex-1 rounded-full text-sm font-medium transition-colors duration-200"
                     style={{
                       color: active ? "#fff" : MUTED,
@@ -374,7 +375,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                     onMouseUp={endPress}
                     onMouseLeave={endPress}
                     onContextMenu={(e) => { e.preventDefault(); setMenu({ id: t.id, x: e.clientX, y: e.clientY }); }}
-                    onClick={() => { if (swipeId === t.id) { setSwipeId(null); return; } navigate({ to: "/messages", search: { thread: t.id } }); }}
+                    onClick={() => { if (swipeId === t.id) { setSwipeId(null); return; } navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, thread: t.id }) }); }}
                   >
                     <div className="relative shrink-0">
                       <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
@@ -481,7 +482,7 @@ function formatTime(iso: string) {
 type ProfileResult = { id: string; name: string | null; avatar_url: string | null; username?: string | null; city?: string | null };
 
 function NewMessage({ me }: { me: string }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [q, setQ] = useState("");
   const [results, setResults] = useState<ProfileResult[]>([]);
   const [recent, setRecent] = useState<ProfileResult[]>([]);
@@ -528,7 +529,7 @@ function NewMessage({ me }: { me: string }) {
       .order("last_message_at", { ascending: false })
       .limit(1);
     if (existing && existing.length > 0) {
-      navigate({ to: "/messages", search: { thread: existing[0].id } });
+      navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, thread: existing[0].id }) });
       return;
     }
     toast.error("Nis një bisedë nga faqja e produktit");
@@ -553,7 +554,7 @@ function NewMessage({ me }: { me: string }) {
         }}
       >
         <header className="sticky top-0 z-30 flex items-center gap-3 px-5 pt-5 pb-3" style={{ backgroundColor: `${CREAM}f2` }}>
-          <button onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
+          <button onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "list", tab: "all" }) })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
             <X className="h-5 w-5" style={{ color: INK }} />
           </button>
           <h1 className="text-[18px] font-bold" style={{ color: INK }}>Mesazh i ri</h1>
@@ -611,7 +612,7 @@ function NewMessage({ me }: { me: string }) {
 type MessageRow = { id: string; sender_id: string; content: string; created_at: string };
 
 function Thread({ id, me }: { id: string; me: string }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [info, setInfo] = useState<{
     otherName: string; otherAvatar: string; listingId: string; listingTitle: string; listingPrice: number | null; listingCover: string; isBuyer: boolean;
   } | null>(null);

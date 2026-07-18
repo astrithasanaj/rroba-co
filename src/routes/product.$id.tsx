@@ -42,7 +42,7 @@ type Seller = {
 
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const cached = getCachedListing(id);
   const [listing, setListing] = useState<ListingView | null>(cached);
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -140,7 +140,7 @@ function ProductDetail() {
       }
       convId = created.id;
     }
-    navigate({ to: "/messages", search: { thread: convId } });
+    navigate({ to: "/messages", search: (prev: { thread: string | undefined; view: "list" | "archive" | "new"; tab: "all" | "buy" | "sell" }) => ({ ...prev, thread: convId }) });
   };
 
   if (loading && !listing) {

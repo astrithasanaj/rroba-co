@@ -70,8 +70,9 @@ function ForgotPage() {
             <p className="mt-2 text-sm" style={{ color: MUTED }}>
               Dërguam një link në {email}. Kliko linkun për të rivendosur fjalëkalimin tënd.
             </p>
-            <Link
+<Link
               to="/auth/login"
+              search={{ next: undefined }}
               className="mt-8 flex h-[54px] w-full items-center justify-center text-[15px] font-bold"
               style={{ background: CARD, color: INK, borderRadius: 14 }}
             >
