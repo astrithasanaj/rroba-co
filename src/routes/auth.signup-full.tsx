@@ -815,7 +815,7 @@ function SignupFullPage() {
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
                   aria-label="Kodi i vendit"
-                  className="appearance-none text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[color:#c65a7a]/40"
+                  className="appearance-none text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-rose)]/40"
                   style={{
                     background: CARD,
                     color: INK,
