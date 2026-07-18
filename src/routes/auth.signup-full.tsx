@@ -661,12 +661,12 @@ function SignupFullPage() {
                       const filled = i < strength.score;
                       const color =
                         strength.isCommon || strength.score <= 2
-                          ? "#e53935"
+                          ? "var(--brand-danger)"
                           : strength.score === 3
-                            ? "#f9a825"
+                            ? "var(--brand-warning)"
                             : strength.score === 4
-                              ? "#c65a7a"
-                              : "#43a047";
+                              ? "var(--brand-rose)"
+                              : "var(--brand-success)";
                       return (
                         <div
                           key={i}
@@ -689,12 +689,12 @@ function SignupFullPage() {
                         <div
                           key={item.key}
                           className="flex items-center gap-2 text-[12px]"
-                          style={{ color: ok ? "#2e7d32" : MUTED }}
+                          style={{ color: ok ? "var(--brand-success)" : MUTED }}
                         >
                           <span
                             className="flex h-4 w-4 items-center justify-center rounded-full text-[10px]"
                             style={{
-                              background: ok ? "#43a047" : "transparent",
+                              background: ok ? "var(--brand-success)" : "transparent",
                               color: ok ? "#fff" : MUTED,
                               border: ok ? "none" : `1px solid ${DIVIDER}`,
                             }}
@@ -756,8 +756,8 @@ function SignupFullPage() {
                     color: isCheckingPassword
                       ? MUTED
                       : supabasePasswordError
-                        ? "#b71c1c"
-                        : "#2e7d32",
+                        ? "var(--brand-danger)"
+                        : "var(--brand-success)",
                   }}
                 >
                   {isCheckingPassword ? (
@@ -815,7 +815,7 @@ function SignupFullPage() {
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
                   aria-label="Kodi i vendit"
-                  className="appearance-none text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[color:#c65a7a]/40"
+                  className="appearance-none text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-rose)]/40"
                   style={{
                     background: CARD,
                     color: INK,
@@ -980,7 +980,7 @@ function SignupFullPage() {
                   style={{
                     color:
                       usernameStatus === "ok"
-                        ? "#2e7d32"
+                        ? "var(--brand-success)"
                         : usernameStatus === "taken" || usernameStatus === "invalid"
                           ? ERR
                           : MUTED,
