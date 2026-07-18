@@ -918,11 +918,16 @@ function DetailsStep({
                   <button
                     type="button"
                     onClick={() => onRemoveImage(i)}
-                    className={`absolute left-0 top-0 grid h-8 w-8 place-items-center rounded-br-xl rounded-tl-2xl ${FOCUS_CLASS}`}
-                    style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
+                    className={`absolute left-0 top-0 grid h-11 w-11 place-items-start justify-start rounded-tl-2xl bg-transparent ${FOCUS_CLASS}`}
                     aria-label={`Fshij foton ${i + 1}`}
                   >
-                    <X className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span
+                      className="grid h-8 w-8 place-items-center rounded-br-xl rounded-tl-2xl"
+                      style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
+                      aria-hidden="true"
+                    >
+                      <X className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
                   </button>
                 </li>
               );
