@@ -408,9 +408,10 @@ function Chips({
             <button
               key={o}
               type="button"
+              aria-pressed={active}
               onClick={() => onChange(active ? "" : o)}
-              className="rounded-full px-3 py-1.5 text-xs font-medium"
-              style={{ backgroundColor: active ? INK : CARD, color: active ? "var(--brand-surface)" : INK }}
+              className="rounded-full px-3 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
+              style={{ backgroundColor: active ? INK : CARD, color: active ? "var(--brand-surface)" : INK, border: active ? "none" : "1px solid var(--brand-border)" }}
             >
               {o}
             </button>
