@@ -36,9 +36,14 @@ function ConfirmEmailPage() {
   ];
 
   return (
-    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
-
-      <div className="mx-auto flex w-full max-w-[420px] flex-col items-center px-6 pt-[60px] text-center" style={{ paddingBottom: "calc(3rem + env(safe-area-inset-bottom))" }}>
+    <div
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
+    >
+      <div
+        className="mx-auto flex w-full max-w-[420px] flex-col items-center px-6 pt-[60px] text-center"
+        style={{ paddingBottom: "calc(3rem + env(safe-area-inset-bottom))" }}
+      >
         <div
           className="italic"
           style={{

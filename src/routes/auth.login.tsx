@@ -4,7 +4,6 @@ import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 
-
 export const Route = createFileRoute("/auth/login")({
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
@@ -26,7 +25,6 @@ const MUTED = "#a89f94";
 const CORAL = "#c65a7a";
 const DIVIDER = "#e2e2de";
 const ERR = "#e53935";
-
 
 function AuthField({
   type = "text",
@@ -86,9 +84,7 @@ function AuthField({
           transition: "border-color 120ms ease, box-shadow 120ms ease",
         }}
       />
-      {right ? (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">{right}</div>
-      ) : null}
+      {right ? <div className="absolute right-3 top-1/2 -translate-y-1/2">{right}</div> : null}
     </div>
   );
 }
@@ -128,7 +124,6 @@ function LoginPage() {
   };
 
   const submit = async (e: React.FormEvent) => {
-
     e.preventDefault();
     setEmailErr("");
     setPassErr("");
@@ -175,10 +170,14 @@ function LoginPage() {
   };
 
   return (
-    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
-
-      <div className="mx-auto w-full max-w-[420px] px-6 pt-4" style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}>
-
+    <div
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
+    >
+      <div
+        className="mx-auto w-full max-w-[420px] px-6 pt-4"
+        style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+      >
         <button
           type="button"
           onClick={() => window.history.back()}
@@ -221,7 +220,13 @@ function LoginPage() {
             className="flex h-[52px] w-full items-center justify-center gap-2 text-[15px] font-semibold transition disabled:opacity-60 active:scale-[0.98]"
             style={{ background: "#000", color: "#fff", borderRadius: 14 }}
           >
-            <svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 384 512"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zM256.6 84.4c30.2-35.8 27.5-68.4 26.6-80.4-26.7 1.5-57.6 18.2-75.2 38.7-19.4 22-30.8 49.2-28.4 79.9 28.9 2.2 55.3-12.6 76.9-38.2z" />
             </svg>
             {appleLoading ? "Duke hyrë..." : "Vazhdo me Apple"}
@@ -233,7 +238,9 @@ function LoginPage() {
           )}
           <div className="flex items-center gap-3 pt-1">
             <div className="h-px flex-1" style={{ background: DIVIDER }} />
-            <span className="text-[12px]" style={{ color: MUTED }}>ose</span>
+            <span className="text-[12px]" style={{ color: MUTED }}>
+              ose
+            </span>
             <div className="h-px flex-1" style={{ background: DIVIDER }} />
           </div>
         </div>
@@ -283,7 +290,11 @@ function LoginPage() {
                 className="grid h-11 w-11 place-items-center rounded-full transition active:scale-90"
                 style={{ color: MUTED }}
               >
-                {showPass ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                {showPass ? (
+                  <EyeOff size={18} aria-hidden="true" />
+                ) : (
+                  <Eye size={18} aria-hidden="true" />
+                )}
               </button>
             }
           />

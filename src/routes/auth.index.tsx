@@ -25,9 +25,14 @@ function AuthLanding() {
   }, [navigate]);
 
   return (
-    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
-
-      <div className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col px-6 pt-[60px]" style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}>
+    <div
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
+    >
+      <div
+        className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col px-6 pt-[60px]"
+        style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+      >
         <div className="text-center">
           <div
             className="italic"
@@ -69,7 +74,7 @@ function AuthLanding() {
             Krijo llogari të re
           </Link>
 
-<Link
+          <Link
             to="/auth/login"
             search={{ next: undefined }}
             className="flex h-[54px] w-full items-center justify-center gap-2 text-[15px] font-bold transition active:scale-[0.98]"

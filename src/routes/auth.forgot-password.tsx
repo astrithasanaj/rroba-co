@@ -27,10 +27,9 @@ function ForgotPage() {
     setErr("");
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        email.trim().toLowerCase(),
-        { redirectTo: window.location.origin + "/reset-password" },
-      );
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+        redirectTo: window.location.origin + "/reset-password",
+      });
       if (error) throw error;
       setSent(true);
     } catch (e2) {
@@ -41,9 +40,14 @@ function ForgotPage() {
   };
 
   return (
-    <div className="w-full" style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}>
-
-      <div className="mx-auto w-full max-w-[420px] px-6 pt-4" style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}>
+    <div
+      className="w-full"
+      style={{ position: "absolute", inset: 0, overflowY: "auto", background: CREAM }}
+    >
+      <div
+        className="mx-auto w-full max-w-[420px] px-6 pt-4"
+        style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+      >
         <button
           type="button"
           onClick={() => window.history.back()}
@@ -70,7 +74,7 @@ function ForgotPage() {
             <p className="mt-2 text-sm" style={{ color: MUTED }}>
               Dërguam një link në {email}. Kliko linkun për të rivendosur fjalëkalimin tënd.
             </p>
-<Link
+            <Link
               to="/auth/login"
               search={{ next: undefined }}
               className="mt-8 flex h-[54px] w-full items-center justify-center text-[15px] font-bold"
@@ -128,7 +132,12 @@ function ForgotPage() {
                 }}
               />
               {err && (
-                <p id="forgot-email-err" role="alert" className="px-1 text-xs" style={{ color: ERR }}>
+                <p
+                  id="forgot-email-err"
+                  role="alert"
+                  className="px-1 text-xs"
+                  style={{ color: ERR }}
+                >
                   {err}
                 </p>
               )}
