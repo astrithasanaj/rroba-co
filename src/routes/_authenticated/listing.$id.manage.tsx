@@ -47,6 +47,16 @@ function ManageListingPage() {
   const [confirmSold, setConfirmSold] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [working, setWorking] = useState(false);
+  const [buyerPickerOpen, setBuyerPickerOpen] = useState(false);
+  const [buyerCandidates, setBuyerCandidates] = useState<
+    Array<{ id: string; name: string | null; avatar_url: string | null }>
+  >([]);
+  const [rateBuyer, setRateBuyer] = useState<{
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+  } | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
