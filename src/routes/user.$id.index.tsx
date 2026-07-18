@@ -152,7 +152,7 @@ function UserProfile() {
           .order("created_at", { ascending: false }),
       ]);
       const rows = (l.data ?? []) as ListingRow[];
-      const hydrated = await hydrateListings(rows);
+      const hydrated = await hydrateListings(rows, { thumbnail: true, mode: "cover" });
 
       // likes totals for the "popular" sort
       const listingIds = rows.map((r) => r.id);

@@ -26,7 +26,8 @@ function HomePage() {
   const handleTabChange = (next: Tab) => {
     if (next === tab) return;
     setTab(next);
-    const scroller = typeof document !== "undefined" ? document.querySelector<HTMLElement>(".page-wrapper") : null;
+    const scroller =
+      typeof document !== "undefined" ? document.querySelector<HTMLElement>(".page-wrapper") : null;
     if (scroller && scroller.scrollTop > 0) {
       scroller.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -40,10 +41,9 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [followingLoading, setFollowingLoading] = useState(true);
 
-
   useEffect(() => {
     let active = true;
-      const load = async () => {
+    const load = async () => {
       setLoading(true);
 
       const nowIso = new Date().toISOString();
@@ -63,15 +63,18 @@ function HomePage() {
         myGenders = prefs?.genders ?? [];
       }
 
-      const wantsWomen = myGenders.includes("women") || myGenders.includes("both") || myGenders.length === 0;
-      const wantsMen = myGenders.includes("men") || myGenders.includes("both") || myGenders.length === 0;
+      const wantsWomen =
+        myGenders.includes("women") || myGenders.includes("both") || myGenders.length === 0;
+      const wantsMen =
+        myGenders.includes("men") || myGenders.includes("both") || myGenders.length === 0;
 
       const allowedGenders: string[] = [];
       if (wantsWomen) allowedGenders.push("Femra");
       if (wantsMen) allowedGenders.push("Meshkuj");
 
       const genderFilter = `gender.in.(${allowedGenders.map((g) => `"${g}"`).join(",")}),gender.is.null`;
-      const passesGenderFilter = (r: ListingRow) => r.gender == null || allowedGenders.includes(r.gender);
+      const passesGenderFilter = (r: ListingRow) =>
+        r.gender == null || allowedGenders.includes(r.gender);
 
       const promosPromise = supabase
 
@@ -91,7 +94,6 @@ function HomePage() {
         .gte("created_at", weekAgoIso)
         .order("created_at", { ascending: false })
         .limit(10);
-
 
       const trendingLikesPromise = supabase
         .from("listing_likes")
@@ -150,7 +152,7 @@ function HomePage() {
       if (trendingRows.length < 5) {
         const have = new Set(trendingRows.map((r) => r.id));
         const fillers = ((regular ?? []) as ListingRow[]).filter(
-          (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r)
+          (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r),
         );
 
         trendingRows = [...trendingRows, ...fillers].slice(0, 5);
@@ -158,10 +160,13 @@ function HomePage() {
 
       const [hydratedPromoted, hydratedRegular, hydratedTrending, hydratedNewWeek] =
         await Promise.all([
-          hydrateListings(promotedRows, { thumbnail: true }),
-          hydrateListings((regular ?? []) as ListingRow[], { thumbnail: true }),
-          hydrateListings(trendingRows, { thumbnail: true }),
-          hydrateListings((newThisWeekRows ?? []) as ListingRow[], { thumbnail: true }),
+          hydrateListings(promotedRows, { thumbnail: true, mode: "cover" }),
+          hydrateListings((regular ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }),
+          hydrateListings(trendingRows, { thumbnail: true, mode: "cover" }),
+          hydrateListings((newThisWeekRows ?? []) as ListingRow[], {
+            thumbnail: true,
+            mode: "cover",
+          }),
         ]);
       const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
 
@@ -220,7 +225,10 @@ function HomePage() {
         .in("user_id", ids)
         .order("created_at", { ascending: false })
         .limit(60);
-      const hydrated = await hydrateListings((rows ?? []) as ListingRow[]);
+      const hydrated = await hydrateListings((rows ?? []) as ListingRow[], {
+        thumbnail: true,
+        mode: "cover",
+      });
       if (active) {
         setFollowingIds(ids);
         setFollowingListings(hydrated);
@@ -230,16 +238,18 @@ function HomePage() {
     loadFollowing();
     const ch = supabase
       .channel("home-following")
-      .on("postgres_changes", { event: "*", schema: "public", table: "followers" }, () => loadFollowing())
-      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => loadFollowing())
+      .on("postgres_changes", { event: "*", schema: "public", table: "followers" }, () =>
+        loadFollowing(),
+      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () =>
+        loadFollowing(),
+      )
       .subscribe();
     return () => {
       active = false;
       supabase.removeChannel(ch);
     };
   }, []);
-
-
 
   return (
     <MobileShell>
@@ -374,8 +384,11 @@ function ForYou({
             const linkProps = hasGender
               ? ({ to: "/category/$slug/choose-gender", params: { slug: key } } as const)
               : hasSubcategory
-              ? ({ to: "/category/$slug/subcategory", params: { slug: key } } as const)
-              : ({ to: "/category/$slug/$gender", params: { slug: key, gender: "all" } } as const);
+                ? ({ to: "/category/$slug/subcategory", params: { slug: key } } as const)
+                : ({
+                    to: "/category/$slug/$gender",
+                    params: { slug: key, gender: "all" },
+                  } as const);
             return (
               <Link
                 key={key}

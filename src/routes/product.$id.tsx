@@ -96,7 +96,10 @@ function ProductDetail() {
         .eq("status", "active")
         .eq("sold", false)
         .limit(8);
-      const simHydrated = await hydrateListings((sim ?? []) as ListingRow[]);
+      const simHydrated = await hydrateListings((sim ?? []) as ListingRow[], {
+        thumbnail: true,
+        mode: "cover",
+      });
       if (!active) return;
       setListing(hydrated);
       setSeller(prof as Seller | null);
@@ -145,7 +148,14 @@ function ProductDetail() {
       }
       convId = created.id;
     }
-    navigate({ to: "/messages", search: (prev: { thread: string | undefined; view: "list" | "archive" | "new"; tab: "all" | "buy" | "sell" }) => ({ ...prev, thread: convId }) });
+    navigate({
+      to: "/messages",
+      search: (prev: {
+        thread: string | undefined;
+        view: "list" | "archive" | "new";
+        tab: "all" | "buy" | "sell";
+      }) => ({ ...prev, thread: convId }),
+    });
   };
 
   if (loading && !listing) {
@@ -214,10 +224,7 @@ function ProductDetail() {
           <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
         </button>
         <div className="min-w-0 flex-1 px-2 text-center">
-          <h1
-            className="truncate font-display text-base font-semibold"
-            style={META_TEXT_INK}
-          >
+          <h1 className="truncate font-display text-base font-semibold" style={META_TEXT_INK}>
             {listing.title}
           </h1>
           <p className="text-sm font-semibold" style={{ color: "var(--brand-rose)" }}>
@@ -327,7 +334,12 @@ function ProductDetail() {
             aria-label="Dërgo mesazh"
             className={`${ICON_BTN} disabled:opacity-40 disabled:active:scale-100`}
           >
-            <MessageCircle size={22} strokeWidth={1.5} color="var(--brand-ink)" aria-hidden="true" />
+            <MessageCircle
+              size={22}
+              strokeWidth={1.5}
+              color="var(--brand-ink)"
+              aria-hidden="true"
+            />
           </button>
         </div>
         <button
@@ -408,10 +420,7 @@ function ProductDetail() {
       >
         {meta.map(([k, v]) => (
           <div key={k} className="min-w-0">
-            <dt
-              className="text-[11px] uppercase tracking-wide"
-              style={META_TEXT_MUTED}
-            >
+            <dt className="text-[11px] uppercase tracking-wide" style={META_TEXT_MUTED}>
               {k}
             </dt>
             <dd className="mt-0.5 break-words" style={META_TEXT_INK}>
@@ -474,10 +483,7 @@ function ProductDetail() {
       {/* Similar items horizontal scroll */}
       {similar.length > 0 && (
         <section id="similar-section" className="mt-8">
-          <h3
-            className="mb-3 px-[18px] font-display text-2xl"
-            style={META_TEXT_INK}
-          >
+          <h3 className="mb-3 px-[18px] font-display text-2xl" style={META_TEXT_INK}>
             Artikuj të ngjashëm
           </h3>
           <div className="flex gap-3 overflow-x-auto px-[18px] pb-4 no-scrollbar snap-x snap-mandatory">
