@@ -230,18 +230,17 @@ export function MoreSheet({
                   </div>
                 );
               })}
-              {reason === "other" && (
-                <div className="px-5 pt-2 pb-1">
-                  <textarea
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
-                    placeholder="Përshkruaj problemin..."
-                    rows={4}
-                    className="w-full resize-none rounded-xl border bg-transparent p-3 text-sm outline-none"
-                    style={{ borderColor: DIVIDER, color: INK }}
-                  />
-                </div>
-              )}
+              <div className="px-5 pt-2 pb-1">
+                <textarea
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  placeholder="Detaje shtesë (opsionale)..."
+                  rows={4}
+                  className="w-full resize-none rounded-xl border bg-transparent p-3 text-sm outline-none"
+                  style={{ borderColor: DIVIDER, color: INK }}
+                />
+              </div>
+
             </div>
 
             <div className="px-5 pt-3 pb-5">
