@@ -354,14 +354,12 @@ function ForYou({
   promoted,
   trending,
   newThisWeek,
-  followingPreview,
 }: {
   loading: boolean;
   listings: ListingView[];
   promoted: ListingView[];
   trending: ListingView[];
   newThisWeek: ListingView[];
-  followingPreview: ListingView[];
 }) {
   return (
     <>
