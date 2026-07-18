@@ -218,10 +218,10 @@ function UserProfile() {
   const sorted = useMemo(() => {
     const active = listings.filter((l) => l.status === "active");
     const sold = listings.filter((l) => l.status === "sold");
-    const cmp = (a: ListingView, b: ListingView) => {
+    const cmp = (a: ListingWithLikes, b: ListingWithLikes) => {
       if (sort === "low") return a.price - b.price;
       if (sort === "high") return b.price - a.price;
-      if (sort === "popular") return ((b as any)._likes ?? 0) - ((a as any)._likes ?? 0);
+      if (sort === "popular") return (b._likes ?? 0) - (a._likes ?? 0);
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     };
     return [...active.sort(cmp), ...sold.sort(cmp)];
