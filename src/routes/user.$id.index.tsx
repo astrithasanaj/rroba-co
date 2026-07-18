@@ -319,7 +319,7 @@ function UserProfile() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
@@ -429,7 +429,7 @@ function UserProfile() {
                     flex: 1,
                     height: 34,
                     borderRadius: 10,
-                    border: "1px solid #c8c3b9",
+                    border: "1px solid var(--brand-border-strong)",
                     backgroundColor: CREAM,
                     color: INK,
                     fontSize: 12,
@@ -501,7 +501,7 @@ function UserProfile() {
               style={{ height: 40, background: "transparent", border: "none" }}
               aria-label="Rendit"
             >
-              <ArrowDownUp style={{ width: 20, height: 20, color: "#c8c3b9" }} strokeWidth={1.7} />
+              <ArrowDownUp style={{ width: 20, height: 20, color: "var(--brand-border-strong)" }} strokeWidth={1.7} />
             </button>
           </div>
         </div>
@@ -579,7 +579,7 @@ function UserProfile() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-2 pb-6 pt-1">
@@ -611,7 +611,7 @@ function UserProfile() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-5 pb-8 pt-4">

@@ -348,7 +348,7 @@ function ProfilePage() {
                     flex: 1,
                     height: 34,
                     borderRadius: 10,
-                    border: "1px solid #c8c3b9",
+                    border: "1px solid var(--brand-border-strong)",
                     backgroundColor: CREAM,
                     color: INK,
                     fontSize: 12,
@@ -372,7 +372,7 @@ function ProfilePage() {
                     flex: 1,
                     height: 34,
                     borderRadius: 10,
-                    border: "1px solid #c8c3b9",
+                    border: "1px solid var(--brand-border-strong)",
                     backgroundColor: CREAM,
                     color: INK,
                     fontSize: 12,
@@ -473,7 +473,7 @@ function ProfilePage() {
                   style={{ height: 40, background: "transparent", border: "none" }}
                 >
                   <Icon
-                    style={{ width: 20, height: 20, color: active ? INK : "#c8c3b9" }}
+                    style={{ width: 20, height: 20, color: active ? INK : "var(--brand-border-strong)" }}
                     strokeWidth={active ? 2 : 1.7}
                   />
                   {active && (
@@ -519,7 +519,7 @@ function ProfilePage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
             </button>
             <h2 className="text-[17px] font-bold" style={{ color: INK }}>Rendit sipas</h2>
           </div>
@@ -577,7 +577,7 @@ function ProfilePage() {
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
@@ -1264,7 +1264,7 @@ function SettingsMain({
           textAlign: "center",
           padding: "16px 0 24px",
           fontSize: 11,
-          color: "#c8c3b9",
+          color: "var(--brand-border-strong)",
           letterSpacing: "0.3px",
         }}
       >
@@ -1595,7 +1595,7 @@ function FaqItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean
           className="h-4 w-4 shrink-0"
           strokeWidth={2}
           style={{
-            color: "#c8c3b9",
+            color: "var(--brand-border-strong)",
             transform: open ? "rotate(90deg)" : "rotate(0deg)",
             transition: "transform 200ms ease",
           }}
