@@ -96,7 +96,8 @@ export function MoreSheet({
   const submitReport = async () => {
     if (!reason) return;
     if (!reporterId) {
-      toast.error("Identifikohu për të raportuar");
+      close();
+      navigate({ to: "/auth" });
       return;
     }
     setSubmitting(true);
@@ -104,7 +105,7 @@ export function MoreSheet({
       product_id: productId,
       reporter_id: reporterId,
       reason,
-      details: reason === "other" ? details.trim() || null : null,
+      details: details.trim() || null,
     });
     setSubmitting(false);
     if (error) {
@@ -113,6 +114,7 @@ export function MoreSheet({
     }
     toast.success("Faleminderit! Raporti u dërgua te ekipi ynë.");
     close();
+
   };
 
   const submitEnabled = !!reason && !submitting;
