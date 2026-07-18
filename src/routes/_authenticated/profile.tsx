@@ -1469,16 +1469,17 @@ function Row({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className="settings-row"
       style={{ borderBottom: isLast ? "none" : `1px solid ${DIVIDER}` }}
     >
-      <i className={`ti ${icon} settings-icon`} aria-hidden />
+      <i className={`ti ${icon} settings-icon`} aria-hidden="true" />
       <div className="settings-text">
         <div className="settings-title">{title}</div>
         {subtitle && <div className="settings-subtitle">{subtitle}</div>}
       </div>
-      <i className="ti ti-chevron-right settings-chevron" aria-hidden />
+      <i className="ti ti-chevron-right settings-chevron" aria-hidden="true" />
     </button>
   );
 }
@@ -1553,6 +1554,7 @@ function SettingsMain({
 
       {/* Logout */}
       <button
+        type="button"
         onClick={onLogout}
         className="settings-row"
         style={{
@@ -1569,12 +1571,16 @@ function SettingsMain({
       {/* Delete account */}
       <div style={{ height: 1, backgroundColor: DIVIDER, margin: "24px 20px 0" }} />
       <button
+        type="button"
         onClick={onDeleteAccount}
+        aria-label="Fshij llogarinë"
+        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         style={{
           display: "flex",
           alignItems: "center",
           gap: 14,
           padding: "16px 20px",
+          minHeight: 44,
           width: "100%",
           background: "transparent",
           border: "none",
@@ -1585,6 +1591,7 @@ function SettingsMain({
       >
         <i
           className="ti ti-trash"
+          aria-hidden="true"
           style={{ fontSize: 20, color: "var(--brand-danger)", width: 22 }}
         />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1605,7 +1612,7 @@ function SettingsMain({
           textAlign: "center",
           padding: "16px 0 24px",
           fontSize: 11,
-          color: "var(--brand-border-strong)",
+          color: BORDER_STRONG,
           letterSpacing: "0.3px",
         }}
       >
@@ -1934,7 +1941,10 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 px-5 py-4" style={{ backgroundColor: CREAM }}>
+    <label
+      className="flex cursor-pointer items-center gap-3 px-5 py-4"
+      style={{ backgroundColor: CREAM, minHeight: 44 }}
+    >
       <div className="flex-1">
         <div className="text-[15px] font-semibold" style={{ color: INK }}>
           {title}
@@ -1946,14 +1956,24 @@ function ToggleRow({
         )}
       </div>
       <button
+        type="button"
         onClick={() => onChange(!value)}
         role="switch"
         aria-checked={value}
-        className="relative h-7 w-12 shrink-0 rounded-full transition-colors"
-        style={{ backgroundColor: value ? INK : DIVIDER }}
+        aria-label={title}
+        className="relative shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        style={{
+          height: 28,
+          width: 48,
+          minHeight: 44,
+          minWidth: 44,
+          padding: 0,
+          backgroundColor: value ? INK : DIVIDER,
+        }}
       >
         <span
-          className="absolute top-0.5 h-6 w-6 rounded-full transition-all"
+          aria-hidden="true"
+          className="absolute top-1/2 h-6 w-6 -translate-y-1/2 rounded-full transition-all"
           style={{
             left: value ? "calc(100% - 26px)" : "2px",
             backgroundColor: CREAM,
@@ -1961,7 +1981,7 @@ function ToggleRow({
           }}
         />
       </button>
-    </div>
+    </label>
   );
 }
 
@@ -2119,24 +2139,27 @@ function FaqItem({
   return (
     <div
       style={{
-        backgroundColor: open ? "#ffffff" : CREAM,
+        backgroundColor: open ? "var(--brand-surface)" : CREAM,
         borderRadius: open ? "0 0 10px 10px" : 0,
         transition: "background-color 160ms ease",
       }}
     >
       <button
+        type="button"
         onClick={onToggle}
-        className="flex w-full items-center gap-3 text-left"
-        style={{ padding: "16px 20px", WebkitTapHighlightColor: "transparent" }}
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        style={{ padding: "16px 20px", minHeight: 44, WebkitTapHighlightColor: "transparent" }}
       >
-        <div className="flex-1 text-[14px] font-bold" style={{ color: "var(--brand-ink)" }}>
+        <div className="flex-1 text-[14px] font-bold" style={{ color: INK }}>
           {q}
         </div>
         <ChevronRight
+          aria-hidden="true"
           className="h-4 w-4 shrink-0"
           strokeWidth={2}
           style={{
-            color: "var(--brand-border-strong)",
+            color: BORDER_STRONG,
             transform: open ? "rotate(90deg)" : "rotate(0deg)",
             transition: "transform 200ms ease",
           }}
@@ -2149,7 +2172,7 @@ function FaqItem({
           transition: "max-height 200ms ease",
         }}
       >
-        <div style={{ padding: "0 20px 16px", fontSize: 13, color: "#a89f94", lineHeight: 1.6 }}>
+        <div style={{ padding: "0 20px 16px", fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
           {a}
         </div>
       </div>
@@ -2169,7 +2192,7 @@ function FaqView() {
             open={openIdx === i}
             onToggle={() => setOpenIdx((cur) => (cur === i ? null : i))}
           />
-          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: "#e2e2de" }} />}
+          {i < FAQS.length - 1 && <div style={{ height: 1, backgroundColor: DIVIDER }} />}
         </div>
       ))}
     </div>
@@ -2238,9 +2261,17 @@ function LogoutConfirm({
   onOpenChange: (v: boolean) => void;
   onConfirm: () => void;
 }) {
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (!open) setBusy(false);
+  }, [open]);
   if (!open) return null;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="logout-title"
+      aria-describedby="logout-desc"
       style={{
         position: "fixed",
         inset: 0,
@@ -2256,15 +2287,16 @@ function LogoutConfirm({
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "var(--brand-ink)",
+          background: INK,
           flexShrink: 0,
         }}
       >
         <button
           type="button"
           onClick={() => onOpenChange(false)}
+          disabled={busy}
           aria-label="Kthehu"
-          className="transition-transform duration-150 active:scale-[0.97]"
+          className="transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{
             width: 44,
             height: 44,
@@ -2274,13 +2306,18 @@ function LogoutConfirm({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer",
+            cursor: busy ? "default" : "pointer",
             flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft aria-hidden="true" size={18} color="#ffffff" strokeWidth={2} />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>A jeni i sigurt?</span>
+        <span
+          id="logout-title"
+          style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}
+        >
+          A jeni i sigurt?
+        </span>
       </div>
       <div
         style={{
@@ -2291,12 +2328,20 @@ function LogoutConfirm({
           color: INK,
         }}
       >
-        <div style={{ fontSize: 13, color: MUTED, marginBottom: 20 }}>
+        <div id="logout-desc" style={{ fontSize: 13, color: MUTED, marginBottom: 20 }}>
           Do të dilni nga llogaria juaj.
         </div>
         <div className="flex flex-col gap-2">
           <button
-            onClick={onConfirm}
+            type="button"
+            onClick={() => {
+              if (busy) return;
+              setBusy(true);
+              onConfirm();
+            }}
+            disabled={busy}
+            aria-busy={busy}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
               backgroundColor: INK,
               color: "#ffffff",
@@ -2305,14 +2350,21 @@ function LogoutConfirm({
               fontSize: 14,
               fontWeight: 600,
               width: "100%",
+              opacity: busy ? 0.7 : 1,
+              cursor: busy ? "default" : "pointer",
+              border: "none",
             }}
           >
-            Po, dilni
+            {busy ? "Duke dalë…" : "Po, dilni"}
           </button>
           <button
+            type="button"
+            autoFocus
             onClick={() => onOpenChange(false)}
+            disabled={busy}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#ffffff",
+              backgroundColor: CARD,
               color: INK,
               border: `1px solid ${DIVIDER}`,
               height: 50,
@@ -2320,6 +2372,7 @@ function LogoutConfirm({
               fontSize: 14,
               fontWeight: 600,
               width: "100%",
+              cursor: busy ? "default" : "pointer",
             }}
           >
             Anulo
@@ -2344,19 +2397,25 @@ function RemovePhotoDialog({
   if (!open) return null;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="remove-photo-title"
+      aria-describedby="remove-photo-desc"
       className="fixed inset-0 z-[100] flex items-center justify-center px-6"
       style={{
         backgroundColor: "rgba(20,18,15,0.55)",
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
       }}
-      onClick={() => onOpenChange(false)}
+      onClick={() => {
+        if (!loading) onOpenChange(false);
+      }}
     >
       <div
         className="w-full"
         style={{
           maxWidth: 280,
-          backgroundColor: "#ffffff",
+          backgroundColor: CARD,
           borderRadius: 22,
           boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
           padding: "24px 20px 20px",
@@ -2366,36 +2425,35 @@ function RemovePhotoDialog({
       >
         <div
           className="mx-auto grid h-[52px] w-[52px] place-items-center rounded-full"
-          style={{ backgroundColor: "#fbeceb" }}
+          style={{ backgroundColor: "var(--brand-danger-soft)" }}
         >
-          <Trash2 style={{ width: 22, height: 22, color: "#b3392f" }} strokeWidth={2} />
+          <Trash2
+            aria-hidden="true"
+            style={{ width: 22, height: 22, color: "var(--brand-danger)" }}
+            strokeWidth={2}
+          />
         </div>
         <div
-          style={{
-            fontSize: 16,
-            fontWeight: 600,
-            color: "var(--brand-ink)",
-            marginTop: 16,
-          }}
+          id="remove-photo-title"
+          style={{ fontSize: 16, fontWeight: 600, color: INK, marginTop: 16 }}
         >
           Hiq foton e profilit?
         </div>
         <div
-          style={{
-            fontSize: 13,
-            color: "#a89f94",
-            lineHeight: 1.5,
-            marginTop: 6,
-          }}
+          id="remove-photo-desc"
+          style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 6 }}
         >
           Do të kthehesh te avatari standard. Kjo veprim nuk mund të kthehet.
         </div>
         <div className="mt-5 flex flex-col gap-2">
           <button
+            type="button"
             onClick={onConfirm}
             disabled={loading}
+            aria-busy={loading}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#b3392f",
+              backgroundColor: "var(--brand-danger)",
               color: "#ffffff",
               height: 48,
               borderRadius: 999,
@@ -2410,11 +2468,14 @@ function RemovePhotoDialog({
             {loading ? "Duke hequr..." : "Hiq foton"}
           </button>
           <button
+            type="button"
+            autoFocus
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#f4f4f2",
-              color: "var(--brand-ink)",
+              backgroundColor: CREAM,
+              color: INK,
               height: 48,
               borderRadius: 999,
               fontSize: 14,
@@ -2444,6 +2505,10 @@ function UnsavedChangesDialog({
   if (!open) return null;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="unsaved-title"
+      aria-describedby="unsaved-desc"
       className="fixed inset-0 z-[100] flex items-center justify-center px-6"
       style={{
         backgroundColor: "rgba(20,18,15,0.55)",
@@ -2456,7 +2521,7 @@ function UnsavedChangesDialog({
         className="w-full"
         style={{
           maxWidth: 280,
-          backgroundColor: "#ffffff",
+          backgroundColor: CARD,
           borderRadius: 22,
           boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
           padding: "24px 20px 20px",
@@ -2464,34 +2529,42 @@ function UnsavedChangesDialog({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: 16, fontWeight: 600, color: "var(--brand-ink)" }}>
+        <div id="unsaved-title" style={{ fontSize: 16, fontWeight: 600, color: INK }}>
           Ndryshimet e paruajtura
         </div>
-        <div style={{ fontSize: 13, color: "#a89f94", lineHeight: 1.5, marginTop: 8 }}>
+        <div
+          id="unsaved-desc"
+          style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 8 }}
+        >
           Ke ndryshime që nuk janë ruajtur ende. A dëshiron të largohesh pa i ruajtur?
         </div>
         <div className="mt-5 flex flex-col gap-2">
           <button
+            type="button"
             onClick={onDiscard}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#fbeceb",
-              color: "#b3392f",
+              backgroundColor: "var(--brand-danger-soft)",
+              color: "var(--brand-danger)",
               height: 48,
               borderRadius: 999,
               fontSize: 14,
               fontWeight: 600,
               width: "100%",
-              border: "1px solid #f3d4d1",
+              border: `1px solid ${DIVIDER}`,
               cursor: "pointer",
             }}
           >
             Largohu pa ruajtur
           </button>
           <button
+            type="button"
+            autoFocus
             onClick={() => onOpenChange(false)}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              backgroundColor: "#f4f4f2",
-              color: "var(--brand-ink)",
+              backgroundColor: CREAM,
+              color: INK,
               height: 48,
               borderRadius: 999,
               fontSize: 14,

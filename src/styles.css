@@ -57,6 +57,7 @@
   --brand-rose-ink: #6e2438;      /* aksent på lys bakgrunn */
   --brand-coral: #e8836a;         /* varm sekundær-aksent */
   --brand-danger: #e53935;        /* destruktiv/rød */
+  --brand-danger-soft: #fbeceb;   /* destruktiv-bakgrunn */
   --brand-success: #2e7d32;       /* suksess */
   --brand-warning: #ffb13b;       /* varsel */
 
@@ -216,6 +217,7 @@ input, textarea, select {
   align-items: center;
   gap: 14px;
   padding: 14px 20px;
+  min-height: 44px;
   width: 100%;
   text-align: left;
   background: var(--brand-surface);
@@ -225,6 +227,10 @@ input, textarea, select {
   transition: background 120ms ease;
 }
 .settings-row:active { background: var(--brand-cream); }
+.settings-row:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px rgba(198, 90, 122, 0.35);
+}
 
 /* Tap feedback for round icon tiles (categories + bottom nav) */
 .tap-icon {

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,11 +12,12 @@ export const Route = createFileRoute("/_authenticated/profile/delete-account")({
   component: DeleteAccountPage,
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const RED = "#e53935";
+const SURFACE = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-secondary)";
+const DANGER = "var(--brand-danger)";
+const GLASS_BG = "rgba(255,255,255,0.7)";
+const GLASS_BORDER = "rgba(226,226,222,0.8)";
 
 function DeleteAccountPage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ function DeleteAccountPage() {
   };
 
   const verifyPassword = async () => {
-    if (!email || !password) return;
+    if (!email || !password || verifying) return;
     setVerifying(true);
     setError(null);
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
@@ -64,6 +65,7 @@ function DeleteAccountPage() {
   };
 
   const performDelete = async () => {
+    if (isDeleting) return;
     setIsDeleting(true);
     try {
       await deleteFn();
@@ -77,8 +79,8 @@ function DeleteAccountPage() {
     }
   };
 
-  const btnRed: React.CSSProperties = {
-    backgroundColor: RED,
+  const btnDanger: React.CSSProperties = {
+    backgroundColor: DANGER,
     color: "#ffffff",
     height: 50,
     borderRadius: 12,
@@ -91,8 +93,8 @@ function DeleteAccountPage() {
   const inputBox: React.CSSProperties = {
     width: "100%",
     height: 52,
-    background: "#ffffff",
-    border: "none",
+    background: SURFACE,
+    border: "1px solid var(--brand-border)",
     borderRadius: 12,
     padding: "0 16px",
     fontSize: 15,
@@ -106,10 +108,13 @@ function DeleteAccountPage() {
   if (isDeleting) {
     return (
       <div
+        role="status"
+        aria-live="polite"
         className="fixed inset-0 z-[90] flex flex-col items-center justify-center"
-        style={{ backgroundColor: CREAM }}
+        style={{ backgroundColor: SURFACE }}
       >
         <div
+          aria-hidden="true"
           style={{
             fontFamily: "var(--font-display)",
             fontStyle: "italic",
@@ -129,31 +134,31 @@ function DeleteAccountPage() {
 
   return (
     <MobileShell>
-      <div style={{ background: CREAM, minHeight: "100dvh" }}>
+      <div style={{ background: SURFACE, minHeight: "100dvh" }}>
         <header
           className="sticky top-0 z-10 flex items-center justify-between px-4 py-3"
-          style={{ background: CREAM }}
+          style={{ background: SURFACE }}
         >
           <button
             type="button"
             onClick={goBack}
             aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             style={{
-              width: 36,
-              height: 36,
-              backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
+              width: 44,
+              height: 44,
+              backgroundColor: GLASS_BG,
+              border: `1px solid ${GLASS_BORDER}`,
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft aria-hidden="true" size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[15px] font-semibold" style={{ color: INK }}>
             {title}
           </h1>
-          <div className="w-9" />
+          <div className="w-11" />
         </header>
 
         <div className="px-5 pt-4 pb-10">
@@ -173,7 +178,12 @@ function DeleteAccountPage() {
               <div style={{ fontSize: 13, color: MUTED, marginTop: 12 }}>
                 Kjo nuk mund të zhbëhet.
               </div>
-              <button style={{ ...btnRed, marginTop: 24 }} onClick={() => setStep(2)}>
+              <button
+                type="button"
+                style={{ ...btnDanger, marginTop: 24 }}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                onClick={() => setStep(2)}
+              >
                 Vazhdo
               </button>
             </>
@@ -185,7 +195,11 @@ function DeleteAccountPage() {
                 Për siguri, shkruaj fjalëkalimin tënd për të vazhduar.
               </div>
               <div style={{ position: "relative", marginTop: 18 }}>
+                <label htmlFor="delete-account-pw" className="sr-only">
+                  Fjalëkalimi juaj
+                </label>
                 <input
+                  id="delete-account-pw"
                   type={showPw ? "text" : "password"}
                   value={password}
                   onChange={(e) => {
@@ -195,40 +209,57 @@ function DeleteAccountPage() {
                   placeholder="Fjalëkalimi juaj"
                   autoFocus
                   autoComplete="current-password"
-                  style={{ ...inputBox, paddingRight: 44 }}
+                  aria-invalid={!!error}
+                  aria-describedby={error ? "delete-account-pw-err" : undefined}
+                  style={{ ...inputBox, paddingRight: 48 }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw((v) => !v)}
-                  aria-label={showPw ? "Fshih" : "Shfaq"}
+                  aria-label={showPw ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
+                  aria-pressed={showPw}
+                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   style={{
                     position: "absolute",
-                    right: 12,
-                    top: 0,
-                    bottom: 0,
+                    right: 4,
+                    top: 4,
+                    bottom: 4,
+                    width: 44,
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "center",
                     background: "transparent",
                     border: "none",
+                    borderRadius: 8,
                     cursor: "pointer",
                   }}
                 >
                   <i
                     className={`ti ${showPw ? "ti-eye-off" : "ti-eye"}`}
+                    aria-hidden="true"
                     style={{ fontSize: 18, color: MUTED }}
                   />
                 </button>
               </div>
               {error && (
-                <div style={{ fontSize: 12, color: RED, marginTop: 8 }}>{error}</div>
+                <div
+                  id="delete-account-pw-err"
+                  role="alert"
+                  style={{ fontSize: 12, color: DANGER, marginTop: 8 }}
+                >
+                  {error}
+                </div>
               )}
               <button
+                type="button"
                 style={{
-                  ...btnRed,
+                  ...btnDanger,
                   marginTop: 20,
                   opacity: verifying || !password ? 0.6 : 1,
                 }}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 disabled={verifying || !password}
+                aria-busy={verifying}
                 onClick={verifyPassword}
               >
                 {verifying ? "Duke verifikuar…" : "Konfirmo dhe vazhdo"}
@@ -241,7 +272,14 @@ function DeleteAccountPage() {
               <div style={{ fontSize: 14, color: INK, lineHeight: 1.55 }}>
                 Llogaria juaj do të fshihet brenda 30 ditëve sipas rregullores GDPR të BE-së. Deri atëherë, mund të anuloni kërkesën duke na kontaktuar.
               </div>
-              <button style={{ ...btnRed, marginTop: 24 }} onClick={performDelete}>
+              <button
+                type="button"
+                style={{ ...btnDanger, marginTop: 24, opacity: isDeleting ? 0.6 : 1 }}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                disabled={isDeleting}
+                aria-busy={isDeleting}
+                onClick={performDelete}
+              >
                 Po, fshij llogarinë time
               </button>
             </>
