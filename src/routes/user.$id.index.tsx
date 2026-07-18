@@ -167,11 +167,14 @@ function UserProfile() {
           totalLikes++;
         }
       }
-      const withLikes = hydrated.map((h) => ({ ...h, _likes: likesMap[h.id] ?? 0 }));
+      const withLikes: ListingWithLikes[] = hydrated.map((h) => ({
+        ...h,
+        _likes: likesMap[h.id] ?? 0,
+      }));
 
       if (!active) return;
       setProfile(p.data as Profile | null);
-      setListings(withLikes as ListingView[]);
+      setListings(withLikes);
       setLikesTotal(totalLikes);
       setHasSale(rows.some((r) => r.status === "sold"));
       setCurrentUserId(uid);
