@@ -91,6 +91,8 @@ export function ReviewsSheet({
   sellerName,
   sellerUsername,
   sellerCreatedAt,
+  initialRateOpen,
+  listingId,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -99,6 +101,8 @@ export function ReviewsSheet({
   sellerName: string;
   sellerUsername?: string;
   sellerCreatedAt?: string | null;
+  initialRateOpen?: boolean;
+  listingId?: string;
 }) {
   const navigate = useNavigate();
   const [rows, setRows] = useState<Row[]>([]);
@@ -107,11 +111,15 @@ export function ReviewsSheet({
   const [tab, setTab] = useState<"all" | "sold" | "bought">("all");
 
   // Rate flow
-  const [rateOpen, setRateOpen] = useState(false);
+  const [rateOpen, setRateOpen] = useState(!!initialRateOpen);
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [canRate, setCanRate] = useState(false);
+
+  useEffect(() => {
+    if (open && initialRateOpen) setRateOpen(true);
+  }, [open, initialRateOpen]);
 
   const isOwn = currentUserId === sellerId;
 
