@@ -126,7 +126,7 @@ function ForgotPage() {
                   height: 52,
                   borderRadius: 12,
                   padding: "0 16px",
-                  border: `1px solid ${err ? ERR : "#e2e2de"}`,
+                  border: `1px solid ${err ? ERR : "var(--brand-border)"}`,
                   transition: "border-color 120ms ease, box-shadow 120ms ease",
                 }}
               />
