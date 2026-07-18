@@ -307,8 +307,6 @@ function HomePage() {
               promoted={promoted}
               trending={trendingListings}
               newThisWeek={newThisWeekListings}
-
-              followingPreview={followingPreview}
             />
           ) : (
             <FollowingFeed
