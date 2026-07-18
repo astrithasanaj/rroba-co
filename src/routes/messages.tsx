@@ -740,7 +740,7 @@ function Thread({ id, me }: { id: string; me: string }) {
         >
           <button
             type="button"
-            onClick={() => navigate({ to: "/messages", search: { view: "list", tab: "all" } })}
+            onClick={() => window.history.back()}
             aria-label="Kthehu"
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
             style={{
