@@ -27,6 +27,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -37,6 +41,24 @@
 
 :root {
   --radius: 1rem;
+
+  /* Rroba merkevare-palett — kildepunkt for hardkodede farger i appen.
+     Disse matcher de faktiske hex-verdiene som brukes gjennom frontend,
+     slik at fremtidig migrering til token-klasser gir identisk output. */
+  --brand-ink: #2d1521;           /* mørk burgunder, primærtekst */
+  --brand-ink-muted: #a89f94;     /* varm grå, sekundærtekst */
+  --brand-surface: #ffffff;       /* kort/bakgrunn */
+  --brand-cream: #fbf6f2;         /* subtil surface-variant */
+  --brand-border: #e2e2de;        /* standard border */
+  --brand-border-strong: #c8c3b9; /* sterkere separator/chevron */
+  --brand-rose: #c65a7a;          /* aksent (CTA, lenker) */
+  --brand-rose-soft: #f5e6e9;     /* aksent-bakgrunn (dust-rosa) */
+  --brand-rose-ink: #6e2438;      /* aksent på lys bakgrunn */
+  --brand-coral: #e8836a;         /* varm sekundær-aksent */
+  --brand-danger: #e53935;        /* destruktiv/rød */
+  --brand-success: #2e7d32;       /* suksess */
+  --brand-warning: #ffb13b;       /* varsel */
+
   /* Pure white */
   --background: oklch(1 0 0);
   --foreground: oklch(0.16 0.01 60);
@@ -52,6 +74,10 @@
   --muted-foreground: oklch(0.5 0.012 65);
   --accent: oklch(0.94 0.02 350); /* tilsvarer #f5e6e9, myk dust-rosa */
   --accent-foreground: oklch(0.32 0.08 350); /* tilsvarer #6e2438 */
+  --success: oklch(0.55 0.14 145);
+  --success-foreground: oklch(0.98 0 0);
+  --warning: oklch(0.78 0.14 75);
+  --warning-foreground: oklch(0.2 0.05 60);
   --destructive: oklch(0.58 0.21 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.9 0.012 75);
@@ -176,8 +202,8 @@ input, textarea, select {
   transition: background-color 120ms ease, transform 80ms ease;
 }
 .profile-btn:active {
-  transform: scale(0.97);
-  background-color: #ffffff;
+  transform: scale(0.98);
+  background-color: var(--brand-cream);
 }
 
 .settings-row {
@@ -187,13 +213,13 @@ input, textarea, select {
   padding: 14px 20px;
   width: 100%;
   text-align: left;
-  background: #ffffff;
-  border-bottom: 1px solid #ddd8ce;
+  background: var(--brand-surface);
+  border-bottom: 1px solid var(--brand-border);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 80ms ease;
+  transition: background 120ms ease;
 }
-.settings-row:active { background: #ffffff; }
+.settings-row:active { background: var(--brand-cream); }
 
 /* Tap feedback for round icon tiles (categories + bottom nav) */
 .tap-icon {
