@@ -83,12 +83,12 @@ const BORDER_STRONG = "var(--brand-border-strong)";
 const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 // Lokale semantiske farge-konstanter (kun brukt i profil).
 const OVERLAY_GLYPH = "#ffffff";
-const GLASS_BG = GLASS_BG;
+const GLASS_BG = "rgba(255,255,255,0.7)";
 const GLASS_BORDER = "rgba(226,226,222,0.8)";
-const DARK_GLASS_BG = DARK_GLASS_BG;
-const DARK_GLASS_INK_SOFT = DARK_GLASS_INK_SOFT;
-const OFFER_ACCEPTED_BG = OFFER_ACCEPTED_BG;
-const OFFER_DECLINED_BG = OFFER_DECLINED_BG;
+const DARK_GLASS_BG = "rgba(255,255,255,0.12)";
+const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
+const OFFER_ACCEPTED_BG = "#d1f4e0";
+const OFFER_DECLINED_BG = "#f4d1d1";
 
 function ProfilePage() {
   const { user } = Route.useRouteContext();
