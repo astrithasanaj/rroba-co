@@ -1,6 +1,14 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Loader2, Pencil, X, Grid3x3, Plus, ArrowLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Pencil,
+  X,
+  Grid3x3,
+  Plus,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -10,7 +18,7 @@ import {
   sizeKindHidden,
 } from "@/components/marketplace/SizePickerSheet";
 import { ColorPickerSheet, COLOR_OPTIONS } from "@/components/marketplace/ColorPickerSheet";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,31 +33,44 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { compressImage, PRODUCT_IMAGE_OPTIONS } from "@/utils/compressImage";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/edit")({
-  component: () => (<SwipeBackWrapper><EditListingPage /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <EditListingPage />
+    </SwipeBackWrapper>
+  ),
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const CORAL_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
-const DIVIDER = "#e2e2de";
-const BORDER = "1px solid #e2e2de";
+// Brand tokens — mirror sell.tsx so create + edit share the same visual language.
+const PAGE = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL_GRADIENT = "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))";
+const DIVIDER = "var(--brand-border)";
+const ROSE = "var(--brand-rose)";
+// Single source for keyboard focus-ring styling across edit.tsx (matches sell.tsx).
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
+const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
+const OVERLAY_GLYPH = "#ffffff"; // intentional white glyph on dark/gradient badges & CTAs
+const OVERLAY_MUTED = "rgba(255,255,255,0.72)"; // muted glyph on gradient (condition subtitle)
+const OVERLAY_SCRIM = "rgba(0,0,0,0.6)"; // scrim behind delete/edit icons on images
 
 const MAX_PHOTOS = 8;
 const ALLOWED: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
+  // HEIC/HEIF from iOS: normalized to JPEG by compressImage() via heic2any before upload.
+  "image/heic": "heic",
+  "image/heif": "heif",
 };
 const MAX_BYTES = 10 * 1024 * 1024;
 
 const CONDITIONS = [
   { value: "I ri", subtitle: "Kurrë i përdorur" },
-  { value: "Mirë përdorur", subtitle: "Pa shenja përdorimi" },
-  { value: "Përdorur", subtitle: "Disa shenja përdorimi" },
-  { value: "Shumë përdorur", subtitle: "Shenja të qarta përdorimi" },
+  { value: "Mirë përdorur", subtitle: "Shenja të lehta përdorimi" },
+  { value: "Përdorur", subtitle: "Shenja të dukshme përdorimi" },
+  { value: "Shumë përdorur", subtitle: "Shenja të forta përdorimi" },
 ];
 
 type GenderMode = "adult" | "kids" | false;
@@ -195,7 +216,10 @@ function EditListingPage() {
     const remaining = MAX_PHOTOS - photos.length;
     const added: NewPhoto[] = [];
     for (const file of Array.from(files).slice(0, remaining)) {
-      if (!ALLOWED[file.type]) {
+      // Same iOS/Safari fallback as sell.tsx: some devices report empty MIME
+      // for HEIC/HEIF — accept by extension so compressImage() can normalize.
+      const isHeicByName = /\.(heic|heif)$/i.test(file.name);
+      if (!ALLOWED[file.type] && !isHeicByName) {
         toast.error(`${file.name}: format i palejuar`);
         continue;
       }
@@ -217,7 +241,8 @@ function EditListingPage() {
     const idx = replaceIdxRef.current;
     const file = e.target.files?.[0];
     if (idx == null || !file) return;
-    if (!ALLOWED[file.type]) {
+    const isHeicByName = /\.(heic|heif)$/i.test(file.name);
+    if (!ALLOWED[file.type] && !isHeicByName) {
       toast.error("Format i palejuar");
     } else if (file.size === 0 || file.size > MAX_BYTES) {
       toast.error("Madhësi e palejuar (maks 10MB)");
@@ -353,44 +378,52 @@ function EditListingPage() {
 
   if (loading) {
     return (
-      <div className="grid h-screen place-items-center" style={{ background: CREAM }}>
-        <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+      <div
+        className="fixed inset-0 grid place-items-center"
+        style={{ background: PAGE, height: "100dvh" }}
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} aria-hidden="true" />
+        <span className="sr-only">Duke ngarkuar…</span>
       </div>
     );
   }
 
   const fullCategoryLabel = [catCategory, catGender, catSub].filter(Boolean).join(" / ");
+  const priceInvalid = price !== "" && !Number.isFinite(Number(price.replace(",", ".")));
 
   return (
     <div
       className="fixed inset-0 flex justify-center"
-      style={{ background: CREAM, height: "100dvh", overflow: "hidden" }}
+      style={{ background: PAGE, height: "100dvh", overflow: "hidden" }}
     >
-      <div className="relative flex h-full w-full max-w-[480px] flex-col" style={{ background: CREAM }}>
-        {/* Header */}
+      <div
+        className="relative flex h-full w-full max-w-[480px] flex-col"
+        style={{ background: PAGE }}
+      >
+        {/* Header — mirrors sell.tsx TopBar */}
         <header
           className="sticky top-0 z-10 flex items-center justify-between px-4 py-3"
-          style={{ background: CREAM }}
+          style={{ background: PAGE }}
         >
-          <div className="w-20">
+          <div className="flex w-20 justify-start">
             <button
               type="button"
               onClick={handleCancel}
               aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-              style={{
-                width: 36,
-                height: 36,
-                backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-              }}
+              className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_CLASS}`}
+              style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft
+                size={18}
+                strokeWidth={2}
+                aria-hidden="true"
+                style={{ color: "var(--brand-ink)" }}
+              />
             </button>
           </div>
-          <h1 className="text-[15px] font-bold" style={{ color: INK }}>
+          <h1 className="text-[15px] font-semibold" style={{ color: INK }}>
             Ndrysho
           </h1>
           <div className="w-20" />
@@ -405,16 +438,22 @@ function EditListingPage() {
                 <div
                   key={i}
                   className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-xl"
-                  style={{ background: CARD }}
+                  style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
                 >
                   {src && <img src={src} alt="" className="h-full w-full object-cover" />}
                   <button
                     type="button"
                     onClick={() => removePhoto(i)}
-                    className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white"
-                    aria-label="Fshij"
+                    className={`absolute right-0 top-0 grid h-11 w-11 place-items-start justify-end rounded-tr-xl bg-transparent ${FOCUS_CLASS}`}
+                    aria-label={`Fshij foton ${i + 1}`}
                   >
-                    <X className="h-3 w-3" />
+                    <span
+                      className="grid h-6 w-6 place-items-center rounded-bl-xl rounded-tr-xl"
+                      style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
+                      aria-hidden="true"
+                    >
+                      <X className="h-3 w-3" aria-hidden="true" />
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -422,28 +461,43 @@ function EditListingPage() {
                       replaceIdxRef.current = i;
                       replaceRef.current?.click();
                     }}
-                    className="absolute left-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white"
-                    aria-label="Ndrysho"
+                    className={`absolute left-0 top-0 grid h-11 w-11 place-items-start justify-start rounded-tl-xl bg-transparent ${FOCUS_CLASS}`}
+                    aria-label={`Ndrysho foton ${i + 1}`}
                   >
-                    <Pencil className="h-3 w-3" />
+                    <span
+                      className="grid h-6 w-6 place-items-center rounded-br-xl rounded-tl-xl"
+                      style={{ background: OVERLAY_SCRIM, color: OVERLAY_GLYPH }}
+                      aria-hidden="true"
+                    >
+                      <Pencil className="h-3 w-3" aria-hidden="true" />
+                    </span>
                   </button>
-                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/40 px-1 py-0.5">
+                  <div
+                    className="absolute inset-x-0 bottom-0 flex items-center justify-between px-1 py-0.5"
+                    style={{ background: OVERLAY_SCRIM }}
+                  >
                     <button
                       type="button"
                       onClick={() => movePhoto(i, -1)}
-                      className="text-[10px] text-white disabled:opacity-30"
+                      className={`grid h-6 w-6 place-items-center text-[12px] disabled:opacity-30 ${FOCUS_CLASS}`}
+                      style={{ color: OVERLAY_GLYPH }}
                       disabled={i === 0}
+                      aria-label={`Zhvendos foton ${i + 1} majtas`}
                     >
-                      ‹
+                      <span aria-hidden="true">‹</span>
                     </button>
-                    <span className="text-[10px] text-white/80">⠿</span>
+                    <span className="text-[10px]" style={{ color: OVERLAY_MUTED }} aria-hidden="true">
+                      ⠿
+                    </span>
                     <button
                       type="button"
                       onClick={() => movePhoto(i, 1)}
-                      className="text-[10px] text-white disabled:opacity-30"
+                      className={`grid h-6 w-6 place-items-center text-[12px] disabled:opacity-30 ${FOCUS_CLASS}`}
+                      style={{ color: OVERLAY_GLYPH }}
                       disabled={i === photos.length - 1}
+                      aria-label={`Zhvendos foton ${i + 1} djathtas`}
                     >
-                      ›
+                      <span aria-hidden="true">›</span>
                     </button>
                   </div>
                 </div>
@@ -453,43 +507,37 @@ function EditListingPage() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="grid h-[100px] w-[100px] shrink-0 place-items-center rounded-xl"
-                style={{ background: CARD, color: INK, border: BORDER }}
+                className={`grid h-[100px] w-[100px] shrink-0 place-items-center rounded-xl transition active:scale-[0.98] ${FOCUS_CLASS}`}
+                style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
+                aria-label="Shto foto"
               >
                 <div className="flex flex-col items-center gap-1">
-                  <Plus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" aria-hidden="true" />
                   <span className="text-[11px] font-semibold">Shto</span>
                 </div>
               </button>
             )}
           </div>
           <p className="mt-2 text-[11px]" style={{ color: MUTED }}>
-            Po lejon ripërdorimin e fotove tuaja momentalisht.{" "}
-            <button
-              type="button"
-              className="underline"
-              style={{ color: CORAL }}
-              onClick={() => toast.info("Ndrysho parametrat në cilësimet e profilit")}
-            >
-              Lexo më shumë ose ndrysho
-            </button>
+            Fotot në formatin portret (3:4) funksionojnë më mirë
           </p>
 
           {/* Section 2: Category */}
-          <SectionLabel>Kategoria</SectionLabel>
+          <Label htmlFor="edit-category-trigger">Kategoria</Label>
           <button
+            id="edit-category-trigger"
             type="button"
             onClick={() => setCatSheet("category")}
-            className="flex w-full items-center justify-between rounded-full px-4 py-3.5 text-left text-sm"
-            style={{ background: CARD, color: INK, border: BORDER }}
+            className={`flex min-h-[52px] w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
             <span className="flex min-w-0 items-center gap-2">
-              <Grid3x3 className="h-4 w-4 shrink-0" style={{ color: MUTED }} />
+              <Grid3x3 className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
               <span className="truncate" style={{ color: fullCategoryLabel ? INK : MUTED }}>
                 {fullCategoryLabel || "Zgjidh kategorinë"}
               </span>
             </span>
-            <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} />
+            <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
           </button>
           {fullCategoryLabel && (
             <button
@@ -499,31 +547,42 @@ function EditListingPage() {
                 setCatGender("");
                 setCatSub("");
               }}
-              className="mt-2 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[12px] font-semibold"
-              style={{ borderColor: CORAL, color: CORAL, background: "transparent" }}
+              className={`mt-2 inline-flex min-h-9 items-center gap-2 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition active:scale-[0.97] ${FOCUS_CLASS}`}
+              style={{ borderColor: ROSE, color: ROSE, background: "transparent" }}
+              aria-label={`Hiq kategorinë: ${fullCategoryLabel}`}
             >
               <span className="truncate">{fullCategoryLabel}</span>
-              <X className="h-3 w-3" />
+              <X className="h-3 w-3" aria-hidden="true" />
             </button>
           )}
 
           {/* Section 3: Condition */}
-          <SectionLabel>Gjendja</SectionLabel>
-          <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
+          <Label>Gjendja</Label>
+          <div
+            role="radiogroup"
+            aria-label="Gjendja e artikullit"
+            className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1"
+          >
             {CONDITIONS.map((c) => {
               const active = condition === c.value;
               return (
                 <button
                   key={c.value}
                   type="button"
+                  role="radio"
+                  aria-checked={active}
                   onClick={() => setCondition(c.value)}
-                  className="flex w-[150px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left"
-                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? "none" : BORDER }}
+                  className={`flex w-[150px] shrink-0 flex-col items-start gap-1 rounded-2xl px-3 py-3 text-left transition active:scale-[0.98] ${FOCUS_CLASS}`}
+                  style={{
+                    background: active ? CORAL_GRADIENT : CARD,
+                    color: active ? OVERLAY_GLYPH : INK,
+                    border: active ? "1px solid transparent" : `1px solid ${DIVIDER}`,
+                  }}
                 >
                   <span className="text-[13px] font-semibold leading-tight">{c.value}</span>
                   <span
                     className="text-[11px] leading-tight"
-                    style={{ color: active ? "rgba(255,255,255,0.7)" : MUTED }}
+                    style={{ color: active ? OVERLAY_MUTED : MUTED }}
                   >
                     {c.subtitle}
                   </span>
@@ -533,24 +592,33 @@ function EditListingPage() {
           </div>
 
           {/* Section 4: Title + description */}
-          <SectionLabel>Titulli</SectionLabel>
+          <Label htmlFor="edit-title">Titulli</Label>
           <input
+            id="edit-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={120}
             placeholder="Titulli"
-            className="w-full rounded-2xl border-none px-4 py-3.5 text-sm focus:outline-none"
-            style={{ background: CARD, color: INK, border: BORDER }}
+            autoComplete="off"
+            enterKeyHint="next"
+            className={`h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           />
-          <SectionLabel>Përshkrimi i artikullit</SectionLabel>
+          <Label htmlFor="edit-description">Përshkrimi i artikullit</Label>
           <textarea
+            id="edit-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={2000}
             rows={5}
             placeholder="Përshkrimi i artikullit"
-            className="w-full resize-none rounded-2xl border-none px-4 py-3.5 text-sm focus:outline-none"
-            style={{ background: CARD, color: INK, border: BORDER }}
+            className={`w-full resize-none rounded-2xl px-4 py-3.5 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
+            style={{
+              background: CARD,
+              color: INK,
+              border: `1px solid ${DIVIDER}`,
+              minHeight: 120,
+            }}
           />
           <p className="mt-1.5 text-[11px]" style={{ color: MUTED }}>
             Përshkruaj formën, defektet dhe mangësitë eventuale
@@ -559,33 +627,35 @@ function EditListingPage() {
           {/* Section 5: Size */}
           {!sizeHidden && (
             <>
-              <SectionLabel>Madhësia</SectionLabel>
+              <Label htmlFor="edit-size-trigger">Madhësia</Label>
               <button
+                id="edit-size-trigger"
                 type="button"
                 onClick={() => setSizeSheet(true)}
-                className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
-                style={{ background: CARD, color: INK, border: BORDER }}
+                className={`flex min-h-[52px] w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
+                style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
               >
                 <span style={{ color: size ? INK : MUTED }}>{size || "Zgjidh madhësinë"}</span>
-                <ChevronRight className="h-4 w-4" style={{ color: MUTED }} />
+                <ChevronRight className="h-4 w-4" style={{ color: MUTED }} aria-hidden="true" />
               </button>
             </>
           )}
 
           {/* Section 6: Color */}
-          <SectionLabel>Ngjyra</SectionLabel>
+          <Label htmlFor="edit-color-trigger">Ngjyra</Label>
           <button
+            id="edit-color-trigger"
             type="button"
             onClick={() => setColorSheet(true)}
-            className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm"
-            style={{ background: CARD, color: INK, border: BORDER }}
+            className={`flex min-h-[52px] w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           >
             <span className="flex min-w-0 items-center gap-2">
               {color.length === 0 ? (
                 <span style={{ color: MUTED }}>Zgjidh ngjyrën</span>
               ) : (
                 <>
-                  <span className="flex -space-x-1.5">
+                  <span className="flex -space-x-1.5" aria-hidden="true">
                     {color.map((c) => {
                       const opt = COLOR_OPTIONS.find((o) => o.name === c);
                       if (!opt) return null;
@@ -608,39 +678,60 @@ function EditListingPage() {
                 </>
               )}
             </span>
-            <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} />
+            <ChevronRight className="h-4 w-4 shrink-0" style={{ color: MUTED }} aria-hidden="true" />
           </button>
 
           {/* Section 7: Brand */}
-          <SectionLabel>Marka</SectionLabel>
+          <Label htmlFor="edit-brand">Marka</Label>
           <input
+            id="edit-brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
             maxLength={60}
             placeholder="p.sh. Zara"
-            className="w-full rounded-2xl border-none px-4 py-3.5 text-sm focus:outline-none"
-            style={{ background: CARD, color: INK, border: BORDER }}
+            autoComplete="off"
+            enterKeyHint="next"
+            className={`h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           />
 
           {/* Section 8: Price + city */}
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-3">
             <div>
-              <SectionLabel className="mt-0">Çmimi (€)</SectionLabel>
-              <div className="rounded-2xl px-4 py-3.5" style={{ background: CARD, border: BORDER }}>
+              <Label htmlFor="edit-price">Çmimi (€)</Label>
+              <div
+                className={`flex h-[52px] w-full items-center rounded-2xl px-4 ${
+                  priceInvalid ? "" : ""
+                }`}
+                style={{
+                  background: CARD,
+                  border: `1px solid ${priceInvalid ? "var(--brand-danger)" : DIVIDER}`,
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="mr-2 text-sm font-semibold"
+                  style={{ color: MUTED }}
+                >
+                  €
+                </span>
                 <input
+                  id="edit-price"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
                   placeholder="45"
+                  type="text"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  enterKeyHint="done"
+                  aria-invalid={priceInvalid || undefined}
                   className="no-spinner w-full bg-transparent text-sm focus:outline-none"
                   style={{ color: INK }}
                 />
               </div>
             </div>
             <div>
-              <SectionLabel className="mt-0">Qyteti</SectionLabel>
+              <Label htmlFor="edit-city">Qyteti</Label>
               <CityPicker
                 value={cityId}
                 onChange={(id, c) => {
@@ -652,17 +743,22 @@ function EditListingPage() {
           </div>
 
           {/* Section 9: Delivery */}
-          <SectionLabel>Dorëzimi</SectionLabel>
-          <div className="flex flex-wrap gap-2">
+          <Label>Dorëzimi</Label>
+          <div role="group" aria-label="Opsionet e dorëzimit" className="flex flex-wrap gap-2">
             {DELIVERY.map((d) => {
               const active = delivery.includes(d);
               return (
                 <button
                   key={d}
                   type="button"
+                  aria-pressed={active}
                   onClick={() => toggleDelivery(d)}
-                  className="rounded-full px-4 py-2 text-sm transition"
-                  style={{ background: active ? CORAL_GRADIENT : CARD, color: active ? "#fff" : INK, border: active ? "none" : BORDER }}
+                  className={`min-h-11 rounded-full px-4 text-sm transition active:scale-[0.97] ${FOCUS_CLASS}`}
+                  style={{
+                    background: active ? CORAL_GRADIENT : CARD,
+                    color: active ? OVERLAY_GLYPH : INK,
+                    border: active ? "1px solid transparent" : `1px solid ${DIVIDER}`,
+                  }}
                 >
                   {d}
                 </button>
@@ -671,31 +767,45 @@ function EditListingPage() {
           </div>
         </div>
 
-        {/* Sticky save button */}
+        {/* Sticky save button — matches sell.tsx CTA */}
         <div
           className="sticky bottom-0 px-5 pt-3"
           style={{
-            background: `linear-gradient(to top, ${CREAM} 70%, transparent)`,
-            paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)",
+            background: `linear-gradient(to top, var(--brand-surface) 70%, transparent)`,
+            paddingBottom: SAFE_BOTTOM,
           }}
         >
           <button
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex w-full items-center justify-center gap-2 py-4 text-sm font-bold transition disabled:opacity-70"
-            style={{ background: CORAL_GRADIENT, color: "#fff", borderRadius: 14, minHeight: 56 }}
+            aria-busy={saving || undefined}
+            className={`relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 disabled:opacity-70 ${FOCUS_CLASS}`}
+            style={{ background: CORAL_GRADIENT, color: OVERLAY_GLYPH }}
           >
-            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            {saving ? "Duke ruajtur…" : "Ruaj ndryshimet"}
+            <span
+              className="inline-flex items-center gap-2"
+              style={{ visibility: saving ? "hidden" : "visible" }}
+            >
+              Ruaj ndryshimet
+            </span>
+            {saving && (
+              <span
+                className="absolute inset-0 inline-flex items-center justify-center gap-2"
+                aria-hidden="true"
+              >
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Duke ruajtur…</span>
+              </span>
+            )}
           </button>
         </div>
 
-        {/* Hidden inputs */}
+        {/* Hidden inputs — HEIC/HEIF accepted (normalized in compressImage) */}
         <input
           ref={fileRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
           multiple
           className="hidden"
           onChange={onPickAdd}
@@ -703,28 +813,28 @@ function EditListingPage() {
         <input
           ref={replaceRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
           className="hidden"
           onChange={onPickReplace}
         />
 
         {/* Category picker sheets */}
         <Sheet open={catSheet !== null} onOpenChange={(o) => !o && setCatSheet(null)}>
-          <SheetContent
-            side="bottom"
-            hideClose
-            className="border-0 p-0"
-            style={{ background: CREAM }}
-          >
-            <div className="flex items-center gap-3 px-5 pt-4 pb-3">
+          <SheetContent side="bottom" hideClose className="border-0 p-0" style={{ background: PAGE }}>
+            <div className="flex items-center gap-3 px-5 pb-3 pt-4">
               <button
                 type="button"
                 onClick={() => setCatSheet(null)}
                 aria-label="Kthehu"
-                className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-                style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
+                className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_CLASS}`}
+                style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft
+                  size={18}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                  style={{ color: "var(--brand-ink)" }}
+                />
               </button>
               <SheetTitle style={{ color: INK }}>
                 {catSheet === "category"
@@ -734,7 +844,10 @@ function EditListingPage() {
                     : "Nënkategoria"}
               </SheetTitle>
             </div>
-            <div className="overflow-y-auto px-5 pb-6 pt-2" style={{ height: "calc(100dvh - 76px)" }}>
+            <div
+              className="overflow-y-auto px-5 pb-6 pt-2"
+              style={{ height: "calc(100dvh - 76px)" }}
+            >
               {catSheet === "category" && (
                 <div className="grid grid-cols-2 gap-3">
                   {CATEGORIES.map((c) => (
@@ -748,8 +861,8 @@ function EditListingPage() {
                         if (c.genderMode === false) setCatSheet("subcategory");
                         else setCatSheet("gender");
                       }}
-                      className="rounded-2xl px-3 py-4 text-[13px] font-bold"
-                      style={{ background: CARD, color: INK, border: BORDER }}
+                      className={`min-h-[52px] rounded-2xl px-3 py-4 text-[13px] font-bold transition active:scale-[0.98] ${FOCUS_CLASS}`}
+                      style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
                     >
                       {c.label}
                     </button>
@@ -767,8 +880,8 @@ function EditListingPage() {
                           setCatGender(g);
                           setCatSheet("subcategory");
                         }}
-                        className="rounded-full px-2 py-3 text-[12px] font-semibold"
-                        style={{ background: CARD, color: INK, border: BORDER }}
+                        className={`min-h-11 rounded-full px-2 py-3 text-[12px] font-semibold transition active:scale-[0.97] ${FOCUS_CLASS}`}
+                        style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
                       >
                         {g}
                       </button>
@@ -786,8 +899,8 @@ function EditListingPage() {
                         setCatSub(s);
                         setCatSheet(null);
                       }}
-                      className="rounded-full px-2 py-3 text-[12px] font-semibold"
-                      style={{ background: CARD, color: INK, border: BORDER }}
+                      className={`min-h-11 rounded-full px-2 py-3 text-[12px] font-semibold transition active:scale-[0.97] ${FOCUS_CLASS}`}
+                      style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
                     >
                       {s}
                     </button>
@@ -814,7 +927,7 @@ function EditListingPage() {
 
         {/* Cancel confirm */}
         <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
-          <AlertDialogContent style={{ background: CREAM, borderColor: DIVIDER }}>
+          <AlertDialogContent style={{ background: PAGE, borderColor: DIVIDER }}>
             <AlertDialogHeader>
               <AlertDialogTitle style={{ color: INK }}>A je i sigurt?</AlertDialogTitle>
               <AlertDialogDescription style={{ color: MUTED }}>
@@ -823,15 +936,15 @@ function EditListingPage() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel
-                className="rounded-full border-0"
-                style={{ background: CARD, color: INK, border: BORDER }}
+                className={`rounded-full border-0 ${FOCUS_CLASS}`}
+                style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
               >
                 Kthehu
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => window.history.back()}
-                className="rounded-full"
-                style={{ background: CORAL_GRADIENT, color: "#fff" }}
+                className={`rounded-full ${FOCUS_CLASS}`}
+                style={{ background: CORAL_GRADIENT, color: OVERLAY_GLYPH }}
               >
                 Po, largohu
               </AlertDialogAction>
@@ -843,19 +956,22 @@ function EditListingPage() {
   );
 }
 
-function SectionLabel({
+function Label({
   children,
   className = "",
+  htmlFor,
 }: {
   children: React.ReactNode;
   className?: string;
+  htmlFor?: string;
 }) {
   return (
-    <p
-      className={`mb-2 mt-5 text-[11px] font-semibold uppercase tracking-[0.15em] ${className}`}
+    <label
+      htmlFor={htmlFor}
+      className={`mb-2 mt-5 block text-[11px] font-semibold uppercase tracking-[0.15em] ${className}`}
       style={{ color: MUTED }}
     >
       {children}
-    </p>
+    </label>
   );
 }
