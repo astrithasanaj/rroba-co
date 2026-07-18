@@ -21,6 +21,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/manage")({
   component: () => (<SwipeBackWrapper><ManageListingPage /></SwipeBackWrapper>),
@@ -46,6 +47,16 @@ function ManageListingPage() {
   const [confirmSold, setConfirmSold] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [working, setWorking] = useState(false);
+  const [buyerPickerOpen, setBuyerPickerOpen] = useState(false);
+  const [buyerCandidates, setBuyerCandidates] = useState<
+    Array<{ id: string; name: string | null; avatar_url: string | null }>
+  >([]);
+  const [rateBuyer, setRateBuyer] = useState<{
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+  } | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -97,23 +108,95 @@ function ManageListingPage() {
 
   const toggleSold = async () => {
     if (!listing) return;
-    setWorking(true);
     const next = !listing.sold;
+
+    // Reactivation: keep existing behavior
+    if (!next) {
+      setWorking(true);
+      const { error } = await supabase
+        .from("listings")
+        .update({
+          sold: false,
+          status: "active",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      setWorking(false);
+      setConfirmSold(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Artikulli u rikthye si aktiv");
+      load();
+      return;
+    }
+
+    // Marking sold: look up buyer candidates first
+    setWorking(true);
+    const { data: convos } = await supabase
+      .from("conversations")
+      .select("buyer_id")
+      .eq("listing_id", id);
+    const buyerIds = Array.from(new Set((convos ?? []).map((c) => c.buyer_id)));
+
+    if (buyerIds.length === 0) {
+      const { error } = await supabase
+        .from("listings")
+        .update({
+          sold: true,
+          status: "sold",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      setWorking(false);
+      setConfirmSold(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Artikulli u shënua si i shitur");
+      load();
+      return;
+    }
+
+    const { data: profs } = await supabase
+      .from("public_profiles")
+      .select("id,name,avatar_url")
+      .in("id", buyerIds);
+    const byId = new Map((profs ?? []).map((p: any) => [p.id, p]));
+    setBuyerCandidates(
+      buyerIds.map((bid) => byId.get(bid) ?? { id: bid, name: null, avatar_url: null }),
+    );
+    setWorking(false);
+    setConfirmSold(false);
+    setBuyerPickerOpen(true);
+  };
+
+  const confirmBuyerAndSold = async (buyer: {
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+  }) => {
+    setWorking(true);
     const { error } = await supabase
       .from("listings")
       .update({
-        sold: next,
-        status: next ? "sold" : "active",
+        sold: true,
+        status: "sold",
+        sold_to_user_id: buyer.id,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
     setWorking(false);
-    setConfirmSold(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success(next ? "Artikulli u shënua si i shitur" : "Artikulli u rikthye si aktiv");
+    setBuyerPickerOpen(false);
+    toast.success("Artikulli u shënua si i shitur");
+    setRateBuyer(buyer);
+    setReviewOpen(true);
     load();
   };
 
@@ -374,6 +457,137 @@ function ManageListingPage() {
         onPrimary={deleteListing}
         working={working}
       />
+
+      {/* Buyer picker */}
+      {buyerPickerOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: CREAM,
+            zIndex: 60,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "14px 16px 12px",
+              background: "#2d1521",
+              flexShrink: 0,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => (working ? null : setBuyerPickerOpen(false))}
+              disabled={working}
+              aria-label="Kthehu"
+              className="transition-transform duration-150 active:scale-90"
+              style={{
+                width: 36,
+                height: 36,
+                background: "rgba(255,255,255,0.12)",
+                border: "none",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            >
+              <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+            </button>
+            <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
+              Kush e bleu?
+            </span>
+          </div>
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
+              padding: "20px 16px 40px",
+            }}
+          >
+            <p style={{ color: MUTED, fontSize: 13, marginBottom: 16 }}>
+              Zgjidh personin që e bleu këtë artikull. Do të mund ta vlerësosh më pas.
+            </p>
+            {buyerCandidates.map((b) => (
+              <button
+                key={b.id}
+                type="button"
+                disabled={working}
+                onClick={() => confirmBuyerAndSold(b)}
+                className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-transform duration-150 active:scale-[0.99] disabled:opacity-60"
+                style={{
+                  backgroundColor: CARD,
+                  border: `1px solid ${DIVIDER}`,
+                  marginBottom: 8,
+                }}
+              >
+                {b.avatar_url ? (
+                  <img
+                    src={b.avatar_url}
+                    alt=""
+                    style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "50%",
+                      background: DIVIDER,
+                      display: "grid",
+                      placeItems: "center",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: INK,
+                    }}
+                  >
+                    {(b.name ?? "?").slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 600,
+                      color: INK,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {b.name || "Përdorues"}
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Rate buyer sheet */}
+      {rateBuyer && (
+        <ReviewsSheet
+          open={reviewOpen}
+          onOpenChange={(v) => {
+            setReviewOpen(v);
+            if (!v) setRateBuyer(null);
+          }}
+          sellerId={rateBuyer.id}
+          currentUserId={user.id}
+          sellerName={rateBuyer.name ?? "Përdorues"}
+          initialRateOpen
+          listingId={id}
+        />
+      )}
     </MobileShell>
   );
 }

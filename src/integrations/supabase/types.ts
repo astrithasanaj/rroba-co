@@ -386,6 +386,7 @@ export type Database = {
           price: number
           size: string
           sold: boolean
+          sold_to_user_id: string | null
           status: string
           subcategory: string | null
           title: string
@@ -409,6 +410,7 @@ export type Database = {
           price: number
           size: string
           sold?: boolean
+          sold_to_user_id?: string | null
           status?: string
           subcategory?: string | null
           title: string
@@ -432,6 +434,7 @@ export type Database = {
           price?: number
           size?: string
           sold?: boolean
+          sold_to_user_id?: string | null
           status?: string
           subcategory?: string | null
           title?: string
@@ -444,6 +447,20 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listings_sold_to_user_id_fkey"
+            columns: ["sold_to_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listings_sold_to_user_id_fkey"
+            columns: ["sold_to_user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -758,6 +775,7 @@ export type Database = {
           comment: string
           created_at: string
           id: string
+          listing_id: string | null
           rater_id: string
           seller_id: string
           stars: number
@@ -767,6 +785,7 @@ export type Database = {
           comment?: string
           created_at?: string
           id?: string
+          listing_id?: string | null
           rater_id: string
           seller_id: string
           stars: number
@@ -776,12 +795,21 @@ export type Database = {
           comment?: string
           created_at?: string
           id?: string
+          listing_id?: string | null
           rater_id?: string
           seller_id?: string
           stars?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ratings_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reports: {
         Row: {
@@ -940,6 +968,7 @@ export type Database = {
         }[]
       }
       renew_membership: { Args: { _tier: string }; Returns: undefined }
+      reveal_pending_ratings: { Args: never; Returns: undefined }
     }
     Enums: {
       report_reason:

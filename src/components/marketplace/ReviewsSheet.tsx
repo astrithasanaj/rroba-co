@@ -91,6 +91,8 @@ export function ReviewsSheet({
   sellerName,
   sellerUsername,
   sellerCreatedAt,
+  initialRateOpen,
+  listingId,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -99,6 +101,8 @@ export function ReviewsSheet({
   sellerName: string;
   sellerUsername?: string;
   sellerCreatedAt?: string | null;
+  initialRateOpen?: boolean;
+  listingId?: string;
 }) {
   const navigate = useNavigate();
   const [rows, setRows] = useState<Row[]>([]);
@@ -107,11 +111,15 @@ export function ReviewsSheet({
   const [tab, setTab] = useState<"all" | "sold" | "bought">("all");
 
   // Rate flow
-  const [rateOpen, setRateOpen] = useState(false);
+  const [rateOpen, setRateOpen] = useState(!!initialRateOpen);
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [canRate, setCanRate] = useState(false);
+
+  useEffect(() => {
+    if (open && initialRateOpen) setRateOpen(true);
+  }, [open, initialRateOpen]);
 
   const isOwn = currentUserId === sellerId;
 
@@ -149,12 +157,13 @@ export function ReviewsSheet({
           setStars(0);
           setComment("");
         }
-        // Eligibility: conversation with this seller as buyer + at least one sold listing between them
+        // Eligibility: any conversation between the two users (either direction)
         const { data: convo } = await supabase
           .from("conversations")
           .select("id")
-          .eq("seller_id", sellerId)
-          .eq("buyer_id", currentUserId)
+          .or(
+            `and(seller_id.eq.${sellerId},buyer_id.eq.${currentUserId}),and(buyer_id.eq.${sellerId},seller_id.eq.${currentUserId})`,
+          )
           .limit(1);
         if (active) setCanRate(!!(convo && convo.length > 0));
       }
@@ -172,10 +181,16 @@ export function ReviewsSheet({
   const submitReview = async () => {
     if (!currentUserId || stars < 1 || submitting) return;
     setSubmitting(true);
-    const { error } = await supabase.from("ratings").upsert(
-      { rater_id: currentUserId, seller_id: sellerId, stars, comment: comment.trim() },
-      { onConflict: "rater_id,seller_id" },
-    );
+    const payload = {
+      rater_id: currentUserId,
+      seller_id: sellerId,
+      stars,
+      comment: comment.trim(),
+      ...(listingId ? { listing_id: listingId } : {}),
+    };
+    const { error } = await supabase
+      .from("ratings")
+      .upsert(payload, { onConflict: "rater_id,seller_id" });
     setSubmitting(false);
     if (error) {
       toast.error(error.message);
