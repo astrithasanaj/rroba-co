@@ -69,8 +69,8 @@ export const CATEGORY_TAXONOMY: CategoryNode[] = [
   },
   {
     key: "interior",
-    label: "Interiør & mobilje",
-    categories: ["Interiør & mobilje"],
+    label: "Interier & mobilie",
+    categories: ["Interier & mobilie"],
     groups: [
       {
         label: "Dhoma e ndenjes",

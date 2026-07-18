@@ -32,7 +32,7 @@ export const CATEGORY_MAP: Record<string, CategoryDef> = {
     ],
   },
   outdoor: { slug: "outdoor", label: "Outdoor & sport", categories: ["Outdoor"], hasGender: false },
-  interior: { slug: "interior", label: "Interiør & mobilje", categories: ["Interier"], hasGender: false },
+  interior: { slug: "interior", label: "Interier & mobilie", categories: ["Interier"], hasGender: false },
   art: { slug: "art", label: "Art & dizajn", categories: ["Art"], hasGender: false },
   elektronik: { slug: "elektronik", label: "Elektronikë & zë", categories: ["Elektronikë"], hasGender: false },
   
@@ -97,7 +97,7 @@ export const HOME_CATEGORIES = [
   },
   {
     key: "interior",
-    label: "Interiør & mobilje",
+    label: "Interier & mobilie",
     Icon: Archive,
     boxColor: "#e1e7ed",
     iconColor: "#6e849e",
