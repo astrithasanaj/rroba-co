@@ -290,7 +290,7 @@ function StepCity({
           />
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={!value} onClick={onNext}>
           Vazhdo
         </BigButton>
@@ -574,7 +574,7 @@ function StepProfile({
           </div>
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={!canContinue} onClick={onNext}>
           Vazhdo
         </BigButton>
@@ -674,7 +674,7 @@ function StepStyle({
           </div>
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton onClick={onNext}>Vazhdo</BigButton>
         <div className="mt-2 text-center text-xs" style={{ color: MUTED }}>
           Mund t'i ndryshosh gjithmonë në cilësime
@@ -741,7 +741,7 @@ function StepHow({
           ))}
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton onClick={onNext}>Vazhdo</BigButton>
       </div>
     </div>
@@ -810,7 +810,7 @@ function StepNotify({
           ))}
         </div>
       </div>
-      <div className="space-y-2 px-5 pb-6 pt-2">
+      <div className="space-y-2 px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={busy} onClick={handleEnable}>
           Aktivizo njoftimet
         </BigButton>
