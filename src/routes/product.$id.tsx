@@ -42,7 +42,7 @@ type Seller = {
 
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const cached = getCachedListing(id);
   const [listing, setListing] = useState<ListingView | null>(cached);
   const [seller, setSeller] = useState<Seller | null>(null);

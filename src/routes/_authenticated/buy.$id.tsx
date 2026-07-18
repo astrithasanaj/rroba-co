@@ -26,7 +26,7 @@ function roundHalf(n: number) {
 
 function BuyPage() {
   const { id } = useParams({ from: "/_authenticated/buy/$id" });
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [listing, setListing] = useState<ListingView | null>(null);
   const [seller, setSeller] = useState<Seller | null>(null);
   const [me, setMe] = useState<string | null>(null);

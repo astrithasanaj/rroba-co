@@ -54,7 +54,7 @@ type ThreadView = {
 
 function MessagesPage() {
   const { thread, view, tab } = useSearch({ from: "/messages" });
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [me, setMe] = useState<string | null>(null);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ function ComposeIcon({ size = 18, color = CREAM }: { size?: number; color?: stri
 }
 
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [threads, setThreads] = useState<ThreadView[]>([]);
   const [loading, setLoading] = useState(true);
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
@@ -481,7 +481,7 @@ function formatTime(iso: string) {
 type ProfileResult = { id: string; name: string | null; avatar_url: string | null; username?: string | null; city?: string | null };
 
 function NewMessage({ me }: { me: string }) {
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [q, setQ] = useState("");
   const [results, setResults] = useState<ProfileResult[]>([]);
   const [recent, setRecent] = useState<ProfileResult[]>([]);
@@ -611,7 +611,7 @@ function NewMessage({ me }: { me: string }) {
 type MessageRow = { id: string; sender_id: string; content: string; created_at: string };
 
 function Thread({ id, me }: { id: string; me: string }) {
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate({ from: "/messages" });
   const [info, setInfo] = useState<{
     otherName: string; otherAvatar: string; listingId: string; listingTitle: string; listingPrice: number | null; listingCover: string; isBuyer: boolean;
   } | null>(null);
