@@ -525,7 +525,7 @@ function Layer({
   // `inert` removes descendants from the tab order, prevents pointer/keyboard
   // interaction and hides them from AT — a stronger guarantee than aria-hidden
   // alone, which still leaves focusable descendants reachable.
-  const inertProps = visible ? {} : ({ inert: "" } as { inert?: string });
+  const inertProps = visible ? {} : ({ inert: true } as { inert?: boolean });
   return (
     <div
       className="absolute inset-0 transition-transform duration-300 ease-out"
