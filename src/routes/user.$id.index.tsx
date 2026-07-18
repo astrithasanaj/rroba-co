@@ -413,16 +413,21 @@ function UserProfile() {
                 {!isOwn && (
                   <button
                     onClick={toggleFollow}
-                    className="profile-btn"
+                    disabled={followBusy}
+                    aria-pressed={isFollowing}
+                    aria-busy={followBusy}
+                    aria-label={isFollowing ? "Ndalo së ndjekuri" : "Ndiq"}
+                    className={`profile-btn ${FOCUS_CLASS}`}
                     style={{
                       flex: 1,
                       height: 34,
+                      minWidth: 0,
                       borderRadius: 10,
                       border: "none",
                       background: isFollowing
-                        ? "#f5e6e9"
-                        : "linear-gradient(120deg, #e8836a, #c65a7a)",
-                      color: isFollowing ? "#6e2438" : "#ffffff",
+                        ? "var(--brand-rose-soft)"
+                        : "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))",
+                      color: isFollowing ? "var(--brand-rose-ink)" : "#ffffff",
                       fontSize: 12,
                       fontWeight: 600,
                       letterSpacing: "0.2px",
@@ -432,11 +437,18 @@ function UserProfile() {
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 4,
+                      opacity: followBusy ? 0.7 : 1,
+                      cursor: followBusy ? "progress" : "pointer",
                     }}
                   >
                     {isFollowing ? (
                       <>
-                        Duke ndjekur <Check style={{ width: 12, height: 12 }} strokeWidth={2.2} />
+                        Duke ndjekur{" "}
+                        <Check
+                          style={{ width: 12, height: 12 }}
+                          strokeWidth={2.2}
+                          aria-hidden="true"
+                        />
                       </>
                     ) : (
                       "Ndiq"
