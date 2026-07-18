@@ -76,11 +76,19 @@ type OfferRow = {
 const CREAM = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
 const INK = "var(--brand-ink)";
-const MUTED = "var(--brand-ink-muted)";
+const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const SOLD = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
 const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
+// Lokale semantiske farge-konstanter (kun brukt i profil).
+const OVERLAY_GLYPH = "#ffffff";
+const GLASS_BG = "rgba(255,255,255,0.7)";
+const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const DARK_GLASS_BG = "rgba(255,255,255,0.12)";
+const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
+const OFFER_ACCEPTED_BG = "#d1f4e0";
+const OFFER_DECLINED_BG = "#f4d1d1";
 
 function ProfilePage() {
   const { user } = Route.useRouteContext();
@@ -260,7 +268,9 @@ function ProfilePage() {
         await navigator.clipboard.writeText(url);
         toast.success("Lidhja u kopjua!");
       }
-    } catch {}
+    } catch {
+      // Bruker avbrøt native share-dialog – ignorer.
+    }
   };
 
   const displayName = profile?.name || user.email?.split("@")[0] || "Përdorues";
@@ -537,18 +547,36 @@ function ProfilePage() {
 
         {/* Tabs */}
         <div>
-          <div className="grid grid-cols-4" style={{ backgroundColor: CREAM }}>
+          <div
+            role="tablist"
+            aria-label="Seksionet e profilit"
+            className="grid grid-cols-4"
+            style={{ backgroundColor: CREAM }}
+          >
             {tabs.map((t) => {
               const Icon = t.icon;
               const active = tab === t.id;
+              const tabLabels: Record<Tab, string> = {
+                mine: "Artikujt e mi",
+                liked: "Të pëlqyera",
+                saved: "Të ruajtura",
+                wardrobe: "Të shitura",
+              };
               return (
                 <button
                   key={t.id}
+                  id={`profile-tab-${t.id}`}
+                  role="tab"
+                  aria-selected={active}
+                  aria-controls={`profile-panel-${t.id}`}
+                  tabIndex={active ? 0 : -1}
+                  aria-label={tabLabels[t.id]}
                   onClick={() => setTab(t.id)}
-                  className="profile-btn relative flex items-center justify-center"
-                  style={{ height: 40, background: "transparent", border: "none" }}
+                  className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
+                  style={{ height: 44, background: "transparent", border: "none" }}
                 >
                   <Icon
+                    aria-hidden="true"
                     style={{
                       width: 20,
                       height: 20,
@@ -558,6 +586,7 @@ function ProfilePage() {
                   />
                   {active && (
                     <span
+                      aria-hidden="true"
                       style={{
                         position: "absolute",
                         bottom: 0,
@@ -574,10 +603,21 @@ function ProfilePage() {
         </div>
 
         {/* Grid */}
-        <section className="pt-0">
+        <section
+          id={`profile-panel-${tab}`}
+          role="tabpanel"
+          aria-labelledby={`profile-tab-${tab}`}
+          aria-busy={loading && tab === "mine"}
+          className="pt-0"
+        >
           {loading && tab === "mine" ? (
-            <div className="grid place-items-center py-10">
-              <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+            <div className="grid place-items-center py-10" role="status" aria-live="polite">
+              <Loader2
+                className="h-6 w-6 animate-spin"
+                style={{ color: MUTED }}
+                aria-hidden="true"
+              />
+              <span className="sr-only">Duke ngarkuar…</span>
             </div>
           ) : currentGrid.length === 0 ? (
             <TabEmptyState tab={tab} />
@@ -604,8 +644,8 @@ function ProfilePage() {
               style={{
                 width: 44,
                 height: 44,
-                backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                backgroundColor: GLASS_BG,
+                border: `1px solid ${GLASS_BORDER}`,
                 backdropFilter: "blur(8px)",
               }}
             >
@@ -679,8 +719,8 @@ function ProfilePage() {
                 style={{
                   width: 44,
                   height: 44,
-                  backgroundColor: "rgba(255,255,255,0.7)",
-                  border: "1px solid rgba(226,226,222,0.8)",
+                  backgroundColor: GLASS_BG,
+                  border: `1px solid ${GLASS_BORDER}`,
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
                 }}
@@ -960,7 +1000,7 @@ function TierCard({
           style={{
             fontSize: 12,
             color: active ? CREAM : MUTED,
-            background: active ? "rgba(255,255,255,0.12)" : CREAM,
+            background: active ? DARK_GLASS_BG : CREAM,
             padding: "4px 10px",
             borderRadius: 10,
           }}
@@ -971,7 +1011,7 @@ function TierCard({
       <p
         style={{
           fontSize: 13,
-          color: active ? "rgba(255,255,255,0.65)" : MUTED,
+          color: active ? DARK_GLASS_INK_SOFT : MUTED,
           lineHeight: 1.5,
           margin: 0,
         }}
@@ -1025,7 +1065,7 @@ function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?
           padding: "6px 7px",
           fontFamily: "var(--font-voice), Georgia, serif",
           fontSize: 9,
-          color: "#ffffff",
+          color: OVERLAY_GLYPH,
           opacity: 0.75,
           textShadow: "0 1px 2px rgba(0,0,0,0.35)",
         }}
@@ -1045,7 +1085,7 @@ function ListingGridTile({ listing: l, manage }: { listing: ListingView; manage?
           style={{
             fontSize: 11,
             fontWeight: 600,
-            color: "#ffffff",
+            color: OVERLAY_GLYPH,
             letterSpacing: "0.1px",
             opacity: isSold ? 0.85 : 1,
           }}
@@ -1076,7 +1116,7 @@ function SoldRibbon() {
         right: -23,
         width: 82,
         background: SOLD,
-        color: "#ffffff",
+        color: OVERLAY_GLYPH,
         fontSize: 9,
         fontWeight: 700,
         textAlign: "center",
@@ -1175,9 +1215,9 @@ function OffersList({
               style={{
                 backgroundColor:
                   o.status === "accepted"
-                    ? "#d1f4e0"
+                    ? OFFER_ACCEPTED_BG
                     : o.status === "declined"
-                      ? "#f4d1d1"
+                      ? OFFER_DECLINED_BG
                       : DIVIDER,
                 color: INK,
               }}
@@ -1524,9 +1564,14 @@ function SettingsMain({
           WebkitTapHighlightColor: "transparent",
         }}
       >
-        <i className="ti ti-trash" style={{ fontSize: 20, color: "#e53935", width: 22 }} />
+        <i
+          className="ti ti-trash"
+          style={{ fontSize: 20, color: "var(--brand-danger)", width: 22 }}
+        />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: "#e53935", lineHeight: 1.3 }}>
+          <div
+            style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-danger)", lineHeight: 1.3 }}
+          >
             Fshij llogarinë
           </div>
           <div style={{ fontSize: 12, color: MUTED, marginTop: 2, lineHeight: 1.3 }}>
@@ -2204,7 +2249,7 @@ function LogoutConfirm({
           style={{
             width: 44,
             height: 44,
-            background: "rgba(255,255,255,0.12)",
+            background: DARK_GLASS_BG,
             border: "none",
             borderRadius: "50%",
             display: "flex",

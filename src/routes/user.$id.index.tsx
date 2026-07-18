@@ -41,11 +41,12 @@ type Profile = {
 };
 
 type SortMode = "new" | "low" | "high" | "popular";
+type ListingWithLikes = ListingView & { _likes: number };
 
 const CREAM = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
 const INK = "var(--brand-ink)";
-const MUTED = "var(--brand-ink-muted)";
+const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const CORAL = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
@@ -105,11 +106,12 @@ function UserProfile() {
   const { id } = useParams({ from: "/user/$id/" });
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [listings, setListings] = useState<ListingView[]>([]);
+  const [listings, setListings] = useState<ListingWithLikes[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
   const [followers, setFollowers] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [likesTotal, setLikesTotal] = useState(0);
@@ -166,11 +168,14 @@ function UserProfile() {
           totalLikes++;
         }
       }
-      const withLikes = hydrated.map((h) => ({ ...h, _likes: likesMap[h.id] ?? 0 }));
+      const withLikes: ListingWithLikes[] = hydrated.map((h) => ({
+        ...h,
+        _likes: likesMap[h.id] ?? 0,
+      }));
 
       if (!active) return;
       setProfile(p.data as Profile | null);
-      setListings(withLikes as ListingView[]);
+      setListings(withLikes);
       setLikesTotal(totalLikes);
       setHasSale(rows.some((r) => r.status === "sold"));
       setCurrentUserId(uid);
@@ -214,10 +219,10 @@ function UserProfile() {
   const sorted = useMemo(() => {
     const active = listings.filter((l) => l.status === "active");
     const sold = listings.filter((l) => l.status === "sold");
-    const cmp = (a: ListingView, b: ListingView) => {
+    const cmp = (a: ListingWithLikes, b: ListingWithLikes) => {
       if (sort === "low") return a.price - b.price;
       if (sort === "high") return b.price - a.price;
-      if (sort === "popular") return ((b as any)._likes ?? 0) - ((a as any)._likes ?? 0);
+      if (sort === "popular") return (b._likes ?? 0) - (a._likes ?? 0);
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     };
     return [...active.sort(cmp), ...sold.sort(cmp)];
@@ -229,30 +234,36 @@ function UserProfile() {
       return;
     }
     if (currentUserId === id) return;
+    if (followBusy) return;
     const prev = isFollowing;
+    setFollowBusy(true);
     // optimistic
     setIsFollowing(!prev);
     setFollowers((n) => n + (prev ? -1 : 1));
-    if (prev) {
-      const { error } = await supabase
-        .from("followers")
-        .delete()
-        .eq("follower_id", currentUserId)
-        .eq("following_id", id);
-      if (error) {
-        setIsFollowing(true);
-        setFollowers((n) => n + 1);
-        toast.error(error.message);
+    try {
+      if (prev) {
+        const { error } = await supabase
+          .from("followers")
+          .delete()
+          .eq("follower_id", currentUserId)
+          .eq("following_id", id);
+        if (error) {
+          setIsFollowing(true);
+          setFollowers((n) => n + 1);
+          toast.error(error.message);
+        }
+      } else {
+        const { error } = await supabase
+          .from("followers")
+          .insert({ follower_id: currentUserId, following_id: id });
+        if (error) {
+          setIsFollowing(false);
+          setFollowers((n) => n - 1);
+          toast.error(error.message);
+        }
       }
-    } else {
-      const { error } = await supabase
-        .from("followers")
-        .insert({ follower_id: currentUserId, following_id: id });
-      if (error) {
-        setIsFollowing(false);
-        setFollowers((n) => n - 1);
-        toast.error(error.message);
-      }
+    } finally {
+      setFollowBusy(false);
     }
   };
 
@@ -273,8 +284,15 @@ function UserProfile() {
   if (loading) {
     return (
       <MobileShell hideNav>
-        <div className="grid h-screen place-items-center" style={{ backgroundColor: CREAM }}>
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+        <div
+          className="grid h-dvh place-items-center"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          style={{ backgroundColor: CREAM }}
+        >
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} aria-hidden="true" />
+          <span className="sr-only">Duke ngarkuar profilin…</span>
         </div>
       </MobileShell>
     );
@@ -283,7 +301,7 @@ function UserProfile() {
   if (!profile) {
     return (
       <MobileShell>
-        <div className="p-10 text-center text-sm" style={{ color: MUTED }}>
+        <div role="alert" className="p-10 text-center text-sm" style={{ color: MUTED }}>
           Përdoruesi nuk u gjet.
         </div>
       </MobileShell>
@@ -402,16 +420,21 @@ function UserProfile() {
                 {!isOwn && (
                   <button
                     onClick={toggleFollow}
-                    className="profile-btn"
+                    disabled={followBusy}
+                    aria-pressed={isFollowing}
+                    aria-busy={followBusy}
+                    aria-label={isFollowing ? "Ndalo së ndjekuri" : "Ndiq"}
+                    className={`profile-btn ${FOCUS_CLASS}`}
                     style={{
                       flex: 1,
                       height: 34,
+                      minWidth: 0,
                       borderRadius: 10,
                       border: "none",
                       background: isFollowing
-                        ? "#f5e6e9"
-                        : "linear-gradient(120deg, #e8836a, #c65a7a)",
-                      color: isFollowing ? "#6e2438" : "#ffffff",
+                        ? "var(--brand-rose-soft)"
+                        : "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))",
+                      color: isFollowing ? "var(--brand-rose-ink)" : "#ffffff",
                       fontSize: 12,
                       fontWeight: 600,
                       letterSpacing: "0.2px",
@@ -421,11 +444,18 @@ function UserProfile() {
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 4,
+                      opacity: followBusy ? 0.7 : 1,
+                      cursor: followBusy ? "progress" : "pointer",
                     }}
                   >
                     {isFollowing ? (
                       <>
-                        Duke ndjekur <Check style={{ width: 12, height: 12 }} strokeWidth={2.2} />
+                        Duke ndjekur{" "}
+                        <Check
+                          style={{ width: 12, height: 12 }}
+                          strokeWidth={2.2}
+                          aria-hidden="true"
+                        />
                       </>
                     ) : (
                       "Ndiq"
