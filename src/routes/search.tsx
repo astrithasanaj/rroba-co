@@ -1155,16 +1155,18 @@ function ResultsSection({
   results: ListingView[];
 }) {
   return (
-    <section className="mt-6 px-5">
-      <p className="mb-3 text-xs" style={{ color: MUTED }}>
+    <section className="mt-6 px-5" aria-busy={loading}>
+      <p className="mb-3 text-xs" style={{ color: MUTED }} aria-live="polite">
         {loading ? "Po kërkon..." : `${results.length} rezultate`}
       </p>
       {loading ? (
         <div role="status" aria-live="polite" className="grid place-items-center py-10">
           <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+          <span className="sr-only">Po kërkon</span>
         </div>
       ) : results.length === 0 ? (
         <div
+          role="status"
           className="rounded-2xl p-10 text-center text-sm"
           style={{ backgroundColor: CARD, color: MUTED }}
         >
