@@ -206,6 +206,10 @@ input, textarea, select {
   transform: scale(0.98);
   background-color: var(--brand-cream);
 }
+.profile-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(198, 90, 122, 0.35);
+}
 
 .settings-row {
   display: flex;
