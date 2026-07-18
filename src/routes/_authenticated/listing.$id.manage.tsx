@@ -21,6 +21,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 export const Route = createFileRoute("/_authenticated/listing/$id/manage")({
   component: () => (<SwipeBackWrapper><ManageListingPage /></SwipeBackWrapper>),
