@@ -569,8 +569,8 @@ function ProfilePage() {
                 aria-label="Kthehu"
                 className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 44,
+                height: 44,
                   backgroundColor: "rgba(255,255,255,0.7)",
                   border: "1px solid rgba(226,226,222,0.8)",
                   backdropFilter: "blur(8px)",
@@ -1070,8 +1070,8 @@ function SettingsSheet({
               background: CARD,
               border: "none",
               borderRadius: "50%",
-              width: 36,
-              height: 36,
+              width: 44,
+                height: 44,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -1711,8 +1711,8 @@ function LogoutConfirm({ open, onOpenChange, onConfirm }: { open: boolean; onOpe
           aria-label="Kthehu"
           className="transition-transform duration-150 active:scale-[0.97]"
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+                height: 44,
             background: "rgba(255,255,255,0.12)",
             border: "none",
             borderRadius: "50%",
