@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Bell, UserPlus, Shirt } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -239,7 +239,6 @@ function HomePage() {
     };
   }, []);
 
-  const followingPreview = useMemo(() => followingListings.slice(0, 5), [followingListings]);
 
 
   return (
