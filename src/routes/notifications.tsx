@@ -110,7 +110,7 @@ function NotificationsPage() {
           .in("id", ids);
         if (!active) return;
         const map: Record<string, ActorProfile> = {};
-        (profs ?? []).forEach((p) => { map[p.id] = p as ActorProfile; });
+        (profs ?? []).forEach((p) => { if (p.id) map[p.id] = p as ActorProfile; });
         setActors((prev) => ({ ...prev, ...map }));
       }
     };
