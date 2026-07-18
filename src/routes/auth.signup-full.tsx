@@ -884,13 +884,14 @@ function SignupFullPage() {
                     key={g.v}
                     type="button"
                     onClick={() => setGender(g.v)}
-                    className="text-[14px] transition active:scale-95"
+                    aria-pressed={gender === g.v}
+                    className="min-h-11 text-[14px] transition active:scale-95"
                     style={{
                       background: gender === g.v ? INK : CARD,
                       color: gender === g.v ? "#fff" : INK,
-                      height: 40,
-                      borderRadius: 20,
-                      padding: "0 16px",
+                      borderRadius: 22,
+                      padding: "0 18px",
+                      border: `1px solid ${gender === g.v ? INK : DIVIDER}`,
                     }}
                   >
                     {g.l}
