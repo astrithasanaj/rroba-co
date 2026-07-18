@@ -431,7 +431,7 @@ function SearchPage() {
             style={{ backgroundColor: CARD, border: "1px solid var(--brand-border)" }}
             onClick={() => inputRef.current?.focus()}
           >
-            <SearchIcon className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
+            <SearchIcon aria-hidden="true" className="h-5 w-5 shrink-0" style={{ color: MUTED }} />
             <input
               ref={inputRef}
               value={q}
@@ -445,6 +445,10 @@ function SearchPage() {
                 }
               }}
               placeholder="Kërko"
+              enterKeyHint="search"
+              inputMode="search"
+              autoComplete="off"
+              aria-label="Kërko"
               className="flex-1 bg-transparent text-[16px] outline-none placeholder:font-normal"
               style={{ color: INK }}
             />
@@ -455,9 +459,10 @@ function SearchPage() {
                   setQ("");
                   inputRef.current?.focus();
                 }}
-                aria-label="Pastro"
+                aria-label="Pastro kërkimin"
+                className="-mr-2 grid h-11 w-11 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
               >
-                <X className="h-5 w-5" style={{ color: MUTED }} />
+                <X aria-hidden="true" className="h-5 w-5" style={{ color: MUTED }} />
               </button>
             )}
           </div>
