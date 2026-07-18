@@ -10,13 +10,13 @@ export const Route = createFileRoute("/auth/signup-full")({
   component: SignupFullPage,
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const DIVIDER = "#e2e2de";
-const ERR = "#e53935";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
+const DIVIDER = "var(--brand-border)";
+const ERR = "var(--brand-danger)";
 
 const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
   { code: "+383", flag: "🇽🇰", name: "Kosovo" },
@@ -187,17 +187,16 @@ function Header({ step, onBack, title }: { step: 1 | 2 | 3; onBack: () => void; 
         type="button"
         onClick={onBack}
         aria-label="Kthehu"
-        className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+        className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
         style={{
-          width: 36,
-          height: 36,
+          color: INK,
           backgroundColor: "rgba(255,255,255,0.7)",
           border: "1px solid rgba(226,226,222,0.8)",
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
         }}
       >
-        <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+        <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
       </button>
       <div className="mt-4">
         <h1
@@ -631,7 +630,7 @@ function SignupFullPage() {
                     onClick={() => setShowP((v) => !v)}
                     aria-label={showP ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showP}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-90"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                     style={{ color: MUTED }}
                   >
                     {showP ? (
@@ -726,7 +725,7 @@ function SignupFullPage() {
                     onClick={() => setShowC((v) => !v)}
                     aria-label={showC ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showC}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-90"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                     style={{ color: MUTED }}
                   >
                     {showC ? (
@@ -1007,7 +1006,7 @@ function SignupFullPage() {
                 aria-checked={terms}
                 aria-label="Pranoj kushtet e shërbimit dhe politikën e privatësisë"
                 onClick={() => setTerms((v) => !v)}
-                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-90"
+                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
                 style={{
                   background: terms ? INK : "transparent",
                   border: `1.5px solid ${terms ? INK : DIVIDER}`,

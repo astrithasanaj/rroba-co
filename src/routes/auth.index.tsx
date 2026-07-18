@@ -10,10 +10,10 @@ export const Route = createFileRoute("/auth/")({
   component: AuthLanding,
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
 
 function AuthLanding() {
   const navigate = useNavigate();

@@ -12,14 +12,14 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   component: OnboardingFlow,
 });
 
-const CREAM = "#ffffff";
-const CHIP_BG = "#ffffff";
-const DARK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const DIVIDER = "#e2e2de";
-const ERR = "#c94a3b";
-const SUCCESS = "#2f9e6b";
+const CREAM = "var(--brand-surface)";
+const CHIP_BG = "var(--brand-surface)";
+const DARK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
+const DIVIDER = "var(--brand-border)";
+const ERR = "var(--brand-danger)";
+const SUCCESS = "var(--brand-success)";
 const FOCUS_RING = "0 0 0 3px rgba(198,90,122,0.35)";
 const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
 
@@ -80,17 +80,16 @@ function TopBar({
           type="button"
           onClick={onBack}
           aria-label="Kthehu"
-          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
           style={{
-            width: 44,
-            height: 44,
+            color: DARK,
             backgroundColor: "rgba(255,255,255,0.7)",
             border: `1px solid ${DIVIDER}`,
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} color={DARK} strokeWidth={2} aria-hidden="true" />
+          <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
         </button>
       ) : (
         <div className="h-11 w-11" />
@@ -448,7 +447,7 @@ function StepProfile({
                 {initials}
               </span>
             ) : (
-              <Camera size={26} color={MUTED} aria-hidden="true" />
+              <Camera size={26} style={{ color: MUTED }} aria-hidden="true" />
             )}
             {uploading && (
               <span
@@ -570,9 +569,11 @@ function StepProfile({
                     style={{ borderColor: MUTED, borderTopColor: "transparent" }}
                   />
                 )}
-                {usernameStatus === "available" && <Check size={18} color={SUCCESS} />}
+                {usernameStatus === "available" && (
+                  <Check size={18} style={{ color: SUCCESS }} aria-hidden="true" />
+                )}
                 {(usernameStatus === "taken" || usernameStatus === "invalid") && (
-                  <X size={18} color={ERR} />
+                  <X size={18} style={{ color: ERR }} aria-hidden="true" />
                 )}
               </div>
             </div>
@@ -819,7 +820,7 @@ function StepHow({
                 className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
                 style={{ background: CREAM }}
               >
-                <r.Icon size={22} color={DARK} />
+                <r.Icon size={22} style={{ color: DARK }} aria-hidden="true" />
               </div>
               <div className="pt-0.5">
                 <div className="text-[15px] font-semibold" style={{ color: DARK }}>
@@ -875,7 +876,7 @@ function StepNotify({
             className="flex h-20 w-20 items-center justify-center rounded-full"
             style={{ background: CHIP_BG }}
           >
-            <Bell size={40} color={DARK} />
+            <Bell size={40} style={{ color: DARK }} aria-hidden="true" />
           </div>
         </div>
         <div className="mt-6 text-center">

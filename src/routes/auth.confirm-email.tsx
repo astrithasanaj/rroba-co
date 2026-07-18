@@ -10,11 +10,11 @@ export const Route = createFileRoute("/auth/confirm-email")({
   component: ConfirmEmailPage,
 });
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
 
 function ConfirmEmailPage() {
   const navigate = useNavigate();
@@ -196,7 +196,7 @@ function ResendButton({ email }: { email: string }) {
         {label}
       </button>
       {err && (
-        <p className="mt-2 text-xs" style={{ color: "#e53935" }}>
+        <p className="mt-2 text-xs" style={{ color: "var(--brand-danger)" }}>
           {err}
         </p>
       )}
