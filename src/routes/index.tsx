@@ -158,9 +158,9 @@ function HomePage() {
 
       const [hydratedPromoted, hydratedRegular, hydratedTrending, hydratedNewWeek] =
         await Promise.all([
-          hydrateListings(promotedRows, { thumbnail: true }),
+          hydrateListings(promotedRows, { thumbnail: true, mode: "cover" }),
           hydrateListings((regular ?? []) as ListingRow[], { thumbnail: true }),
-          hydrateListings(trendingRows, { thumbnail: true }),
+          hydrateListings(trendingRows, { thumbnail: true, mode: "cover" }),
           hydrateListings((newThisWeekRows ?? []) as ListingRow[], { thumbnail: true }),
         ]);
       const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
