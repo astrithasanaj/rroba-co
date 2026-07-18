@@ -1,5 +1,6 @@
 import { Heart } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { useUserCollections } from "@/lib/user-collections";
 
 export function LikeButton({
@@ -13,28 +14,44 @@ export function LikeButton({
 }) {
   const { userId, likes, toggleLike } = useUserCollections();
   const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
   const liked = likes.has(listingId);
   return (
     <button
       type="button"
-      onClick={(e) => {
+      onClick={async (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (!userId) {
           navigate({ to: "/auth" });
           return;
         }
-        toggleLike(listingId);
+        if (busy) return;
+        setBusy(true);
+        try {
+          await toggleLike(listingId);
+        } finally {
+          setBusy(false);
+        }
       }}
       aria-label={liked ? "Hiq nga të preferuarat" : "Ruaj në të preferuarat"}
       aria-pressed={liked}
-      className={`grid place-items-center rounded-full bg-background/85 backdrop-blur transition active:scale-95 ${className}`}
+      aria-busy={busy}
+      disabled={busy}
+      className={`grid min-h-11 min-w-11 place-items-center rounded-full backdrop-blur transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-100 ${className}`}
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--brand-surface) 85%, transparent)",
+      }}
     >
       <Heart
-        style={{ width: size, height: size }}
+        aria-hidden="true"
+        style={{
+          width: size,
+          height: size,
+          color: liked ? "var(--brand-rose)" : "var(--brand-ink)",
+        }}
         strokeWidth={1.8}
         fill={liked ? "currentColor" : "none"}
-        className={liked ? "text-rose-500" : "text-foreground"}
       />
     </button>
   );
@@ -53,24 +70,38 @@ export function SaveButton({
 }) {
   const { userId, saves, toggleSave } = useUserCollections();
   const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
   const saved = saves.has(listingId);
   return (
     <button
       type="button"
-      onClick={(e) => {
+      onClick={async (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (!userId) {
           navigate({ to: "/auth" });
           return;
         }
-        toggleSave(listingId);
+        if (busy) return;
+        setBusy(true);
+        try {
+          await toggleSave(listingId);
+        } finally {
+          setBusy(false);
+        }
       }}
       aria-label={saved ? "Hiq nga të ruajturat" : "Ruaj për më vonë"}
       aria-pressed={saved}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-full bg-background/85 backdrop-blur transition active:scale-95 ${className}`}
+      aria-busy={busy}
+      disabled={busy}
+      className={`inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full backdrop-blur transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-100 ${className}`}
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--brand-surface) 85%, transparent)",
+        color: "var(--brand-ink)",
+      }}
     >
       <svg
+        aria-hidden="true"
         style={{ width: size, height: size }}
         viewBox="0 0 24 24"
         fill={saved ? "currentColor" : "none"}
