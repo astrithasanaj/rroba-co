@@ -9,7 +9,6 @@ import {
   Users,
   ChevronRight,
   ChevronLeft,
-  Sparkles,
   Shirt,
   Baby,
   Archive,
@@ -663,30 +662,6 @@ function EksploreList({
 
   return (
     <section className="mt-4">
-      <button
-        type="button"
-        onClick={() => onOpenPicker(undefined)}
-        className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
-        style={{ borderBottom: "1px solid #e2e2de", background: BG }}
-      >
-        <span
-          className="grid place-items-center"
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: "50%",
-            background: "#fbeceb",
-            flexShrink: 0,
-          }}
-        >
-          <Sparkles size={18} strokeWidth={1.7} style={{ color: "#c65a7a" }} />
-        </span>
-        <span className="flex-1 text-[15px] font-semibold" style={{ color: "#c65a7a" }}>
-          Trending
-        </span>
-        <ChevronRight className="h-5 w-5" style={{ color: MUTED }} />
-      </button>
-
       {genderTab === "Fëmijë" ? (
         femijeRows.map(({ label }) => {
           const Icon = childIcons[label] ?? Baby;
