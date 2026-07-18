@@ -70,9 +70,7 @@ function GenderSelectPage() {
             aria-label="Kthehu"
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
             style={{
-              width: 36,
-              height: 36,
-              backgroundColor: "rgba(255,255,255,0.7)",
+              width: 44,              height: 44,              backgroundColor: "rgba(255,255,255,0.7)",
               border: "1px solid rgba(226,226,222,0.8)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
