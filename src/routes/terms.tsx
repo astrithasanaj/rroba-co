@@ -17,7 +17,7 @@ const INK = "#2d1521";
 const PARAGRAPHS = [
   "Duke përdorur Rroba, ti pranon këto kushte. Përdoruesit janë përgjegjës për saktësinë e informacionit të artikujve dhe për transaksionet e tyre.",
   "Ndalohen artikujt e falsifikuar, të vjedhur ose të papërshtatshëm. Rroba rezervon të drejtën të heqë artikuj që shkelin këto kushte.",
-  "Pagesat, kthimet dhe mosmarrëveshjet trajtohen sipas politikave tona. Për pyetje, kontakto mbështetjen.",
+  "Pagesat, kthimet dhe mosmarrëveshjet trajtohen sipas politikave tona. Për pyetje, na kontaktoni në support@rroba.app.",
 ];
 
 function TermsPage() {
