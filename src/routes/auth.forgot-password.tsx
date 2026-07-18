@@ -52,22 +52,21 @@ function ForgotPage() {
           type="button"
           onClick={() => window.history.back()}
           aria-label="Kthehu"
-          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
           style={{
-            width: 36,
-            height: 36,
+            color: INK,
             backgroundColor: "rgba(255,255,255,0.7)",
             border: "1px solid rgba(226,226,222,0.8)",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+          <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
         </button>
 
         {sent ? (
           <div className="mt-16 flex flex-col items-center text-center">
-            <MailCheck size={56} color={CORAL} strokeWidth={1.6} />
+            <MailCheck size={56} strokeWidth={1.6} style={{ color: CORAL }} aria-hidden="true" />
             <h2 className="mt-4 text-xl font-bold" style={{ color: INK }}>
               Kontrollo emailin tënd
             </h2>
