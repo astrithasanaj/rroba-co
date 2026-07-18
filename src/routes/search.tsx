@@ -541,7 +541,7 @@ function SearchPage() {
           <button
             type="button"
             onClick={() => setShowFilters(true)}
-            className="fixed bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg"
+            className="fixed bottom-28 left-1/2 z-40 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full px-5 py-3 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
             style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
             <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
