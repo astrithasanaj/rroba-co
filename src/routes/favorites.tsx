@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Heart, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Heart } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { EmptyState } from "@/components/marketplace/EmptyState";
@@ -17,67 +17,138 @@ export const Route = createFileRoute("/favorites")({
   ),
 });
 
+type LoadState = "loading" | "ready" | "error";
+
 function Favorites() {
   const navigate = useNavigate();
   const [items, setItems] = useState<ListingView[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<LoadState>("loading");
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const retry = useCallback(() => {
+    setState("loading");
+    setReloadKey((k) => k + 1);
+  }, []);
 
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) {
-        navigate({ to: "/auth" });
-        return;
-      }
-      const { data: likes } = await supabase
-        .from("listing_likes")
-        .select("listing_id")
-        .eq("user_id", u.user.id);
-      const ids = (likes ?? []).map((l) => l.listing_id);
-      if (ids.length === 0) {
-        if (active) {
-          setItems([]);
-          setLoading(false);
+      try {
+        const { data: u } = await supabase.auth.getUser();
+        if (!u.user) {
+          navigate({ to: "/auth" });
+          return;
         }
-        return;
-      }
-      const { data } = await supabase
-        .from("listings")
-        .select("*")
-        .in("id", ids)
-        .eq("status", "active")
-        .eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
-        thumbnail: true,
-        mode: "cover",
-      });
-      if (active) {
-        setItems(hydrated);
-        setLoading(false);
+        const { data: likes, error: likesErr } = await supabase
+          .from("listing_likes")
+          .select("listing_id")
+          .eq("user_id", u.user.id);
+        if (likesErr) throw likesErr;
+        const ids = (likes ?? []).map((l) => l.listing_id);
+        if (ids.length === 0) {
+          if (active) {
+            setItems([]);
+            setState("ready");
+          }
+          return;
+        }
+        const { data, error } = await supabase
+          .from("listings")
+          .select("*")
+          .in("id", ids)
+          .eq("status", "active")
+          .eq("sold", false);
+        if (error) throw error;
+        const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
+          thumbnail: true,
+          mode: "cover",
+        });
+        if (active) {
+          setItems(hydrated);
+          setState("ready");
+        }
+      } catch {
+        if (active) setState("error");
       }
     })();
     return () => {
       active = false;
     };
-  }, [navigate]);
+  }, [navigate, reloadKey]);
+
+  const count = items.length;
 
   return (
     <MobileShell>
-      <header className="sticky top-0 z-30 bg-background/95 px-5 py-4 backdrop-blur">
-        <h1 className="font-display text-3xl">Të ruajtura</h1>
+      <header
+        className="sticky top-0 z-30 flex items-center justify-between px-5 py-4 backdrop-blur"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--brand-surface) 92%, transparent)",
+          borderBottom: "1px solid var(--brand-border)",
+        }}
+      >
+        <h1
+          className="font-display text-3xl truncate"
+          style={{ color: "var(--brand-ink)" }}
+        >
+          Të ruajtura
+        </h1>
+        <span
+          aria-live="polite"
+          className="tabular-nums text-sm font-medium min-w-[2ch] text-right"
+          style={{ color: "var(--brand-ink-secondary)" }}
+        >
+          {state === "ready" && count > 0 ? count : ""}
+        </span>
       </header>
-      {loading ? (
-        <div className="grid place-items-center py-10">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+
+      {state === "loading" ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="grid grid-cols-2 gap-3 px-5 py-3"
+        >
+          <span className="sr-only">Duke ngarkuar të ruajturat…</span>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              aria-hidden="true"
+              className="animate-pulse rounded-2xl"
+              style={{
+                aspectRatio: "3 / 4",
+                backgroundColor: "var(--brand-cream)",
+              }}
+            />
+          ))}
         </div>
-      ) : items.length === 0 ? (
+      ) : state === "error" ? (
+        <div role="alert" className="px-5 py-10">
+          <EmptyState
+            icon={<Heart className="h-6 w-6" aria-hidden="true" />}
+            title="Diçka shkoi keq."
+            description="Nuk arritëm t'i ngarkojmë të ruajturat. Provo përsëri."
+            action={
+              <button
+                type="button"
+                onClick={retry}
+                className="inline-flex min-h-11 items-center justify-center rounded-full px-5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.97]"
+                style={{
+                  backgroundColor: "var(--brand-ink)",
+                  color: "var(--brand-surface)",
+                }}
+              >
+                Provo përsëri
+              </button>
+            }
+          />
+        </div>
+      ) : count === 0 ? (
         <EmptyState
-          icon={<Heart className="h-6 w-6" />}
+          icon={<Heart className="h-6 w-6" aria-hidden="true" />}
           title="Ruaj artikujt që të pëlqejnë."
           description="Prek zemrën në çdo artikull për ta gjetur më vonë."
           action={
-            <Link to="/">
+            <Link to="/" className="focus-visible:outline-none">
               <PrimaryButton>Shfleto artikuj</PrimaryButton>
             </Link>
           }
