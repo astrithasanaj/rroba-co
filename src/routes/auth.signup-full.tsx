@@ -719,7 +719,7 @@ function SignupFullPage() {
             </button>
             <p className="pt-3 text-center text-sm" style={{ color: MUTED }}>
               Ke tashmë llogari?{" "}
-              <Link to="/auth/login" className="font-semibold" style={{ color: CORAL }}>
+              <Link to="/auth/login" search={{ next: undefined }} className="font-semibold" style={{ color: CORAL }}>
                 Hyr
               </Link>
             </p>

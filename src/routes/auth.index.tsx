@@ -69,8 +69,9 @@ function AuthLanding() {
             Krijo llogari të re
           </Link>
 
-          <Link
+<Link
             to="/auth/login"
+            search={{ next: undefined }}
             className="flex h-[54px] w-full items-center justify-center gap-2 text-[15px] font-bold transition active:scale-[0.98]"
             style={{ background: CARD, color: INK, borderRadius: 14 }}
           >

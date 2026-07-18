@@ -46,8 +46,9 @@ function BlockedPage() {
         >
           support@rroba.app
         </a>
-        <Link
+<Link
           to="/auth/login"
+          search={{ next: undefined }}
           className="mt-8 text-[13px] underline"
           style={{ color: INK }}
         >

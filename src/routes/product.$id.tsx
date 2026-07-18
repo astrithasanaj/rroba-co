@@ -140,7 +140,7 @@ function ProductDetail() {
       }
       convId = created.id;
     }
-    navigate({ to: "/messages", search: { thread: convId } });
+    navigate({ to: "/messages", search: (prev) => ({ ...prev, thread: convId }) });
   };
 
   if (loading && !listing) {
