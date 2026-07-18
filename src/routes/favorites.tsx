@@ -10,7 +10,11 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/favorites")({
-  component: () => (<SwipeBackWrapper><Favorites /></SwipeBackWrapper>),
+  component: () => (
+    <SwipeBackWrapper>
+      <Favorites />
+    </SwipeBackWrapper>
+  ),
 });
 
 function Favorites() {
@@ -26,7 +30,10 @@ function Favorites() {
         navigate({ to: "/auth" });
         return;
       }
-      const { data: likes } = await supabase.from("listing_likes").select("listing_id").eq("user_id", u.user.id);
+      const { data: likes } = await supabase
+        .from("listing_likes")
+        .select("listing_id")
+        .eq("user_id", u.user.id);
       const ids = (likes ?? []).map((l) => l.listing_id);
       if (ids.length === 0) {
         if (active) {
@@ -35,8 +42,16 @@ function Favorites() {
         }
         return;
       }
-      const { data } = await supabase.from("listings").select("*").in("id", ids).eq("status", "active").eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
+      const { data } = await supabase
+        .from("listings")
+        .select("*")
+        .in("id", ids)
+        .eq("status", "active")
+        .eq("sold", false);
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
+        thumbnail: true,
+        mode: "cover",
+      });
       if (active) {
         setItems(hydrated);
         setLoading(false);

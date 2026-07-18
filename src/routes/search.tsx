@@ -233,7 +233,10 @@ function SearchPage() {
         return bBoosted - aBoosted;
       });
 
-      const hydrated = await hydrateListings(sorted as ListingRow[], { thumbnail: true, mode: "cover" });
+      const hydrated = await hydrateListings(sorted as ListingRow[], {
+        thumbnail: true,
+        mode: "cover",
+      });
       if (active) {
         setResults(hydrated);
         setLoading(false);

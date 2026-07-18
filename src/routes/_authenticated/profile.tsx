@@ -147,7 +147,10 @@ function ProfilePage() {
     setFollowers(fCount.count ?? 0);
     setFollowing(gCount.count ?? 0);
     setProfile(prof.data as Profile | null);
-    const hydratedMine = await hydrateListings((mine.data ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
+    const hydratedMine = await hydrateListings((mine.data ?? []) as ListingRow[], {
+      thumbnail: true,
+      mode: "cover",
+    });
     const sortedMine = [
       ...hydratedMine.filter((p) => p.status === "active"),
       ...hydratedMine.filter((p) => p.status === "sold"),
@@ -186,7 +189,10 @@ function ProfilePage() {
         .in("id", ids)
         .eq("status", "active")
         .eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
+        thumbnail: true,
+        mode: "cover",
+      });
       if (!cancelled) setLikedListings(hydrated);
     })();
     return () => {
@@ -208,7 +214,10 @@ function ProfilePage() {
         .in("id", ids)
         .eq("status", "active")
         .eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
+      const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
+        thumbnail: true,
+        mode: "cover",
+      });
       if (!cancelled) setSavedListings(hydrated);
     })();
     return () => {

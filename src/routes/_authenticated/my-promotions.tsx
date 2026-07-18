@@ -37,7 +37,9 @@ function MyPromotionsPage() {
   } | null>(null);
 
   const load = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
     const [{ data: prof }, { data: rows }] = await Promise.all([
       supabase
@@ -52,11 +54,17 @@ function MyPromotionsPage() {
         .eq("status", "active")
         .order("created_at", { ascending: false }),
     ]);
-    const p = (prof ?? {}) as { membership_tier?: string | null; top_of_list_credits?: number; paid_placement_days?: number };
+    const p = (prof ?? {}) as {
+      membership_tier?: string | null;
+      top_of_list_credits?: number;
+      paid_placement_days?: number;
+    };
     setTier(p.membership_tier ?? null);
     setTopCredits(p.top_of_list_credits ?? 0);
     setPpDays(p.paid_placement_days ?? 0);
-    setListings(await hydrateListings((rows ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }));
+    setListings(
+      await hydrateListings((rows ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }),
+    );
     setLoading(false);
   };
 
@@ -73,9 +81,14 @@ function MyPromotionsPage() {
       toast.error("Nuk keni më ditë 'Plasim i paguar' këtë muaj");
       return;
     }
-    const { error } = await (supabase as unknown as {
-      rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>;
-    }).rpc("consume_promotion_credit", {
+    const { error } = await (
+      supabase as unknown as {
+        rpc: (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{ data: unknown; error: { message: string } | null }>;
+      }
+    ).rpc("consume_promotion_credit", {
       _listing_id: listingId,
       _kind: kind,
       _days: kind === "search_top" ? null : days,
@@ -143,7 +156,10 @@ function MyPromotionsPage() {
                   color: "#ffffff",
                 }}
               >
-                <p className="text-[12px]" style={{ color: "#e5e0d5", letterSpacing: 1, fontWeight: 700 }}>
+                <p
+                  className="text-[12px]"
+                  style={{ color: "#e5e0d5", letterSpacing: 1, fontWeight: 700 }}
+                >
                   {tier ? tier.toUpperCase() : "PA MEDLEMSKAP"}
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-3">
@@ -186,7 +202,13 @@ function MyPromotionsPage() {
                     >
                       <div
                         className="overflow-hidden"
-                        style={{ width: 56, height: 56, borderRadius: 10, backgroundColor: DIVIDER, flexShrink: 0 }}
+                        style={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 10,
+                          backgroundColor: DIVIDER,
+                          flexShrink: 0,
+                        }}
                       >
                         {l.coverUrl && (
                           <img src={l.coverUrl} alt="" className="h-full w-full object-cover" />
@@ -277,7 +299,6 @@ function MyPromotionsPage() {
               <p className="text-[13px]" style={{ color: MUTED }}>
                 {picker.listing.title}
               </p>
-
 
               <button
                 onClick={() => {
@@ -379,10 +400,15 @@ function BalanceTile({
     <div style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 12, padding: 12 }}>
       <div className="flex items-center gap-1.5" style={{ color: "#e5e0d5" }}>
         {icon}
-        <span className="text-[11px]" style={{ letterSpacing: 0.3 }}>{label}</span>
+        <span className="text-[11px]" style={{ letterSpacing: 0.3 }}>
+          {label}
+        </span>
       </div>
       <p className="mt-1 font-bold" style={{ color: "#fff", fontSize: 24 }}>
-        {value} <span className="text-[12px] font-normal" style={{ color: "#e5e0d5" }}>{suffix}</span>
+        {value}{" "}
+        <span className="text-[12px] font-normal" style={{ color: "#e5e0d5" }}>
+          {suffix}
+        </span>
       </p>
     </div>
   );
@@ -442,9 +468,7 @@ function DaysSheet({
         >
           <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
-          Sa ditë?
-        </span>
+        <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>Sa ditë?</span>
       </div>
       <div
         style={{
@@ -458,7 +482,6 @@ function DaysSheet({
           {listing.title} • {max} ditë të mbetura
         </p>
 
-
         <div
           className="mt-5 flex items-center justify-between"
           style={{ backgroundColor: CARD, borderRadius: 14, padding: "10px 14px" }}
@@ -471,8 +494,12 @@ function DaysSheet({
             <Minus className="h-4 w-4" style={{ color: INK }} />
           </button>
           <div className="text-center">
-            <p className="text-[32px] font-bold" style={{ color: INK, lineHeight: 1 }}>{clamped}</p>
-            <p className="text-[11px]" style={{ color: MUTED }}>ditë</p>
+            <p className="text-[32px] font-bold" style={{ color: INK, lineHeight: 1 }}>
+              {clamped}
+            </p>
+            <p className="text-[11px]" style={{ color: MUTED }}>
+              ditë
+            </p>
           </div>
           <button
             onClick={() => setDays((d) => Math.min(max, d + 1))}
