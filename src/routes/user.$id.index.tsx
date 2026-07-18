@@ -5,13 +5,13 @@ import {
   ArrowDownUp,
   ArrowLeft,
   Check,
-  Flag,
   Loader2,
   MoreHorizontal,
   Share2,
   Star,
   X,
 } from "lucide-react";
+
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
@@ -260,14 +260,6 @@ function UserProfile() {
     setMoreOpen(false);
   };
 
-  const handleReport = async () => {
-    if (!currentUserId) {
-      navigate({ to: "/auth" });
-      return;
-    }
-    toast.success("Faleminderit, raporti u dërgua");
-    setMoreOpen(false);
-  };
 
   if (loading) {
     return (
@@ -595,13 +587,6 @@ function UserProfile() {
               style={{ color: INK }}
             >
               <Share2 className="h-5 w-5" strokeWidth={1.8} /> Ndaj profilin
-            </button>
-            <button
-              onClick={handleReport}
-              className="flex w-full items-center gap-3 rounded-xl px-4 py-4 text-left text-[15px] font-medium"
-              style={{ color: INK }}
-            >
-              <Flag className="h-5 w-5" strokeWidth={1.8} /> Raporto përdoruesin
             </button>
           </div>
         </SheetContent>

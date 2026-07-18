@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ChevronLeft, ArrowLeft, Flag, Link2, Share, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
 
 const CREAM = "#ffffff";
 const INK = "#2d1521";
@@ -18,14 +20,15 @@ type Reason = {
 };
 
 const REASONS: Reason[] = [
-  { key: "scam", label: "Mashtrim ose përmbajtje e dyshimtë" },
-  { key: "counterfeit", label: "Artikull i falsifikuar" },
-  { key: "misleading", label: "Çmim ose përshkrim mashtrues" },
-  { key: "inappropriate", label: "Përmbajtje e papërshtatshme ose ofenduese" },
-  { key: "spam", label: "Spam ose njoftim i përsëritur" },
-  { key: "prohibited", label: "Artikull i ndaluar ose i paligjshëm" },
-  { key: "other", label: "Shqetësim tjetër" },
+  { key: "scam", label: "Mashtrim" },
+  { key: "counterfeit", label: "Forfalskning" },
+  { key: "misleading", label: "Villedende" },
+  { key: "inappropriate", label: "Upassende" },
+  { key: "spam", label: "Spam" },
+  { key: "prohibited", label: "Forbudt vare" },
+  { key: "other", label: "Annet" },
 ];
+
 
 export function MoreSheet({
   open,
@@ -42,10 +45,12 @@ export function MoreSheet({
   productTitle: string;
   reporterId: string | null;
 }) {
+  const navigate = useNavigate();
   const [view, setView] = useState<"more" | "report">("more");
   const [reason, setReason] = useState<Reason["key"] | null>(null);
   const [details, setDetails] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
 
   const close = () => {
     onOpenChange(false);
@@ -91,7 +96,8 @@ export function MoreSheet({
   const submitReport = async () => {
     if (!reason) return;
     if (!reporterId) {
-      toast.error("Identifikohu për të raportuar");
+      close();
+      navigate({ to: "/auth" });
       return;
     }
     setSubmitting(true);
@@ -99,7 +105,7 @@ export function MoreSheet({
       product_id: productId,
       reporter_id: reporterId,
       reason,
-      details: reason === "other" ? details.trim() || null : null,
+      details: details.trim() || null,
     });
     setSubmitting(false);
     if (error) {
@@ -108,6 +114,7 @@ export function MoreSheet({
     }
     toast.success("Faleminderit! Raporti u dërgua te ekipi ynë.");
     close();
+
   };
 
   const submitEnabled = !!reason && !submitting;
@@ -223,18 +230,17 @@ export function MoreSheet({
                   </div>
                 );
               })}
-              {reason === "other" && (
-                <div className="px-5 pt-2 pb-1">
-                  <textarea
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
-                    placeholder="Përshkruaj problemin..."
-                    rows={4}
-                    className="w-full resize-none rounded-xl border bg-transparent p-3 text-sm outline-none"
-                    style={{ borderColor: DIVIDER, color: INK }}
-                  />
-                </div>
-              )}
+              <div className="px-5 pt-2 pb-1">
+                <textarea
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  placeholder="Detaje shtesë (opsionale)..."
+                  rows={4}
+                  className="w-full resize-none rounded-xl border bg-transparent p-3 text-sm outline-none"
+                  style={{ borderColor: DIVIDER, color: INK }}
+                />
+              </div>
+
             </div>
 
             <div className="px-5 pt-3 pb-5">
