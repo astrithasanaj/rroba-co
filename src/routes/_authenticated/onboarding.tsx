@@ -12,14 +12,14 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   component: OnboardingFlow,
 });
 
-const CREAM = "#ffffff";
-const CHIP_BG = "#ffffff";
-const DARK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const DIVIDER = "#e2e2de";
-const ERR = "#c94a3b";
-const SUCCESS = "#2f9e6b";
+const CREAM = "var(--brand-surface)";
+const CHIP_BG = "var(--brand-surface)";
+const DARK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
+const DIVIDER = "var(--brand-border)";
+const ERR = "var(--brand-danger)";
+const SUCCESS = "var(--brand-success)";
 const FOCUS_RING = "0 0 0 3px rgba(198,90,122,0.35)";
 const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
 
