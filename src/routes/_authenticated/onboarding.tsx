@@ -447,7 +447,7 @@ function StepProfile({
                 {initials}
               </span>
             ) : (
-              <Camera size={26} color={MUTED} aria-hidden="true" />
+              <Camera size={26} style={{ color: MUTED }} aria-hidden="true" />
             )}
             {uploading && (
               <span
