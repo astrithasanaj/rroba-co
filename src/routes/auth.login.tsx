@@ -18,13 +18,14 @@ function safeNext(next: string | undefined): string | null {
   return next;
 }
 
-const CREAM = "#ffffff";
-const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const DIVIDER = "#e2e2de";
-const ERR = "#e53935";
+const CREAM = "var(--brand-surface)";
+const CARD = "var(--brand-surface)";
+const INK = "var(--brand-ink)";
+const MUTED = "var(--brand-ink-muted)";
+const CORAL = "var(--brand-rose)";
+const DIVIDER = "var(--brand-border)";
+const ERR = "var(--brand-danger)";
+const FOCUS_RING = "0 0 0 3px rgba(198,90,122,0.35)";
 
 function AuthField({
   type = "text",
