@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ChevronLeft, ArrowLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
+import { ChevronLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { CityPicker } from "@/components/marketplace/CityPicker";
@@ -17,6 +17,11 @@ const CHIP_BG = "#ffffff";
 const DARK = "#2d1521";
 const MUTED = "#a89f94";
 const CORAL = "#c65a7a";
+const DIVIDER = "#e2e2de";
+const ERR = "#c94a3b";
+const SUCCESS = "#2f9e6b";
+const FOCUS_RING = "0 0 0 3px rgba(198,90,122,0.35)";
+const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
 
 // City list moved to DB — see CityPicker/useCities
 const GENDERS = [
@@ -45,7 +50,15 @@ const ALLOWED_MIME: Record<string, string> = {
 
 function StepIndicator({ n }: { n: number }) {
   return (
-    <span className="text-xs font-medium" style={{ color: MUTED }}>
+    <span
+      role="progressbar"
+      aria-valuenow={n}
+      aria-valuemin={1}
+      aria-valuemax={5}
+      aria-label={`Hapi ${n} nga 5`}
+      className="text-xs font-medium"
+      style={{ color: MUTED }}
+    >
       {n} / 5
     </span>
   );
@@ -67,28 +80,30 @@ function TopBar({
           type="button"
           onClick={onBack}
           aria-label="Kthehu"
-          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
+          className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+            height: 44,
             backgroundColor: "rgba(255,255,255,0.7)",
-            border: "1px solid rgba(226,226,222,0.8)",
+            border: `1px solid ${DIVIDER}`,
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+          <ChevronLeft size={18} color={DARK} strokeWidth={2} aria-hidden="true" />
         </button>
       ) : (
-        <div className="h-9 w-9" />
+        <div className="h-11 w-11" />
       )}
       <div className="flex items-center gap-4">
         <StepIndicator n={step} />
         {onSkip ? (
           <button
+            type="button"
             onClick={onSkip}
-            className="text-sm font-medium"
-            style={{ color: MUTED }}
+            aria-label="Kalo këtë hap"
+            className="min-h-11 px-2 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)] rounded-md"
+            style={{ color: MUTED, background: "transparent" }}
           >
             Kalo
           </button>
@@ -101,37 +116,59 @@ function TopBar({
 function BigButton({
   children,
   disabled,
+  loading,
   onClick,
   variant = "primary",
+  type = "button",
 }: {
   children: React.ReactNode;
   disabled?: boolean;
+  loading?: boolean;
   onClick?: () => void;
   variant?: "primary" | "ghost";
+  type?: "button" | "submit";
 }) {
+  const isDisabled = disabled || loading;
   const base =
-    "w-full rounded-full py-4 text-[15px] font-semibold transition disabled:opacity-40";
+    "relative w-full rounded-full text-[15px] font-semibold transition disabled:opacity-40 disabled:active:scale-100 enabled:active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
+  const height = { height: 54, minHeight: 54 } as const;
   if (variant === "ghost") {
     return (
       <button
+        type={type}
         onClick={onClick}
-        disabled={disabled}
+        disabled={isDisabled}
+        aria-busy={loading || undefined}
         className={base}
-        style={{ background: "transparent", color: MUTED }}
+        style={{ background: "transparent", color: MUTED, ...height }}
       >
-        {children}
+        <span style={{ visibility: loading ? "hidden" : "visible" }}>{children}</span>
+        {loading && <Spinner colorHex={MUTED} />}
       </button>
     );
   }
   return (
     <button
+      type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={isDisabled}
+      aria-busy={loading || undefined}
       className={base}
-      style={{ background: DARK, color: "#fff" }}
+      style={{ background: DARK, color: "#fff", ...height }}
     >
-      {children}
+      <span style={{ visibility: loading ? "hidden" : "visible" }}>{children}</span>
+      {loading && <Spinner colorHex="#ffffff" />}
     </button>
+  );
+}
+
+function Spinner({ colorHex }: { colorHex: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute left-1/2 top-1/2 inline-block h-5 w-5 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2"
+      style={{ borderColor: colorHex, borderTopColor: "transparent" }}
+    />
   );
 }
 
@@ -139,18 +176,24 @@ function Chip({
   active,
   onClick,
   children,
+  ariaLabel,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  ariaLabel?: string;
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="rounded-full px-4 py-2.5 text-sm font-medium transition"
+      aria-pressed={active}
+      aria-label={ariaLabel}
+      className="min-h-11 rounded-full px-4 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
       style={{
         background: active ? DARK : CHIP_BG,
         color: active ? "#fff" : DARK,
+        border: `1px solid ${active ? DARK : DIVIDER}`,
       }}
     >
       {children}
@@ -240,13 +283,10 @@ function StepCity({
           <div className="mb-3 text-sm font-semibold" style={{ color: DARK }}>
             Ku jeton?
           </div>
-          <CityPicker
-            value={value}
-            onChange={(id, c) => onChange(id, c.name)}
-          />
+          <CityPicker value={value} onChange={(id, c) => onChange(id, c.name)} />
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={!value} onClick={onNext}>
           Vazhdo
         </BigButton>
@@ -254,7 +294,6 @@ function StepCity({
     </div>
   );
 }
-
 
 /* ---------- Step 2: Profile ---------- */
 function StepProfile({
@@ -347,9 +386,7 @@ function StepProfile({
         .upload(path, compressed, { contentType: compressed.type, upsert: false });
       if (error) throw error;
       setAvatarUrl(path);
-      const { data: signed } = await supabase.storage
-        .from("photos")
-        .createSignedUrl(path, 60 * 60);
+      const { data: signed } = await supabase.storage.from("photos").createSignedUrl(path, 60 * 60);
       if (signed?.signedUrl) setAvatarPreview(signed.signedUrl);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Ngarkimi dështoi");
@@ -390,29 +427,43 @@ function StepProfile({
 
         <div className="mt-6 flex flex-col items-center">
           <button
+            type="button"
             onClick={pickAvatar}
             disabled={uploading}
-            className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full"
-            style={{ background: CHIP_BG }}
+            aria-label={
+              avatarPreview ? "Ndrysho fotografinë e profilit" : "Ngarko fotografinë e profilit"
+            }
+            aria-busy={uploading || undefined}
+            className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)] disabled:opacity-70"
+            style={{ background: CHIP_BG, border: `1px solid ${DIVIDER}` }}
           >
             {avatarPreview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={avatarPreview}
-                alt="Avatar"
-                className="h-full w-full object-cover"
-              />
+              <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
             ) : initials ? (
               <span
+                aria-hidden="true"
                 className="text-2xl font-semibold"
                 style={{ color: DARK, opacity: 0.75 }}
               >
                 {initials}
               </span>
             ) : (
-              <Camera size={26} color={MUTED} />
+              <Camera size={26} color={MUTED} aria-hidden="true" />
+            )}
+            {uploading && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "rgba(255,255,255,0.65)" }}
+              >
+                <span
+                  className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"
+                  style={{ borderColor: DARK, borderTopColor: "transparent" }}
+                />
+              </span>
             )}
             <span
+              aria-hidden="true"
               className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border-2"
               style={{ background: DARK, borderColor: CREAM }}
             >
@@ -425,6 +476,8 @@ function StepProfile({
             accept="image/jpeg,image/png,image/webp"
             className="hidden"
             onChange={onFile}
+            aria-hidden="true"
+            tabIndex={-1}
           />
           <div className="mt-2 text-xs" style={{ color: MUTED }}>
             {uploading ? "Duke ngarkuar..." : "Opsionale"}
@@ -433,24 +486,44 @@ function StepProfile({
 
         <div className="mt-6 space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-display-name"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Emri i shfaqur
             </label>
             <input
+              id="ob-display-name"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value.slice(0, 40))}
               placeholder="Emri yt"
-              className="w-full rounded-2xl border-0 px-4 py-3 text-sm outline-none"
-              style={{ background: CHIP_BG, color: DARK }}
+              autoComplete="name"
+              enterKeyHint="next"
+              className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+              style={{
+                background: CHIP_BG,
+                color: DARK,
+                height: 52,
+                borderRadius: 12,
+                padding: "0 16px",
+                border: `1px solid ${DIVIDER}`,
+                transition: "border-color 120ms ease, box-shadow 120ms ease",
+              }}
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-username"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Emri i përdoruesit
             </label>
             <div className="relative">
               <input
+                id="ob-username"
                 value={username}
                 onChange={(e) =>
                   setUsername(e.target.value.replace(/[^a-zA-Z0-9_.@]/g, "").slice(0, 25))
@@ -458,50 +531,102 @@ function StepProfile({
                 placeholder="@emri_yt"
                 autoCapitalize="none"
                 autoCorrect="off"
-                className="w-full rounded-2xl border-0 px-4 py-3 pr-10 text-sm outline-none"
-                style={{ background: CHIP_BG, color: DARK }}
+                autoComplete="username"
+                enterKeyHint="next"
+                aria-invalid={
+                  usernameStatus === "taken" || usernameStatus === "invalid" || undefined
+                }
+                aria-describedby={
+                  usernameStatus === "invalid"
+                    ? "ob-username-err-invalid"
+                    : usernameStatus === "taken"
+                      ? "ob-username-err-taken"
+                      : undefined
+                }
+                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: CHIP_BG,
+                  color: DARK,
+                  height: 52,
+                  borderRadius: 12,
+                  padding: "0 44px 0 16px",
+                  border: `1px solid ${
+                    usernameStatus === "taken" || usernameStatus === "invalid"
+                      ? ERR
+                      : usernameStatus === "available"
+                        ? SUCCESS
+                        : DIVIDER
+                  }`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
+                }}
               />
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+              >
                 {usernameStatus === "checking" && (
                   <span
                     className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-t-transparent"
                     style={{ borderColor: MUTED, borderTopColor: "transparent" }}
                   />
                 )}
-                {usernameStatus === "available" && (
-                  <Check size={18} color="#2f9e6b" />
-                )}
+                {usernameStatus === "available" && <Check size={18} color={SUCCESS} />}
                 {(usernameStatus === "taken" || usernameStatus === "invalid") && (
-                  <X size={18} color="#c94a3b" />
+                  <X size={18} color={ERR} />
                 )}
               </div>
             </div>
             {usernameStatus === "invalid" && (
-              <div className="mt-1 text-xs" style={{ color: "#c94a3b" }}>
+              <div
+                id="ob-username-err-invalid"
+                role="alert"
+                className="mt-1 text-xs"
+                style={{ color: ERR }}
+              >
                 3–24 karaktere: a-z, 0-9, _ ose .
               </div>
             )}
             {usernameStatus === "taken" && (
-              <div className="mt-1 text-xs" style={{ color: "#c94a3b" }}>
+              <div
+                id="ob-username-err-taken"
+                role="alert"
+                className="mt-1 text-xs"
+                style={{ color: ERR }}
+              >
                 Ky emër është i zënë
               </div>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-bio"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Bio <span style={{ color: MUTED }}>(opsionale)</span>
             </label>
             <div className="relative">
               <textarea
+                id="ob-bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value.slice(0, 150))}
                 placeholder="Trego diçka për veten..."
                 rows={3}
-                className="w-full resize-none rounded-2xl border-0 px-4 py-3 text-sm outline-none"
-                style={{ background: CHIP_BG, color: DARK }}
+                aria-describedby="ob-bio-count"
+                className="w-full resize-none text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: CHIP_BG,
+                  color: DARK,
+                  borderRadius: 12,
+                  padding: "12px 16px 24px 16px",
+                  border: `1px solid ${DIVIDER}`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
+                }}
               />
               <div
+                id="ob-bio-count"
+                aria-live="polite"
                 className="pointer-events-none absolute bottom-2 right-3 text-[11px]"
                 style={{ color: MUTED }}
               >
@@ -511,26 +636,41 @@ function StepProfile({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium" style={{ color: DARK }}>
+            <label
+              htmlFor="ob-height"
+              className="mb-1.5 block text-sm font-medium"
+              style={{ color: DARK }}
+            >
               Gjatësia <span style={{ color: MUTED }}>(opsionale)</span>
             </label>
             <div className="flex items-center gap-3">
               <input
+                id="ob-height"
                 inputMode="numeric"
+                enterKeyHint="done"
                 value={height}
                 onChange={(e) => setHeight(e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
                 placeholder="170"
-                className="w-24 rounded-2xl border-0 px-4 py-3 text-sm outline-none"
-                style={{ background: CHIP_BG, color: DARK }}
+                aria-label="Gjatësia në centimetra"
+                className="w-24 text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
+                style={{
+                  background: CHIP_BG,
+                  color: DARK,
+                  height: 52,
+                  borderRadius: 12,
+                  padding: "0 16px",
+                  border: `1px solid ${DIVIDER}`,
+                  transition: "border-color 120ms ease, box-shadow 120ms ease",
+                }}
               />
-              <span className="text-sm" style={{ color: MUTED }}>
+              <span className="text-sm" style={{ color: MUTED }} aria-hidden="true">
                 cm
               </span>
             </div>
           </div>
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={!canContinue} onClick={onNext}>
           Vazhdo
         </BigButton>
@@ -576,11 +716,7 @@ function StepStyle({
           </div>
           <div className="flex flex-wrap gap-2">
             {GENDERS.map((g) => (
-              <Chip
-                key={g.id}
-                active={genders.includes(g.id)}
-                onClick={() => toggleGender(g.id)}
-              >
+              <Chip key={g.id} active={genders.includes(g.id)} onClick={() => toggleGender(g.id)}>
                 {g.label}
               </Chip>
             ))}
@@ -630,7 +766,7 @@ function StepStyle({
           </div>
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton onClick={onNext}>Vazhdo</BigButton>
         <div className="mt-2 text-center text-xs" style={{ color: MUTED }}>
           Mund t'i ndryshosh gjithmonë në cilësime
@@ -697,7 +833,7 @@ function StepHow({
           ))}
         </div>
       </div>
-      <div className="px-5 pb-6 pt-2">
+      <div className="px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton onClick={onNext}>Vazhdo</BigButton>
       </div>
     </div>
@@ -766,7 +902,7 @@ function StepNotify({
           ))}
         </div>
       </div>
-      <div className="space-y-2 px-5 pb-6 pt-2">
+      <div className="space-y-2 px-5 pt-2" style={{ paddingBottom: SAFE_BOTTOM }}>
         <BigButton disabled={busy} onClick={handleEnable}>
           Aktivizo njoftimet
         </BigButton>
@@ -885,12 +1021,9 @@ function OnboardingFlow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const toggleFrom = useCallback(
-    (arr: string[], setArr: (v: string[]) => void, v: string) => {
-      setArr(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-    },
-    [],
-  );
+  const toggleFrom = useCallback((arr: string[], setArr: (v: string[]) => void, v: string) => {
+    setArr(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  }, []);
 
   const finish = async () => {
     if (!userId) return;
@@ -988,20 +1121,10 @@ function OnboardingFlow() {
         );
       case 4:
         return (
-          <StepHow
-            onBack={() => setStep(3)}
-            onSkip={() => setStep(5)}
-            onNext={() => setStep(5)}
-          />
+          <StepHow onBack={() => setStep(3)} onSkip={() => setStep(5)} onNext={() => setStep(5)} />
         );
       case 5:
-        return (
-          <StepNotify
-            onBack={() => setStep(4)}
-            onSkip={finish}
-            onEnable={finish}
-          />
-        );
+        return <StepNotify onBack={() => setStep(4)} onSkip={finish} onEnable={finish} />;
       case 6:
       default:
         return <StepDone onDone={() => navigate({ to: "/", replace: true })} />;
