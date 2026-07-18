@@ -427,24 +427,6 @@ function ForYou({
         </div>
       ) : (
         <>
-          {followingPreview.length > 0 && (
-            <section className="mt-7">
-              <div className="px-5">
-                <SectionHeader title="Nga profilet që ndjek" />
-              </div>
-              <div
-                className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
-                style={{ scrollbarWidth: "none" }}
-              >
-                {followingPreview.map((l) => (
-                  <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                    <ListingCard listing={l} />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
           {promoted.length > 0 && (
             <section className="mt-7">
               <div className="px-5">
