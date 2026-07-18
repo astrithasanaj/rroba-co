@@ -1,17 +1,25 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ArrowLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
+import { ChevronLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { signPaths } from "@/lib/listings";
 import { toast } from "sonner";
 
-const CREAM = "#ffffff";
-const CREAM_ALT = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+// Design tokens (from src/styles.css)
+const INK = "var(--brand-ink)";
+const INK_SECONDARY = "var(--brand-ink-secondary)";
+const SURFACE = "var(--brand-surface)";
+const CREAM_SOFT = "var(--brand-cream)";
+const DIVIDER = "var(--brand-border)";
+const ROSE = "var(--brand-rose)";
+// Documented specials — kept intentionally
+const GLASS_BG = "rgba(255,255,255,0.7)";
+const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const BRAND_GRADIENT = "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))";
+
+const FOCUS_RING =
+  "outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-[color:var(--brand-surface)]";
 
 type View = "list" | "archive" | "new";
 type MessagesSearch = { thread: string | undefined; view: View; tab: "all" | "buy" | "sell" };
@@ -68,8 +76,14 @@ function MessagesPage() {
   if (!me) {
     return (
       <MobileShell>
-        <div className="grid h-[60vh] place-items-center" style={{ backgroundColor: CREAM }}>
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
+        <div
+          className="grid h-[60dvh] place-items-center"
+          style={{ backgroundColor: SURFACE }}
+          role="status"
+          aria-live="polite"
+        >
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
+          <span className="sr-only">Duke ngarkuar…</span>
         </div>
       </MobileShell>
     );
@@ -81,9 +95,9 @@ function MessagesPage() {
   return <ConversationList me={me} mode="inbox" tab={tab} />;
 }
 
-function InboxIcon({ size = 18, color = CREAM }: { size?: number; color?: string }) {
+function InboxIcon({ size = 18, color = "#ffffff" }: { size?: number; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M4 13l2-7h12l2 7M4 13v5a1 1 0 001 1h14a1 1 0 001-1v-5M4 13h5l1 2h4l1-2h5"
         stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M12 3v6m0 0l-2-2m2 2l2-2" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
@@ -91,14 +105,33 @@ function InboxIcon({ size = 18, color = CREAM }: { size?: number; color?: string
   );
 }
 
-function ComposeIcon({ size = 18, color = CREAM }: { size?: number; color?: string }) {
+function ComposeIcon({ size = 18, color = "#ffffff" }: { size?: number; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M14 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-7"
         stroke={color} strokeWidth="1.7" strokeLinecap="round"/>
       <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
         stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
+  );
+}
+
+function BackButton({ onClick, label = "Kthehu" }: { onClick: () => void; label?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_RING}`}
+      style={{
+        backgroundColor: GLASS_BG,
+        border: `1px solid ${GLASS_BORDER}`,
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+      }}
+    >
+      <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" style={{ color: "var(--brand-ink)" }} />
+    </button>
   );
 }
 
@@ -137,7 +170,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
       if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m);
     }
     const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
-    const urls = await signPaths(allCovers);
+    const urls = await signPaths(allCovers, { thumbnail: true });
 
     const views: ThreadView[] = rows.map((r) => {
       const isBuyer = r.buyer_id === me;
@@ -227,6 +260,11 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
   const title = mode === "archive" ? "Arkiva" : "Mesazhe";
   const emptyMsg = mode === "archive" ? "Asnjë bisedë e arkivuar" : "Ende nuk ke biseda.";
 
+  const openThread = (t: ThreadView) => {
+    if (swipeId === t.id) { setSwipeId(null); return; }
+    navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, thread: t.id }) });
+  };
+
   return (
     <MobileShell fixed>
       <div
@@ -240,58 +278,54 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          backgroundColor: CREAM,
+          backgroundColor: SURFACE,
         }}
       >
         <header
           className="flex items-center justify-between px-5 pt-5 pb-3"
-          style={{ backgroundColor: CREAM, flexShrink: 0 }}
+          style={{ backgroundColor: SURFACE, flexShrink: 0 }}
         >
           {mode === "archive" ? (
-            <button
-              type="button"
-              onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "list", tab }) })}
-              aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-              style={{
-                width: 36,
-                height: 36,
-                backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-              }}
-            >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
-            </button>
-          ) : <div className="w-10" />}
+            <BackButton onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "list", tab }) })} />
+          ) : <div className="w-11" aria-hidden="true" />}
           <h1 className="text-[22px] font-bold" style={{ color: INK }}>{title}</h1>
           {mode === "inbox" ? (
-            <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: "#2d1521" }}>
-              <button onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "archive", tab }) })} aria-label="Arkiva" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
+            <div className="flex items-center gap-1 rounded-full px-2 py-1.5" style={{ backgroundColor: INK }}>
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "archive", tab }) })}
+                aria-label="Arkiva"
+                className={`grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-[0.97] ${FOCUS_RING}`}
+              >
                 <InboxIcon />
               </button>
-              <button onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "new", tab }) })} aria-label="Mesazh i ri" className="grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-90">
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "new", tab }) })}
+                aria-label="Mesazh i ri"
+                className={`grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-[0.97] ${FOCUS_RING}`}
+              >
                 <ComposeIcon />
               </button>
             </div>
-          ) : <div className="w-10" />}
+          ) : <div className="w-11" aria-hidden="true" />}
         </header>
 
         {mode === "inbox" && (
           <div className="px-5 pb-3" style={{ flexShrink: 0, height: 68 }}>
             <div
+              role="tablist"
+              aria-label="Filtro biseda"
               className="relative flex rounded-full p-1"
-              style={{ backgroundColor: CREAM_ALT, height: 48 }}
+              style={{ backgroundColor: CREAM_SOFT, height: 48 }}
             >
-              {/* Sliding indicator — transform only, no reflow */}
               <div
-                aria-hidden
+                aria-hidden="true"
                 className="absolute top-1 bottom-1 rounded-full transition-transform duration-200 ease-out"
                 style={{
                   left: 4,
                   width: "calc((100% - 8px) / 3)",
-                  background: "linear-gradient(120deg, #e8836a, #c65a7a)",
+                  background: BRAND_GRADIENT,
                   transform: `translateX(${tab === "all" ? 0 : tab === "buy" ? 100 : 200}%)`,
                 }}
               />
@@ -301,10 +335,13 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 return (
                   <button
                     key={t}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
                     onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, tab: t, view: "list" }) })}
-                    className="relative z-10 flex-1 rounded-full text-sm font-medium transition-colors duration-200"
+                    className={`relative z-10 flex-1 rounded-full text-sm font-medium transition-colors duration-200 ${FOCUS_RING}`}
                     style={{
-                      color: active ? "#fff" : MUTED,
+                      color: active ? "#ffffff" : INK_SECONDARY,
                       backgroundColor: "transparent",
                     }}
                   >
@@ -327,46 +364,56 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           }}
         >
           {loading ? (
-            <ul>
-              {Array.from({ length: 6 }).map((_, i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-3 px-5"
-                  style={{ height: 72, borderBottom: `1px solid ${DIVIDER}` }}
-                >
-                  <div
-                    className="h-12 w-12 shrink-0 rounded-full"
-                    style={{ backgroundColor: CREAM_ALT }}
-                  />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 w-1/2 rounded" style={{ backgroundColor: CREAM_ALT }} />
-                    <div className="h-3 w-3/4 rounded" style={{ backgroundColor: CREAM_ALT }} />
-                    <div className="h-2.5 w-1/3 rounded" style={{ backgroundColor: CREAM_ALT }} />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <>
+              <span className="sr-only" role="status" aria-live="polite">Duke ngarkuar biseda…</span>
+              <ul aria-hidden="true">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <li
+                    key={i}
+                    className="flex items-center gap-3 px-5"
+                    style={{ height: 72, borderBottom: `1px solid ${DIVIDER}` }}
+                  >
+                    <div className="h-12 w-12 shrink-0 rounded-full" style={{ backgroundColor: CREAM_SOFT }} />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 w-1/2 rounded" style={{ backgroundColor: CREAM_SOFT }} />
+                      <div className="h-3 w-3/4 rounded" style={{ backgroundColor: CREAM_SOFT }} />
+                      <div className="h-2.5 w-1/3 rounded" style={{ backgroundColor: CREAM_SOFT }} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
           ) : filtered.length === 0 ? (
-            <div className="mx-5 mt-10 rounded-2xl border border-dashed p-10 text-center text-sm" style={{ borderColor: DIVIDER, color: MUTED }}>
+            <div
+              role="status"
+              aria-live="polite"
+              className="mx-5 mt-10 rounded-2xl border border-dashed p-10 text-center text-sm"
+              style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
+            >
               {emptyMsg}
             </div>
           ) : (
             <ul>
               {filtered.map((t) => (
                 <li key={t.id} className="relative overflow-hidden" style={{ borderBottom: `1px solid ${DIVIDER}`, minHeight: 72 }}>
-                  {/* swipe action */}
                   <button
-                    onClick={() => { setSwipeId(null); mode === "archive" ? setArchived(t, false) : setArchived(t, true); }}
+                    type="button"
+                    onClick={() => { setSwipeId(null); setArchived(t, mode !== "archive"); }}
+                    aria-label={mode === "archive" ? "Zharkivo bisedën" : "Arkivo bisedën"}
                     className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
-                    style={{ backgroundColor: CORAL, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
+                    style={{ backgroundColor: ROSE, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
                   >
                     {mode === "archive" ? "Zharkivo" : "Arkivo"}
                   </button>
                   <div
-                    className="relative flex items-center gap-3 px-5 py-3.5 transition-transform duration-200 ease-out active:scale-[0.98]"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Bisedë me ${t.otherName}${t.unread ? ", i palexuar" : ""}`}
+                    className={`relative flex items-center gap-3 px-5 py-3.5 transition-transform duration-200 ease-out active:scale-[0.98] ${FOCUS_RING}`}
                     style={{
-                      backgroundColor: t.unread ? CREAM_ALT : CREAM,
+                      backgroundColor: t.unread ? CREAM_SOFT : SURFACE,
                       transform: swipeId === t.id ? "translateX(-100px)" : "translateX(0)",
+                      minHeight: 72,
                     }}
                     onTouchStart={(e) => { onTouchStart(e); startPress(t.id, e); }}
                     onTouchEnd={(e) => { endPress(); onTouchEnd(t.id)(e); }}
@@ -375,12 +422,31 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                     onMouseUp={endPress}
                     onMouseLeave={endPress}
                     onContextMenu={(e) => { e.preventDefault(); setMenu({ id: t.id, x: e.clientX, y: e.clientY }); }}
-                    onClick={() => { if (swipeId === t.id) { setSwipeId(null); return; } navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, thread: t.id }) }); }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openThread(t); }
+                    }}
+                    onClick={() => openThread(t)}
                   >
-                    <div className="relative shrink-0">
-                      <img src={t.otherAvatar} alt={t.otherName} className="h-12 w-12 rounded-full object-cover" />
+                    <div className="relative shrink-0" style={{ width: 48, height: 48 }}>
+                      <img
+                        src={t.otherAvatar}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 rounded-full object-cover"
+                        style={{ backgroundColor: CREAM_SOFT }}
+                      />
                       {t.listingCover && (
-                        <img src={t.listingCover} alt="" className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 object-cover" style={{ borderColor: CREAM }} />
+                        <img
+                          src={t.listingCover}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute -bottom-1 -right-1 h-5 w-5 rounded border-2 object-cover"
+                          style={{ borderColor: SURFACE, backgroundColor: CREAM_SOFT }}
+                        />
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -393,7 +459,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                       <p
                         className="truncate text-sm"
                         style={{
-                          color: t.unread ? INK : MUTED,
+                          color: t.unread ? INK : INK_SECONDARY,
                           fontWeight: t.unread ? 500 : 400,
                           fontStyle: t.unread ? "normal" : "italic",
                           marginTop: 2,
@@ -401,16 +467,19 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                       >
                         {t.lastPreview}
                       </p>
-                      <p className="truncate text-xs" style={{ color: MUTED, marginTop: 2 }}>{t.listingTitle}</p>
+                      <p className="truncate text-xs" style={{ color: INK_SECONDARY, marginTop: 2 }}>{t.listingTitle}</p>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1.5">
-                      <span className="text-[12px]" style={{ color: MUTED }}>{formatTime(t.lastAt)}</span>
+                      <span className="text-[12px]" style={{ color: INK_SECONDARY }}>
+                        <time dateTime={t.lastAt}>{formatTime(t.lastAt)}</time>
+                      </span>
                       {t.unread && (
                         <span
+                          aria-label="I palexuar"
                           style={{
                             width: 10,
                             height: 10,
-                            backgroundColor: CORAL,
+                            backgroundColor: ROSE,
                             borderRadius: "50%",
                             display: "block",
                           }}
@@ -426,32 +495,37 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
 
         {menu && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => setMenu(null)} />
+            <div className="fixed inset-0 z-40" onClick={() => setMenu(null)} aria-hidden="true" />
             <div
+              role="menu"
               className="fixed z-50 overflow-hidden rounded-xl shadow-2xl animate-scale-in"
               style={{
                 top: Math.min(menu.y, window.innerHeight - 140),
                 left: Math.min(menu.x, window.innerWidth - 200),
-                backgroundColor: CREAM,
+                backgroundColor: SURFACE,
                 border: `1px solid ${DIVIDER}`,
                 minWidth: 180,
               }}
             >
               <button
-                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm"
-                style={{ color: INK }}
+                type="button"
+                role="menuitem"
+                className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm ${FOCUS_RING}`}
+                style={{ color: INK, minHeight: 44 }}
                 onClick={() => { const t = threads.find((x) => x.id === menu.id); if (t) setArchived(t, !t.archived); setMenu(null); }}
               >
-                <Inbox className="h-4 w-4" />
+                <Inbox className="h-4 w-4" aria-hidden="true" />
                 {mode === "archive" ? "Zharkivo" : "Arkivo"}
               </button>
               <div style={{ height: 1, backgroundColor: DIVIDER }} />
               <button
-                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm"
-                style={{ color: CORAL }}
+                type="button"
+                role="menuitem"
+                className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm ${FOCUS_RING}`}
+                style={{ color: ROSE, minHeight: 44 }}
                 onClick={() => { const t = threads.find((x) => x.id === menu.id); if (t) deleteThread(t); setMenu(null); }}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
                 Fshij
               </button>
             </div>
@@ -521,7 +595,6 @@ function NewMessage({ me }: { me: string }) {
   }, [q, me]);
 
   const startChat = async (otherId: string) => {
-    // Find any existing conversation between me and other
     const { data: existing } = await supabase
       .from("conversations")
       .select("id")
@@ -550,35 +623,51 @@ function NewMessage({ me }: { me: string }) {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          backgroundColor: CREAM,
+          backgroundColor: SURFACE,
         }}
       >
-        <header className="sticky top-0 z-30 flex items-center gap-3 px-5 pt-5 pb-3" style={{ backgroundColor: `${CREAM}f2` }}>
-          <button onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "list", tab: "all" }) })} className="grid h-10 w-10 place-items-center rounded-full" style={{ backgroundColor: CREAM_ALT }}>
-            <X className="h-5 w-5" style={{ color: INK }} />
+        <header
+          className="sticky top-0 z-30 flex items-center gap-3 px-5 pt-5 pb-3"
+          style={{ backgroundColor: SURFACE }}
+        >
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "list", tab: "all" }) })}
+            aria-label="Mbyll"
+            className={`grid h-11 w-11 place-items-center rounded-full ${FOCUS_RING}`}
+            style={{ backgroundColor: CREAM_SOFT }}
+          >
+            <X className="h-5 w-5" style={{ color: INK }} aria-hidden="true" />
           </button>
           <h1 className="text-[18px] font-bold" style={{ color: INK }}>Mesazh i ri</h1>
         </header>
         <div className="px-5 pb-3">
-          <div className="flex items-center gap-2 rounded-full px-4 py-2.5" style={{ backgroundColor: CREAM_ALT }}>
-            <SearchIcon className="h-4 w-4" style={{ color: MUTED }} />
+          <label className="sr-only" htmlFor="new-message-search">Kërko përdoruesin</label>
+          <div className="flex items-center gap-2 rounded-full px-4" style={{ backgroundColor: CREAM_SOFT, minHeight: 44 }}>
+            <SearchIcon className="h-4 w-4" style={{ color: INK_SECONDARY }} aria-hidden="true" />
             <input
+              id="new-message-search"
               autoFocus
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Kërko përdoruesin..."
               className="flex-1 bg-transparent text-sm outline-none"
-              style={{ color: INK }}
+              style={{ color: INK, minHeight: 44 }}
+              inputMode="search"
+              enterKeyHint="search"
             />
           </div>
         </div>
         {!q.trim() && recent.length > 0 && (
-          <p className="px-5 pb-2 pt-2 text-xs font-semibold uppercase tracking-wide" style={{ color: MUTED }}>Kontaktet e fundit</p>
+          <p className="px-5 pb-2 pt-2 text-xs font-semibold uppercase tracking-wide" style={{ color: INK_SECONDARY }}>Kontaktet e fundit</p>
         )}
         {loading ? (
-          <div className="grid place-items-center py-10"><Loader2 className="h-5 w-5 animate-spin" style={{ color: MUTED }} /></div>
+          <div className="grid place-items-center py-10" role="status" aria-live="polite">
+            <Loader2 className="h-5 w-5 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
+            <span className="sr-only">Duke kërkuar…</span>
+          </div>
         ) : list.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm" style={{ color: MUTED }}>
+          <p role="status" aria-live="polite" className="px-5 py-10 text-center text-sm" style={{ color: INK_SECONDARY }}>
             {q.trim() ? "Asnjë përdorues u gjet" : "Ende nuk ke kontakte"}
           </p>
         ) : (
@@ -586,18 +675,22 @@ function NewMessage({ me }: { me: string }) {
             {list.map((p) => (
               <li key={p.id}>
                 <button
+                  type="button"
                   onClick={() => startChat(p.id)}
-                  className="flex w-full items-center gap-3 px-5 py-3 text-left transition-transform active:scale-[0.98]"
-                  style={{ borderBottom: `1px solid ${DIVIDER}` }}
+                  className={`flex w-full items-center gap-3 px-5 py-3 text-left transition-transform active:scale-[0.98] ${FOCUS_RING}`}
+                  style={{ borderBottom: `1px solid ${DIVIDER}`, minHeight: 60 }}
                 >
                   <img
                     src={p.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p.name || "U")}`}
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                     className="h-11 w-11 rounded-full object-cover"
+                    style={{ backgroundColor: CREAM_SOFT }}
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold" style={{ color: INK }}>{p.name || "Përdorues"}</p>
-                    {p.city && <p className="truncate text-xs" style={{ color: MUTED }}>{p.city}</p>}
+                    {p.city && <p className="truncate text-xs" style={{ color: INK_SECONDARY }}>{p.city}</p>}
                   </div>
                 </button>
               </li>
@@ -612,23 +705,26 @@ function NewMessage({ me }: { me: string }) {
 type MessageRow = { id: string; sender_id: string; content: string; created_at: string };
 
 function Thread({ id, me }: { id: string; me: string }) {
-  const navigate = useNavigate({ from: "/messages" });
   const [info, setInfo] = useState<{
     otherName: string; otherAvatar: string; listingId: string; listingTitle: string; listingPrice: number | null; listingCover: string; isBuyer: boolean;
   } | null>(null);
   const [msgs, setMsgs] = useState<MessageRow[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputBarRef = useRef<HTMLFormElement>(null);
   const didInitialScroll = useRef(false);
+  const nearBottomRef = useRef(true);
+  const lastOwnSendRef = useRef(0);
 
   useEffect(() => {
     let active = true;
     const load = async () => {
-      const { data: conv } = await supabase.from("conversations").select("*").eq("id", id).maybeSingle();
-      if (!conv) { if (active) setLoading(false); return; }
+      const { data: conv, error: convErr } = await supabase.from("conversations").select("*").eq("id", id).maybeSingle();
+      if (convErr || !conv) { if (active) { setLoading(false); setLoadError(!conv); } return; }
       const isBuyer = conv.buyer_id === me;
       const otherId = isBuyer ? conv.seller_id : conv.buyer_id;
       const [prof, listing, msgRes] = await Promise.all([
@@ -637,7 +733,7 @@ function Thread({ id, me }: { id: string; me: string }) {
         supabase.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: true }),
       ]);
       const cover = listing.data?.image_paths?.[0] ?? "";
-      const urls = cover ? await signPaths([cover]) : {};
+      const urls = cover ? await signPaths([cover], { thumbnail: true }) : {};
       if (!active) return;
       setInfo({
         otherName: prof.data?.name || "Përdorues",
@@ -666,12 +762,28 @@ function Thread({ id, me }: { id: string; me: string }) {
     const ch = supabase
       .channel(`thread-${id}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
-        (payload) => setMsgs((prev) => [...prev, payload.new as MessageRow]))
+        (payload) => setMsgs((prev) => {
+          const next = payload.new as MessageRow;
+          if (prev.some((m) => m.id === next.id)) return prev;
+          return [...prev, next];
+        }))
       .subscribe();
     return () => { active = false; supabase.removeChannel(ch); };
   }, [id, me]);
 
-  // Scroll to bottom: instant on first paint, smooth for new messages
+  // Track scroll position to avoid forcing users to bottom while reading history
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+      nearBottomRef.current = distance < 120;
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Scroll to bottom: instant on first paint; on new messages only if user is near bottom or just sent
   useEffect(() => {
     if (loading) return;
     const el = scrollRef.current;
@@ -679,7 +791,11 @@ function Thread({ id, me }: { id: string; me: string }) {
     if (!didInitialScroll.current) {
       el.scrollTop = el.scrollHeight;
       didInitialScroll.current = true;
-    } else {
+      nearBottomRef.current = true;
+      return;
+    }
+    const justSent = Date.now() - lastOwnSendRef.current < 1500;
+    if (nearBottomRef.current || justSent) {
       endRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [msgs, loading]);
@@ -693,9 +809,8 @@ function Thread({ id, me }: { id: string; me: string }) {
       if (!bar) return;
       const offset = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop || 0));
       bar.style.transform = `translateY(-${offset}px)`;
-      // Keep the latest message visible when keyboard opens
       const el = scrollRef.current;
-      if (el) el.scrollTop = el.scrollHeight;
+      if (el && nearBottomRef.current) el.scrollTop = el.scrollHeight;
     };
     vv.addEventListener("resize", onResize);
     vv.addEventListener("scroll", onResize);
@@ -709,9 +824,17 @@ function Thread({ id, me }: { id: string; me: string }) {
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text) return;
+    if (!text || sending) return;
+    setSending(true);
     setInput("");
-    await supabase.from("messages").insert({ conversation_id: id, sender_id: me, content: text });
+    lastOwnSendRef.current = Date.now();
+    const { error } = await supabase.from("messages").insert({ conversation_id: id, sender_id: me, content: text });
+    if (error) {
+      // Restore user's text so they don't lose their message
+      setInput(text);
+      toast.error("Mesazhi nuk u dërgua");
+    }
+    setSending(false);
   };
 
   return (
@@ -727,80 +850,92 @@ function Thread({ id, me }: { id: string; me: string }) {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          backgroundColor: CREAM,
+          backgroundColor: SURFACE,
         }}
       >
         <header
           className="flex items-center gap-3 px-4 py-3"
           style={{
-            backgroundColor: CREAM,
+            backgroundColor: SURFACE,
             borderBottom: `1px solid ${DIVIDER}`,
             flexShrink: 0,
             paddingTop: "calc(env(safe-area-inset-top) + 12px)",
           }}
         >
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            aria-label="Kthehu"
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-            style={{
-              width: 36,
-              height: 36,
-              backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-            }}
-          >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
-          </button>
+          <BackButton onClick={() => window.history.back()} />
           {info ? (
             <>
-              <img src={info.otherAvatar} alt="" className="h-9 w-9 rounded-full object-cover" />
+              <img
+                src={info.otherAvatar}
+                alt=""
+                loading="eager"
+                decoding="async"
+                className="h-9 w-9 rounded-full object-cover"
+                style={{ backgroundColor: CREAM_SOFT }}
+              />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold" style={{ color: INK }}>{info.otherName}</p>
               </div>
               {info.listingCover && (
-                <Link to="/product/$id" params={{ id: info.listingId }}>
-                  <img src={info.listingCover} alt="" className="h-9 w-9 rounded-lg object-cover" />
+                <Link
+                  to="/product/$id"
+                  params={{ id: info.listingId }}
+                  aria-label={`Shiko artikullin ${info.listingTitle}`}
+                  className={`grid h-11 w-11 place-items-center rounded-lg ${FOCUS_RING}`}
+                >
+                  <img
+                    src={info.listingCover}
+                    alt=""
+                    loading="eager"
+                    decoding="async"
+                    className="h-9 w-9 rounded-lg object-cover"
+                    style={{ backgroundColor: CREAM_SOFT }}
+                  />
                 </Link>
               )}
             </>
           ) : (
             <>
-              <div className="h-9 w-9 rounded-full" style={{ backgroundColor: CREAM_ALT }} />
+              <div className="h-9 w-9 rounded-full" style={{ backgroundColor: CREAM_SOFT }} aria-hidden="true" />
               <div className="min-w-0 flex-1">
-                <div className="h-3 w-24 rounded" style={{ backgroundColor: CREAM_ALT }} />
+                <div className="h-3 w-24 rounded" style={{ backgroundColor: CREAM_SOFT }} aria-hidden="true" />
               </div>
-              <div className="h-9 w-9 rounded-lg" style={{ backgroundColor: CREAM_ALT }} />
+              <div className="h-9 w-9 rounded-lg" style={{ backgroundColor: CREAM_SOFT }} aria-hidden="true" />
             </>
           )}
         </header>
 
-        {/* Product banner — skeleton until ready so no layout shift */}
         <div style={{ flexShrink: 0, padding: "12px 16px 0" }}>
           {info ? (
             <Link
               to="/product/$id"
               params={{ id: info.listingId }}
-              className="flex items-center gap-3 rounded-xl p-2.5"
-              style={{ backgroundColor: CREAM_ALT }}
+              aria-label={`Artikull: ${info.listingTitle}`}
+              className={`flex items-center gap-3 rounded-xl p-2.5 ${FOCUS_RING}`}
+              style={{ backgroundColor: CREAM_SOFT }}
             >
               {info.listingCover ? (
-                <img src={info.listingCover} alt="" className="h-12 w-12 rounded-lg object-cover" />
+                <img
+                  src={info.listingCover}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="h-12 w-12 rounded-lg object-cover"
+                  style={{ backgroundColor: DIVIDER }}
+                />
               ) : (
-                <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: DIVIDER }} />
+                <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: DIVIDER }} aria-hidden="true" />
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold" style={{ color: INK }}>{info.listingTitle}</p>
-                {info.listingPrice != null && <p className="text-sm" style={{ color: MUTED }}>{info.listingPrice} €</p>}
+                {info.listingPrice != null && <p className="text-sm" style={{ color: INK_SECONDARY }}>{info.listingPrice} €</p>}
               </div>
             </Link>
           ) : (
             <div
+              aria-hidden="true"
               className="flex items-center gap-3 rounded-xl p-2.5"
-              style={{ backgroundColor: CREAM_ALT, height: 72 }}
+              style={{ backgroundColor: CREAM_SOFT, height: 72 }}
             >
               <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: DIVIDER }} />
               <div className="flex-1 space-y-2">
@@ -813,6 +948,9 @@ function Thread({ id, me }: { id: string; me: string }) {
 
         <div
           ref={scrollRef}
+          role="log"
+          aria-live="polite"
+          aria-label="Mesazhet e bisedës"
           style={{
             flex: 1,
             minHeight: 0,
@@ -825,7 +963,18 @@ function Thread({ id, me }: { id: string; me: string }) {
           }}
         >
           {loading ? (
-            <div className="grid flex-1 place-items-center"><Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} /></div>
+            <div className="grid flex-1 place-items-center" role="status" aria-live="polite">
+              <Loader2 className="h-6 w-6 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
+              <span className="sr-only">Duke ngarkuar mesazhet…</span>
+            </div>
+          ) : loadError ? (
+            <div role="alert" className="grid flex-1 place-items-center px-6 text-center text-sm" style={{ color: INK_SECONDARY }}>
+              Biseda nuk u gjet.
+            </div>
+          ) : msgs.length === 0 ? (
+            <div role="status" aria-live="polite" className="grid flex-1 place-items-center px-6 text-center text-sm" style={{ color: INK_SECONDARY }}>
+              Filloni bisedën me një mesazh.
+            </div>
           ) : (
             <div className="flex flex-col gap-1">
               {msgs.map((m, i) => {
@@ -836,15 +985,22 @@ function Thread({ id, me }: { id: string; me: string }) {
                     <div
                       className="max-w-[80%] px-3.5 py-2 text-sm"
                       style={{
-                        backgroundColor: mine ? INK : CREAM_ALT,
-                        color: mine ? CREAM : INK,
+                        backgroundColor: mine ? INK : CREAM_SOFT,
+                        color: mine ? "#ffffff" : INK,
                         borderRadius: mine ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                        border: mine ? "none" : `1px solid ${DIVIDER}`,
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
+                        whiteSpace: "pre-wrap",
                       }}
                     >
+                      <span className="sr-only">{mine ? "Ti: " : `${info?.otherName ?? "Përdoruesi"}: `}</span>
                       {m.content}
                     </div>
                     {showTime && (
-                      <span className="mt-0.5 px-1 text-[10px]" style={{ color: MUTED }}>{formatTime(m.created_at)}</span>
+                      <span className="mt-0.5 px-1 text-[10px]" style={{ color: INK_SECONDARY }}>
+                        <time dateTime={m.created_at}>{formatTime(m.created_at)}</time>
+                      </span>
                     )}
                   </div>
                 );
@@ -857,27 +1013,39 @@ function Thread({ id, me }: { id: string; me: string }) {
         <form
           ref={inputBarRef}
           onSubmit={send}
+          aria-busy={sending}
           style={{
             flexShrink: 0,
-            backgroundColor: CREAM,
+            backgroundColor: SURFACE,
             borderTop: `1px solid ${DIVIDER}`,
             padding: "12px 12px calc(env(safe-area-inset-bottom) + 12px)",
             willChange: "transform",
           }}
         >
+          <label htmlFor="thread-composer" className="sr-only">Shkruaj një mesazh</label>
           <div className="flex items-center gap-2">
             <input
+              id="thread-composer"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Shkruaj një mesazh..."
-              className="flex-1 rounded-full px-4 outline-none"
-              style={{ backgroundColor: CREAM_ALT, color: INK, fontSize: 16, height: 44 }}
+              aria-label="Shkruaj një mesazh"
+              enterKeyHint="send"
+              disabled={sending}
+              className={`flex-1 rounded-full px-4 ${FOCUS_RING}`}
+              style={{ backgroundColor: CREAM_SOFT, color: INK, fontSize: 16, height: 44, border: `1px solid ${DIVIDER}` }}
             />
-            {input.trim() && (
-              <button type="submit" className="grid h-10 w-10 place-items-center rounded-full transition-transform active:scale-90" style={{ backgroundColor: INK }}>
-                <Send className="h-4 w-4" style={{ color: CREAM }} />
-              </button>
-            )}
+            <button
+              type="submit"
+              disabled={!input.trim() || sending}
+              aria-label="Dërgo mesazhin"
+              className={`grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100 ${FOCUS_RING}`}
+              style={{ backgroundColor: INK }}
+            >
+              {sending
+                ? <Loader2 className="h-4 w-4 animate-spin" style={{ color: "#ffffff" }} aria-hidden="true" />
+                : <Send className="h-4 w-4" style={{ color: "#ffffff" }} aria-hidden="true" />}
+            </button>
           </div>
         </form>
       </div>
