@@ -36,7 +36,7 @@ const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
 
 // City list moved to DB — see CityPicker/useCities
 
-type Gender = "female" | "male" | "unspecified";
+type Gender = "female" | "male";
 
 type StrengthResult = {
   checks: {
