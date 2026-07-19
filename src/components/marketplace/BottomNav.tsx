@@ -72,7 +72,7 @@ export const BottomNav = () => {
               <i
                 className="ti ti-plus"
                 style={{
-                  fontSize: "20px",
+                  fontSize: "24px",
                   color: "#ffffff",
                   lineHeight: 1,
                 }}
