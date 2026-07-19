@@ -1391,6 +1391,7 @@ function SettingsSheet({
               onNavigate={setView}
               onLogout={() => setConfirmLogout(true)}
               onDeleteAccount={() => navigate({ to: "/profile/delete-account" })}
+              onOpenMembership={() => navigate({ to: "/membership" })}
             />
           )}
           {view === "profile" && (
