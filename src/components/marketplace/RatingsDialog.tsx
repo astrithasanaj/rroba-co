@@ -152,7 +152,7 @@ export function RatingsDialog({
           <div className="text-3xl font-display">{avg.toFixed(1)}</div>
           <div>
             <StarRow value={avg} size={16} />
-            <p className="text-xs text-muted-foreground">basert på {ratings.length} vurderinger</p>
+            <p className="text-xs text-muted-foreground">bazuar në {ratings.length} vlerësime</p>
           </div>
         </div>
 
