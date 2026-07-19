@@ -22,7 +22,7 @@ export const BottomNav = () => {
         bottom: "16px",
         left: "16px",
         right: "16px",
-        height: "58px",
+        height: "68px",
         background: "rgba(45,21,33,0.88)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
