@@ -36,7 +36,7 @@ function BuyPage() {
   const [offerOpen, setOfferOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [offerAmount, setOfferAmount] = useState("");
-  const [protectionInfoOpen, setProtectionInfoOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
