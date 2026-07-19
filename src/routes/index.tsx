@@ -286,10 +286,10 @@ function HomePage() {
             </div>
             <Link
               to="/notifications"
-              className="grid h-10 w-10 place-items-center rounded-full"
+              className="grid h-12 w-12 place-items-center rounded-full"
               aria-label="Njoftime"
             >
-              <Bell className="h-5 w-5" strokeWidth={1.7} style={{ color: INK }} />
+              <Bell className="h-6 w-6" strokeWidth={1.7} style={{ color: INK }} />
             </Link>
           </div>
           <div className="px-[18px] pb-3">
