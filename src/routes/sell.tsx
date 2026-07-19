@@ -166,7 +166,7 @@ function getSubcategories(category: string, gender: string): string[] {
 // City list moved to DB — see CityPicker/useCities
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 
-type View = "media" | "details" | "final";
+type View = "media" | "form";
 type Picker = "gender" | "subcategory";
 
 function SellPage() {
@@ -358,7 +358,7 @@ function SellPage() {
   const handlePickSub = (s: string) => {
     setCatSub(s);
     closePickers();
-    setView("details");
+    setView("form");
   };
 
   return (
@@ -381,64 +381,48 @@ function SellPage() {
           />
         </Layer>
 
-        <Layer visible={view === "details" || view === "final"}>
-          {view === "details" ? (
-            <DetailsStep
-              images={images}
-              onCancel={() => setView("media")}
-              onAddMore={() => fileRef.current?.click()}
-              onRemoveImage={removeImage}
-              fullCategoryLabel={fullCategoryLabel}
-              onEditCategory={() => {
-                // Reset and go back to step 1 to re-pick
-                setCatCategory("");
-                setCatGender("");
-                setCatSub("");
-                setView("media");
-              }}
-              condition={condition}
-              setCondition={setCondition}
-              title={title}
-              setTitle={setTitle}
-              description={description}
-              setDescription={setDescription}
-              size={size}
-              sizeHidden={sizeHidden}
-              sizeRequired={sizeRequired}
-              sizeError={sizeError}
-              onOpenSize={() => setSizeSheetOpen(true)}
-              canNext={step2Valid}
-              onNext={() => {
-                if (sizeRequired && !size.trim()) {
-                  setSizeError(true);
-                  return;
-                }
-                setView("final");
-              }}
-            />
-          ) : (
-            <FinalStep
-              onBack={() => setView("details")}
-              brand={brand}
-              setBrand={setBrand}
-              size={size}
-              color={color}
-              price={price}
-              setPrice={setPrice}
-              cityId={cityId}
-              onCityChange={(id, name) => {
-                setCityId(id);
-                setCity(name);
-              }}
-              delivery={delivery}
-              setDelivery={setDelivery}
-              onOpenSize={() => setSizeSheetOpen(true)}
-              onOpenColor={() => setColorSheetOpen(true)}
-              canPublish={finalValid}
-              submitting={submitting}
-              onPublish={publish}
-            />
-          )}
+        <Layer visible={view === "form"}>
+          <FormStep
+            images={images}
+            onCancel={() => setView("media")}
+            onAddMore={() => fileRef.current?.click()}
+            onRemoveImage={removeImage}
+            fullCategoryLabel={fullCategoryLabel}
+            onEditCategory={() => {
+              setCatCategory("");
+              setCatGender("");
+              setCatSub("");
+              setView("media");
+            }}
+            condition={condition}
+            setCondition={setCondition}
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            size={size}
+            sizeHidden={sizeHidden}
+            sizeRequired={sizeRequired}
+            sizeError={sizeError}
+            setSizeError={setSizeError}
+            onOpenSize={() => setSizeSheetOpen(true)}
+            brand={brand}
+            setBrand={setBrand}
+            color={color}
+            price={price}
+            setPrice={setPrice}
+            cityId={cityId}
+            onCityChange={(id, name) => {
+              setCityId(id);
+              setCity(name);
+            }}
+            delivery={delivery}
+            setDelivery={setDelivery}
+            onOpenColor={() => setColorSheetOpen(true)}
+            canPublish={finalValid}
+            submitting={submitting}
+            onPublish={publish}
+          />
         </Layer>
 
         {(["gender", "subcategory"] as Picker[]).map((p) => {
@@ -830,9 +814,9 @@ function SubcategoryPicker({
   );
 }
 
-/* ============================== Step 4: Details ============================== */
+/* ============================== Unified form step ============================== */
 
-function DetailsStep({
+function FormStep({
   images,
   onCancel,
   onAddMore,
@@ -849,9 +833,21 @@ function DetailsStep({
   sizeHidden,
   sizeRequired,
   sizeError,
+  setSizeError,
   onOpenSize,
-  canNext,
-  onNext,
+  brand,
+  setBrand,
+  color,
+  price,
+  setPrice,
+  cityId,
+  onCityChange,
+  delivery,
+  setDelivery,
+  onOpenColor,
+  canPublish,
+  submitting,
+  onPublish,
 }: {
   images: PendingImage[];
   onCancel: () => void;
@@ -869,11 +865,73 @@ function DetailsStep({
   sizeHidden: boolean;
   sizeRequired: boolean;
   sizeError: boolean;
+  setSizeError: (v: boolean) => void;
   onOpenSize: () => void;
-  canNext: boolean;
-  onNext: () => void;
+  brand: string;
+  setBrand: (v: string) => void;
+  color: string[];
+  price: string;
+  setPrice: (v: string) => void;
+  cityId: string | null;
+  onCityChange: (id: string, name: string) => void;
+  delivery: string[];
+  setDelivery: (v: string[]) => void;
+  onOpenColor: () => void;
+  canPublish: boolean;
+  submitting: boolean;
+  onPublish: () => void;
 }) {
   const slots = Math.max(images.length + 1, 4);
+  const toggleDelivery = (opt: string) =>
+    setDelivery(delivery.includes(opt) ? delivery.filter((x) => x !== opt) : [...delivery, opt]);
+
+  const conditionRef = useRef<HTMLDivElement>(null);
+  const sizeRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const priceRef = useRef<HTMLInputElement>(null);
+  const cityRef = useRef<HTMLDivElement>(null);
+
+  const scrollTo = (el: HTMLElement | null) => {
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    // Move focus for a11y where possible.
+    if (typeof (el as HTMLInputElement).focus === "function") {
+      (el as HTMLInputElement).focus({ preventScroll: true });
+    }
+  };
+
+  const handlePublish = () => {
+    if (submitting) return;
+    if (!condition) {
+      toast.error("Zgjidh gjendjen e artikullit");
+      scrollTo(conditionRef.current);
+      return;
+    }
+    if (sizeRequired && !size.trim()) {
+      setSizeError(true);
+      toast.error("Zgjidh madhësinë");
+      scrollTo(sizeRef.current);
+      return;
+    }
+    if (!title.trim()) {
+      toast.error("Shto një titull");
+      scrollTo(titleRef.current);
+      return;
+    }
+    if (!price.trim() || !Number.isFinite(Number(price.replace(",", ".")))) {
+      toast.error("Shto çmimin");
+      scrollTo(priceRef.current);
+      return;
+    }
+    if (!cityId) {
+      toast.error("Zgjidh qytetin");
+      scrollTo(cityRef.current);
+      return;
+    }
+    onPublish();
+  };
+
   return (
     <div className="flex h-full flex-col">
       <TopHeader title="Shto artikull të ri" onBack={onCancel} />
@@ -947,6 +1005,7 @@ function DetailsStep({
           })}
         </ul>
 
+        {/* Detajet: condition + size */}
         <div
           className="mt-7 rounded-2xl p-4"
           style={{ border: `1px solid ${DIVIDER}`, background: CARD }}
@@ -955,7 +1014,7 @@ function DetailsStep({
             Detajet
           </h2>
 
-          <h3 className="mt-5 text-[17px] font-bold" style={{ color: INK }}>
+          <h3 ref={conditionRef} className="mt-5 text-[17px] font-bold" style={{ color: INK }}>
             Çfarë është gjendja e artikullit?
           </h3>
           <div
@@ -992,7 +1051,7 @@ function DetailsStep({
           </div>
 
           {!sizeHidden && (
-            <div className="mt-7">
+            <div ref={sizeRef} className="mt-7">
               <label
                 htmlFor="sell-size-trigger"
                 className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.15em]"
@@ -1030,6 +1089,7 @@ function DetailsStep({
           )}
         </div>
 
+        {/* Përshkruaj artikullin: title + description */}
         <div
           className="mt-7 rounded-2xl p-4"
           style={{ border: `1px solid ${DIVIDER}`, background: CARD }}
@@ -1042,12 +1102,19 @@ function DetailsStep({
           </label>
           <input
             id="sell-title"
+            ref={titleRef}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Titulli"
             maxLength={120}
             autoComplete="off"
             enterKeyHint="next"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                descriptionRef.current?.focus();
+              }
+            }}
             className={`mt-3 h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
           />
@@ -1056,6 +1123,7 @@ function DetailsStep({
           </label>
           <textarea
             id="sell-description"
+            ref={descriptionRef}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Përshkrimi i artikullit"
@@ -1065,110 +1133,23 @@ function DetailsStep({
             style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}`, minHeight: 120 }}
           />
         </div>
-      </div>
 
-      <div
-        className="sticky bottom-0 px-5 pt-3"
-        style={{
-          background: `linear-gradient(to top, var(--brand-surface) 70%, transparent)`,
-          paddingBottom: SAFE_BOTTOM,
-        }}
-      >
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={!canNext}
-          className={`h-[54px] w-full rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 ${FOCUS_CLASS}`}
-          style={{
-            background: canNext ? CORAL_GRADIENT : DIVIDER,
-            color: canNext ? OVERLAY_GLYPH : MUTED,
-          }}
-        >
-          Tjetër
-        </button>
-      </div>
-    </div>
-  );
-}
+        {/* Detaje shtesë: brand + color */}
+        <div className="mt-7">
+          <Label htmlFor="sell-brand">Marka</Label>
+          <input
+            id="sell-brand"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            placeholder="p.sh. Zara"
+            maxLength={60}
+            autoComplete="off"
+            enterKeyHint="next"
+            className={`h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
+            style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
+          />
 
-/* ============================== Final: existing details ============================== */
-
-function FinalStep({
-  onBack,
-  brand,
-  setBrand,
-  size,
-  color,
-  price,
-  setPrice,
-  cityId,
-  onCityChange,
-  delivery,
-  setDelivery,
-  onOpenSize,
-  onOpenColor,
-  canPublish,
-  submitting,
-  onPublish,
-}: {
-  onBack: () => void;
-  brand: string;
-  setBrand: (v: string) => void;
-  size: string;
-  color: string[];
-  price: string;
-  setPrice: (v: string) => void;
-  cityId: string | null;
-  onCityChange: (id: string, name: string) => void;
-  delivery: string[];
-  setDelivery: (v: string[]) => void;
-  onOpenSize: () => void;
-  onOpenColor: () => void;
-  canPublish: boolean;
-  submitting: boolean;
-  onPublish: () => void;
-}) {
-  const toggleDelivery = (opt: string) =>
-    setDelivery(delivery.includes(opt) ? delivery.filter((x) => x !== opt) : [...delivery, opt]);
-
-  return (
-    <div className="flex h-full flex-col">
-      <TopHeader title="Detaje shtesë" onBack={onBack} />
-      <div className="flex-1 overflow-y-auto px-5 pb-32">
-        <Label htmlFor="sell-brand">Marka</Label>
-        <input
-          id="sell-brand"
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
-          placeholder="p.sh. Zara"
-          maxLength={60}
-          autoComplete="off"
-          enterKeyHint="next"
-          className={`h-[52px] w-full rounded-2xl px-4 text-sm placeholder:text-[color:var(--brand-ink-muted)] ${FOCUS_CLASS}`}
-          style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
-        />
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <Label htmlFor="sell-size-final">Madhësia</Label>
-            <button
-              id="sell-size-final"
-              type="button"
-              onClick={onOpenSize}
-              className={`flex h-[52px] w-full items-center justify-between rounded-2xl px-4 text-left text-sm transition active:scale-[0.99] ${FOCUS_CLASS}`}
-              style={{ background: CARD, color: INK, border: `1px solid ${DIVIDER}` }}
-            >
-              <span className="truncate" style={{ color: size ? INK : MUTED }}>
-                {size || "Zgjidh"}
-              </span>
-              <ChevronRight
-                className="h-4 w-4 shrink-0"
-                style={{ color: MUTED }}
-                aria-hidden="true"
-              />
-            </button>
-          </div>
-          <div>
+          <div className="mt-4">
             <Label htmlFor="sell-color">Ngjyra</Label>
             <button
               id="sell-color"
@@ -1229,6 +1210,7 @@ function FinalStep({
           </div>
         </div>
 
+        {/* Price + city */}
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
             <Label htmlFor="sell-price">Çmimi (€)</Label>
@@ -1245,6 +1227,7 @@ function FinalStep({
               </span>
               <input
                 id="sell-price"
+                ref={priceRef}
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="45"
@@ -1257,12 +1240,13 @@ function FinalStep({
               />
             </div>
           </div>
-          <div>
+          <div ref={cityRef}>
             <Label htmlFor="sell-city">Qyteti</Label>
             <CityPicker value={cityId} onChange={(id, c) => onCityChange(id, c.name)} />
           </div>
         </div>
 
+        {/* Delivery */}
         <Label className="mt-4">Dorëzimi</Label>
         <div role="group" aria-label="Opsionet e dorëzimit" className="flex flex-wrap gap-2">
           {DELIVERY.map((d) => {
@@ -1296,9 +1280,10 @@ function FinalStep({
       >
         <button
           type="button"
-          onClick={onPublish}
-          disabled={!canPublish || submitting}
+          onClick={handlePublish}
+          disabled={submitting}
           aria-busy={submitting || undefined}
+          aria-disabled={!canPublish || undefined}
           className={`relative inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold transition enabled:active:scale-[0.98] disabled:active:scale-100 ${FOCUS_CLASS}`}
           style={{
             background: canPublish ? CORAL_GRADIENT : DIVIDER,
