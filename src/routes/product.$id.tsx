@@ -419,7 +419,7 @@ function ProductDetail() {
             <dt className="text-[11px] uppercase tracking-wide" style={META_TEXT_MUTED}>
               {k}
             </dt>
-            <dd className="mt-0.5 break-words" style={META_TEXT_INK}>
+            <dd className="mt-0.5 line-clamp-2 break-words" style={META_TEXT_INK}>
               {v}
             </dd>
           </div>
