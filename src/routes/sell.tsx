@@ -381,64 +381,48 @@ function SellPage() {
           />
         </Layer>
 
-        <Layer visible={view === "details" || view === "final"}>
-          {view === "details" ? (
-            <DetailsStep
-              images={images}
-              onCancel={() => setView("media")}
-              onAddMore={() => fileRef.current?.click()}
-              onRemoveImage={removeImage}
-              fullCategoryLabel={fullCategoryLabel}
-              onEditCategory={() => {
-                // Reset and go back to step 1 to re-pick
-                setCatCategory("");
-                setCatGender("");
-                setCatSub("");
-                setView("media");
-              }}
-              condition={condition}
-              setCondition={setCondition}
-              title={title}
-              setTitle={setTitle}
-              description={description}
-              setDescription={setDescription}
-              size={size}
-              sizeHidden={sizeHidden}
-              sizeRequired={sizeRequired}
-              sizeError={sizeError}
-              onOpenSize={() => setSizeSheetOpen(true)}
-              canNext={step2Valid}
-              onNext={() => {
-                if (sizeRequired && !size.trim()) {
-                  setSizeError(true);
-                  return;
-                }
-                setView("final");
-              }}
-            />
-          ) : (
-            <FinalStep
-              onBack={() => setView("details")}
-              brand={brand}
-              setBrand={setBrand}
-              size={size}
-              color={color}
-              price={price}
-              setPrice={setPrice}
-              cityId={cityId}
-              onCityChange={(id, name) => {
-                setCityId(id);
-                setCity(name);
-              }}
-              delivery={delivery}
-              setDelivery={setDelivery}
-              onOpenSize={() => setSizeSheetOpen(true)}
-              onOpenColor={() => setColorSheetOpen(true)}
-              canPublish={finalValid}
-              submitting={submitting}
-              onPublish={publish}
-            />
-          )}
+        <Layer visible={view === "form"}>
+          <FormStep
+            images={images}
+            onCancel={() => setView("media")}
+            onAddMore={() => fileRef.current?.click()}
+            onRemoveImage={removeImage}
+            fullCategoryLabel={fullCategoryLabel}
+            onEditCategory={() => {
+              setCatCategory("");
+              setCatGender("");
+              setCatSub("");
+              setView("media");
+            }}
+            condition={condition}
+            setCondition={setCondition}
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            size={size}
+            sizeHidden={sizeHidden}
+            sizeRequired={sizeRequired}
+            sizeError={sizeError}
+            setSizeError={setSizeError}
+            onOpenSize={() => setSizeSheetOpen(true)}
+            brand={brand}
+            setBrand={setBrand}
+            color={color}
+            price={price}
+            setPrice={setPrice}
+            cityId={cityId}
+            onCityChange={(id, name) => {
+              setCityId(id);
+              setCity(name);
+            }}
+            delivery={delivery}
+            setDelivery={setDelivery}
+            onOpenColor={() => setColorSheetOpen(true)}
+            canPublish={finalValid}
+            submitting={submitting}
+            onPublish={publish}
+          />
         </Layer>
 
         {(["gender", "subcategory"] as Picker[]).map((p) => {
