@@ -159,7 +159,7 @@ export function RatingsDialog({
         {!isOwn && currentUserId && (
           <div className="space-y-2 border-t border-border pt-4">
             <p className="text-sm font-semibold">
-              {existing ? "Oppdater din vurdering" : "Gi en vurdering"}
+              {existing ? "Përditëso vlerësimin tënd" : "Jep një vlerësim"}
             </p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
