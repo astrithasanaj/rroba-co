@@ -224,18 +224,6 @@ function BuyPage() {
               <span style={{ color: MUTED }}>Çmimi i artikullit</span>
               <span style={{ color: TEXT }} className="font-semibold">€{price}</span>
             </div>
-            <div className="flex items-center justify-between text-sm py-1">
-              <button
-                type="button"
-                onClick={() => setProtectionInfoOpen(true)}
-                className="inline-flex items-center gap-1.5"
-                style={{ color: MUTED }}
-              >
-                Mbrojtja e blerësit
-                <Info size={14} strokeWidth={1.6} />
-              </button>
-              <span style={{ color: TEXT }} className="font-semibold">€{fee.toFixed(2)}</span>
-            </div>
             <div style={{ borderTop: `1px dashed ${DIVIDER}`, marginTop: 6, marginBottom: 6 }} />
             <div className="flex items-center justify-between text-sm py-1">
               <span style={{ color: TEXT }} className="font-bold">Nëntotali</span>
