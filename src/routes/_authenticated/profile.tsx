@@ -35,6 +35,7 @@ import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { getMembershipPlan } from "@/lib/membership-plans";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
@@ -1278,7 +1279,6 @@ type SettingsView =
   | "main"
   | "profile"
   | "notifications"
-  | "preferences"
   | "faq"
   | "support"
   | "privacy"
@@ -1328,7 +1328,6 @@ function SettingsSheet({
     main: "Cilësimet",
     profile: "Ndrysho profilin",
     notifications: "Njoftimet",
-    preferences: "Preferencat",
     faq: "Pyetjet e shpeshta",
     support: "Mbështetje",
     privacy: "Privatësia",
@@ -1393,6 +1392,7 @@ function SettingsSheet({
               onNavigate={setView}
               onLogout={() => setConfirmLogout(true)}
               onDeleteAccount={() => navigate({ to: "/profile/delete-account" })}
+              onOpenMembership={() => navigate({ to: "/membership" })}
             />
           )}
           {view === "profile" && (
@@ -1406,7 +1406,6 @@ function SettingsSheet({
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
-          {view === "preferences" && <PreferencesView />}
           {view === "faq" && <FaqView />}
           {view === "support" && <SupportView />}
           {view === "privacy" && <PrivacyView />}
@@ -1495,11 +1494,32 @@ function SettingsMain({
   onNavigate,
   onLogout,
   onDeleteAccount,
+  onOpenMembership,
 }: {
   onNavigate: (v: SettingsView) => void;
   onLogout: () => void;
   onDeleteAccount: () => void;
+  onOpenMembership: () => void;
 }) {
+  const [membershipTier, setMembershipTier] = useState<string | null>(null);
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("membership_tier")
+        .eq("id", user.id)
+        .maybeSingle();
+      setMembershipTier((data as { membership_tier?: string | null } | null)?.membership_tier ?? null);
+    })();
+  }, []);
+  const activePlan = getMembershipPlan(membershipTier);
+  const membershipSubtitle = activePlan
+    ? `${activePlan.label} · Aktiv`
+    : "Shiko planet dhe përfitimet";
   return (
     <div>
       <SectionHeader>Llogaria</SectionHeader>
@@ -1517,13 +1537,14 @@ function SettingsMain({
           onClick={() => onNavigate("notifications")}
         />
         <Row
-          icon="ti-adjustments-horizontal"
-          title="Preferencat"
-          subtitle="Kategoritë dhe madhësitë e preferuara"
-          onClick={() => onNavigate("preferences")}
+          icon="ti-crown"
+          title="Anëtarësimi"
+          subtitle={membershipSubtitle}
+          onClick={onOpenMembership}
           isLast
         />
       </div>
+
 
       <SectionHeader>Ndihmë</SectionHeader>
       <div>
@@ -2023,64 +2044,6 @@ function NotificationsView() {
   );
 }
 
-const PREF_CATEGORIES = ["Bluzë", "Pantallona", "Fustan", "Këpucë", "Xhup", "Aksesorë", "Çantë"];
-const PREF_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
-
-function Chip({
-  label,
-  selected,
-  onClick,
-}: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="rounded-full px-4 py-2 text-[13px] font-semibold transition-colors"
-      style={{
-        backgroundColor: selected ? INK : CARD,
-        color: selected ? "#ffffff" : INK,
-      }}
-    >
-      {label}
-    </button>
-  );
-}
-
-function PreferencesView() {
-  const [cats, setCats] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<string[]>([]);
-  const toggle = (arr: string[], set: (v: string[]) => void, v: string) =>
-    set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-  return (
-    <div>
-      <SectionHeader>Kategoritë e preferuara</SectionHeader>
-      <div className="flex flex-wrap gap-2 px-5 pt-2">
-        {PREF_CATEGORIES.map((c) => (
-          <Chip
-            key={c}
-            label={c}
-            selected={cats.includes(c)}
-            onClick={() => toggle(cats, setCats, c)}
-          />
-        ))}
-      </div>
-      <SectionHeader>Madhësitë</SectionHeader>
-      <div className="flex flex-wrap gap-2 px-5 pt-2">
-        {PREF_SIZES.map((s) => (
-          <Chip
-            key={s}
-            label={s}
-            selected={sizes.includes(s)}
-            onClick={() => toggle(sizes, setSizes, s)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 const FAQS = [
   {
