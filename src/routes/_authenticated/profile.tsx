@@ -1493,11 +1493,32 @@ function SettingsMain({
   onNavigate,
   onLogout,
   onDeleteAccount,
+  onOpenMembership,
 }: {
   onNavigate: (v: SettingsView) => void;
   onLogout: () => void;
   onDeleteAccount: () => void;
+  onOpenMembership: () => void;
 }) {
+  const [membershipTier, setMembershipTier] = useState<string | null>(null);
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("membership_tier")
+        .eq("id", user.id)
+        .maybeSingle();
+      setMembershipTier((data as { membership_tier?: string | null } | null)?.membership_tier ?? null);
+    })();
+  }, []);
+  const activePlan = getMembershipPlan(membershipTier);
+  const membershipSubtitle = activePlan
+    ? `${activePlan.label} · Aktiv`
+    : "Shiko planet dhe përfitimet";
   return (
     <div>
       <SectionHeader>Llogaria</SectionHeader>
@@ -1515,13 +1536,14 @@ function SettingsMain({
           onClick={() => onNavigate("notifications")}
         />
         <Row
-          icon="ti-adjustments-horizontal"
-          title="Preferencat"
-          subtitle="Kategoritë dhe madhësitë e preferuara"
-          onClick={() => onNavigate("preferences")}
+          icon="ti-crown"
+          title="Anëtarësimi"
+          subtitle={membershipSubtitle}
+          onClick={onOpenMembership}
           isLast
         />
       </div>
+
 
       <SectionHeader>Ndihmë</SectionHeader>
       <div>
