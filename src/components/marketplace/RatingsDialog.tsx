@@ -202,7 +202,7 @@ export function RatingsDialog({
         )}
 
         {!currentUserId && (
-          <p className="text-center text-xs text-muted-foreground">Logg inn for å vurdere.</p>
+          <p className="text-center text-xs text-muted-foreground">Hyr për të vlerësuar.</p>
         )}
 
         <div className="space-y-3 border-t border-border pt-4">
