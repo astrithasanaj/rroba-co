@@ -166,7 +166,7 @@ function getSubcategories(category: string, gender: string): string[] {
 // City list moved to DB — see CityPicker/useCities
 const DELIVERY = ["Takim", "Dorëzim në shtëpi"];
 
-type View = "media" | "details" | "final";
+type View = "media" | "form";
 type Picker = "gender" | "subcategory";
 
 function SellPage() {
