@@ -212,7 +212,7 @@ export function RatingsDialog({
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : ratings.length === 0 ? (
-            <p className="text-center text-xs text-muted-foreground">Ingen vurderinger ennå.</p>
+            <p className="text-center text-xs text-muted-foreground">Ende asnjë vlerësim.</p>
           ) : (
             ratings.map((r) => (
               <div key={r.id} className="rounded-xl border border-border p-3">
