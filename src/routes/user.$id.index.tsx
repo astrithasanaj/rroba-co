@@ -353,8 +353,8 @@ function UserProfile() {
             onClick={() => setMoreOpen(true)}
             className="profile-btn grid place-items-center"
             style={{
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               borderRadius: "9999px",
               backgroundColor: CARD,
               color: INK,
@@ -362,7 +362,7 @@ function UserProfile() {
             }}
             aria-label="Më shumë"
           >
-            <MoreHorizontal style={{ width: 18, height: 18 }} strokeWidth={1.8} />
+            <MoreHorizontal style={{ width: 22, height: 22 }} strokeWidth={1.8} />
           </button>
         </header>
 
