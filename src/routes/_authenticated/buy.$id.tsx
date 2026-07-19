@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ArrowLeft, Info, MapPin, Handshake, Home, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ArrowLeft, MapPin, Handshake, Home, ChevronRight, X } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
