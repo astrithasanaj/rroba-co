@@ -583,13 +583,13 @@ function ProfilePage() {
                   aria-label={tabLabels[t.id]}
                   onClick={() => setTab(t.id)}
                   className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
-                  style={{ height: 44, background: "transparent", border: "none" }}
+                  style={{ height: 52, background: "transparent", border: "none" }}
                 >
                   <Icon
                     aria-hidden="true"
                     style={{
-                      width: 20,
-                      height: 20,
+                      width: 26,
+                      height: 26,
                       color: active ? INK : "var(--brand-border-strong)",
                     }}
                     strokeWidth={active ? 2 : 1.7}
@@ -600,7 +600,7 @@ function ProfilePage() {
                       style={{
                         position: "absolute",
                         bottom: 0,
-                        width: 20,
+                        width: 26,
                         height: 2,
                         backgroundColor: INK,
                       }}
