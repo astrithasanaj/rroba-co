@@ -460,7 +460,6 @@ function SignupFullPage() {
       const genderMap: Record<Gender, string> = {
         female: "Femër",
         male: "Mashkull",
-        unspecified: "Preferoj të mos specifikoj",
       };
       const patch: Record<string, unknown> = {
         first_name: firstName.trim(),
