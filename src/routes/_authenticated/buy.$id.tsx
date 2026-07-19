@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ArrowLeft, Info, MapPin, Handshake, Home, ChevronRight, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronLeft, ArrowLeft, MapPin, Handshake, Home, ChevronRight, X } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,9 +20,6 @@ const MUTED = "#a89f94";
 const DIVIDER = "#e2e2de";
 const CORAL = "#c65a7a";
 
-function roundHalf(n: number) {
-  return Math.round(n * 2) / 2;
-}
 
 function BuyPage() {
   const { id } = useParams({ from: "/_authenticated/buy/$id" });
@@ -36,7 +33,6 @@ function BuyPage() {
   const [offerOpen, setOfferOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [offerAmount, setOfferAmount] = useState("");
-  const [protectionInfoOpen, setProtectionInfoOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -64,8 +60,7 @@ function BuyPage() {
   }, [id]);
 
   const price = listing?.price ?? 0;
-  const fee = useMemo(() => roundHalf(price * 0.05), [price]);
-  const total = price + fee;
+  const total = price;
 
   const deliveryOptions = listing?.delivery ?? [];
   const hasMeet =
@@ -225,18 +220,6 @@ function BuyPage() {
             <div className="flex items-center justify-between text-sm py-1">
               <span style={{ color: MUTED }}>Çmimi i artikullit</span>
               <span style={{ color: TEXT }} className="font-semibold">€{price}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm py-1">
-              <button
-                type="button"
-                onClick={() => setProtectionInfoOpen(true)}
-                className="inline-flex items-center gap-1.5"
-                style={{ color: MUTED }}
-              >
-                Mbrojtja e blerësit
-                <Info size={14} strokeWidth={1.6} />
-              </button>
-              <span style={{ color: TEXT }} className="font-semibold">€{fee.toFixed(2)}</span>
             </div>
             <div style={{ borderTop: `1px dashed ${DIVIDER}`, marginTop: 6, marginBottom: 6 }} />
             <div className="flex items-center justify-between text-sm py-1">
@@ -411,26 +394,6 @@ function BuyPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Protection info sheet */}
-      <Sheet open={protectionInfoOpen} onOpenChange={setProtectionInfoOpen}>
-        <SheetContent side="bottom" hideClose style={{ backgroundColor: CREAM, borderColor: DIVIDER }}>
-          <div className="flex items-center gap-3 mb-4">
-            <button
-              type="button"
-              onClick={() => setProtectionInfoOpen(false)}
-              aria-label="Kthehu"
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
-              style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
-            >
-              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
-            </button>
-            <h3 className="text-base font-bold" style={{ color: TEXT }}>Mbrojtja e blerësit</h3>
-          </div>
-          <p className="text-sm mb-6" style={{ color: TEXT }}>
-            Mbrojtja e blerësit siguron që të marrësh artikullin siç përshkruhet.
-          </p>
-        </SheetContent>
-      </Sheet>
 
       {/* Confirm buy sheet */}
       <Sheet open={confirmOpen} onOpenChange={setConfirmOpen}>
