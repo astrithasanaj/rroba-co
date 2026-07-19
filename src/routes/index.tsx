@@ -454,7 +454,7 @@ function ForYou({
           )}
 
           <section className="mt-7 px-[18px]">
-            <SectionHeader title="Trending tani" seeAllSearch={{ section: "trending" }} />
+            <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
             <div className="mt-3 grid grid-cols-2 gap-2">
               {trending.map((l, i) => (
                 <ListingCard key={l.id} listing={l} eager={i < 4} />
