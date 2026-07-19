@@ -130,7 +130,7 @@ export function RatingsDialog({
       toast.error(error.message);
       return;
     }
-    toast.success(existing ? "Vurdering oppdatert" : "Takk for vurderingen");
+    toast.success(existing ? "Vlerësimi u përditësua" : "Faleminderit për vlerësimin");
   };
 
   const avg =
@@ -142,9 +142,9 @@ export function RatingsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-md overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Vurderinger</DialogTitle>
+          <DialogTitle>Vlerësimet</DialogTitle>
           <DialogDescription>
-            {sellerName} har {ratings.length} vurderinger
+            {sellerName} ka {ratings.length} vlerësime
           </DialogDescription>
         </DialogHeader>
 
@@ -152,14 +152,14 @@ export function RatingsDialog({
           <div className="text-3xl font-display">{avg.toFixed(1)}</div>
           <div>
             <StarRow value={avg} size={16} />
-            <p className="text-xs text-muted-foreground">basert på {ratings.length} vurderinger</p>
+            <p className="text-xs text-muted-foreground">bazuar në {ratings.length} vlerësime</p>
           </div>
         </div>
 
         {!isOwn && currentUserId && (
           <div className="space-y-2 border-t border-border pt-4">
             <p className="text-sm font-semibold">
-              {existing ? "Oppdater din vurdering" : "Gi en vurdering"}
+              {existing ? "Përditëso vlerësimin tënd" : "Jep një vlerësim"}
             </p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
@@ -170,7 +170,7 @@ export function RatingsDialog({
                   onMouseLeave={() => setHover(0)}
                   onClick={() => setStars(n)}
                   className="p-1"
-                  aria-label={`${n} stjerner`}
+                  aria-label={`${n} yje`}
                 >
                   <Star
                     className={
@@ -187,7 +187,7 @@ export function RatingsDialog({
               onChange={(e) => setComment(e.target.value)}
               maxLength={500}
               rows={3}
-              placeholder="Skriv en kommentar (valgfritt)"
+              placeholder="Shkruaj një koment (opsionale)"
             />
             <button
               type="button"
@@ -196,30 +196,30 @@ export function RatingsDialog({
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-semibold text-background disabled:opacity-50"
             >
               {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {existing ? "Oppdater" : "Send vurdering"}
+              {existing ? "Përditëso" : "Dërgo vlerësimin"}
             </button>
           </div>
         )}
 
         {!currentUserId && (
-          <p className="text-center text-xs text-muted-foreground">Logg inn for å vurdere.</p>
+          <p className="text-center text-xs text-muted-foreground">Hyr për të vlerësuar.</p>
         )}
 
         <div className="space-y-3 border-t border-border pt-4">
-          <p className="text-sm font-semibold">Alle vurderinger</p>
+          <p className="text-sm font-semibold">Të gjitha vlerësimet</p>
           {loading ? (
             <div className="grid place-items-center py-6">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : ratings.length === 0 ? (
-            <p className="text-center text-xs text-muted-foreground">Ingen vurderinger ennå.</p>
+            <p className="text-center text-xs text-muted-foreground">Ende asnjë vlerësim.</p>
           ) : (
             ratings.map((r) => (
               <div key={r.id} className="rounded-xl border border-border p-3">
                 <div className="flex items-center justify-between">
                   <StarRow value={r.stars} />
                   <span className="text-xs text-muted-foreground">
-                    {new Date(r.created_at).toLocaleDateString("nb-NO")}
+                    {new Date(r.created_at).toLocaleDateString("sq-AL")}
                   </span>
                 </div>
                 {r.comment && <p className="mt-1.5 text-sm">{r.comment}</p>}
@@ -232,7 +232,7 @@ export function RatingsDialog({
           type="button"
           onClick={() => onOpenChange(false)}
           className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full hover:bg-secondary"
-          aria-label="Lukk"
+          aria-label="Mbyll"
         >
           <X className="h-4 w-4" />
         </button>

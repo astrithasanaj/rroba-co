@@ -833,7 +833,7 @@ function RecentSearches({
 function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const items: { key: Tab; label: string }[] = [
     { key: "main", label: "Kryesore" },
-    { key: "profile", label: "Profile" },
+    { key: "profile", label: "Profili" },
     { key: "brand", label: "Marka" },
     { key: "category", label: "Kategori" },
   ];

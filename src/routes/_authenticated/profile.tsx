@@ -1502,7 +1502,7 @@ function SettingsMain({
 }) {
   return (
     <div>
-      <SectionHeader>Konto</SectionHeader>
+      <SectionHeader>Llogaria</SectionHeader>
       <div>
         <Row
           icon="ti-user"
