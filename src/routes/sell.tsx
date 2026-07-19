@@ -358,7 +358,7 @@ function SellPage() {
   const handlePickSub = (s: string) => {
     setCatSub(s);
     closePickers();
-    setView("details");
+    setView("form");
   };
 
   return (
