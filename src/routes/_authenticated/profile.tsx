@@ -1327,7 +1327,6 @@ function SettingsSheet({
     main: "Cilësimet",
     profile: "Ndrysho profilin",
     notifications: "Njoftimet",
-    preferences: "Preferencat",
     faq: "Pyetjet e shpeshta",
     support: "Mbështetje",
     privacy: "Privatësia",
