@@ -37,7 +37,6 @@ function BuyPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [offerAmount, setOfferAmount] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
