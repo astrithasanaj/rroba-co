@@ -187,7 +187,7 @@ export function RatingsDialog({
               onChange={(e) => setComment(e.target.value)}
               maxLength={500}
               rows={3}
-              placeholder="Skriv en kommentar (valgfritt)"
+              placeholder="Shkruaj një koment (opsionale)"
             />
             <button
               type="button"
