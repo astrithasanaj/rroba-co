@@ -36,7 +36,7 @@ const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
 
 // City list moved to DB — see CityPicker/useCities
 
-type Gender = "female" | "male" | "unspecified";
+type Gender = "female" | "male";
 
 type StrengthResult = {
   checks: {
@@ -460,7 +460,6 @@ function SignupFullPage() {
       const genderMap: Record<Gender, string> = {
         female: "Femër",
         male: "Mashkull",
-        unspecified: "Preferoj të mos specifikoj",
       };
       const patch: Record<string, unknown> = {
         first_name: firstName.trim(),
