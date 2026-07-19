@@ -170,7 +170,7 @@ export function RatingsDialog({
                   onMouseLeave={() => setHover(0)}
                   onClick={() => setStars(n)}
                   className="p-1"
-                  aria-label={`${n} stjerner`}
+                  aria-label={`${n} yje`}
                 >
                   <Star
                     className={
