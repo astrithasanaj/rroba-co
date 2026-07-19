@@ -196,7 +196,7 @@ export function RatingsDialog({
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-semibold text-background disabled:opacity-50"
             >
               {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {existing ? "Oppdater" : "Send vurdering"}
+              {existing ? "Përditëso" : "Dërgo vlerësimin"}
             </button>
           </div>
         )}
