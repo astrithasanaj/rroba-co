@@ -142,9 +142,9 @@ export function RatingsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-md overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Vurderinger</DialogTitle>
+          <DialogTitle>Vlerësimet</DialogTitle>
           <DialogDescription>
-            {sellerName} har {ratings.length} vurderinger
+            {sellerName} ka {ratings.length} vlerësime
           </DialogDescription>
         </DialogHeader>
 
