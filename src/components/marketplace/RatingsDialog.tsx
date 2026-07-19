@@ -206,7 +206,7 @@ export function RatingsDialog({
         )}
 
         <div className="space-y-3 border-t border-border pt-4">
-          <p className="text-sm font-semibold">Alle vurderinger</p>
+          <p className="text-sm font-semibold">Të gjitha vlerësimet</p>
           {loading ? (
             <div className="grid place-items-center py-6">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
