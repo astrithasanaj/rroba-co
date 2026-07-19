@@ -1278,7 +1278,6 @@ type SettingsView =
   | "main"
   | "profile"
   | "notifications"
-  | "preferences"
   | "faq"
   | "support"
   | "privacy"
