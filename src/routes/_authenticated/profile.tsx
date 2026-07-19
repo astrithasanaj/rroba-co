@@ -659,7 +659,7 @@ function ProfilePage() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
             <h2 className="text-[17px] font-bold" style={{ color: INK }}>
               Rendit sipas
@@ -735,7 +735,7 @@ function ProfilePage() {
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+                <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
@@ -1368,7 +1368,7 @@ function SettingsSheet({
               flexShrink: 0,
             }}
           >
-            <ChevronLeft aria-hidden="true" size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft aria-hidden="true" size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle
             className="italic"
@@ -2272,7 +2272,7 @@ function LogoutConfirm({
             flexShrink: 0,
           }}
         >
-          <ChevronLeft aria-hidden="true" size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft aria-hidden="true" size={22} color="#ffffff" strokeWidth={2} />
         </button>
         <span
           id="logout-title"

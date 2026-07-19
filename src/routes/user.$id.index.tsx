@@ -635,7 +635,7 @@ function UserProfile() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-2 pb-6 pt-1">
@@ -672,7 +672,7 @@ function UserProfile() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-5 pb-8 pt-4">
