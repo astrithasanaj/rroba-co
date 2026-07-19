@@ -6,6 +6,7 @@ export type ListingRow = {
   title: string;
   brand: string;
   category: string;
+  subcategory: string | null;
   size: string;
   price: number;
   description: string;

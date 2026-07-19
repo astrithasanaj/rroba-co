@@ -184,13 +184,14 @@ function ProductDetail() {
   }
 
   const meta: [string, string][] = [
-    ["Marka", listing.brand || "—"],
     ["Kategoria", listing.category],
-    ["Madhësia", listing.size],
+    ["Lloji i produktit", listing.subcategory || "—"],
+    ["Marka", listing.brand || "—"],
     ["Gjendja", listing.condition],
+    ["Madhësia", listing.size],
     ["Ngjyra", listing.color || "—"],
-    ["Qyteti", listing.city || "—"],
     ["Gjinia", listing.gender],
+    ["Qyteti", listing.city || "—"],
   ];
 
   const images = listing.imageUrls.length ? listing.imageUrls : [listing.coverUrl];
@@ -370,9 +371,7 @@ function ProductDetail() {
           className="px-[18px] py-1 text-[13px]"
           style={META_TEXT_INK}
           aria-label={
-            likeInfo.count === 1
-              ? "Pëlqyer nga 1 person"
-              : `Pëlqyer nga ${likeInfo.count} persona`
+            likeInfo.count === 1 ? "Pëlqyer nga 1 person" : `Pëlqyer nga ${likeInfo.count} persona`
           }
         >
           <span className="font-semibold">Pëlqyer nga</span>{" "}
@@ -418,7 +417,7 @@ function ProductDetail() {
             <dt className="text-[11px] uppercase tracking-wide" style={META_TEXT_MUTED}>
               {k}
             </dt>
-            <dd className="mt-0.5 break-words" style={META_TEXT_INK}>
+            <dd className="mt-0.5 line-clamp-2 break-words" style={META_TEXT_INK}>
               {v}
             </dd>
           </div>
