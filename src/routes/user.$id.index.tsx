@@ -344,7 +344,7 @@ function UserProfile() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
+            <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
           </button>
           <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
