@@ -347,23 +347,23 @@ function ProfilePage() {
         >
           <div
             className="flex items-center"
-            style={{ backgroundColor: CARD, borderRadius: 20, padding: "7px 12px", gap: 8 }}
+            style={{ backgroundColor: CARD, borderRadius: 24, padding: "6px 10px", gap: 4 }}
           >
             <button
               onClick={() => navigate({ to: "/notifications" })}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Njoftimet"
             >
-              <Bell style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+              <Bell style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
             <button
               onClick={() => setSortOpen(true)}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Filtro"
             >
-              <SlidersHorizontal style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+              <SlidersHorizontal style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
           </div>
           <h1
@@ -378,23 +378,23 @@ function ProfilePage() {
           </h1>
           <div
             className="flex items-center"
-            style={{ backgroundColor: CARD, borderRadius: 20, padding: "7px 12px", gap: 8 }}
+            style={{ backgroundColor: CARD, borderRadius: 24, padding: "6px 10px", gap: 4 }}
           >
             <button
               onClick={handleShare}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Shpërndaj"
             >
-              <IosShareIcon size={15} color={INK} strokeWidth={1.6} />
+              <IosShareIcon size={20} color={INK} strokeWidth={1.6} />
             </button>
             <button
               onClick={() => setSettingsOpen(true)}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Cilësimet"
             >
-              <SettingsIcon style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+              <SettingsIcon style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
           </div>
         </header>
