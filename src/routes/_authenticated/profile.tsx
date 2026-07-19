@@ -1404,7 +1404,6 @@ function SettingsSheet({
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
-          {view === "preferences" && <PreferencesView />}
           {view === "faq" && <FaqView />}
           {view === "support" && <SupportView />}
           {view === "privacy" && <PrivacyView />}
