@@ -2044,64 +2044,6 @@ function NotificationsView() {
   );
 }
 
-const PREF_CATEGORIES = ["Bluzë", "Pantallona", "Fustan", "Këpucë", "Xhup", "Aksesorë", "Çantë"];
-const PREF_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
-
-function Chip({
-  label,
-  selected,
-  onClick,
-}: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="rounded-full px-4 py-2 text-[13px] font-semibold transition-colors"
-      style={{
-        backgroundColor: selected ? INK : CARD,
-        color: selected ? "#ffffff" : INK,
-      }}
-    >
-      {label}
-    </button>
-  );
-}
-
-function PreferencesView() {
-  const [cats, setCats] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<string[]>([]);
-  const toggle = (arr: string[], set: (v: string[]) => void, v: string) =>
-    set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-  return (
-    <div>
-      <SectionHeader>Kategoritë e preferuara</SectionHeader>
-      <div className="flex flex-wrap gap-2 px-5 pt-2">
-        {PREF_CATEGORIES.map((c) => (
-          <Chip
-            key={c}
-            label={c}
-            selected={cats.includes(c)}
-            onClick={() => toggle(cats, setCats, c)}
-          />
-        ))}
-      </div>
-      <SectionHeader>Madhësitë</SectionHeader>
-      <div className="flex flex-wrap gap-2 px-5 pt-2">
-        {PREF_SIZES.map((s) => (
-          <Chip
-            key={s}
-            label={s}
-            selected={sizes.includes(s)}
-            onClick={() => toggle(sizes, setSizes, s)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 const FAQS = [
   {
