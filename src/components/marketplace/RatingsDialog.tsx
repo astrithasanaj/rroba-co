@@ -232,7 +232,7 @@ export function RatingsDialog({
           type="button"
           onClick={() => onOpenChange(false)}
           className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full hover:bg-secondary"
-          aria-label="Lukk"
+          aria-label="Mbyll"
         >
           <X className="h-4 w-4" />
         </button>
