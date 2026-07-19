@@ -130,7 +130,7 @@ export function RatingsDialog({
       toast.error(error.message);
       return;
     }
-    toast.success(existing ? "Vurdering oppdatert" : "Takk for vurderingen");
+    toast.success(existing ? "Vlerësimi u përditësua" : "Faleminderit për vlerësimin");
   };
 
   const avg =
