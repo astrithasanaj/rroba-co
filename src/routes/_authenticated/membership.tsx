@@ -113,7 +113,7 @@ function MembershipPage() {
               border: `1px solid ${DIVIDER}`,
             }}
           >
-            <ChevronLeft size={20} aria-hidden="true" style={{ color: INK }} />
+            <ChevronLeft size={22} aria-hidden="true" style={{ color: INK }} />
           </button>
           <h1
             className="flex-1 px-3 text-center font-display italic"

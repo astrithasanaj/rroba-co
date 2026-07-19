@@ -269,7 +269,7 @@ function ManageListingPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
           </button>
           <h1
             className="flex-1 truncate px-3 text-center text-base font-bold"
@@ -395,7 +395,7 @@ function ManageListingPage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
             </button>
             <SheetTitle style={{ color: INK }}>Ndrysho çmimin</SheetTitle>
           </div>
@@ -499,7 +499,7 @@ function ManageListingPage() {
                 flexShrink: 0,
               }}
             >
-              <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+              <ChevronLeft size={22} color="#ffffff" strokeWidth={2} />
             </button>
             <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
               Kush e bleu?
@@ -652,7 +652,7 @@ function ConfirmSheet({
             flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft size={22} color="#ffffff" strokeWidth={2} />
         </button>
         <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
           {title}

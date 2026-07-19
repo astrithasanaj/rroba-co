@@ -138,7 +138,7 @@ function UsersBrowsePage() {
                 WebkitBackdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
             </button>
             <h1 style={{ flex: 1, textAlign: "center", fontSize: 16, fontWeight: 600, color: INK, marginRight: 36 }}>
               Të gjithë përdoruesit

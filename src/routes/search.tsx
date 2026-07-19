@@ -1268,7 +1268,7 @@ function FiltersSheet({
               backdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </div>

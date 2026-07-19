@@ -250,7 +250,7 @@ function AdminPromotions() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
           </button>
           <h1 className="flex-1 px-3 text-center font-display text-[22px] italic" style={{ color: INK }}>
             Promovime

@@ -22,7 +22,7 @@ export const BottomNav = () => {
         bottom: "16px",
         left: "16px",
         right: "16px",
-        height: "58px",
+        height: "68px",
         background: "rgba(45,21,33,0.88)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
@@ -51,15 +51,15 @@ export const BottomNav = () => {
               onClick={() => navigate({ to: item.route })}
               className="nav-sell-btn tap-icon"
               style={{
-                width: "44px",
-                height: "44px",
-                minWidth: "44px",
-                maxWidth: "44px",
-                minHeight: "44px",
-                maxHeight: "44px",
+                width: "52px",
+                height: "52px",
+                minWidth: "52px",
+                maxWidth: "52px",
+                minHeight: "52px",
+                maxHeight: "52px",
                 backgroundColor: "transparent",
                 border: "1.5px solid #ffffff",
-                borderRadius: "12px",
+                borderRadius: "14px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -72,7 +72,7 @@ export const BottomNav = () => {
               <i
                 className="ti ti-plus"
                 style={{
-                  fontSize: "20px",
+                  fontSize: "24px",
                   color: "#ffffff",
                   lineHeight: 1,
                 }}
@@ -87,15 +87,15 @@ export const BottomNav = () => {
             onClick={() => navigate({ to: item.route })}
             className="nav-item tap-icon"
             style={{
-              width: "44px",
-              height: "44px",
-              minWidth: "44px",
-              maxWidth: "44px",
-              minHeight: "44px",
-              maxHeight: "44px",
+              width: "52px",
+              height: "52px",
+              minWidth: "52px",
+              maxWidth: "52px",
+              minHeight: "52px",
+              maxHeight: "52px",
               backgroundColor: isActive ? "rgba(255,255,255,0.22)" : "transparent",
               border: "none",
-              borderRadius: "12px",
+              borderRadius: "14px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -108,12 +108,12 @@ export const BottomNav = () => {
             <i
               className={`ti ${item.icon}`}
               style={{
-                fontSize: "20px",
+                fontSize: "24px",
                 color: "#ffffff",
                 lineHeight: 1,
                 display: "block",
-                width: "20px",
-                height: "20px",
+                width: "24px",
+                height: "24px",
               }}
             />
           </button>

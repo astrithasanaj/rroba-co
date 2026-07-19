@@ -80,7 +80,7 @@ function GenderSelectPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
             {def.label}

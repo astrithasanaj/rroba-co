@@ -347,23 +347,23 @@ function ProfilePage() {
         >
           <div
             className="flex items-center"
-            style={{ backgroundColor: CARD, borderRadius: 20, padding: "7px 12px", gap: 8 }}
+            style={{ backgroundColor: CARD, borderRadius: 24, padding: "6px 10px", gap: 4 }}
           >
             <button
               onClick={() => navigate({ to: "/notifications" })}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Njoftimet"
             >
-              <Bell style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+              <Bell style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
             <button
               onClick={() => setSortOpen(true)}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Filtro"
             >
-              <SlidersHorizontal style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+              <SlidersHorizontal style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
           </div>
           <h1
@@ -378,23 +378,23 @@ function ProfilePage() {
           </h1>
           <div
             className="flex items-center"
-            style={{ backgroundColor: CARD, borderRadius: 20, padding: "7px 12px", gap: 8 }}
+            style={{ backgroundColor: CARD, borderRadius: 24, padding: "6px 10px", gap: 4 }}
           >
             <button
               onClick={handleShare}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Shpërndaj"
             >
-              <IosShareIcon size={15} color={INK} strokeWidth={1.6} />
+              <IosShareIcon size={20} color={INK} strokeWidth={1.6} />
             </button>
             <button
               onClick={() => setSettingsOpen(true)}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0 }}
+              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Cilësimet"
             >
-              <SettingsIcon style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+              <SettingsIcon style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
           </div>
         </header>
@@ -583,13 +583,13 @@ function ProfilePage() {
                   aria-label={tabLabels[t.id]}
                   onClick={() => setTab(t.id)}
                   className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
-                  style={{ height: 44, background: "transparent", border: "none" }}
+                  style={{ height: 52, background: "transparent", border: "none" }}
                 >
                   <Icon
                     aria-hidden="true"
                     style={{
-                      width: 20,
-                      height: 20,
+                      width: 26,
+                      height: 26,
                       color: active ? INK : "var(--brand-border-strong)",
                     }}
                     strokeWidth={active ? 2 : 1.7}
@@ -600,7 +600,7 @@ function ProfilePage() {
                       style={{
                         position: "absolute",
                         bottom: 0,
-                        width: 20,
+                        width: 26,
                         height: 2,
                         backgroundColor: INK,
                       }}
@@ -659,7 +659,7 @@ function ProfilePage() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
             <h2 className="text-[17px] font-bold" style={{ color: INK }}>
               Rendit sipas
@@ -735,7 +735,7 @@ function ProfilePage() {
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+                <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
@@ -1368,7 +1368,7 @@ function SettingsSheet({
               flexShrink: 0,
             }}
           >
-            <ChevronLeft aria-hidden="true" size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft aria-hidden="true" size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle
             className="italic"
@@ -2272,7 +2272,7 @@ function LogoutConfirm({
             flexShrink: 0,
           }}
         >
-          <ChevronLeft aria-hidden="true" size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft aria-hidden="true" size={22} color="#ffffff" strokeWidth={2} />
         </button>
         <span
           id="logout-title"

@@ -143,7 +143,7 @@ export function MoreSheet({
                   backdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 Më shumë
@@ -193,7 +193,7 @@ export function MoreSheet({
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 Raporto artikullin

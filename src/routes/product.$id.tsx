@@ -41,7 +41,7 @@ type Seller = {
 
 // Delte klasse-strenger for konsekvent stil
 const ICON_BTN =
-  "grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
+  "grid h-12 w-12 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
 const META_TEXT_INK = { color: "var(--brand-ink)" } as const;
 const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
 
@@ -221,7 +221,7 @@ function ProductDetail() {
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
+          <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
         </button>
         <div className="min-w-0 flex-1 px-2 text-center">
           <h1 className="truncate font-display text-base font-semibold" style={META_TEXT_INK}>
@@ -238,7 +238,7 @@ function ProductDetail() {
           className={`${ICON_BTN} border`}
           style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
         >
-          <MoreHorizontal size={20} color="var(--brand-ink)" strokeWidth={1.6} aria-hidden="true" />
+          <MoreHorizontal size={22} color="var(--brand-ink)" strokeWidth={1.6} aria-hidden="true" />
         </button>
       </div>
 

@@ -182,7 +182,7 @@ function NotificationsPage() {
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" style={{ color: INK }} />
+          <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" style={{ color: INK }} />
         </button>
         <h1 className="font-display text-2xl" style={{ color: INK }}>Njoftimet</h1>
       </header>

@@ -344,7 +344,7 @@ function UserProfile() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={20} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
+            <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
           </button>
           <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
@@ -353,8 +353,8 @@ function UserProfile() {
             onClick={() => setMoreOpen(true)}
             className="profile-btn grid place-items-center"
             style={{
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               borderRadius: "9999px",
               backgroundColor: CARD,
               color: INK,
@@ -362,7 +362,7 @@ function UserProfile() {
             }}
             aria-label="Më shumë"
           >
-            <MoreHorizontal style={{ width: 18, height: 18 }} strokeWidth={1.8} />
+            <MoreHorizontal style={{ width: 22, height: 22 }} strokeWidth={1.8} />
           </button>
         </header>
 
@@ -635,7 +635,7 @@ function UserProfile() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-2 pb-6 pt-1">
@@ -672,7 +672,7 @@ function UserProfile() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
           </div>
           <div className="px-5 pb-8 pt-4">

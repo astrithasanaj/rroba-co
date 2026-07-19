@@ -61,7 +61,7 @@ function ForgotPage() {
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
+          <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" />
         </button>
 
         {sent ? (
