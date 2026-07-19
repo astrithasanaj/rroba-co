@@ -2023,7 +2023,7 @@ function NotificationsView() {
   );
 }
 
-const PREF_CATEGORIES = ["Topp", "Bukse", "Fustan", "Këpucë", "Xhup", "Aksesorë", "Çantë"];
+const PREF_CATEGORIES = ["Bluzë", "Pantallona", "Fustan", "Këpucë", "Xhup", "Aksesorë", "Çantë"];
 const PREF_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
 function Chip({
