@@ -1353,23 +1353,22 @@ function SettingsSheet({
           }}
         >
           <button
+            type="button"
             onClick={handleBack}
-            aria-label="Mbrapa"
+            aria-label="Kthehu"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
             style={{
-              background: CARD,
-              border: "none",
-              borderRadius: "50%",
               width: 44,
               height: 44,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
+              backgroundColor: GLASS_BG,
+              border: `1px solid ${GLASS_BORDER}`,
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
               WebkitTapHighlightColor: "transparent",
               flexShrink: 0,
             }}
           >
-            <i className="ti ti-chevron-left" style={{ fontSize: 18, color: INK }} />
+            <ChevronLeft aria-hidden="true" size={18} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle
             className="italic"
@@ -1383,7 +1382,7 @@ function SettingsSheet({
           >
             {titles[view]}
           </SheetTitle>
-          <div style={{ width: 36 }} />
+          <div style={{ width: 44 }} />
         </div>
 
         <div className="px-0 pb-6">
