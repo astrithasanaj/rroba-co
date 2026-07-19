@@ -101,7 +101,7 @@ export function ColorPickerSheet({
             backgroundColor: "rgba(255,255,255,0.12)",
           }}
         >
-          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft size={22} color="#ffffff" strokeWidth={2} />
         </button>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <h2 className="text-base font-medium" style={{ color: "#ffffff" }}>

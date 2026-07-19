@@ -196,7 +196,7 @@ function Header({ step, onBack, title }: { step: 1 | 2 | 3; onBack: () => void; 
           WebkitBackdropFilter: "blur(8px)",
         }}
       >
-        <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
+        <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" />
       </button>
       <div className="mt-4">
         <h1

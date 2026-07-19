@@ -284,7 +284,7 @@ export function CategoryPickerSheet({
             flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color={HEADER_TEXT} strokeWidth={2} />
+          <ChevronLeft size={22} color={HEADER_TEXT} strokeWidth={2} />
         </button>
         <span
           style={{

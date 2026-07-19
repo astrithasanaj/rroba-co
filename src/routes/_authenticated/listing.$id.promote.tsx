@@ -195,7 +195,7 @@ function PromotePage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
           </button>
           <h1
             className="flex-1 px-3 text-center font-display text-[22px] italic"
@@ -522,7 +522,7 @@ function PaySheet({
             flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color="#ffffff" strokeWidth={2} />
+          <ChevronLeft size={22} color="#ffffff" strokeWidth={2} />
         </button>
         <span style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}>
           Bli {p.label}

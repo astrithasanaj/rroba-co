@@ -43,7 +43,7 @@ function PrivacyPage() {
             }
           }}
         >
-          <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+          <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
         </Link>
         <h1
           className="italic mt-2"

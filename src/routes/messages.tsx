@@ -130,7 +130,7 @@ function BackButton({ onClick, label = "Kthehu" }: { onClick: () => void; label?
         WebkitBackdropFilter: "blur(8px)",
       }}
     >
-      <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" style={{ color: "var(--brand-ink)" }} />
+      <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" style={{ color: "var(--brand-ink)" }} />
     </button>
   );
 }

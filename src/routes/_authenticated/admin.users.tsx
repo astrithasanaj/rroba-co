@@ -181,7 +181,7 @@ function AdminUsers() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
           </button>
           <h1 className="text-2xl font-bold">Përdoruesit</h1>
         </div>

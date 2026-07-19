@@ -150,7 +150,7 @@ function CategoryResultsPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1
             className="px-12 text-center text-[15px] font-bold leading-tight"
@@ -339,7 +339,7 @@ function FiltersSheet({
               backdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={18} color="var(--brand-ink)" strokeWidth={2} />
+            <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
         </div>

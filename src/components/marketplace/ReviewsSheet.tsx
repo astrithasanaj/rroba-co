@@ -246,7 +246,7 @@ export function ReviewsSheet({
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
@@ -502,7 +502,7 @@ export function ReviewsSheet({
                   backdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={18} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerëso shitësin</div>
             </div>
