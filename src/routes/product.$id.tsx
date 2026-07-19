@@ -238,7 +238,7 @@ function ProductDetail() {
           className={`${ICON_BTN} border`}
           style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
         >
-          <MoreHorizontal size={20} color="var(--brand-ink)" strokeWidth={1.6} aria-hidden="true" />
+          <MoreHorizontal size={22} color="var(--brand-ink)" strokeWidth={1.6} aria-hidden="true" />
         </button>
       </div>
 
