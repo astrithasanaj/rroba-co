@@ -41,7 +41,7 @@ type Seller = {
 
 // Delte klasse-strenger for konsekvent stil
 const ICON_BTN =
-  "grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
+  "grid h-12 w-12 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
 const META_TEXT_INK = { color: "var(--brand-ink)" } as const;
 const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
 
