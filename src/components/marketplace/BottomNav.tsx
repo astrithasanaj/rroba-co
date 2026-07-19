@@ -51,15 +51,15 @@ export const BottomNav = () => {
               onClick={() => navigate({ to: item.route })}
               className="nav-sell-btn tap-icon"
               style={{
-                width: "44px",
-                height: "44px",
-                minWidth: "44px",
-                maxWidth: "44px",
-                minHeight: "44px",
-                maxHeight: "44px",
+                width: "52px",
+                height: "52px",
+                minWidth: "52px",
+                maxWidth: "52px",
+                minHeight: "52px",
+                maxHeight: "52px",
                 backgroundColor: "transparent",
                 border: "1.5px solid #ffffff",
-                borderRadius: "12px",
+                borderRadius: "14px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
