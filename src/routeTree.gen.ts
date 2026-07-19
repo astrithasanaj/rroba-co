@@ -33,6 +33,7 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedMyPromotionsRouteImport } from './routes/_authenticated/my-promotions'
+import { Route as AuthenticatedMembershipRouteImport } from './routes/_authenticated/membership'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as UserIdIndexRouteImport } from './routes/user.$id.index'
@@ -179,6 +180,11 @@ const AuthenticatedMyPromotionsRoute =
     path: '/my-promotions',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMembershipRoute = AuthenticatedMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -336,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/users': typeof UsersRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/membership': typeof AuthenticatedMembershipRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRouteWithChildren
@@ -385,6 +392,7 @@ export interface FileRoutesByTo {
   '/users': typeof UsersRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/membership': typeof AuthenticatedMembershipRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRouteWithChildren
@@ -437,6 +445,7 @@ export interface FileRoutesById {
   '/users': typeof UsersRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/membership': typeof AuthenticatedMembershipRoute
   '/_authenticated/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
@@ -489,6 +498,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/membership'
     | '/my-promotions'
     | '/onboarding'
     | '/profile'
@@ -538,6 +548,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/membership'
     | '/my-promotions'
     | '/onboarding'
     | '/profile'
@@ -589,6 +600,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/membership'
     | '/_authenticated/my-promotions'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
@@ -827,6 +839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMyPromotionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/membership': {
+      id: '/_authenticated/membership'
+      path: '/membership'
+      fullPath: '/membership'
+      preLoaderRoute: typeof AuthenticatedMembershipRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -1020,6 +1039,7 @@ const AuthenticatedProfileRouteWithChildren =
   AuthenticatedProfileRoute._addFileChildren(AuthenticatedProfileRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedMembershipRoute: typeof AuthenticatedMembershipRoute
   AuthenticatedMyPromotionsRoute: typeof AuthenticatedMyPromotionsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
@@ -1034,6 +1054,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedMembershipRoute: AuthenticatedMembershipRoute,
   AuthenticatedMyPromotionsRoute: AuthenticatedMyPromotionsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
