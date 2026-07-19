@@ -219,7 +219,7 @@ export function RatingsDialog({
                 <div className="flex items-center justify-between">
                   <StarRow value={r.stars} />
                   <span className="text-xs text-muted-foreground">
-                    {new Date(r.created_at).toLocaleDateString("nb-NO")}
+                    {new Date(r.created_at).toLocaleDateString("sq-AL")}
                   </span>
                 </div>
                 {r.comment && <p className="mt-1.5 text-sm">{r.comment}</p>}
