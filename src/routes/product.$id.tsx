@@ -365,23 +365,18 @@ function ProductDetail() {
       </div>
 
       {/* Social proof line */}
-      {likeInfo.count > 0 && likeInfo.recentLiker && (
-        <p className="px-[18px] py-1 text-[13px]" style={META_TEXT_INK}>
-          Likt nga{" "}
-          {likeInfo.recentLikerId ? (
-            <Link
-              to="/user/$id"
-              params={{ id: likeInfo.recentLikerId }}
-              onClick={(e) => e.stopPropagation()}
-              className="font-semibold hover:underline active:opacity-70 focus-visible:outline-none focus-visible:underline"
-              style={{ WebkitTapHighlightColor: "transparent" }}
-            >
-              {likeInfo.recentLiker}
-            </Link>
-          ) : (
-            <span className="font-semibold">{likeInfo.recentLiker}</span>
-          )}
-          {likeInfo.count > 1 ? ` dhe ${likeInfo.count - 1} të tjerë` : ""}
+      {likeInfo.count > 0 && (
+        <p
+          className="px-[18px] py-1 text-[13px]"
+          style={META_TEXT_INK}
+          aria-label={
+            likeInfo.count === 1
+              ? "Pëlqyer nga 1 person"
+              : `Pëlqyer nga ${likeInfo.count} persona`
+          }
+        >
+          <span className="font-semibold">Pëlqyer nga</span>{" "}
+          {likeInfo.count === 1 ? "1 person" : `${likeInfo.count} persona`}
         </p>
       )}
 
