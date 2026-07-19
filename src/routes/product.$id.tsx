@@ -371,9 +371,7 @@ function ProductDetail() {
           className="px-[18px] py-1 text-[13px]"
           style={META_TEXT_INK}
           aria-label={
-            likeInfo.count === 1
-              ? "Pëlqyer nga 1 person"
-              : `Pëlqyer nga ${likeInfo.count} persona`
+            likeInfo.count === 1 ? "Pëlqyer nga 1 person" : `Pëlqyer nga ${likeInfo.count} persona`
           }
         >
           <span className="font-semibold">Pëlqyer nga</span>{" "}
