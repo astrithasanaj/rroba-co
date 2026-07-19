@@ -20,9 +20,6 @@ const MUTED = "#a89f94";
 const DIVIDER = "#e2e2de";
 const CORAL = "#c65a7a";
 
-function roundHalf(n: number) {
-  return Math.round(n * 2) / 2;
-}
 
 function BuyPage() {
   const { id } = useParams({ from: "/_authenticated/buy/$id" });
