@@ -184,13 +184,14 @@ function ProductDetail() {
   }
 
   const meta: [string, string][] = [
-    ["Marka", listing.brand || "—"],
     ["Kategoria", listing.category],
-    ["Madhësia", listing.size],
+    ["Lloji i produktit", listing.subcategory || "—"],
+    ["Marka", listing.brand || "—"],
     ["Gjendja", listing.condition],
+    ["Madhësia", listing.size],
     ["Ngjyra", listing.color || "—"],
-    ["Qyteti", listing.city || "—"],
     ["Gjinia", listing.gender],
+    ["Qyteti", listing.city || "—"],
   ];
 
   const images = listing.imageUrls.length ? listing.imageUrls : [listing.coverUrl];
