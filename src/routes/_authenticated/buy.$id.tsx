@@ -63,8 +63,7 @@ function BuyPage() {
   }, [id]);
 
   const price = listing?.price ?? 0;
-  const fee = useMemo(() => roundHalf(price * 0.05), [price]);
-  const total = price + fee;
+  const total = price;
 
   const deliveryOptions = listing?.delivery ?? [];
   const hasMeet =
