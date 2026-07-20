@@ -39,17 +39,22 @@ function HomePage() {
   const [newThisWeekListings, setNewThisWeekListings] = useState<ListingView[]>([]);
   const [followingListings, setFollowingListings] = useState<ListingView[]>([]);
   const [followingIds, setFollowingIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [regularLoading, setRegularLoading] = useState(true);
+  const [trendingLoading, setTrendingLoading] = useState(true);
+  const [newWeekLoading, setNewWeekLoading] = useState(true);
   const [followingLoading, setFollowingLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     const load = async () => {
-      setLoading(true);
+      setRegularLoading(true);
+      setTrendingLoading(true);
+      setNewWeekLoading(true);
 
       const nowIso = new Date().toISOString();
       const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
+      // Kjør auth + prefs først, men hold det raskt: preferences avgjør bare filter.
       const authData = { user: await getCurrentUser() };
       const uid = authData.user?.id;
 
@@ -77,107 +82,125 @@ function HomePage() {
       const passesGenderFilter = (r: ListingRow) =>
         r.gender == null || allowedGenders.includes(r.gender);
 
-      const promosPromise = supabase
-
-        .from("promotions")
-        .select("listing_id, listings(*)")
-        .eq("type", "feed_top")
-        .eq("status", "active")
-        .eq("payment_confirmed", true)
-        .gt("ends_at", nowIso);
-
-      const newThisWeekPromise = supabase
-        .from("listings")
-        .select("*")
-        .eq("status", "active")
-        .neq("category", "Fëmijë & bebe")
-        .or(genderFilter)
-        .gte("created_at", weekAgoIso)
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      const trendingLikesPromise = supabase
-        .from("listing_likes")
-        .select("listing_id")
-        .gte("created_at", weekAgoIso);
-
-      const [{ data: promos }, { data: newThisWeekRows }, { data: likeRows }] = await Promise.all([
-        promosPromise,
-        newThisWeekPromise,
-        trendingLikesPromise,
-      ]);
-
-      const promotedRows = ((promos ?? []) as Array<{ listings: ListingRow | null }>)
-        .map((p) => p.listings)
-        .filter((r): r is ListingRow => !!r && r.status === "active");
-      const promotedIds = promotedRows.map((r) => r.id);
-
-      let query = supabase
-        .from("listings")
-        .select("*")
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(60);
-      if (promotedIds.length > 0) {
-        query = query.not("id", "in", `(${promotedIds.join(",")})`);
-      }
-      const { data: regular } = await query;
-
-      // Trending: rank active listings by like count in the last 7 days
-      const likeCounts = new Map<string, number>();
-      for (const r of (likeRows ?? []) as Array<{ listing_id: string }>) {
-        likeCounts.set(r.listing_id, (likeCounts.get(r.listing_id) ?? 0) + 1);
-      }
-      const rankedIds = Array.from(likeCounts.entries())
-        .sort((a, b) => b[1] - a[1])
-        .map(([id]) => id);
-
-      let trendingRows: ListingRow[] = [];
-      if (rankedIds.length > 0) {
-        const { data: trendingActive } = await supabase
+      // --- Seksjon: "E re këtë javë" — uavhengig ---
+      const newWeekTask = (async () => {
+        const { data: rows } = await supabase
           .from("listings")
           .select("*")
           .eq("status", "active")
           .neq("category", "Fëmijë & bebe")
           .or(genderFilter)
-          .in("id", rankedIds);
+          .gte("created_at", weekAgoIso)
+          .order("created_at", { ascending: false })
+          .limit(10);
+        if (!active) return;
+        const list = (rows ?? []) as ListingRow[];
+        if (list.length === 0) {
+          setNewThisWeekListings([]);
+          setNewWeekLoading(false);
+          return;
+        }
+        const hydrated = await hydrateListings(list, { thumbnail: true, mode: "cover" });
+        if (!active) return;
+        setNewThisWeekListings(hydrated);
+        setNewWeekLoading(false);
+      })();
 
-        const byId = new Map<string, ListingRow>();
-        for (const row of (trendingActive ?? []) as ListingRow[]) byId.set(row.id, row);
-        trendingRows = rankedIds
-          .map((id) => byId.get(id))
-          .filter((r): r is ListingRow => !!r)
-          .slice(0, 5);
-      }
-      // Fill up to 5 with newest active listings if needed
-      if (trendingRows.length < 5) {
-        const have = new Set(trendingRows.map((r) => r.id));
-        const fillers = ((regular ?? []) as ListingRow[]).filter(
-          (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r),
-        );
+      // --- Seksjon: promoted + regular ("Të zgjedhura" og hovedgrid) ---
+      const promotedRegularTask = (async () => {
+        const { data: promos } = await supabase
+          .from("promotions")
+          .select("listing_id, listings(*)")
+          .eq("type", "feed_top")
+          .eq("status", "active")
+          .eq("payment_confirmed", true)
+          .gt("ends_at", nowIso);
 
-        trendingRows = [...trendingRows, ...fillers].slice(0, 5);
-      }
+        const promotedRows = ((promos ?? []) as Array<{ listings: ListingRow | null }>)
+          .map((p) => p.listings)
+          .filter((r): r is ListingRow => !!r && r.status === "active");
+        const promotedIds = promotedRows.map((r) => r.id);
 
-      const [hydratedPromoted, hydratedRegular, hydratedTrending, hydratedNewWeek] =
-        await Promise.all([
+        let query = supabase
+          .from("listings")
+          .select("*")
+          .eq("status", "active")
+          .order("created_at", { ascending: false })
+          .limit(60);
+        if (promotedIds.length > 0) {
+          query = query.not("id", "in", `(${promotedIds.join(",")})`);
+        }
+        const { data: regular } = await query;
+        const regularRows = (regular ?? []) as ListingRow[];
+
+        const [hydratedPromoted, hydratedRegular] = await Promise.all([
           hydrateListings(promotedRows, { thumbnail: true, mode: "cover" }),
-          hydrateListings((regular ?? []) as ListingRow[], { thumbnail: true, mode: "cover" }),
-          hydrateListings(trendingRows, { thumbnail: true, mode: "cover" }),
-          hydrateListings((newThisWeekRows ?? []) as ListingRow[], {
-            thumbnail: true,
-            mode: "cover",
-          }),
+          hydrateListings(regularRows, { thumbnail: true, mode: "cover" }),
         ]);
-      const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
 
-      if (active) {
+        if (!active) return { regularRows };
+        const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
         setPromoted(promotedWithFlag.slice(0, 10));
         setListings(hydratedRegular);
-        setTrendingListings(hydratedTrending);
-        setNewThisWeekListings(hydratedNewWeek);
-        setLoading(false);
-      }
+        setRegularLoading(false);
+        return { regularRows };
+      })();
+
+      // --- Seksjon: "Në trend tani" — trenger regularRows som filler ---
+      const trendingTask = (async () => {
+        const { data: likeRows } = await supabase
+          .from("listing_likes")
+          .select("listing_id")
+          .gte("created_at", weekAgoIso);
+
+        const likeCounts = new Map<string, number>();
+        for (const r of (likeRows ?? []) as Array<{ listing_id: string }>) {
+          likeCounts.set(r.listing_id, (likeCounts.get(r.listing_id) ?? 0) + 1);
+        }
+        const rankedIds = Array.from(likeCounts.entries())
+          .sort((a, b) => b[1] - a[1])
+          .map(([id]) => id);
+
+        let trendingRows: ListingRow[] = [];
+        if (rankedIds.length > 0) {
+          const { data: trendingActive } = await supabase
+            .from("listings")
+            .select("*")
+            .eq("status", "active")
+            .neq("category", "Fëmijë & bebe")
+            .or(genderFilter)
+            .in("id", rankedIds);
+
+          const byId = new Map<string, ListingRow>();
+          for (const row of (trendingActive ?? []) as ListingRow[]) byId.set(row.id, row);
+          trendingRows = rankedIds
+            .map((id) => byId.get(id))
+            .filter((r): r is ListingRow => !!r)
+            .slice(0, 5);
+        }
+
+        if (trendingRows.length < 5) {
+          const { regularRows } = (await promotedRegularTask) ?? { regularRows: [] };
+          const have = new Set(trendingRows.map((r) => r.id));
+          const fillers = (regularRows ?? []).filter(
+            (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r),
+          );
+          trendingRows = [...trendingRows, ...fillers].slice(0, 5);
+        }
+
+        if (!active) return;
+        if (trendingRows.length === 0) {
+          setTrendingListings([]);
+          setTrendingLoading(false);
+          return;
+        }
+        const hydrated = await hydrateListings(trendingRows, { thumbnail: true, mode: "cover" });
+        if (!active) return;
+        setTrendingListings(hydrated);
+        setTrendingLoading(false);
+      })();
+
+      await Promise.all([newWeekTask, promotedRegularTask, trendingTask]);
     };
     load();
 
@@ -191,6 +214,7 @@ function HomePage() {
       supabase.removeChannel(ch);
     };
   }, []);
+
 
   useEffect(() => {
     let active = true;
