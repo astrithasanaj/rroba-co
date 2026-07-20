@@ -13,7 +13,7 @@ export function useUnreadMessages() {
   useEffect(() => {
     let cancelled = false;
     getCurrentUser().then((user) => {
-      if (!cancelled) setMe(data.user?.id ?? null);
+      if (!cancelled) setMe(user?.id ?? null);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setMe(session?.user?.id ?? null);
