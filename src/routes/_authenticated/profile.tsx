@@ -114,19 +114,42 @@ function ProfilePage() {
   const [listingTitles, setListingTitles] = useState<Record<string, string>>({});
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
+  const [listingsLoading, setListingsLoading] = useState(true);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [prof, mine, offRec, offSent, fCount, gCount] = await Promise.all([
+    setListingsLoading(true);
+
+    // Egen annonseforespørsel — ikke blokker på ratings/offers/followers.
+    const listingsPromise = supabase
+      .from("listings")
+      .select("*")
+      .eq("user_id", user.id)
+      .in("status", ["active", "sold"])
+      .order("created_at", { ascending: false })
+      .then(async (res) => {
+        const rows = (res.data ?? []) as ListingRow[];
+        if (rows.length === 0) {
+          setMyListings([]);
+          setListingsLoading(false);
+          return;
+        }
+        const hydratedMine = await hydrateListings(rows, {
+          thumbnail: true,
+          mode: "cover",
+        });
+        const sortedMine = [
+          ...hydratedMine.filter((p) => p.status === "active"),
+          ...hydratedMine.filter((p) => p.status === "sold"),
+        ];
+        setMyListings(sortedMine);
+        setListingsLoading(false);
+      });
+
+    const restPromise = Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase
-        .from("listings")
-        .select("*")
-        .eq("user_id", user.id)
-        .in("status", ["active", "sold"])
-        .order("created_at", { ascending: false }),
       supabase
         .from("offers")
         .select("*")
@@ -145,33 +168,28 @@ function ProfilePage() {
         .from("followers")
         .select("*", { count: "exact", head: true })
         .eq("follower_id", user.id),
-    ]);
-    setFollowers(fCount.count ?? 0);
-    setFollowing(gCount.count ?? 0);
-    setProfile(prof.data as Profile | null);
-    const hydratedMine = await hydrateListings((mine.data ?? []) as ListingRow[], {
-      thumbnail: true,
-      mode: "cover",
+    ]).then(async ([prof, offRec, offSent, fCount, gCount]) => {
+      setFollowers(fCount.count ?? 0);
+      setFollowing(gCount.count ?? 0);
+      setProfile(prof.data as Profile | null);
+
+      const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
+      setOffersReceived((offRec.data ?? []) as OfferRow[]);
+      setOffersSent((offSent.data ?? []) as OfferRow[]);
+
+      const ids = Array.from(new Set(allOffers.map((o) => o.listing_id)));
+      if (ids.length) {
+        const { data: titles } = await supabase.from("listings").select("id,title").in("id", ids);
+        const map: Record<string, string> = {};
+        for (const t of titles ?? []) map[t.id] = t.title;
+        setListingTitles(map);
+      }
+      setLoading(false);
     });
-    const sortedMine = [
-      ...hydratedMine.filter((p) => p.status === "active"),
-      ...hydratedMine.filter((p) => p.status === "sold"),
-    ];
-    setMyListings(sortedMine);
 
-    const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
-    setOffersReceived((offRec.data ?? []) as OfferRow[]);
-    setOffersSent((offSent.data ?? []) as OfferRow[]);
-
-    const ids = Array.from(new Set(allOffers.map((o) => o.listing_id)));
-    if (ids.length) {
-      const { data: titles } = await supabase.from("listings").select("id,title").in("id", ids);
-      const map: Record<string, string> = {};
-      for (const t of titles ?? []) map[t.id] = t.title;
-      setListingTitles(map);
-    }
-    setLoading(false);
+    await Promise.all([listingsPromise, restPromise]);
   }, [user.id]);
+
 
   useEffect(() => {
     loadAll();
