@@ -5,11 +5,12 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { signPaths } from "@/lib/listings";
 
 export const Route = createFileRoute("/_authenticated/admin/promotions")({
   beforeLoad: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) throw redirect({ to: "/auth" });
     const { data: isAdmin } = await supabase.rpc("is_admin", { _uid: user.id });
     if (!isAdmin) throw redirect({ to: "/" });
@@ -154,7 +155,7 @@ function AdminPromotions() {
   }, []);
 
   const confirm = async (id: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     const { error } = await supabase
       .from("promotions")
       .update({

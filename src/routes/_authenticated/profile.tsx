@@ -33,6 +33,7 @@ import { StarRow } from "@/components/marketplace/RatingsDialog";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getMembershipPlan } from "@/lib/membership-plans";
@@ -1503,9 +1504,7 @@ function SettingsMain({
   const [membershipTier, setMembershipTier] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return;
       const { data } = await supabase
         .from("profiles")

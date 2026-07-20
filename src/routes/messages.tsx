@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { signPaths } from "@/lib/listings";
 import { toast } from "sonner";
 
@@ -67,9 +68,9 @@ function MessagesPage() {
   const [me, setMe] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) navigate({ to: "/auth" });
-      else setMe(data.user.id);
+    getCurrentUser().then((user) => {
+      if (!user) navigate({ to: "/auth" });
+      else setMe(user!.id);
     });
   }, [navigate]);
 

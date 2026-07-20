@@ -4,15 +4,14 @@ import { ChevronLeft, ArrowLeft, Loader2, Search, ShieldOff, ShieldAlert } from 
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { useServerFn } from "@tanstack/react-start";
 import { blockUser, unblockUser } from "@/lib/admin-users.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   beforeLoad: async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) throw redirect({ to: "/auth" });
     const { data: isAdmin } = await supabase.rpc("is_admin", { _uid: user.id });
     if (!isAdmin) throw redirect({ to: "/" });

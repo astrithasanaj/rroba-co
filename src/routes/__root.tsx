@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { BottomNav } from "@/components/marketplace/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { UserCollectionsProvider } from "@/lib/user-collections";
 
 function NotFoundComponent() {
@@ -211,8 +212,8 @@ function OnboardingGate() {
         router.navigate({ to: "/onboarding", replace: true });
       }
     };
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) check(data.user.id);
+    getCurrentUser().then((user) => {
+      if (user) check(user!.id);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session?.user) check(session.user.id);

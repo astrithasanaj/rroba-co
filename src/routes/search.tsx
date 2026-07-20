@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import {
   CONDITIONS,
@@ -161,7 +162,7 @@ function SearchPage() {
   const [brandResults, setBrandResults] = useState<string[]>([]);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMe(id));
   }, []);
 
   useEffect(() => {
@@ -285,7 +286,7 @@ function SearchPage() {
         if (active) setProfileCounts(counts);
 
         // Following state for current user
-        const meId = (await supabase.auth.getUser()).data.user?.id ?? null;
+        const meId = (await getCurrentUserId());
         if (meId && active) {
           const { data: mine } = await supabase
             .from("followers")

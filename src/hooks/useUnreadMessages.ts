@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 
 /**
  * Returns true when the signed-in user has at least one unread message
@@ -11,8 +12,8 @@ export function useUnreadMessages() {
 
   useEffect(() => {
     let cancelled = false;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled) setMe(data.user?.id ?? null);
+    getCurrentUser().then((user) => {
+      if (!cancelled) setMe(user?.id ?? null);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setMe(session?.user?.id ?? null);

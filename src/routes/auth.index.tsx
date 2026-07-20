@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { UserPlus, LogIn, AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 
 export const Route = createFileRoute("/auth/")({
   ssr: false,
@@ -19,8 +20,8 @@ function AuthLanding() {
   const navigate = useNavigate();
   const { error: authError } = Route.useSearch();
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/", replace: true });
+    getCurrentUser().then((user) => {
+      if (user) navigate({ to: "/", replace: true });
     });
   }, [navigate]);
 

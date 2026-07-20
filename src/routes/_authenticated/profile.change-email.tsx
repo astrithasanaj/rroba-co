@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router"
 import { useEffect, useState } from "react";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 
 export const Route = createFileRoute("/_authenticated/profile/change-email")({
@@ -29,8 +30,8 @@ function ChangeEmailPage() {
   const [sentTo, setSentTo] = useState("");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email) setCurrentEmail(data.user.email);
+    getCurrentUser().then((user) => {
+      if (user?.email) setCurrentEmail(user!.email);
       else navigate({ to: "/profile" });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

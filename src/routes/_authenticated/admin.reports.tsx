@@ -4,11 +4,12 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/_authenticated/admin/reports")({
   beforeLoad: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) throw redirect({ to: "/auth" });
     const { data: isAdmin } = await supabase.rpc("is_admin", { _uid: user.id });
     if (!isAdmin) throw redirect({ to: "/" });

@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { deleteMyAccount } from "@/lib/delete-account.functions";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 
@@ -33,8 +34,8 @@ function DeleteAccountPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email) setEmail(data.user.email);
+    getCurrentUser().then((user) => {
+      if (user?.email) setEmail(user!.email);
       else navigate({ to: "/profile" });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

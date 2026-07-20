@@ -7,6 +7,7 @@ import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
 
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
@@ -49,7 +50,7 @@ function HomePage() {
       const nowIso = new Date().toISOString();
       const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-      const { data: authData } = await supabase.auth.getUser();
+      const authData = { user: await getCurrentUser() };
       const uid = authData.user?.id;
 
       let myGenders: string[] = [];
@@ -195,7 +196,7 @@ function HomePage() {
     let active = true;
     const loadFollowing = async () => {
       setFollowingLoading(true);
-      const { data: authData } = await supabase.auth.getUser();
+      const authData = { user: await getCurrentUser() };
       const uid = authData.user?.id;
       if (!uid) {
         if (active) {

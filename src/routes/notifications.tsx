@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus, Bell } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 export const Route = createFileRoute("/notifications")({
@@ -70,9 +71,9 @@ function NotificationsPage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) navigate({ to: "/auth" });
-      else setMe(data.user.id);
+    getCurrentUser().then((user) => {
+      if (!user) navigate({ to: "/auth" });
+      else setMe(user!.id);
     });
   }, [navigate]);
 

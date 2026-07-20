@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { CONDITIONS } from "@/lib/listings";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import {
@@ -203,9 +204,9 @@ function SellPage() {
   const [sizeError, setSizeError] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) navigate({ to: "/auth" });
-      else setUserId(data.user.id);
+    getCurrentUser().then((user) => {
+      if (!user) navigate({ to: "/auth" });
+      else setUserId(user!.id);
     });
   }, [navigate]);
 

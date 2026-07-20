@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -135,7 +136,7 @@ function UserProfile() {
     let active = true;
     (async () => {
       setLoading(true);
-      const { data: auth } = await supabase.auth.getUser();
+      const auth = { user: await getCurrentUser() };
       const uid = auth?.user?.id ?? null;
 
       const [p, l] = await Promise.all([

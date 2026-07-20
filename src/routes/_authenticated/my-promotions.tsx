@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 
 export const Route = createFileRoute("/_authenticated/my-promotions")({
@@ -37,9 +38,7 @@ function MyPromotionsPage() {
   } | null>(null);
 
   const load = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) return;
     const [{ data: prof }, { data: rows }] = await Promise.all([
       supabase

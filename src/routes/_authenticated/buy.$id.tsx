@@ -4,6 +4,7 @@ import { ChevronLeft, ArrowLeft, MapPin, Handshake, Home, ChevronRight, X } from
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -36,7 +37,7 @@ function BuyPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMe(id));
   }, []);
 
   useEffect(() => {

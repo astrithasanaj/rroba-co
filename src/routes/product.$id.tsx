@@ -18,6 +18,7 @@ import { MoreSheet } from "@/components/marketplace/MoreSheet";
 import { ProductPageSkeleton } from "@/components/marketplace/Skeletons";
 import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
@@ -65,7 +66,7 @@ function ProductDetail() {
   const { likes, saves, toggleLike, toggleSave } = useUserCollections();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMe(id));
   }, []);
 
   useEffect(() => {

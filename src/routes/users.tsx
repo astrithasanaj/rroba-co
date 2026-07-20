@@ -4,6 +4,7 @@ import { ChevronLeft, ArrowLeft, Loader2, Users } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "#ffffff";
 const INK = "#2d1521";
@@ -38,7 +39,7 @@ function UsersBrowsePage() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMe(id));
   }, []);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ function UsersBrowsePage() {
     setRows((prev) => (initial ? list : [...prev, ...list]));
     if (list.length < PAGE_SIZE) setDone(true);
 
-    const currentMe = (await supabase.auth.getUser()).data.user?.id ?? null;
+    const currentMe = (await getCurrentUserId());
     if (currentMe && list.length > 0) {
       const ids = list.map((r) => r.id);
       const { data: mine } = await supabase

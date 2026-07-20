@@ -4,6 +4,7 @@ import { ChevronLeft, Check, Loader2 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import {
   MEMBERSHIP_PLANS,
   getMembershipPlan,
@@ -58,9 +59,7 @@ function MembershipPage() {
 
   useEffect(() => {
     (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) {
         setLoading(false);
         return;

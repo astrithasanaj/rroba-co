@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "#ffffff";
 const INK = "#2d1521";
@@ -28,7 +29,7 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMe(id));
   }, []);
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
     const ordered = ids.map((id) => map.get(id)).filter(Boolean) as Row[];
     setRows((prev) => (initial ? ordered : [...prev, ...ordered]));
 
-    const currentMe = (await supabase.auth.getUser()).data.user?.id ?? null;
+    const currentMe = (await getCurrentUserId());
     if (currentMe) {
       const { data: mine } = await supabase
         .from("followers")
