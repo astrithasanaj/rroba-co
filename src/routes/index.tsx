@@ -336,7 +336,9 @@ function HomePage() {
         <div key={tab} className="animate-fade-in" style={{ animationDuration: "150ms" }}>
           {tab === "for-you" ? (
             <ForYou
-              loading={loading}
+              regularLoading={regularLoading}
+              trendingLoading={trendingLoading}
+              newWeekLoading={newWeekLoading}
               listings={listings}
               promoted={promoted}
               trending={trendingListings}
@@ -350,6 +352,7 @@ function HomePage() {
             />
           )}
         </div>
+
       </div>
     </MobileShell>
   );
