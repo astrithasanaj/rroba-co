@@ -21,7 +21,7 @@ function AuthLanding() {
   const { error: authError } = Route.useSearch();
   useEffect(() => {
     getCurrentUser().then((user) => {
-      if (data.user) navigate({ to: "/", replace: true });
+      if (user) navigate({ to: "/", replace: true });
     });
   }, [navigate]);
 

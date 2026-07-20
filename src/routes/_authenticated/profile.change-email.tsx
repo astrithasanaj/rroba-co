@@ -31,7 +31,7 @@ function ChangeEmailPage() {
 
   useEffect(() => {
     getCurrentUser().then((user) => {
-      if (data.user?.email) setCurrentEmail(data.user.email);
+      if (user?.email) setCurrentEmail(user!.email);
       else navigate({ to: "/profile" });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

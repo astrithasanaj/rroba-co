@@ -72,8 +72,8 @@ function NotificationsPage() {
 
   useEffect(() => {
     getCurrentUser().then((user) => {
-      if (!data.user) navigate({ to: "/auth" });
-      else setMe(data.user.id);
+      if (!user) navigate({ to: "/auth" });
+      else setMe(user!.id);
     });
   }, [navigate]);
 

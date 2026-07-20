@@ -205,8 +205,8 @@ function SellPage() {
 
   useEffect(() => {
     getCurrentUser().then((user) => {
-      if (!data.user) navigate({ to: "/auth" });
-      else setUserId(data.user.id);
+      if (!user) navigate({ to: "/auth" });
+      else setUserId(user!.id);
     });
   }, [navigate]);
 

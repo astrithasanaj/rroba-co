@@ -35,7 +35,7 @@ function DeleteAccountPage() {
 
   useEffect(() => {
     getCurrentUser().then((user) => {
-      if (data.user?.email) setEmail(data.user.email);
+      if (user?.email) setEmail(user!.email);
       else navigate({ to: "/profile" });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

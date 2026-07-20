@@ -213,7 +213,7 @@ function OnboardingGate() {
       }
     };
     getCurrentUser().then((user) => {
-      if (data.user) check(data.user.id);
+      if (user) check(user!.id);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session?.user) check(session.user.id);
