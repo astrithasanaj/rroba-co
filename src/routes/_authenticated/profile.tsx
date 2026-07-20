@@ -636,10 +636,10 @@ function ProfilePage() {
           id={`profile-panel-${tab}`}
           role="tabpanel"
           aria-labelledby={`profile-tab-${tab}`}
-          aria-busy={loading && tab === "mine"}
+          aria-busy={listingsLoading && tab === "mine"}
           className="pt-0"
         >
-          {loading && tab === "mine" ? (
+          {listingsLoading && tab === "mine" ? (
             <div className="grid place-items-center py-10" role="status" aria-live="polite">
               <Loader2
                 className="h-6 w-6 animate-spin"
@@ -654,6 +654,7 @@ function ProfilePage() {
             <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
           )}
         </section>
+
       </div>
 
       {/* Sort sheet */}
