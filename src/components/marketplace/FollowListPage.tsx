@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "#ffffff";
 const INK = "#2d1521";

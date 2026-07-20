@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router"
 import { useEffect, useState } from "react";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 
 export const Route = createFileRoute("/_authenticated/profile/change-email")({

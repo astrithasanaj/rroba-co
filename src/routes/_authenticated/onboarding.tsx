@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ChevronLeft, Bell, Camera, Check, MessageCircle, Search, Shirt, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useCityById } from "@/hooks/useCities";

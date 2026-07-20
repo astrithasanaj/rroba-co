@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/hooks/useCurrentUser";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import {
   CONDITIONS,

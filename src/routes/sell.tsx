@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { CONDITIONS } from "@/lib/listings";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import {

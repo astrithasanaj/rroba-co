@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { UserPlus, LogIn, AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 
 export const Route = createFileRoute("/auth/")({
   ssr: false,
