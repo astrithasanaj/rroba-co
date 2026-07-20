@@ -386,18 +386,31 @@ function TabButton({
 }
 
 function ForYou({
-  loading,
+  regularLoading,
+  trendingLoading,
+  newWeekLoading,
   listings,
   promoted,
   trending,
   newThisWeek,
 }: {
-  loading: boolean;
+  regularLoading: boolean;
+  trendingLoading: boolean;
+  newWeekLoading: boolean;
   listings: ListingView[];
   promoted: ListingView[];
   trending: ListingView[];
   newThisWeek: ListingView[];
 }) {
+  const noContentAtAll =
+    !regularLoading &&
+    !trendingLoading &&
+    !newWeekLoading &&
+    listings.length === 0 &&
+    promoted.length === 0 &&
+    trending.length === 0 &&
+    newThisWeek.length === 0;
+
   return (
     <>
       {/* Categories */}
@@ -450,11 +463,7 @@ function ForYou({
         </div>
       </section>
 
-      {loading ? (
-        <section className="mt-7 px-[18px]">
-          <ProductGridSkeleton count={6} />
-        </section>
-      ) : listings.length === 0 ? (
+      {noContentAtAll ? (
         <div
           className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
           style={{ borderColor: "#e2e2de", color: MUTED }}
@@ -483,28 +492,60 @@ function ForYou({
 
           <section className="mt-7 px-[18px]">
             <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {trending.map((l, i) => (
-                <ListingCard key={l.id} listing={l} eager={i < 4} />
-              ))}
-            </div>
+            {trendingLoading ? (
+              <div className="mt-3">
+                <ProductGridSkeleton count={2} />
+              </div>
+            ) : trending.length === 0 ? (
+              <div
+                className="mt-3 rounded-2xl border border-dashed p-6 text-center text-sm"
+                style={{ borderColor: "#e2e2de", color: MUTED }}
+              >
+                Ende asnjë artikull në trend.
+              </div>
+            ) : (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {trending.map((l, i) => (
+                  <ListingCard key={l.id} listing={l} eager={i < 4} />
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="mt-8">
             <div className="px-5">
               <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
             </div>
-            <div
-              className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
-              style={{ scrollbarWidth: "none" }}
-            >
-              {newThisWeek.map((l) => (
-                <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                  <ListingCard listing={l} />
-                </div>
-              ))}
-            </div>
+            {newWeekLoading ? (
+              <div className="mt-3 px-5">
+                <ProductGridSkeleton count={2} />
+              </div>
+            ) : newThisWeek.length === 0 ? (
+              <div
+                className="mx-5 mt-3 rounded-2xl border border-dashed p-6 text-center text-sm"
+                style={{ borderColor: "#e2e2de", color: MUTED }}
+              >
+                Ende asnjë artikull këtë javë.
+              </div>
+            ) : (
+              <div
+                className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {newThisWeek.map((l) => (
+                  <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                    <ListingCard listing={l} />
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
+
+          {regularLoading && listings.length === 0 && (
+            <section className="mt-7 px-[18px]">
+              <ProductGridSkeleton count={6} />
+            </section>
+          )}
 
           <div className="h-24" />
         </>
@@ -512,6 +553,7 @@ function ForYou({
     </>
   );
 }
+
 
 function FollowingFeed({
   loading,
