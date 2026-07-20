@@ -990,8 +990,7 @@ function OnboardingFlow() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      const user = data.user;
+      const user = await getCurrentUser();
       if (!user) {
         navigate({ to: "/auth" });
         return;
