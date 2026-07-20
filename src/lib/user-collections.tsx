@@ -17,7 +17,7 @@ export function UserCollectionsProvider({ children }: { children: ReactNode }) {
   const [saves, setSaves] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setUserId(id));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUserId(session?.user?.id ?? null);
     });

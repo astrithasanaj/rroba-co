@@ -135,7 +135,7 @@ function UserProfile() {
     let active = true;
     (async () => {
       setLoading(true);
-      const { data: auth } = await supabase.auth.getUser();
+      const auth = { user: await getCurrentUser() };
       const uid = auth?.user?.id ?? null;
 
       const [p, l] = await Promise.all([

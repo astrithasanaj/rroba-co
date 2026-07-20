@@ -34,7 +34,7 @@ function Favorites() {
     let active = true;
     (async () => {
       try {
-        const { data: u } = await supabase.auth.getUser();
+        const u = { user: await getCurrentUser() };
         if (!u.user) {
           navigate({ to: "/auth" });
           return;

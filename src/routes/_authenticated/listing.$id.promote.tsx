@@ -109,7 +109,7 @@ function PromotePage() {
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) {
       setLoading(false);
       return;
@@ -450,9 +450,7 @@ function PaySheet({
   const submit = async () => {
     if (!method) return;
     setSubmitting(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) {
       toast.error("Duhet të kyçesh");
       setSubmitting(false);

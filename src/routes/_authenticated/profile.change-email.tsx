@@ -29,7 +29,7 @@ function ChangeEmailPage() {
   const [sentTo, setSentTo] = useState("");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    getCurrentUser().then((user) => {
       if (data.user?.email) setCurrentEmail(data.user.email);
       else navigate({ to: "/profile" });
     });

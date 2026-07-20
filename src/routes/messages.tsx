@@ -67,7 +67,7 @@ function MessagesPage() {
   const [me, setMe] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    getCurrentUser().then((user) => {
       if (!data.user) navigate({ to: "/auth" });
       else setMe(data.user.id);
     });

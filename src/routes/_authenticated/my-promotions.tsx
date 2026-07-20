@@ -37,9 +37,7 @@ function MyPromotionsPage() {
   } | null>(null);
 
   const load = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) return;
     const [{ data: prof }, { data: rows }] = await Promise.all([
       supabase

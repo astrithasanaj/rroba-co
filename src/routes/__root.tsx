@@ -211,7 +211,7 @@ function OnboardingGate() {
         router.navigate({ to: "/onboarding", replace: true });
       }
     };
-    supabase.auth.getUser().then(({ data }) => {
+    getCurrentUser().then((user) => {
       if (data.user) check(data.user.id);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {

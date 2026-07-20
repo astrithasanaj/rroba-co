@@ -49,7 +49,7 @@ function HomePage() {
       const nowIso = new Date().toISOString();
       const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-      const { data: authData } = await supabase.auth.getUser();
+      const authData = { user: await getCurrentUser() };
       const uid = authData.user?.id;
 
       let myGenders: string[] = [];
@@ -195,7 +195,7 @@ function HomePage() {
     let active = true;
     const loadFollowing = async () => {
       setFollowingLoading(true);
-      const { data: authData } = await supabase.auth.getUser();
+      const authData = { user: await getCurrentUser() };
       const uid = authData.user?.id;
       if (!uid) {
         if (active) {

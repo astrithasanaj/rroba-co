@@ -203,7 +203,7 @@ function SellPage() {
   const [sizeError, setSizeError] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    getCurrentUser().then((user) => {
       if (!data.user) navigate({ to: "/auth" });
       else setUserId(data.user.id);
     });

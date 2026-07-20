@@ -19,7 +19,7 @@ function AuthLanding() {
   const navigate = useNavigate();
   const { error: authError } = Route.useSearch();
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    getCurrentUser().then((user) => {
       if (data.user) navigate({ to: "/", replace: true });
     });
   }, [navigate]);

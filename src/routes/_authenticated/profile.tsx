@@ -1503,9 +1503,7 @@ function SettingsMain({
   const [membershipTier, setMembershipTier] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return;
       const { data } = await supabase
         .from("profiles")

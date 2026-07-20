@@ -33,7 +33,7 @@ function DeleteAccountPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    getCurrentUser().then((user) => {
       if (data.user?.email) setEmail(data.user.email);
       else navigate({ to: "/profile" });
     });

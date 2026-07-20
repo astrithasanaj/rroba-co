@@ -65,7 +65,7 @@ function ProductDetail() {
   const { likes, saves, toggleLike, toggleSave } = useUserCollections();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMe(id));
   }, []);
 
   useEffect(() => {

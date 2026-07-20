@@ -10,9 +10,7 @@ import { blockUser, unblockUser } from "@/lib/admin-users.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   beforeLoad: async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) throw redirect({ to: "/auth" });
     const { data: isAdmin } = await supabase.rpc("is_admin", { _uid: user.id });
     if (!isAdmin) throw redirect({ to: "/" });

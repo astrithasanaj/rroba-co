@@ -58,9 +58,7 @@ function MembershipPage() {
 
   useEffect(() => {
     (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) {
         setLoading(false);
         return;
