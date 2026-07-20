@@ -283,6 +283,9 @@ export async function hydrateListings(
   rows: ListingRow[],
   options?: HydrateOptions,
 ): Promise<ListingView[]> {
+  // Tidlig retur: ingen rader = ingen signering, ingen promises.
+  if (!rows || rows.length === 0) return [];
+
   const mode = options?.mode ?? "all";
 
   // Velg hvilke paths vi faktisk trenger å signere.
@@ -297,7 +300,8 @@ export async function hydrateListings(
     }
   }
 
-  const urls = await signPaths(paths, { thumbnail: options?.thumbnail });
+  const urls = paths.length > 0 ? await signPaths(paths, { thumbnail: options?.thumbnail }) : {};
+
 
   return (
     rows
