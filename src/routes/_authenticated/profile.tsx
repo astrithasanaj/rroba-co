@@ -526,7 +526,7 @@ function ProfilePage() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat
-                  value={myListings.filter((l) => l.status === "active").length}
+                  value={articleCount}
                   label="artikuj"
                 />
                 <Stat
