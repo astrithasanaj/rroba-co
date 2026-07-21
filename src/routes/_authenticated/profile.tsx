@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowDownUp,
   ArrowLeft,
@@ -101,10 +102,97 @@ const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
 const OFFER_ACCEPTED_BG = "#d1f4e0";
 const OFFER_DECLINED_BG = "#f4d1d1";
 
+// ---- Fetchers (module-scope so they don't re-alloc per render) ---------
+
+async function fetchProfileRow(userId: string): Promise<Profile | null> {
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+  const row = data as Profile | null;
+  return row && row.id === userId ? row : null;
+}
+
+async function fetchProfileStats(
+  userId: string,
+): Promise<{ followers: number; following: number; articles: number }> {
+  const [fRes, gRes, aRes] = await Promise.all([
+    supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", userId),
+    supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", userId),
+    supabase
+      .from("listings")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("status", "active"),
+  ]);
+  return {
+    followers: fRes.count ?? 0,
+    following: gRes.count ?? 0,
+    articles: aRes.count ?? 0,
+  };
+}
+
+async function fetchMyListings(userId: string): Promise<ListingView[]> {
+  const { data } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("user_id", userId)
+    .in("status", ["active", "sold"])
+    .order("created_at", { ascending: false });
+  const rows = (data ?? []) as ListingRow[];
+  const hydrated = await hydrateListings(rows, { thumbnail: true, mode: "cover" });
+  // Aktive først, deretter solgte — samme sortering som før.
+  return [
+    ...hydrated.filter((p) => p.status === "active"),
+    ...hydrated.filter((p) => p.status === "sold"),
+  ];
+}
+
+async function fetchOffers(userId: string): Promise<{
+  received: OfferRow[];
+  sent: OfferRow[];
+  titles: Record<string, string>;
+}> {
+  const [rec, sent] = await Promise.all([
+    supabase
+      .from("offers")
+      .select("*")
+      .eq("seller_id", userId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("offers")
+      .select("*")
+      .eq("buyer_id", userId)
+      .order("created_at", { ascending: false }),
+  ]);
+  const received = (rec.data ?? []) as OfferRow[];
+  const sentRows = (sent.data ?? []) as OfferRow[];
+  const ids = Array.from(new Set([...received, ...sentRows].map((o) => o.listing_id)));
+  let titles: Record<string, string> = {};
+  if (ids.length) {
+    const { data: t } = await supabase.from("listings").select("id,title").in("id", ids);
+    for (const row of t ?? []) titles[row.id] = row.title;
+  }
+  return { received, sent: sentRows, titles };
+}
+
+async function fetchListingsByIds(ids: string[]): Promise<ListingView[]> {
+  if (ids.length === 0) return [];
+  const { data } = await supabase
+    .from("listings")
+    .select("*")
+    .in("id", ids)
+    .eq("status", "active")
+    .eq("sold", false);
+  return hydrateListings((data ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
+}
+
 function ProfilePage() {
   const { user } = Route.useRouteContext();
   const navigate = useNavigate();
-  const { likes, saves } = useUserCollections();
+  const queryClient = useQueryClient();
+  const { likes, saves, loaded: collectionsLoaded } = useUserCollections();
   const [tab, setTab] = useState<Tab>("mine");
   const [sort, setSort] = useState<SortMode>("new");
   const [ratingsOpen, setRatingsOpen] = useState(false);
@@ -113,13 +201,11 @@ function ProfilePage() {
   const [offersOpen, setOffersOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heightOpen, setHeightOpen] = useState(false);
+  const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
 
-  // Seed profile synchronously from the shared cache so that navigating to
-  // /profile paints the correct name and avatar on first render whenever
-  // the cache has been warmed (login, previous visit, edit, etc.).
+  // Profile row — synchronous cache seed for name/avatar/bio/city.
   const cachedProfile = getCachedCurrentProfile(user.id) as Profile | null | undefined;
   const [profile, setProfile] = useState<Profile | null>(cachedProfile ?? null);
-  // Subscribe to future cache updates for this user.
   const liveCachedProfile = useCurrentProfile(user.id) as Profile | null;
   useEffect(() => {
     if (liveCachedProfile && liveCachedProfile.id === user.id) {
@@ -127,230 +213,154 @@ function ProfilePage() {
     }
   }, [liveCachedProfile, user.id]);
 
-  const [myListings, setMyListings] = useState<ListingView[]>([]);
-  const [likedListings, setLikedListings] = useState<ListingView[]>([]);
-  const [savedListings, setSavedListings] = useState<ListingView[]>([]);
-  const [offersReceived, setOffersReceived] = useState<OfferRow[]>([]);
-  const [offersSent, setOffersSent] = useState<OfferRow[]>([]);
-  const [listingTitles, setListingTitles] = useState<Record<string, string>>({});
-  const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
-  const [loading, setLoading] = useState(true);
-  const [listingsLoading, setListingsLoading] = useState(true);
-  const [followers, setFollowers] = useState<number | null>(
-    () => getProfileStats(user.id)?.followers ?? null,
-  );
-  const [following, setFollowing] = useState<number | null>(
-    () => getProfileStats(user.id)?.following ?? null,
-  );
-  const [articleCount, setArticleCount] = useState<number | null>(
-    () => getProfileStats(user.id)?.articles ?? null,
-  );
+  // ---- Queries ---------------------------------------------------------
 
-  const loadAll = useCallback(async () => {
-    const requestedUserId = user.id;
-    setLoading(true);
-    setListingsLoading(true);
-    // Nullstill stale state fra en eventuell tidligere bruker.
-    // Ikke rør `profile` her — den er allerede seedet fra cachen for
-    // riktig user.id, og skal ikke blinke til null før nettverket svarer.
-
-    setMyListings([]);
-    setOffersReceived([]);
-    setOffersSent([]);
-    setListingTitles({});
-    // NB: intentionally do NOT reset `followers`/`following` here. They are
-    // seeded from cache and only replaced when a fresh count arrives, so
-    // refetches never flash back to 0 or a placeholder.
-
-    const isStale = () => requestedUserId !== user.id;
-
-    // Egen annonseforespørsel — ikke blokker på ratings/offers/followers.
-    const listingsPromise = supabase
-      .from("listings")
-      .select("*")
-      .eq("user_id", requestedUserId)
-      .in("status", ["active", "sold"])
-      .order("created_at", { ascending: false })
-      .then(async (res) => {
-        if (isStale()) return;
-        const rows = (res.data ?? []) as ListingRow[];
-        if (rows.length === 0) {
-          setMyListings([]);
-          setArticleCount(0);
-          setProfileStats(requestedUserId, { articles: 0 });
-          setListingsLoading(false);
-          return;
-        }
-        const hydratedMine = await hydrateListings(rows, {
-          thumbnail: true,
-          mode: "cover",
-        });
-        if (isStale()) return;
-        const sortedMine = [
-          ...hydratedMine.filter((p) => p.status === "active"),
-          ...hydratedMine.filter((p) => p.status === "sold"),
-        ];
-        setMyListings(sortedMine);
-        const activeLen = sortedMine.filter((p) => p.status === "active").length;
-        setArticleCount(activeLen);
-        setProfileStats(requestedUserId, { articles: activeLen });
-        setListingsLoading(false);
-      });
-
-    const restPromise = Promise.all([
-      supabase.from("profiles").select("*").eq("id", requestedUserId).maybeSingle(),
-      supabase
-        .from("offers")
-        .select("*")
-        .eq("seller_id", requestedUserId)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("offers")
-        .select("*")
-        .eq("buyer_id", requestedUserId)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("followers")
-        .select("*", { count: "exact", head: true })
-        .eq("following_id", requestedUserId),
-      supabase
-        .from("followers")
-        .select("*", { count: "exact", head: true })
-        .eq("follower_id", requestedUserId),
-      supabase
-        .from("listings")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", requestedUserId)
-        .eq("status", "active"),
-    ]).then(async ([prof, offRec, offSent, fCount, gCount, aCount]) => {
-      if (isStale()) return;
-      // Beskytt mot at feil profil (annen id) blir satt inn.
-      const profData = prof.data as Profile | null;
-      if (profData && profData.id !== requestedUserId) {
-        setProfile(null);
-      } else {
-        setProfile(profData);
-        setCurrentProfileCache(requestedUserId, profData);
+  const statsQuery = useQuery({
+    queryKey: ["profile-stats", user.id] as const,
+    queryFn: () => fetchProfileStats(user.id),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+    initialData: () => {
+      const s = getProfileStats(user.id);
+      if (s && s.followers != null && s.following != null && s.articles != null) {
+        return {
+          followers: s.followers,
+          following: s.following,
+          articles: s.articles,
+        };
       }
+      return undefined;
+    },
+  });
 
-      const nextFollowers = fCount.count ?? 0;
-      const nextFollowing = gCount.count ?? 0;
-      const nextArticles = aCount.count ?? 0;
-      setFollowers(nextFollowers);
-      setFollowing(nextFollowing);
-      setArticleCount(nextArticles);
-      setProfileStats(requestedUserId, {
-        followers: nextFollowers,
-        following: nextFollowing,
-        articles: nextArticles,
-      });
+  useEffect(() => {
+    if (statsQuery.data) {
+      setProfileStats(user.id, statsQuery.data);
+    }
+  }, [statsQuery.data, user.id]);
 
-      const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
-      setOffersReceived((offRec.data ?? []) as OfferRow[]);
-      setOffersSent((offSent.data ?? []) as OfferRow[]);
+  const listingsQuery = useQuery({
+    queryKey: ["profile-listings", user.id] as const,
+    queryFn: () => fetchMyListings(user.id),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const myListings: ListingView[] = listingsQuery.data ?? [];
 
-      const ids = Array.from(new Set(allOffers.map((o) => o.listing_id)));
-      if (ids.length) {
-        const { data: titles } = await supabase.from("listings").select("id,title").in("id", ids);
-        if (isStale()) return;
-        const map: Record<string, string> = {};
-        for (const t of titles ?? []) map[t.id] = t.title;
-        setListingTitles(map);
-      }
-      setLoading(false);
+  const offersQuery = useQuery({
+    queryKey: ["profile-offers", user.id] as const,
+    queryFn: () => fetchOffers(user.id),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const offersReceived = offersQuery.data?.received ?? [];
+  const offersSent = offersQuery.data?.sent ?? [];
+  const listingTitles = offersQuery.data?.titles ?? {};
+
+  // Liked/saved — keyed on sorted ids so cache-per-selection works,
+  // placeholderData keeps last render while switching.
+  const likesKey = useMemo(() => Array.from(likes).sort().join(","), [likes]);
+  const savesKey = useMemo(() => Array.from(saves).sort().join(","), [saves]);
+
+  const likedQuery = useQuery({
+    queryKey: ["profile-liked-listings", user.id, likesKey] as const,
+    queryFn: () => fetchListingsByIds(Array.from(likes)),
+    enabled: collectionsLoaded,
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const savedQuery = useQuery({
+    queryKey: ["profile-saved-listings", user.id, savesKey] as const,
+    queryFn: () => fetchListingsByIds(Array.from(saves)),
+    enabled: collectionsLoaded,
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const likedListings = likedQuery.data ?? [];
+  const savedListings = savedQuery.data ?? [];
+
+  // Fetch profile row separately (fills the shared profile cache), but do
+  // not gate anything on it — the cache-seeded profile above is used for
+  // the visible header.
+  useEffect(() => {
+    let cancelled = false;
+    fetchProfileRow(user.id).then((row) => {
+      if (cancelled) return;
+      setProfile(row);
+      setCurrentProfileCache(user.id, row);
     });
-
-    await Promise.all([listingsPromise, restPromise]);
+    return () => {
+      cancelled = true;
+    };
   }, [user.id]);
 
+  // Invalidation helper — used by SettingsSheet / HeightSheet.
+  const loadAll = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["profile-stats", user.id] });
+    queryClient.invalidateQueries({ queryKey: ["profile-listings", user.id] });
+    queryClient.invalidateQueries({ queryKey: ["profile-offers", user.id] });
+    fetchProfileRow(user.id).then((row) => {
+      setProfile(row);
+      setCurrentProfileCache(user.id, row);
+    });
+  }, [queryClient, user.id]);
 
+  // Realtime: debounced invalidations, never blank current state.
   useEffect(() => {
-    loadAll();
-  }, [loadAll]);
-
-
-  useEffect(() => {
-    const ids = Array.from(likes);
-    if (ids.length === 0) {
-      setLikedListings([]);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase
-        .from("listings")
-        .select("*")
-        .in("id", ids)
-        .eq("status", "active")
-        .eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
-        thumbnail: true,
-        mode: "cover",
-      });
-      if (!cancelled) setLikedListings(hydrated);
-    })();
-    return () => {
-      cancelled = true;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const invalidateListings = () => {
+      if (timer) return;
+      timer = setTimeout(() => {
+        timer = null;
+        queryClient.invalidateQueries({ queryKey: ["profile-listings", user.id] });
+        queryClient.invalidateQueries({ queryKey: ["profile-stats", user.id] });
+      }, 300);
     };
-  }, [likes]);
-
-  useEffect(() => {
-    const ids = Array.from(saves);
-    if (ids.length === 0) {
-      setSavedListings([]);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase
-        .from("listings")
-        .select("*")
-        .in("id", ids)
-        .eq("status", "active")
-        .eq("sold", false);
-      const hydrated = await hydrateListings((data ?? []) as ListingRow[], {
-        thumbnail: true,
-        mode: "cover",
-      });
-      if (!cancelled) setSavedListings(hydrated);
-    })();
-    return () => {
-      cancelled = true;
+    const invalidateOffers = () => {
+      queryClient.invalidateQueries({ queryKey: ["profile-offers", user.id] });
     };
-  }, [saves]);
-
-  useEffect(() => {
     const ch = supabase
       .channel(`profile-live:${user.id}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "listings", filter: `user_id=eq.${user.id}` },
-        () => loadAll(),
+        invalidateListings,
       )
-      // DELETE events don't include user_id in default REPLICA IDENTITY, so listen broadly and let loadAll reconcile.
-      .on("postgres_changes", { event: "DELETE", schema: "public", table: "listings" }, () =>
-        loadAll(),
-      )
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "listings" }, invalidateListings)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "offers", filter: `seller_id=eq.${user.id}` },
-        () => loadAll(),
+        invalidateOffers,
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "offers", filter: `buyer_id=eq.${user.id}` },
-        () => loadAll(),
+        invalidateOffers,
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "ratings", filter: `seller_id=eq.${user.id}` },
-        () => loadAll(),
+        () => {
+          fetchProfileRow(user.id).then((row) => {
+            setProfile(row);
+            setCurrentProfileCache(user.id, row);
+          });
+        },
       )
       .subscribe();
     return () => {
+      if (timer) clearTimeout(timer);
       supabase.removeChannel(ch);
     };
-  }, [user.id, loadAll]);
+  }, [user.id, queryClient]);
+
+  // ---- Derived values --------------------------------------------------
+
+  // Authoritative source: head-count from stats query.
+  const articleCount: number | null = statsQuery.data?.articles ?? null;
+  const followers: number | null = statsQuery.data?.followers ?? null;
+  const following: number | null = statsQuery.data?.following ?? null;
+
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -726,28 +736,18 @@ function ProfilePage() {
         </div>
 
         {/* Grid */}
-        <section
-          id={`profile-panel-${tab}`}
-          role="tabpanel"
-          aria-labelledby={`profile-tab-${tab}`}
-          aria-busy={listingsLoading && tab === "mine"}
-          className="pt-0"
-        >
-          {listingsLoading && tab === "mine" ? (
-            <div className="grid place-items-center py-10" role="status" aria-live="polite">
-              <Loader2
-                className="h-6 w-6 animate-spin"
-                style={{ color: MUTED }}
-                aria-hidden="true"
-              />
-              <span className="sr-only">Duke ngarkuar…</span>
-            </div>
-          ) : currentGrid.length === 0 ? (
-            <TabEmptyState tab={tab} />
-          ) : (
-            <ListingsGrid listings={currentGrid} manage={tab === "mine"} />
-          )}
-        </section>
+        <ProfileTabGrid
+          tab={tab}
+          listings={currentGrid}
+          isMineLoading={listingsQuery.isPending && !listingsQuery.data}
+          isLikedLoading={
+            !collectionsLoaded || (likedQuery.isPending && !likedQuery.data)
+          }
+          isSavedLoading={
+            !collectionsLoaded || (savedQuery.isPending && !savedQuery.data)
+          }
+        />
+
 
       </div>
 
@@ -1059,12 +1059,22 @@ function Stat({
 }) {
   const inner = (
     <>
-      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2, minHeight: "1.2em" }}>
+      <p
+        style={{
+          fontSize: 18,
+          fontWeight: 600,
+          color: INK,
+          lineHeight: 1.2,
+          minHeight: "1.2em",
+          minWidth: "2.5ch",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
         {value === null ? (
           <span
             aria-hidden="true"
             className="inline-block rounded bg-muted animate-pulse align-middle"
-            style={{ width: "1.6ch", height: "0.85em" }}
+            style={{ width: "2ch", height: "0.85em" }}
           />
         ) : (
           value
@@ -1096,14 +1106,82 @@ function Stat({
           padding: 0,
           cursor: "pointer",
           WebkitTapHighlightColor: "transparent",
+          minWidth: "5ch",
         }}
       >
         {inner}
       </button>
     );
   }
-  return <div style={{ textAlign: "center" }}>{inner}</div>;
+  return <div style={{ textAlign: "center", minWidth: "5ch" }}>{inner}</div>;
 }
+
+/**
+ * Renders the listings grid for the active profile tab.
+ * - Same geometry as the real grid (2 cols, gap:1.5, aspect-square).
+ * - First-visit shows an aspect-matched skeleton grid from the first frame.
+ * - Empty state is only shown once the tab's query has finished with no data.
+ */
+function ProfileTabGrid({
+  tab,
+  listings,
+  isMineLoading,
+  isLikedLoading,
+  isSavedLoading,
+}: {
+  tab: Tab;
+  listings: ListingView[];
+  isMineLoading: boolean;
+  isLikedLoading: boolean;
+  isSavedLoading: boolean;
+}) {
+  const loading =
+    tab === "mine"
+      ? isMineLoading
+      : tab === "liked"
+        ? isLikedLoading
+        : tab === "saved"
+          ? isSavedLoading
+          : isMineLoading; // wardrobe derives from mine listings
+  return (
+    <section
+      id={`profile-panel-${tab}`}
+      role="tabpanel"
+      aria-labelledby={`profile-tab-${tab}`}
+      aria-busy={loading}
+      className="pt-0"
+    >
+      {loading && listings.length === 0 ? (
+        <ProfileGridSkeleton />
+      ) : listings.length === 0 ? (
+        <TabEmptyState tab={tab} />
+      ) : (
+        <ListingsGrid listings={listings} manage={tab === "mine"} />
+      )}
+    </section>
+  );
+}
+
+function ProfileGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div
+      className="grid grid-cols-2"
+      style={{ gap: 1.5, backgroundColor: "#ffffff" }}
+      role="status"
+      aria-live="polite"
+    >
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="aspect-square animate-pulse"
+          style={{ backgroundColor: "var(--brand-cream, #f3ede4)" }}
+        />
+      ))}
+      <span className="sr-only">Duke ngarkuar…</span>
+    </div>
+  );
+}
+
 
 function TierCard({
   emoji,

@@ -6,6 +6,7 @@ type Ctx = {
   userId: string | null;
   likes: Set<string>;
   saves: Set<string>;
+  loaded: boolean;
   toggleLike: (listingId: string) => Promise<boolean>;
   toggleSave: (listingId: string) => Promise<boolean>;
 };
@@ -16,6 +17,7 @@ export function UserCollectionsProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [likes, setLikes] = useState<Set<string>>(new Set());
   const [saves, setSaves] = useState<Set<string>>(new Set());
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     getCurrentUserId().then((id) => setUserId(id));
@@ -32,14 +34,17 @@ export function UserCollectionsProvider({ children }: { children: ReactNode }) {
     ]);
     setLikes(new Set((l.data ?? []).map((r) => r.listing_id)));
     setSaves(new Set((s.data ?? []).map((r) => r.listing_id)));
+    setLoaded(true);
   }, []);
 
   useEffect(() => {
     if (!userId) {
       setLikes(new Set());
       setSaves(new Set());
+      setLoaded(true); // signed-out: nothing to load
       return;
     }
+    setLoaded(false);
     reload(userId);
     const ch = supabase
       .channel(`user-collections-${userId}`)
@@ -90,8 +95,8 @@ export function UserCollectionsProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ userId, likes, saves, toggleLike, toggleSave }),
-    [userId, likes, saves, toggleLike, toggleSave],
+    () => ({ userId, likes, saves, loaded, toggleLike, toggleSave }),
+    [userId, likes, saves, loaded, toggleLike, toggleSave],
   );
 
   return <UserCollectionsContext.Provider value={value}>{children}</UserCollectionsContext.Provider>;
