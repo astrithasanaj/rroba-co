@@ -34,6 +34,13 @@ import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
+import {
+  getCachedCurrentProfile,
+  setCurrentProfileCache,
+  updateCurrentProfileCache,
+  useCurrentProfile,
+} from "@/hooks/useCurrentProfile";
+
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getMembershipPlan } from "@/lib/membership-plans";
