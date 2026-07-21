@@ -188,6 +188,9 @@ function ProfilePage() {
           ...hydratedMine.filter((p) => p.status === "sold"),
         ];
         setMyListings(sortedMine);
+        const activeLen = sortedMine.filter((p) => p.status === "active").length;
+        setArticleCount(activeLen);
+        setProfileStats(requestedUserId, { articles: activeLen });
         setListingsLoading(false);
       });
 
