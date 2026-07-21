@@ -79,22 +79,6 @@ export const SUBCATEGORY_OPTIONS: Record<GenderSlug, string[]> = {
   all: [],
 };
 
-export const CATEGORY_SUBCATEGORIES: Record<string, string[]> = {
-  outdoor: [
-    "Çadra", "Bicikleta", "Çanta shpine", "Veshje sportive", "Këpucë sportive",
-    "Pajisje fitness", "Pajisje hiking/camping", "Pajisje uji (kajak, SUP)",
-    "Ski & snowboard", "Topa & lojëra", "Aksesorë sportive",
-  ],
-  interior: [
-    "Sofa & kolltuk", "Tavolina", "Karrige", "Krevat", "Dollap & rafte",
-    "Dritare & perde", "Qilima", "Llamba & ndriçim", "Pasqyra",
-    "Dekor muri", "Kuzhinë & enë", "Ndriçim outdoor",
-  ],
-  art: [
-    "Pikturë", "Print & poster", "Fotografi", "Skulpturë", "Dizajn produkti",
-    "Vazo & qeramikë", "Tekstil dekorativ", "Vintage & antike", "Krijime artizanale",
-  ],
-};
 
 export const HOME_CATEGORIES = [
   {

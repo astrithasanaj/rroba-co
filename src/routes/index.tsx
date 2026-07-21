@@ -438,8 +438,14 @@ function ForYou({
         </h2>
         <div className="category-scroll mt-3 pb-1">
           {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
-            const hasGender = key === "mode" || key === "femije";
-            const hasSubcategory = key === "outdoor" || key === "interior" || key === "art";
+            const k: string = key;
+            const hasGender = k === "mode" || k === "femije";
+            const hasSubcategory =
+              k === "outdoor" ||
+              k === "interior" ||
+              k === "art" ||
+              k === "elektronik" ||
+              k === "hobi";
             const linkProps = hasGender
               ? ({ to: "/category/$slug/choose-gender", params: { slug: key } } as const)
               : hasSubcategory

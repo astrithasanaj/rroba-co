@@ -92,11 +92,7 @@ function CategoryResultsPage() {
       if (filters.priceMin) query = query.gte("price", Number(filters.priceMin));
       if (filters.priceMax) query = query.lte("price", Number(filters.priceMax));
       if (subcategoryList.length > 0) {
-        const orExpr = [
-          `subcategory.in.(${subcategoryList.map((s: string) => `"${s.replace(/"/g, "")}"`).join(",")})`,
-          ...subcategoryList.map((s: string) => `title.ilike.%${s.replace(/[,()"']/g, "")}%`),
-        ].join(",");
-        query = query.or(orExpr);
+        query = query.in("subcategory", subcategoryList);
       }
       query = query.order("created_at", { ascending: false });
       const { data } = await query.limit(120);
