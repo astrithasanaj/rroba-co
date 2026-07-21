@@ -154,8 +154,9 @@ function ProfilePage() {
     setOffersReceived([]);
     setOffersSent([]);
     setListingTitles({});
-    setFollowers(0);
-    setFollowing(0);
+    // NB: intentionally do NOT reset `followers`/`following` here. They are
+    // seeded from cache and only replaced when a fresh count arrives, so
+    // refetches never flash back to 0 or a placeholder.
 
     const isStale = () => requestedUserId !== user.id;
 
