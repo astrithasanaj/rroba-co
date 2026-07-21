@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { isGenderSpecificCategory, GENDER_SPECIFIC_CATEGORIES } from "@/lib/category-taxonomy";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -78,9 +79,26 @@ function HomePage() {
       if (wantsWomen) allowedGenders.push("Femra");
       if (wantsMen) allowedGenders.push("Meshkuj");
 
-      const genderFilter = `gender.in.(${allowedGenders.map((g) => `"${g}"`).join(",")}),gender.is.null`;
-      const passesGenderFilter = (r: ListingRow) =>
-        r.gender == null || allowedGenders.includes(r.gender);
+      // Personalization only applies to gender-specific categories.
+      // Neutral categories (Interier, Outdoor, Art, Elektronikë, Hobi, …) and
+      // listings without a gender are always allowed.
+      const neutralCategoriesList = `"${["Interier & mobilie", "Outdoor & sport", "Art & dizajn", "Elektronikë & zë", "Hobi"].join('","')}"`;
+      const genderSpecificList = `"${GENDER_SPECIFIC_CATEGORIES.join('","')}"`;
+      const allowedGendersList = allowedGenders.map((g) => `"${g}"`).join(",");
+      // A row passes if: gender is null OR category is not gender-specific OR
+      // gender is in allowed set. Encoded as PostgREST OR:
+      const genderFilter = [
+        "gender.is.null",
+        `category.not.in.(${genderSpecificList})`,
+        `category.in.(${neutralCategoriesList})`,
+        allowedGenders.length > 0 ? `gender.in.(${allowedGendersList})` : null,
+      ].filter(Boolean).join(",");
+
+      const passesPersonalization = (r: Pick<ListingRow, "category" | "gender">) => {
+        if (r.gender == null) return true;
+        if (!isGenderSpecificCategory(r.category)) return true;
+        return allowedGenders.includes(r.gender);
+      };
 
       // --- Seksjon: "E re këtë javë" — uavhengig ---
       const newWeekTask = (async () => {
@@ -183,7 +201,7 @@ function HomePage() {
           const { regularRows } = (await promotedRegularTask) ?? { regularRows: [] };
           const have = new Set(trendingRows.map((r) => r.id));
           const fillers = (regularRows ?? []).filter(
-            (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r),
+            (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesPersonalization(r),
           );
           trendingRows = [...trendingRows, ...fillers].slice(0, 5);
         }
