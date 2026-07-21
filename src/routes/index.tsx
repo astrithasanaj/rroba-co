@@ -493,10 +493,10 @@ function ForYou({
           <section className="mt-8 px-5">
             <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
             <div className="mt-3">
-              {trendingLoading ? (
-                <SectionLoadingPlaceholder />
-              ) : trending.length === 0 ? (
-                <SectionEmptyState>Ende asnjë artikull në trend.</SectionEmptyState>
+              {trendingLoading || trending.length === 0 ? (
+                <SectionStateBox loading={trendingLoading}>
+                  Ende asnjë artikull në trend.
+                </SectionStateBox>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {trending.map((l, i) => (
@@ -510,10 +510,10 @@ function ForYou({
           <section className="mt-8 px-5">
             <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
             <div className="mt-3">
-              {newWeekLoading ? (
-                <SectionLoadingPlaceholder />
-              ) : newThisWeek.length === 0 ? (
-                <SectionEmptyState>Ende asnjë artikull këtë javë.</SectionEmptyState>
+              {newWeekLoading || newThisWeek.length === 0 ? (
+                <SectionStateBox loading={newWeekLoading}>
+                  Ende asnjë artikull këtë javë.
+                </SectionStateBox>
               ) : (
                 <div
                   className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
@@ -528,6 +528,7 @@ function ForYou({
               )}
             </div>
           </section>
+
 
 
           {regularLoading && listings.length === 0 && (
@@ -610,28 +611,32 @@ function FollowingFeed({
   );
 }
 
-function SectionLoadingPlaceholder() {
-  return (
-    <div
-      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed"
-      style={{ borderColor: "#e2e2de" }}
-      aria-label="Duke ngarkuar"
-    >
-      <div className="h-3 w-32 animate-pulse rounded-full" style={{ background: "rgba(0,0,0,0.06)" }} />
-    </div>
-  );
-}
-
-function SectionEmptyState({ children }: { children: React.ReactNode }) {
+function SectionStateBox({
+  loading,
+  children,
+}: {
+  loading: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <div
       className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
       style={{ borderColor: "#e2e2de", color: MUTED }}
+      aria-label={loading ? "Duke ngarkuar" : undefined}
     >
-      {children}
+      {loading ? (
+        <div
+          className="h-3 w-32 rounded-full"
+          style={{ background: "rgba(0,0,0,0.06)" }}
+          aria-hidden="true"
+        />
+      ) : (
+        <span>{children}</span>
+      )}
     </div>
   );
 }
+
 
 function SectionHeader({
   title,
