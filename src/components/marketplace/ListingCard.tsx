@@ -51,7 +51,7 @@ export function ListingCard({
           style={{
             backgroundColor: "var(--brand-cream, #f3ede4)",
             opacity: hasCover && imageLoaded ? 0 : 1,
-            transition: "opacity 200ms ease-out",
+            transition: "opacity 80ms linear",
           }}
         />
 
@@ -67,7 +67,7 @@ export function ListingCard({
             className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
             style={{
               opacity: imageLoaded ? 1 : 0,
-              transition: "opacity 220ms ease-out, transform 500ms",
+              transition: "opacity 80ms linear, transform 500ms",
               filter: isSold && isOnProfileGrid ? "brightness(0.82) saturate(0.65)" : "none",
             }}
           />
