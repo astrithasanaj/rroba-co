@@ -282,7 +282,7 @@ function UserProfile() {
           .eq("following_id", id);
         if (error) {
           setIsFollowing(true);
-          setFollowers((n) => n + 1);
+          setFollowers((n) => (n ?? 0) + 1);
           toast.error(error.message);
         }
       } else {
