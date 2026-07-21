@@ -60,13 +60,23 @@ function Stat({
   label,
   onClick,
 }: {
-  value: number | string;
+  value: number | string | null;
   label: string;
   onClick?: (e: React.MouseEvent) => void;
 }) {
   const content = (
     <>
-      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2, minHeight: "1.2em" }}>
+        {value === null ? (
+          <span
+            aria-hidden="true"
+            className="inline-block rounded bg-muted animate-pulse align-middle"
+            style={{ width: "1.6ch", height: "0.85em" }}
+          />
+        ) : (
+          value
+        )}
+      </p>
       <p
         style={{
           fontSize: 11,
