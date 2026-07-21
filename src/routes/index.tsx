@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Bell, UserPlus, Shirt } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
-import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
+import { ListingCardSkeleton, ProductGridSkeleton } from "@/components/marketplace/Skeletons";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
@@ -508,46 +508,42 @@ function ForYou({
             </section>
           )}
 
-          <section className="mt-8 px-5">
-            <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
-            <div className="mt-3">
-              {trendingLoading || trending.length === 0 ? (
-                <SectionStateBox loading={trendingLoading}>
-                  Ende asnjë artikull në trend.
-                </SectionStateBox>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  {trending.map((l, i) => (
-                    <ListingCard key={l.id} listing={l} eager={i < 4} />
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
+          {(trendingLoading || trending.length > 0) && (
+            <section className="mt-8 px-5">
+              <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {trendingLoading
+                  ? Array.from({ length: 4 }).map((_, i) => (
+                      <ListingCardSkeleton key={i} aspect="3/4" />
+                    ))
+                  : trending.map((l, i) => (
+                      <ListingCard key={l.id} listing={l} eager={i < 4} />
+                    ))}
+              </div>
+            </section>
+          )}
 
-          <section className="mt-8 px-5">
-            <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
-            <div className="mt-3">
-              {newWeekLoading || newThisWeek.length === 0 ? (
-                <SectionStateBox loading={newWeekLoading}>
-                  Ende asnjë artikull këtë javë.
-                </SectionStateBox>
-              ) : (
-                <div
-                  className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  {newThisWeek.map((l) => (
-                    <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                      <ListingCard listing={l} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
-
-
+          {(newWeekLoading || newThisWeek.length > 0) && (
+            <section className="mt-8 px-5">
+              <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
+              <div
+                className="mt-3 flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {newWeekLoading
+                  ? Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} style={{ width: 168, flexShrink: 0 }}>
+                        <ListingCardSkeleton aspect="3/4" />
+                      </div>
+                    ))
+                  : newThisWeek.map((l) => (
+                      <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                        <ListingCard listing={l} />
+                      </div>
+                    ))}
+              </div>
+            </section>
+          )}
 
           {regularLoading && listings.length === 0 && (
             <section className="mt-7 px-[18px]">
@@ -629,31 +625,6 @@ function FollowingFeed({
   );
 }
 
-function SectionStateBox({
-  loading,
-  children,
-}: {
-  loading: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
-      style={{ borderColor: "#e2e2de", color: MUTED }}
-      aria-label={loading ? "Duke ngarkuar" : undefined}
-    >
-      {loading ? (
-        <div
-          className="h-3 w-32 rounded-full"
-          style={{ background: "rgba(0,0,0,0.06)" }}
-          aria-hidden="true"
-        />
-      ) : (
-        <span>{children}</span>
-      )}
-    </div>
-  );
-}
 
 
 function SectionHeader({
