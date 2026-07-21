@@ -492,54 +492,57 @@ function ForYou({
 
           <section className="mt-7 px-[18px]">
             <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
-            {trendingLoading ? (
-              <div className="mt-3">
+            <div className="mt-3">
+              {trendingLoading ? (
                 <ProductGridSkeleton count={2} />
-              </div>
-            ) : trending.length === 0 ? (
-              <div
-                className="mt-3 rounded-2xl border border-dashed p-6 text-center text-sm"
-                style={{ borderColor: "#e2e2de", color: MUTED }}
-              >
-                Ende asnjë artikull në trend.
-              </div>
-            ) : (
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {trending.map((l, i) => (
-                  <ListingCard key={l.id} listing={l} eager={i < 4} />
-                ))}
-              </div>
-            )}
+              ) : trending.length === 0 ? (
+                <div
+                  className="box-border flex w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
+                  style={{ borderColor: "#e2e2de", color: MUTED, minHeight: 140 }}
+                >
+                  Ende asnjë artikull në trend.
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {trending.map((l, i) => (
+                    <ListingCard key={l.id} listing={l} eager={i < 4} />
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
 
           <section className="mt-8">
             <div className="px-5">
               <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
             </div>
-            {newWeekLoading ? (
-              <div className="mt-3 px-5">
-                <ProductGridSkeleton count={2} />
-              </div>
-            ) : newThisWeek.length === 0 ? (
-              <div
-                className="mx-5 mt-3 rounded-2xl border border-dashed p-6 text-center text-sm"
-                style={{ borderColor: "#e2e2de", color: MUTED }}
-              >
-                Ende asnjë artikull këtë javë.
-              </div>
-            ) : (
-              <div
-                className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
-                style={{ scrollbarWidth: "none" }}
-              >
-                {newThisWeek.map((l) => (
-                  <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                    <ListingCard listing={l} />
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="mt-3">
+              {newWeekLoading ? (
+                <div className="px-5">
+                  <ProductGridSkeleton count={2} />
+                </div>
+              ) : newThisWeek.length === 0 ? (
+                <div
+                  className="mx-5 box-border flex items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
+                  style={{ borderColor: "#e2e2de", color: MUTED, minHeight: 140 }}
+                >
+                  Ende asnjë artikull këtë javë.
+                </div>
+              ) : (
+                <div
+                  className="flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  {newThisWeek.map((l) => (
+                    <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
+                      <ListingCard listing={l} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
+
 
           {regularLoading && listings.length === 0 && (
             <section className="mt-7 px-[18px]">
