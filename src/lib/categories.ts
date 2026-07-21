@@ -1,4 +1,5 @@
 import { Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+import { CATEGORY_TAXONOMY } from "./category-taxonomy";
 
 export type GenderSlug = "femra" | "meshkuj" | "vajza" | "djem" | "all";
 
@@ -10,11 +11,18 @@ export type CategoryDef = {
   genderOptions?: { slug: GenderSlug; label: string; dbValue: string; symbol: "♀" | "♂" }[];
 };
 
-export const CATEGORY_MAP: Record<string, CategoryDef> = {
+// Single source of truth: derive DB category values from CATEGORY_TAXONOMY so
+// the category route filter can never drift from what sell.tsx writes.
+function taxonomyCategories(key: string): string[] {
+  const node = CATEGORY_TAXONOMY.find((n) => n.key === key);
+  return node ? [...node.categories] : [];
+}
+
+const GENDER_META: Record<
+  string,
+  { hasGender: boolean; genderOptions?: CategoryDef["genderOptions"] }
+> = {
   mode: {
-    slug: "mode",
-    label: "Modë & aksesorë",
-    categories: ["Veshje", "Këpucë", "Aksesorë"],
     hasGender: true,
     genderOptions: [
       { slug: "femra", label: "Femra", dbValue: "Femra", symbol: "♀" },
@@ -22,21 +30,29 @@ export const CATEGORY_MAP: Record<string, CategoryDef> = {
     ],
   },
   femije: {
-    slug: "femije",
-    label: "Fëmijë & bebe",
-    categories: ["Fëmijë"],
     hasGender: true,
     genderOptions: [
       { slug: "vajza", label: "Vajza", dbValue: "Vajza", symbol: "♀" },
       { slug: "djem", label: "Djem", dbValue: "Djem", symbol: "♂" },
     ],
   },
-  outdoor: { slug: "outdoor", label: "Outdoor & sport", categories: ["Outdoor"], hasGender: false },
-  interior: { slug: "interior", label: "Interier & mobilie", categories: ["Interier"], hasGender: false },
-  art: { slug: "art", label: "Art & dizajn", categories: ["Art"], hasGender: false },
-  elektronik: { slug: "elektronik", label: "Elektronikë & zë", categories: ["Elektronikë"], hasGender: false },
-  
 };
+
+export const CATEGORY_MAP: Record<string, CategoryDef> = Object.fromEntries(
+  CATEGORY_TAXONOMY.map((node) => {
+    const meta = GENDER_META[node.key] ?? { hasGender: false };
+    return [
+      node.key,
+      {
+        slug: node.key,
+        label: node.label,
+        categories: taxonomyCategories(node.key),
+        hasGender: meta.hasGender,
+        genderOptions: meta.genderOptions,
+      } satisfies CategoryDef,
+    ];
+  }),
+);
 
 export function getCategory(slug: string): CategoryDef | undefined {
   return CATEGORY_MAP[slug];
