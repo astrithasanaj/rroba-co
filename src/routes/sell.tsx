@@ -161,6 +161,18 @@ function getSubcategories(category: string, gender: string): string[] {
       return ["Telefona", "Kompjuterë", "Audio", "Kamera", "Aksesorë", "Të tjera"];
     case "Interier & mobilie":
       return ["Mobilje", "Dekor", "Ndriçim", "Kuzhinë", "Tekstil", "Të tjera"];
+    case "Hobi":
+      return [
+        "Libra",
+        "Muzikë & instrumente",
+        "Lojra tavoline & kartela",
+        "Koleksione",
+        "Foto & kamera",
+        "Krijime me duar",
+        "Kafshë shtëpiake",
+        "Bileta koncerti & ngjarje",
+        "Të tjera",
+      ];
     default:
       return [];
   }
