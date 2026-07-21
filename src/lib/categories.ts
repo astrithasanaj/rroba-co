@@ -1,4 +1,4 @@
-import { Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+import { Shirt, Mountain, Archive, Baby, Frame, Speaker, Gamepad2 } from "lucide-react";
 import { CATEGORY_TAXONOMY } from "./category-taxonomy";
 
 export type GenderSlug = "femra" | "meshkuj" | "vajza" | "djem" | "all";
