@@ -331,6 +331,8 @@ export async function hydrateListings(
   // Merk: rader uten cover filtreres IKKE ut. Grid og count-query må
   // representere nøyaktig samme sett. ListingCard viser en placeholder
   // (ImageOff) når coverUrl mangler.
+}
+
 
 export const CATEGORIES = [
   { value: "Veshje", label: "Veshje" },
