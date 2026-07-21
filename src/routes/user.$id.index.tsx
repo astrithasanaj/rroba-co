@@ -373,20 +373,95 @@ function UserProfile() {
 
   if (loading) {
     return (
-      <MobileShell hideNav>
+      <MobileShell>
         <div
-          className="grid h-dvh place-items-center"
           role="status"
           aria-live="polite"
           aria-busy="true"
+          className="min-h-screen pb-[110px]"
           style={{ backgroundColor: CREAM }}
         >
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} aria-hidden="true" />
+          {/* Header placeholder — matches real header geometry */}
+          <header
+            className="sticky top-0 z-30 flex items-center justify-between"
+            style={{ padding: "10px 16px 6px", backgroundColor: CREAM }}
+          >
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "9999px",
+                backgroundColor: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(226,226,222,0.8)",
+              }}
+              aria-hidden="true"
+            />
+            <div
+              style={{
+                width: 96,
+                height: 14,
+                borderRadius: 4,
+                backgroundColor: DIVIDER,
+              }}
+              aria-hidden="true"
+            />
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "9999px",
+                backgroundColor: CARD,
+              }}
+              aria-hidden="true"
+            />
+          </header>
+
+          {/* Profile row placeholder */}
+          <section>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 14,
+                padding: "8px 16px 12px",
+              }}
+            >
+              <div
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: "50%",
+                  backgroundColor: DIVIDER,
+                  flexShrink: 0,
+                }}
+                aria-hidden="true"
+              />
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", justifyContent: "space-around" }}>
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}
+                    >
+                      <div style={{ width: 24, height: 18, borderRadius: 4, backgroundColor: DIVIDER }} />
+                      <div style={{ width: 48, height: 11, borderRadius: 4, backgroundColor: DIVIDER }} />
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: "flex", gap: 7 }}>
+                  <div style={{ flex: 1, height: 34, borderRadius: 10, backgroundColor: DIVIDER }} />
+                  <div style={{ flex: 1, height: 34, borderRadius: 10, backgroundColor: DIVIDER }} />
+                </div>
+              </div>
+            </div>
+          </section>
+
           <span className="sr-only">Duke ngarkuar profilin…</span>
         </div>
       </MobileShell>
     );
   }
+
 
   if (profileQuery.isFetched && !profile) {
     return (
