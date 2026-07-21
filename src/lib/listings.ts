@@ -303,38 +303,36 @@ export async function hydrateListings(
   const urls = paths.length > 0 ? await signPaths(paths, { thumbnail: options?.thumbnail }) : {};
 
 
-  return (
-    rows
-      .map((r) => {
-        const raw = r.image_paths ?? [];
-        const imageCount = raw.filter(Boolean).length;
+  return rows.map((r) => {
+    const raw = r.image_paths ?? [];
+    const imageCount = raw.filter(Boolean).length;
 
-        if (mode === "cover") {
-          const first = raw.find((p) => !!p) ?? "";
-          const coverUrl = /^https?:\/\//i.test(first) ? first : (urls[first] ?? "");
-          return {
-            ...r,
-            coverUrl,
-            imageUrls: coverUrl ? [coverUrl] : [],
-            imageCount,
-          };
-        }
+    if (mode === "cover") {
+      const first = raw.find((p) => !!p) ?? "";
+      const coverUrl = /^https?:\/\//i.test(first) ? first : (urls[first] ?? "");
+      return {
+        ...r,
+        coverUrl,
+        imageUrls: coverUrl ? [coverUrl] : [],
+        imageCount,
+      };
+    }
 
-        const imageUrls = raw
-          .map((p) => (/^https?:\/\//i.test(p) ? p : (urls[p] ?? "")))
-          .filter(Boolean);
-        return {
-          ...r,
-          coverUrl: imageUrls[0] ?? "",
-          imageUrls,
-          imageCount,
-        };
-      })
-      // Skjul listings uten cover — ListingCard viser placeholder for broken images
-      // som kommer etter render, men rader helt uten paths har ingenting å vise.
-      .filter((l) => !!l.coverUrl)
-  );
+    const imageUrls = raw
+      .map((p) => (/^https?:\/\//i.test(p) ? p : (urls[p] ?? "")))
+      .filter(Boolean);
+    return {
+      ...r,
+      coverUrl: imageUrls[0] ?? "",
+      imageUrls,
+      imageCount,
+    };
+  });
+  // Merk: rader uten cover filtreres IKKE ut. Grid og count-query må
+  // representere nøyaktig samme sett. ListingCard viser en placeholder
+  // (ImageOff) når coverUrl mangler.
 }
+
 
 export const CATEGORIES = [
   { value: "Veshje", label: "Veshje" },
