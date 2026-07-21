@@ -33,6 +33,7 @@ export const Route = createFileRoute("/user/$id/")({
 type Profile = {
   id: string;
   name: string;
+  username: string | null;
   avatar_url: string | null;
   city: string;
   bio: string;
@@ -40,6 +41,7 @@ type Profile = {
   rating_count: number;
   created_at?: string;
 };
+
 
 type SortMode = "new" | "low" | "high" | "popular";
 type ListingWithLikes = ListingView & { _likes: number };
@@ -142,7 +144,7 @@ function UserProfile() {
       const [p, l] = await Promise.all([
         supabase
           .from("public_profiles")
-          .select("id,name,avatar_url,city,bio,rating_avg,rating_count,created_at")
+          .select("id,name,username,avatar_url,city,bio,rating_avg,rating_count,created_at")
           .eq("id", id)
           .maybeSingle(),
         supabase
@@ -200,7 +202,10 @@ function UserProfile() {
   }, [id, loadFollows]);
 
   const displayName = profile?.name || "Përdorues";
-  const username = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
+  const username = profile?.username
+    ? `@${profile.username}`
+    : `@user_${(profile?.id || id || "").slice(0, 8)}`;
+
   const avatar =
     profile?.avatar_url ||
     `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
