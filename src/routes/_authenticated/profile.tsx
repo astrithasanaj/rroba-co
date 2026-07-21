@@ -1184,7 +1184,7 @@ function ListingGridTile({
   eager?: boolean;
 }) {
   const [broken, setBroken] = useState(false);
-  if (!l.coverUrl || broken) return null;
+  const hasCover = !!l.coverUrl && !broken;
   const linkProps = manage
     ? ({ to: "/listing/$id/manage", params: { id: l.id } } as const)
     : ({ to: "/product/$id", params: { id: l.id } } as const);
@@ -1193,22 +1193,33 @@ function ListingGridTile({
     <Link
       {...linkProps}
       className="relative block aspect-square overflow-hidden"
-      style={{ backgroundColor: "transparent", borderRadius: 0 }}
+      style={{ backgroundColor: "var(--brand-cream, #f3ede4)", borderRadius: 0 }}
     >
-      <img
-        src={l.coverUrl}
-        alt={l.title}
-        className="h-full w-full"
-        loading={eager ? "eager" : "lazy"}
-        fetchPriority={eager ? "high" : "auto"}
-        decoding="async"
-        onError={() => setBroken(true)}
-        style={{
-          objectFit: "cover",
-          objectPosition: "center top",
-          ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
-        }}
-      />
+      {hasCover ? (
+        <img
+          src={l.coverUrl}
+          alt={l.title}
+          className="h-full w-full"
+          loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : "auto"}
+          decoding="async"
+          onError={() => setBroken(true)}
+          style={{
+            objectFit: "cover",
+            objectPosition: "center top",
+            ...(isSold ? { filter: "brightness(0.80) saturate(0.60)" } : {}),
+          }}
+        />
+      ) : (
+        <div
+          role="img"
+          aria-label={l.title}
+          className="flex h-full w-full items-center justify-center"
+          style={{ color: "var(--brand-ink-muted, #a89f94)" }}
+        >
+          <ImageOff aria-hidden="true" className="h-8 w-8" strokeWidth={1.4} />
+        </div>
+      )}
       <span
         className="pointer-events-none absolute italic"
         style={{
