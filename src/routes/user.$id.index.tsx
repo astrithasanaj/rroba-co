@@ -132,6 +132,9 @@ function UserProfile() {
   const [followingCount, setFollowingCount] = useState<number | null>(
     () => getProfileStats(id)?.following ?? null,
   );
+  const [articleCount, setArticleCount] = useState<number | null>(
+    () => getProfileStats(id)?.articles ?? null,
+  );
   const [likesTotal, setLikesTotal] = useState(0);
   const [hasSale, setHasSale] = useState(false);
 
