@@ -368,6 +368,9 @@ function UserProfile() {
     setMoreOpen(false);
   };
 
+  const loading = profileQuery.isPending && !profileQuery.data;
+  const listingsLoading = listingsQuery.isPending && !listingsQuery.data;
+
   if (loading) {
     return (
       <MobileShell hideNav>
@@ -385,7 +388,7 @@ function UserProfile() {
     );
   }
 
-  if (!profile) {
+  if (profileQuery.isFetched && !profile) {
     return (
       <MobileShell>
         <div role="alert" className="p-10 text-center text-sm" style={{ color: MUTED }}>
@@ -394,6 +397,12 @@ function UserProfile() {
       </MobileShell>
     );
   }
+
+  if (!profile) {
+    // Placeholder — should never render because `loading` short-circuits.
+    return null;
+  }
+
 
   const isOwn = currentUserId === id;
   const ratingBtnText =
