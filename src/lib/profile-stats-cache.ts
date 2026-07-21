@@ -5,6 +5,7 @@
 export type ProfileStatsCacheEntry = {
   followers?: number;
   following?: number;
+  articles?: number;
 };
 
 const cache = new Map<string, ProfileStatsCacheEntry>();
