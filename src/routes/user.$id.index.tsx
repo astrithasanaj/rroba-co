@@ -144,7 +144,7 @@ function UserProfile() {
       const [p, l] = await Promise.all([
         supabase
           .from("public_profiles")
-          .select("id,name,avatar_url,city,bio,rating_avg,rating_count,created_at")
+          .select("id,name,username,avatar_url,city,bio,rating_avg,rating_count,created_at")
           .eq("id", id)
           .maybeSingle(),
         supabase
