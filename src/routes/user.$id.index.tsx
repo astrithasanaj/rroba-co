@@ -33,6 +33,7 @@ export const Route = createFileRoute("/user/$id/")({
 type Profile = {
   id: string;
   name: string;
+  username: string | null;
   avatar_url: string | null;
   city: string;
   bio: string;
@@ -40,6 +41,7 @@ type Profile = {
   rating_count: number;
   created_at?: string;
 };
+
 
 type SortMode = "new" | "low" | "high" | "popular";
 type ListingWithLikes = ListingView & { _likes: number };
