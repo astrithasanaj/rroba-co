@@ -625,31 +625,6 @@ function FollowingFeed({
   );
 }
 
-function SectionStateBox({
-  loading,
-  children,
-}: {
-  loading: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
-      style={{ borderColor: "#e2e2de", color: MUTED }}
-      aria-label={loading ? "Duke ngarkuar" : undefined}
-    >
-      {loading ? (
-        <div
-          className="h-3 w-32 rounded-full"
-          style={{ background: "rgba(0,0,0,0.06)" }}
-          aria-hidden="true"
-        />
-      ) : (
-        <span>{children}</span>
-      )}
-    </div>
-  );
-}
 
 
 function SectionHeader({
