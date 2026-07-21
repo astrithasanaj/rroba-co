@@ -450,18 +450,33 @@ function ProfilePage() {
           <div
             style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}
           >
-            <img
-              src={avatar}
-              alt=""
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: `2px solid ${DIVIDER}`,
-                flexShrink: 0,
-              }}
-            />
+            {avatar ? (
+              <img
+                src={avatar}
+                alt=""
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: `2px solid ${DIVIDER}`,
+                  flexShrink: 0,
+                }}
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: "50%",
+                  backgroundColor: DIVIDER,
+                  border: `2px solid ${DIVIDER}`,
+                  flexShrink: 0,
+                }}
+              />
+            )}
+
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat
