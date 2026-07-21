@@ -536,9 +536,9 @@ function ForYou({
                         <ListingCardSkeleton aspect="3/4" />
                       </div>
                     ))
-                  : newThisWeek.map((l) => (
+                  : newThisWeek.map((l, i) => (
                       <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                        <ListingCard listing={l} />
+                        <ListingCard listing={l} eager={i < 2} />
                       </div>
                     ))}
               </div>
