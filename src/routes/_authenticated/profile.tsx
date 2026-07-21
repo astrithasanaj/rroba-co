@@ -219,8 +219,14 @@ function ProfilePage() {
         setCurrentProfileCache(requestedUserId, profData);
       }
 
-      setFollowers(fCount.count ?? 0);
-      setFollowing(gCount.count ?? 0);
+      const nextFollowers = fCount.count ?? 0;
+      const nextFollowing = gCount.count ?? 0;
+      setFollowers(nextFollowers);
+      setFollowing(nextFollowing);
+      setProfileStats(requestedUserId, {
+        followers: nextFollowers,
+        following: nextFollowing,
+      });
 
       const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
       setOffersReceived((offRec.data ?? []) as OfferRow[]);
