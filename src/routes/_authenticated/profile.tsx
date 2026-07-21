@@ -1895,10 +1895,19 @@ function ProfileForm({
     setSaving(false);
     if (error) toast.error(error.message);
     else {
+      updateCurrentProfileCache(profile.id, {
+        name,
+        bio,
+        city,
+        city_id: cityId,
+        avatar_url: avatarUrl || null,
+        height_cm: h,
+      });
       toast.success("Profili u ruajt");
       onSaved();
     }
   };
+
 
   const inputStyle = { backgroundColor: CARD, color: INK, borderColor: DIVIDER } as const;
 
