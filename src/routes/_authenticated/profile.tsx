@@ -1871,9 +1871,11 @@ function ProfileForm({
         .update({ avatar_url: null })
         .eq("id", profile.id);
       if (error) throw error;
+      updateCurrentProfileCache(profile.id, { avatar_url: null });
       setAvatarUrl("");
       toast.success("Fotoja e profilit u hoq");
       onSaved();
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Diçka shkoi keq");
     } finally {
