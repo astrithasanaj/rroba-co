@@ -279,6 +279,10 @@ function SellPage() {
 
   const publish = async () => {
     if (!userId || submitting || !finalValid) return;
+    if (images.length < 1) {
+      toast.error("Shto të paktën një foto para se të publikosh");
+      return;
+    }
     setSubmitting(true);
     const uploaded: string[] = [];
     try {
