@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
-import { getCategory, CATEGORY_SUBCATEGORIES } from "@/lib/categories";
+import { getCategory } from "@/lib/categories";
+import { CATEGORY_TAXONOMY } from "@/lib/category-taxonomy";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 
 const BG = "var(--brand-surface)";
-const CARD = "var(--brand-surface)";
 const CHIP = "var(--brand-surface)";
 const INK = "var(--brand-ink)";
 const DISABLED = "var(--brand-border)";
@@ -23,7 +23,11 @@ function SubcategorySelectPage() {
   const { slug } = useParams({ from: "/category/$slug/subcategory" });
   const navigate = useNavigate();
   const def = getCategory(slug);
-  const subcategories = CATEGORY_SUBCATEGORIES[slug] ?? [];
+  const subcategories = useMemo<string[]>(() => {
+    const node = CATEGORY_TAXONOMY.find((n) => n.key === slug);
+    return node ? node.groups.map((g) => g.label) : [];
+  }, [slug]);
+  const [selected, setSelected] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
 
   if (!def || subcategories.length === 0) {
