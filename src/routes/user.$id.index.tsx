@@ -451,7 +451,7 @@ function UserProfile() {
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <Stat value={activeCount} label="artikuj" />
+                <Stat value={articleCount} label="artikuj" />
                 <Stat
                   value={followers}
                   label="ndjekës"
