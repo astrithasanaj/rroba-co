@@ -210,7 +210,9 @@ function ProfilePage() {
         setProfile(null);
       } else {
         setProfile(profData);
+        setCurrentProfileCache(requestedUserId, profData);
       }
+
       setFollowers(fCount.count ?? 0);
       setFollowing(gCount.count ?? 0);
 
