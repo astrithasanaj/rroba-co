@@ -201,7 +201,7 @@ function HomePage() {
           const { regularRows } = (await promotedRegularTask) ?? { regularRows: [] };
           const have = new Set(trendingRows.map((r) => r.id));
           const fillers = (regularRows ?? []).filter(
-            (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesGenderFilter(r),
+            (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesPersonalization(r),
           );
           trendingRows = [...trendingRows, ...fillers].slice(0, 5);
         }
