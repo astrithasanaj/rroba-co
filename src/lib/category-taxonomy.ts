@@ -14,6 +14,20 @@ export type CategoryNode = {
   groups: SubcategoryNode[];
 };
 
+// Only these categories carry a gender on listings and should be filtered by
+// preferences.genders. Everything else (Interier, Outdoor, Art, Elektronikë,
+// Hobi, …) is neutral and must always pass personalization.
+export const GENDER_SPECIFIC_CATEGORIES: readonly string[] = [
+  "Veshje",
+  "Këpucë",
+  "Aksesorë",
+  "Çanta",
+];
+
+export function isGenderSpecificCategory(category: string | null | undefined): boolean {
+  return !!category && GENDER_SPECIFIC_CATEGORIES.includes(category);
+}
+
 export const CATEGORY_TAXONOMY: CategoryNode[] = [
   {
     key: "mode",
