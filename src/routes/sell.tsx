@@ -636,6 +636,15 @@ function MediaCategoryStep({
         <p className="mt-2 text-[11px] italic" style={{ color: MUTED }}>
           Fotot në formatin portret (3:4) funksionojnë më mirë
         </p>
+        {images.length === 0 && (
+          <p
+            role="alert"
+            className="mt-2 text-[12px] font-medium"
+            style={{ color: "#c65a7a" }}
+          >
+            Duhet të paktën një foto për të publikuar artikullin.
+          </p>
+        )}
 
         {images.length > 0 && (
           <ul
