@@ -134,8 +134,12 @@ function ProfilePage() {
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
   const [listingsLoading, setListingsLoading] = useState(true);
-  const [followers, setFollowers] = useState(0);
-  const [following, setFollowing] = useState(0);
+  const [followers, setFollowers] = useState<number | null>(
+    () => getProfileStats(user.id)?.followers ?? null,
+  );
+  const [following, setFollowing] = useState<number | null>(
+    () => getProfileStats(user.id)?.following ?? null,
+  );
 
   const loadAll = useCallback(async () => {
     const requestedUserId = user.id;
