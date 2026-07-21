@@ -119,17 +119,29 @@ function ProfilePage() {
   const [following, setFollowing] = useState(0);
 
   const loadAll = useCallback(async () => {
+    const requestedUserId = user.id;
     setLoading(true);
     setListingsLoading(true);
+    // Nullstill stale state fra en eventuell tidligere bruker.
+    setProfile(null);
+    setMyListings([]);
+    setOffersReceived([]);
+    setOffersSent([]);
+    setListingTitles({});
+    setFollowers(0);
+    setFollowing(0);
+
+    const isStale = () => requestedUserId !== user.id;
 
     // Egen annonseforespørsel — ikke blokker på ratings/offers/followers.
     const listingsPromise = supabase
       .from("listings")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", requestedUserId)
       .in("status", ["active", "sold"])
       .order("created_at", { ascending: false })
       .then(async (res) => {
+        if (isStale()) return;
         const rows = (res.data ?? []) as ListingRow[];
         if (rows.length === 0) {
           setMyListings([]);
@@ -140,6 +152,7 @@ function ProfilePage() {
           thumbnail: true,
           mode: "cover",
         });
+        if (isStale()) return;
         const sortedMine = [
           ...hydratedMine.filter((p) => p.status === "active"),
           ...hydratedMine.filter((p) => p.status === "sold"),
@@ -149,29 +162,36 @@ function ProfilePage() {
       });
 
     const restPromise = Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select("*").eq("id", requestedUserId).maybeSingle(),
       supabase
         .from("offers")
         .select("*")
-        .eq("seller_id", user.id)
+        .eq("seller_id", requestedUserId)
         .order("created_at", { ascending: false }),
       supabase
         .from("offers")
         .select("*")
-        .eq("buyer_id", user.id)
+        .eq("buyer_id", requestedUserId)
         .order("created_at", { ascending: false }),
       supabase
         .from("followers")
         .select("*", { count: "exact", head: true })
-        .eq("following_id", user.id),
+        .eq("following_id", requestedUserId),
       supabase
         .from("followers")
         .select("*", { count: "exact", head: true })
-        .eq("follower_id", user.id),
+        .eq("follower_id", requestedUserId),
     ]).then(async ([prof, offRec, offSent, fCount, gCount]) => {
+      if (isStale()) return;
+      // Beskytt mot at feil profil (annen id) blir satt inn.
+      const profData = prof.data as Profile | null;
+      if (profData && profData.id !== requestedUserId) {
+        setProfile(null);
+      } else {
+        setProfile(profData);
+      }
       setFollowers(fCount.count ?? 0);
       setFollowing(gCount.count ?? 0);
-      setProfile(prof.data as Profile | null);
 
       const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
       setOffersReceived((offRec.data ?? []) as OfferRow[]);
@@ -180,6 +200,7 @@ function ProfilePage() {
       const ids = Array.from(new Set(allOffers.map((o) => o.listing_id)));
       if (ids.length) {
         const { data: titles } = await supabase.from("listings").select("id,title").in("id", ids);
+        if (isStale()) return;
         const map: Record<string, string> = {};
         for (const t of titles ?? []) map[t.id] = t.title;
         setListingTitles(map);
@@ -194,6 +215,7 @@ function ProfilePage() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
 
   useEffect(() => {
     const ids = Array.from(likes);
