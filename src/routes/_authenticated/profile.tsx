@@ -142,7 +142,9 @@ function ProfilePage() {
     setLoading(true);
     setListingsLoading(true);
     // Nullstill stale state fra en eventuell tidligere bruker.
-    setProfile(null);
+    // Ikke rør `profile` her — den er allerede seedet fra cachen for
+    // riktig user.id, og skal ikke blinke til null før nettverket svarer.
+
     setMyListings([]);
     setOffersReceived([]);
     setOffersSent([]);
