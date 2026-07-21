@@ -254,20 +254,24 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
 
   const setArchived = async (t: ThreadView, archived: boolean) => {
     const patch = t.isBuyer ? { archived_by_buyer: archived } : { archived_by_seller: archived };
-    setThreads((prev) => prev.map((x) => (x.id === t.id ? { ...x, archived } : x)));
+    queryClient.setQueryData<ThreadView[]>(queryKey, (prev) =>
+      (prev ?? []).map((x) => (x.id === t.id ? { ...x, archived } : x)),
+    );
     const { error } = await supabase.from("conversations").update(patch).eq("id", t.id);
     if (error) {
       toast.error("Diçka shkoi keq");
-      load();
+      refetch();
     } else {
       toast.success(archived ? "U arkivua" : "U çarkivua");
     }
   };
 
   const deleteThread = async (t: ThreadView) => {
-    setThreads((prev) => prev.filter((x) => x.id !== t.id));
+    queryClient.setQueryData<ThreadView[]>(queryKey, (prev) =>
+      (prev ?? []).filter((x) => x.id !== t.id),
+    );
     const { error } = await supabase.from("conversations").delete().eq("id", t.id);
-    if (error) { toast.error("Diçka shkoi keq"); load(); }
+    if (error) { toast.error("Diçka shkoi keq"); refetch(); }
     else toast.success("U fshi");
   };
 
