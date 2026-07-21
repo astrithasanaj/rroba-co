@@ -202,7 +202,10 @@ function UserProfile() {
   }, [id, loadFollows]);
 
   const displayName = profile?.name || "Përdorues";
-  const username = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
+  const username = profile?.username
+    ? `@${profile.username}`
+    : `@user_${(profile?.id || id || "").slice(0, 8)}`;
+
   const avatar =
     profile?.avatar_url ||
     `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
