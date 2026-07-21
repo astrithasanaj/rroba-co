@@ -654,7 +654,23 @@ function UserProfile() {
         </div>
 
         {/* Grid */}
-        {sorted.length === 0 ? (
+        {listingsLoading && sorted.length === 0 ? (
+          <div
+            className="grid grid-cols-2"
+            style={{ gap: 1.5, backgroundColor: "#ffffff" }}
+            role="status"
+            aria-live="polite"
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square animate-pulse"
+                style={{ backgroundColor: "var(--brand-cream, #f3ede4)" }}
+              />
+            ))}
+            <span className="sr-only">Duke ngarkuar…</span>
+          </div>
+        ) : sorted.length === 0 ? (
           <div className="p-10 text-center text-sm" style={{ color: MUTED }}>
             Asnjë artikull për tu shfaqur.
           </div>
@@ -667,6 +683,7 @@ function UserProfile() {
             ))}
           </div>
         )}
+
 
         {/* Floating sort */}
         {sorted.length > 0 && (
