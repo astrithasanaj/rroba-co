@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, Loader2, Send, Search as SearchIcon, Trash2, Inbox, X } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -136,120 +137,113 @@ function BackButton({ onClick, label = "Kthehu" }: { onClick: () => void; label?
   );
 }
 
+async function fetchThreads(me: string): Promise<ThreadView[]> {
+  const { data: convs, error } = await supabase
+    .from("conversations")
+    .select("*")
+    .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
+    .order("last_message_at", { ascending: false });
+  if (error) throw error;
+  const rows = (convs ?? []) as ThreadRow[];
+  if (rows.length === 0) return [];
+  const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
+  const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
+  const [profs, listings, lastMsgs] = await Promise.all([
+    supabase.from("public_profiles").select("id,name,avatar_url").in("id", otherIds),
+    supabase.from("listings").select("id,title,image_paths,price").in("id", listingIds),
+    supabase.from("messages").select("conversation_id,content,created_at,sender_id").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
+  ]);
+  const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
+  const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
+  const lastMap = new Map<string, { content: string; created_at: string; sender_id: string }>();
+  for (const m of lastMsgs.data ?? []) {
+    if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m);
+  }
+  const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
+  const urls = await signPaths(allCovers, { thumbnail: true });
+
+  return rows.map((r) => {
+    const isBuyer = r.buyer_id === me;
+    const otherId = isBuyer ? r.seller_id : r.buyer_id;
+    const prof = profMap.get(otherId);
+    const listing = listingMap.get(r.listing_id);
+    const cover = listing?.image_paths?.[0] ?? "";
+    const last = lastMap.get(r.id);
+    const lastReadAt = isBuyer ? r.last_read_buyer_at : r.last_read_seller_at;
+    const unread = !!last && last.sender_id !== me && (!lastReadAt || new Date(last.created_at) > new Date(lastReadAt));
+    const archived = isBuyer ? r.archived_by_buyer : r.archived_by_seller;
+    return {
+      id: r.id,
+      otherId,
+      otherName: prof?.name || "Përdorues",
+      otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
+      listingId: r.listing_id,
+      listingTitle: listing?.title || "Artikull",
+      listingPrice: listing?.price ?? null,
+      listingCover: urls[cover] || "",
+      lastPreview: last?.content || "Bisedë e re",
+      lastAt: r.last_message_at,
+      unread,
+      isBuyer,
+      archived,
+    };
+  });
+}
+
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
   const navigate = useNavigate({ from: "/messages" });
-  const [threads, setThreads] = useState<ThreadView[]>([]);
-  const [hasResolvedOnce, setHasResolvedOnce] = useState(false);
-  const [loadError, setLoadError] = useState(false);
-  const [showInitialSkeleton, setShowInitialSkeleton] = useState(false);
+  const queryClient = useQueryClient();
+  const queryKey = useMemo(() => ["messages-threads", me] as const, [me]);
+
+  const {
+    data: threads = [],
+    isPending,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey,
+    queryFn: () => fetchThreads(me),
+    staleTime: 30_000,
+    // Keep showing previous data while background refetching.
+    placeholderData: (prev) => prev,
+  });
+
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
   const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [swipeId, setSwipeId] = useState<string | null>(null);
   const touchStartX = useRef(0);
-  const mountedRef = useRef(true);
-  const loadReqIdRef = useRef(0);
 
-  const load = async () => {
-    const reqId = ++loadReqIdRef.current;
-    try {
-      const { data: convs, error } = await supabase
-        .from("conversations")
-        .select("*")
-        .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
-        .order("last_message_at", { ascending: false });
-      if (error) throw error;
-      const rows = (convs ?? []) as ThreadRow[];
-      if (rows.length === 0) {
-        if (!mountedRef.current || reqId !== loadReqIdRef.current) return;
-        setThreads([]);
-        setLoadError(false);
-        setHasResolvedOnce(true);
-        return;
-      }
-      const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
-      const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
-      const [profs, listings, lastMsgs] = await Promise.all([
-        supabase.from("public_profiles").select("id,name,avatar_url").in("id", otherIds),
-        supabase.from("listings").select("id,title,image_paths,price").in("id", listingIds),
-        supabase.from("messages").select("conversation_id,content,created_at,sender_id").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
-      ]);
-      const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
-      const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
-      const lastMap = new Map<string, { content: string; created_at: string; sender_id: string }>();
-      for (const m of lastMsgs.data ?? []) {
-        if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m);
-      }
-      const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
-      const urls = await signPaths(allCovers, { thumbnail: true });
-
-      const views: ThreadView[] = rows.map((r) => {
-        const isBuyer = r.buyer_id === me;
-        const otherId = isBuyer ? r.seller_id : r.buyer_id;
-        const prof = profMap.get(otherId);
-        const listing = listingMap.get(r.listing_id);
-        const cover = listing?.image_paths?.[0] ?? "";
-        const last = lastMap.get(r.id);
-        const lastReadAt = isBuyer ? r.last_read_buyer_at : r.last_read_seller_at;
-        const unread = !!last && last.sender_id !== me && (!lastReadAt || new Date(last.created_at) > new Date(lastReadAt));
-        const archived = isBuyer ? r.archived_by_buyer : r.archived_by_seller;
-        return {
-          id: r.id,
-          otherId,
-          otherName: prof?.name || "Përdorues",
-          otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
-          listingId: r.listing_id,
-          listingTitle: listing?.title || "Artikull",
-          listingPrice: listing?.price ?? null,
-          listingCover: urls[cover] || "",
-          lastPreview: last?.content || "Bisedë e re",
-          lastAt: r.last_message_at,
-          unread,
-          isBuyer,
-          archived,
-        };
-      });
-      if (!mountedRef.current || reqId !== loadReqIdRef.current) return;
-      setThreads(views);
-      setLoadError(false);
-      setHasResolvedOnce(true);
-    } catch {
-      if (!mountedRef.current || reqId !== loadReqIdRef.current) return;
-      setLoadError(true);
-      setHasResolvedOnce(true);
-    }
+  // Debounce realtime-triggered refetches to avoid parallel bursts.
+  const refetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scheduleRefetch = () => {
+    if (refetchTimerRef.current) return;
+    refetchTimerRef.current = setTimeout(() => {
+      refetchTimerRef.current = null;
+      queryClient.invalidateQueries({ queryKey });
+    }, 300);
   };
 
-  // Reset state on account switch, then load and subscribe
   useEffect(() => {
-    mountedRef.current = true;
-    setThreads([]);
-    setHasResolvedOnce(false);
-    setLoadError(false);
-    setShowInitialSkeleton(false);
-    load();
     const ch = supabase
       .channel(`messages-list:${me}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => load())
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, scheduleRefetch)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, scheduleRefetch)
       .subscribe();
     return () => {
-      mountedRef.current = false;
+      if (refetchTimerRef.current) {
+        clearTimeout(refetchTimerRef.current);
+        refetchTimerRef.current = null;
+      }
       supabase.removeChannel(ch);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me]);
 
-  // Delayed skeleton: only show if initial load takes >225ms
-  useEffect(() => {
-    if (hasResolvedOnce) {
-      setShowInitialSkeleton(false);
-      return;
-    }
-    const id = window.setTimeout(() => {
-      if (mountedRef.current) setShowInitialSkeleton(true);
-    }, 225);
-    return () => window.clearTimeout(id);
-  }, [hasResolvedOnce, me]);
+  // First-visit skeleton shows from the first frame; on cached returns
+  // `threads` is already populated and skeleton never appears.
+  const showInitialSkeleton = isPending && threads.length === 0;
+  const loadError = isError && threads.length === 0;
+
 
   const filtered = useMemo(() => {
     let list = threads.filter((t) => (mode === "archive" ? t.archived : !t.archived));
@@ -260,20 +254,24 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
 
   const setArchived = async (t: ThreadView, archived: boolean) => {
     const patch = t.isBuyer ? { archived_by_buyer: archived } : { archived_by_seller: archived };
-    setThreads((prev) => prev.map((x) => (x.id === t.id ? { ...x, archived } : x)));
+    queryClient.setQueryData<ThreadView[]>(queryKey, (prev) =>
+      (prev ?? []).map((x) => (x.id === t.id ? { ...x, archived } : x)),
+    );
     const { error } = await supabase.from("conversations").update(patch).eq("id", t.id);
     if (error) {
       toast.error("Diçka shkoi keq");
-      load();
+      refetch();
     } else {
       toast.success(archived ? "U arkivua" : "U çarkivua");
     }
   };
 
   const deleteThread = async (t: ThreadView) => {
-    setThreads((prev) => prev.filter((x) => x.id !== t.id));
+    queryClient.setQueryData<ThreadView[]>(queryKey, (prev) =>
+      (prev ?? []).filter((x) => x.id !== t.id),
+    );
     const { error } = await supabase.from("conversations").delete().eq("id", t.id);
-    if (error) { toast.error("Diçka shkoi keq"); load(); }
+    if (error) { toast.error("Diçka shkoi keq"); refetch(); }
     else toast.success("U fshi");
   };
 
@@ -401,7 +399,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
             paddingBottom: 90,
           }}
         >
-          {!hasResolvedOnce && showInitialSkeleton ? (
+          {showInitialSkeleton ? (
             <>
               <span className="sr-only" role="status" aria-live="polite">Duke ngarkuar biseda…</span>
               <ul aria-hidden="true">
@@ -421,10 +419,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 ))}
               </ul>
             </>
-          ) : !hasResolvedOnce ? (
-            // Initial pre-skeleton blank window (<225ms) — keep layout stable
-            <div aria-hidden="true" />
-          ) : loadError && threads.length === 0 ? (
+          ) : loadError ? (
             <div
               role="alert"
               className="mx-5 mt-10 rounded-2xl border border-dashed p-8 text-center text-sm"
@@ -433,7 +428,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
               <div className="mb-3">Diçka shkoi keq gjatë ngarkimit.</div>
               <button
                 type="button"
-                onClick={() => { setLoadError(false); load(); }}
+                onClick={() => { refetch(); }}
                 className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${FOCUS_RING}`}
                 style={{ background: BRAND_GRADIENT }}
               >
