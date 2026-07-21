@@ -211,7 +211,12 @@ function ProfilePage() {
         .from("followers")
         .select("*", { count: "exact", head: true })
         .eq("follower_id", requestedUserId),
-    ]).then(async ([prof, offRec, offSent, fCount, gCount]) => {
+      supabase
+        .from("listings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", requestedUserId)
+        .eq("status", "active"),
+    ]).then(async ([prof, offRec, offSent, fCount, gCount, aCount]) => {
       if (isStale()) return;
       // Beskytt mot at feil profil (annen id) blir satt inn.
       const profData = prof.data as Profile | null;
@@ -224,11 +229,14 @@ function ProfilePage() {
 
       const nextFollowers = fCount.count ?? 0;
       const nextFollowing = gCount.count ?? 0;
+      const nextArticles = aCount.count ?? 0;
       setFollowers(nextFollowers);
       setFollowing(nextFollowing);
+      setArticleCount(nextArticles);
       setProfileStats(requestedUserId, {
         followers: nextFollowers,
         following: nextFollowing,
+        articles: nextArticles,
       });
 
       const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
