@@ -610,6 +610,29 @@ function FollowingFeed({
   );
 }
 
+function SectionLoadingPlaceholder() {
+  return (
+    <div
+      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed"
+      style={{ borderColor: "#e2e2de" }}
+      aria-label="Duke ngarkuar"
+    >
+      <div className="h-3 w-32 animate-pulse rounded-full" style={{ background: "rgba(0,0,0,0.06)" }} />
+    </div>
+  );
+}
+
+function SectionEmptyState({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
+      style={{ borderColor: "#e2e2de", color: MUTED }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function SectionHeader({
   title,
   seeAllSearch,
