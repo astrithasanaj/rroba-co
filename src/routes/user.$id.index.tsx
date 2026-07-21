@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
   ArrowDownUp,
@@ -67,12 +68,22 @@ function Stat({
 }) {
   const content = (
     <>
-      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2, minHeight: "1.2em" }}>
+      <p
+        style={{
+          fontSize: 18,
+          fontWeight: 600,
+          color: INK,
+          lineHeight: 1.2,
+          minHeight: "1.2em",
+          minWidth: "2.5ch",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
         {value === null ? (
           <span
             aria-hidden="true"
             className="inline-block rounded bg-muted animate-pulse align-middle"
-            style={{ width: "1.6ch", height: "0.85em" }}
+            style={{ width: "2ch", height: "0.85em" }}
           />
         ) : (
           value
@@ -107,141 +118,173 @@ function Stat({
           padding: 0,
           cursor: "pointer",
           WebkitTapHighlightColor: "transparent",
+          minWidth: "5ch",
         }}
       >
         {content}
       </button>
     );
   }
-  return <div style={{ textAlign: "center" }}>{content}</div>;
+  return <div style={{ textAlign: "center", minWidth: "5ch" }}>{content}</div>;
+}
+
+// ---- Fetchers --------------------------------------------------------------
+
+async function fetchPublicProfile(id: string): Promise<Profile | null> {
+  const { data } = await supabase
+    .from("public_profiles")
+    .select("id,name,username,avatar_url,city,bio,rating_avg,rating_count,created_at")
+    .eq("id", id)
+    .maybeSingle();
+  return (data as Profile | null) ?? null;
+}
+
+async function fetchUserPublicListings(id: string): Promise<{
+  listings: ListingWithLikes[];
+  hasSale: boolean;
+  totalLikes: number;
+}> {
+  const { data } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("user_id", id)
+    .in("status", ["active", "sold"])
+    .order("created_at", { ascending: false });
+  const rows = (data ?? []) as ListingRow[];
+  const hydrated = await hydrateListings(rows, { thumbnail: true, mode: "cover" });
+
+  const ids = rows.map((r) => r.id);
+  const likesMap: Record<string, number> = {};
+  let totalLikes = 0;
+  if (ids.length) {
+    const { data: lk } = await supabase
+      .from("listing_likes")
+      .select("listing_id")
+      .in("listing_id", ids);
+    for (const row of lk ?? []) {
+      likesMap[row.listing_id] = (likesMap[row.listing_id] ?? 0) + 1;
+      totalLikes++;
+    }
+  }
+  return {
+    listings: hydrated.map((h) => ({ ...h, _likes: likesMap[h.id] ?? 0 })),
+    hasSale: rows.some((r) => r.status === "sold"),
+    totalLikes,
+  };
+}
+
+async function fetchUserStats(
+  id: string,
+): Promise<{ followers: number; following: number; articles: number }> {
+  const [fRes, gRes, aRes] = await Promise.all([
+    supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
+    supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", id),
+    supabase
+      .from("listings")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", id)
+      .eq("status", "active"),
+  ]);
+  return {
+    followers: fRes.count ?? 0,
+    following: gRes.count ?? 0,
+    articles: aRes.count ?? 0,
+  };
 }
 
 function UserProfile() {
   const { id } = useParams({ from: "/user/$id/" });
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [listings, setListings] = useState<ListingWithLikes[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followBusy, setFollowBusy] = useState(false);
-  const [followers, setFollowers] = useState<number | null>(
-    () => getProfileStats(id)?.followers ?? null,
-  );
-  const [followingCount, setFollowingCount] = useState<number | null>(
-    () => getProfileStats(id)?.following ?? null,
-  );
-  const [articleCount, setArticleCount] = useState<number | null>(
-    () => getProfileStats(id)?.articles ?? null,
-  );
-  const [likesTotal, setLikesTotal] = useState(0);
-  const [hasSale, setHasSale] = useState(false);
 
   const [moreOpen, setMoreOpen] = useState(false);
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
 
-  // When navigating to a different profile, seed from cache (or reset) so we
-  // never briefly show the previous profile's counts.
-  useEffect(() => {
-    const cached = getProfileStats(id);
-    setFollowers(cached?.followers ?? null);
-    setFollowingCount(cached?.following ?? null);
-    setArticleCount(cached?.articles ?? null);
-  }, [id]);
+  // ---- Queries ------------------------------------------------------------
 
-  const loadFollows = useCallback(async () => {
-    const requestedId = id;
-    const [{ count: fCount }, { count: gCount }, { count: aCount }] = await Promise.all([
-      supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
-      supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", id),
-      supabase
-        .from("listings")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", id)
-        .eq("status", "active"),
-    ]);
-    const nextFollowers = fCount ?? 0;
-    const nextFollowing = gCount ?? 0;
-    const nextArticles = aCount ?? 0;
-    setFollowers(nextFollowers);
-    setFollowingCount(nextFollowing);
-    setArticleCount(nextArticles);
-    setProfileStats(requestedId, {
-      followers: nextFollowers,
-      following: nextFollowing,
-      articles: nextArticles,
-    });
-  }, [id]);
+  const profileQuery = useQuery({
+    queryKey: ["user-public-profile", id] as const,
+    queryFn: () => fetchPublicProfile(id),
+    staleTime: 60_000,
+    placeholderData: (prev) => prev,
+  });
+  const profile = profileQuery.data ?? null;
+
+  const listingsQuery = useQuery({
+    queryKey: ["user-public-listings", id] as const,
+    queryFn: () => fetchUserPublicListings(id),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const listings: ListingWithLikes[] = listingsQuery.data?.listings ?? [];
+  const hasSale = listingsQuery.data?.hasSale ?? false;
+  const likesTotal = listingsQuery.data?.totalLikes ?? 0;
+
+  const statsQuery = useQuery({
+    queryKey: ["user-public-stats", id] as const,
+    queryFn: () => fetchUserStats(id),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+    initialData: () => {
+      const s = getProfileStats(id);
+      if (s && s.followers != null && s.following != null && s.articles != null) {
+        return { followers: s.followers, following: s.following, articles: s.articles };
+      }
+      return undefined;
+    },
+  });
 
   useEffect(() => {
-    let active = true;
+    if (statsQuery.data) setProfileStats(id, statsQuery.data);
+  }, [statsQuery.data, id]);
+
+  // Authoritative: head-count from stats query.
+  const followers: number | null = statsQuery.data?.followers ?? null;
+  const followingCount: number | null = statsQuery.data?.following ?? null;
+  const articleCount: number | null = statsQuery.data?.articles ?? null;
+
+  // Load current user + follow-state once auth is known.
+  useEffect(() => {
+    let cancelled = false;
     (async () => {
-      setLoading(true);
-      const auth = { user: await getCurrentUser() };
-      const uid = auth?.user?.id ?? null;
-
-      const [p, l] = await Promise.all([
-        supabase
-          .from("public_profiles")
-          .select("id,name,username,avatar_url,city,bio,rating_avg,rating_count,created_at")
-          .eq("id", id)
-          .maybeSingle(),
-        supabase
-          .from("listings")
-          .select("*")
-          .eq("user_id", id)
-          .in("status", ["active", "sold"])
-          .order("created_at", { ascending: false }),
-      ]);
-      const rows = (l.data ?? []) as ListingRow[];
-      const hydrated = await hydrateListings(rows, { thumbnail: true, mode: "cover" });
-
-      // likes totals for the "popular" sort
-      const listingIds = rows.map((r) => r.id);
-      const likesMap: Record<string, number> = {};
-      let totalLikes = 0;
-      if (listingIds.length) {
-        const { data: lk } = await supabase
-          .from("listing_likes")
-          .select("listing_id")
-          .in("listing_id", listingIds);
-        for (const row of lk ?? []) {
-          likesMap[row.listing_id] = (likesMap[row.listing_id] ?? 0) + 1;
-          totalLikes++;
-        }
-      }
-      const withLikes: ListingWithLikes[] = hydrated.map((h) => ({
-        ...h,
-        _likes: likesMap[h.id] ?? 0,
-      }));
-
-      if (!active) return;
-      setProfile(p.data as Profile | null);
-      setListings(withLikes);
-      setLikesTotal(totalLikes);
-      setHasSale(rows.some((r) => r.status === "sold"));
+      const u = await getCurrentUser();
+      if (cancelled) return;
+      const uid = u?.id ?? null;
       setCurrentUserId(uid);
-
-      await loadFollows();
-
-      if (uid) {
-        const { data: follow } = await supabase
-          .from("followers")
-          .select("id")
-          .eq("follower_id", uid)
-          .eq("following_id", id)
-          .maybeSingle();
-        setIsFollowing(!!follow);
+      if (!uid) {
+        setIsFollowing(false);
+        return;
       }
-      setLoading(false);
+      const { data: follow } = await supabase
+        .from("followers")
+        .select("id")
+        .eq("follower_id", uid)
+        .eq("following_id", id)
+        .maybeSingle();
+      if (!cancelled) setIsFollowing(!!follow);
     })();
     return () => {
-      active = false;
+      cancelled = true;
     };
-  }, [id, loadFollows]);
+  }, [id]);
+
+  // Optimistic follow state updates use setFollowers via query cache patch.
+  const setFollowers = useCallback(
+    (mut: (n: number) => number) => {
+      queryClient.setQueryData<{ followers: number; following: number; articles: number }>(
+        ["user-public-stats", id],
+        (prev) => (prev ? { ...prev, followers: mut(prev.followers) } : prev),
+      );
+    },
+    [queryClient, id],
+  );
+
 
   const displayName = profile?.name || "Përdorues";
   const username = profile?.username
@@ -325,6 +368,9 @@ function UserProfile() {
     setMoreOpen(false);
   };
 
+  const loading = profileQuery.isPending && !profileQuery.data;
+  const listingsLoading = listingsQuery.isPending && !listingsQuery.data;
+
   if (loading) {
     return (
       <MobileShell hideNav>
@@ -342,7 +388,7 @@ function UserProfile() {
     );
   }
 
-  if (!profile) {
+  if (profileQuery.isFetched && !profile) {
     return (
       <MobileShell>
         <div role="alert" className="p-10 text-center text-sm" style={{ color: MUTED }}>
@@ -351,6 +397,12 @@ function UserProfile() {
       </MobileShell>
     );
   }
+
+  if (!profile) {
+    // Placeholder — should never render because `loading` short-circuits.
+    return null;
+  }
+
 
   const isOwn = currentUserId === id;
   const ratingBtnText =
@@ -602,7 +654,23 @@ function UserProfile() {
         </div>
 
         {/* Grid */}
-        {sorted.length === 0 ? (
+        {listingsLoading && sorted.length === 0 ? (
+          <div
+            className="grid grid-cols-2"
+            style={{ gap: 1.5, backgroundColor: "#ffffff" }}
+            role="status"
+            aria-live="polite"
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square animate-pulse"
+                style={{ backgroundColor: "var(--brand-cream, #f3ede4)" }}
+              />
+            ))}
+            <span className="sr-only">Duke ngarkuar…</span>
+          </div>
+        ) : sorted.length === 0 ? (
           <div className="p-10 text-center text-sm" style={{ color: MUTED }}>
             Asnjë artikull për tu shfaqur.
           </div>
@@ -615,6 +683,7 @@ function UserProfile() {
             ))}
           </div>
         )}
+
 
         {/* Floating sort */}
         {sorted.length > 0 && (
