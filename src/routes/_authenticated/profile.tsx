@@ -34,6 +34,13 @@ import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
+import {
+  getCachedCurrentProfile,
+  setCurrentProfileCache,
+  updateCurrentProfileCache,
+  useCurrentProfile,
+} from "@/hooks/useCurrentProfile";
+
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getMembershipPlan } from "@/lib/membership-plans";
@@ -105,7 +112,19 @@ function ProfilePage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heightOpen, setHeightOpen] = useState(false);
 
-  const [profile, setProfile] = useState<Profile | null>(null);
+  // Seed profile synchronously from the shared cache so that navigating to
+  // /profile paints the correct name and avatar on first render whenever
+  // the cache has been warmed (login, previous visit, edit, etc.).
+  const cachedProfile = getCachedCurrentProfile(user.id) as Profile | null | undefined;
+  const [profile, setProfile] = useState<Profile | null>(cachedProfile ?? null);
+  // Subscribe to future cache updates for this user.
+  const liveCachedProfile = useCurrentProfile(user.id) as Profile | null;
+  useEffect(() => {
+    if (liveCachedProfile && liveCachedProfile.id === user.id) {
+      setProfile(liveCachedProfile);
+    }
+  }, [liveCachedProfile, user.id]);
+
   const [myListings, setMyListings] = useState<ListingView[]>([]);
   const [likedListings, setLikedListings] = useState<ListingView[]>([]);
   const [savedListings, setSavedListings] = useState<ListingView[]>([]);
@@ -123,7 +142,9 @@ function ProfilePage() {
     setLoading(true);
     setListingsLoading(true);
     // Nullstill stale state fra en eventuell tidligere bruker.
-    setProfile(null);
+    // Ikke rør `profile` her — den er allerede seedet fra cachen for
+    // riktig user.id, og skal ikke blinke til null før nettverket svarer.
+
     setMyListings([]);
     setOffersReceived([]);
     setOffersSent([]);
@@ -189,7 +210,9 @@ function ProfilePage() {
         setProfile(null);
       } else {
         setProfile(profData);
+        setCurrentProfileCache(requestedUserId, profData);
       }
+
       setFollowers(fCount.count ?? 0);
       setFollowing(gCount.count ?? 0);
 
@@ -1848,9 +1871,11 @@ function ProfileForm({
         .update({ avatar_url: null })
         .eq("id", profile.id);
       if (error) throw error;
+      updateCurrentProfileCache(profile.id, { avatar_url: null });
       setAvatarUrl("");
       toast.success("Fotoja e profilit u hoq");
       onSaved();
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Diçka shkoi keq");
     } finally {
@@ -1870,10 +1895,19 @@ function ProfileForm({
     setSaving(false);
     if (error) toast.error(error.message);
     else {
+      updateCurrentProfileCache(profile.id, {
+        name,
+        bio,
+        city,
+        city_id: cityId,
+        avatar_url: avatarUrl || null,
+        height_cm: h,
+      });
       toast.success("Profili u ruajt");
       onSaved();
     }
   };
+
 
   const inputStyle = { backgroundColor: CARD, color: INK, borderColor: DIVIDER } as const;
 
