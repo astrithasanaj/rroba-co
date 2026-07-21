@@ -324,11 +324,16 @@ function ProfilePage() {
     }
   };
 
-  const displayName = profile?.name || user.email?.split("@")[0] || "Përdorues";
-  const avatar =
-    profile?.avatar_url ||
-    `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
-  const username = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
+  // Ikke vis noe brukernavn eller avatar før profilen (matchende user.id) er lastet.
+  // Tidligere fallback brukte user.email-prefix, som lekket rå e-post (f.eks. private-relay-id)
+  // som brukernavn i et lite øyeblikk før den ekte profilen kom fram.
+  const profileReady = profile !== null && profile.id === user.id;
+  const displayName = profileReady ? profile.name : "";
+  const avatar = profileReady && profile.avatar_url ? profile.avatar_url : null;
+  const username = profileReady
+    ? `@${(profile.name || "").toLowerCase().replace(/\s+/g, "")}`
+    : "";
+
 
   const sortFn = (a: ListingView, b: ListingView) => {
     if (sort === "low") return a.price - b.price;
