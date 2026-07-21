@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { preloadCurrentProfile } from "@/hooks/useCurrentProfile";
 
 // Module-scope cache — shared across the whole app so that repeated
 // navigations don't re-hit the network for the same identity.
@@ -15,6 +16,9 @@ function ensureInit(): Promise<User | null> {
   initPromise = supabase.auth.getSession().then(({ data }) => {
     cachedUser = data.session?.user ?? null;
     initialized = true;
+    // Warm the profile cache as soon as we know who the user is,
+    // so the profile screen paints with the correct name on first render.
+    if (cachedUser) void preloadCurrentProfile(cachedUser.id);
     return cachedUser;
   });
   return initPromise;
@@ -25,11 +29,13 @@ function ensureInit(): Promise<User | null> {
 supabase.auth.onAuthStateChange((_event, session) => {
   cachedUser = session?.user ?? null;
   initialized = true;
+  if (cachedUser) void preloadCurrentProfile(cachedUser.id);
   for (const l of listeners) l(cachedUser);
 });
 
 // Kick off the initial session read eagerly on module load.
 void ensureInit();
+
 
 /** Async accessor for imperative code (event handlers, effects). */
 export async function getCurrentUser(): Promise<User | null> {
