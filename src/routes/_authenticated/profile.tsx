@@ -175,6 +175,8 @@ function ProfilePage() {
         const rows = (res.data ?? []) as ListingRow[];
         if (rows.length === 0) {
           setMyListings([]);
+          setArticleCount(0);
+          setProfileStats(requestedUserId, { articles: 0 });
           setListingsLoading(false);
           return;
         }
