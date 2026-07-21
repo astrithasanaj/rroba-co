@@ -401,7 +401,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
             paddingBottom: 90,
           }}
         >
-          {loading ? (
+          {!hasResolvedOnce && showInitialSkeleton ? (
             <>
               <span className="sr-only" role="status" aria-live="polite">Duke ngarkuar biseda…</span>
               <ul aria-hidden="true">
@@ -421,6 +421,25 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 ))}
               </ul>
             </>
+          ) : !hasResolvedOnce ? (
+            // Initial pre-skeleton blank window (<225ms) — keep layout stable
+            <div aria-hidden="true" />
+          ) : loadError && threads.length === 0 ? (
+            <div
+              role="alert"
+              className="mx-5 mt-10 rounded-2xl border border-dashed p-8 text-center text-sm"
+              style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
+            >
+              <div className="mb-3">Diçka shkoi keq gjatë ngarkimit.</div>
+              <button
+                type="button"
+                onClick={() => { setLoadError(false); load(); }}
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${FOCUS_RING}`}
+                style={{ background: BRAND_GRADIENT }}
+              >
+                Provo përsëri
+              </button>
+            </div>
           ) : filtered.length === 0 ? (
             <div
               role="status"
