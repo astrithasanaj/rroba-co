@@ -1,0 +1,1 @@
+ALTER TABLE public.listings VALIDATE CONSTRAINT listings_image_paths_check;
