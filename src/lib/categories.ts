@@ -1,4 +1,4 @@
-import { Shirt, Mountain, Archive, Baby, Frame, Speaker } from "lucide-react";
+import { Shirt, Mountain, Archive, Baby, Frame, Speaker, Gamepad2 } from "lucide-react";
 import { CATEGORY_TAXONOMY } from "./category-taxonomy";
 
 export type GenderSlug = "femra" | "meshkuj" | "vajza" | "djem" | "all";
@@ -122,5 +122,12 @@ export const HOME_CATEGORIES = [
     Icon: Speaker,
     boxColor: "#e0e8e6",
     iconColor: "#5e7d87",
+  },
+  {
+    key: "hobi",
+    label: "Hobi",
+    Icon: Gamepad2,
+    boxColor: "#ece3f0",
+    iconColor: "#7a5e94",
   },
 ] as const;
