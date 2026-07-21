@@ -494,14 +494,9 @@ function ForYou({
             <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
             <div className="mt-3">
               {trendingLoading ? (
-                <ProductGridSkeleton count={2} />
+                <SectionLoadingPlaceholder />
               ) : trending.length === 0 ? (
-                <div
-                  className="box-border flex w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
-                  style={{ borderColor: "#e2e2de", color: MUTED, minHeight: 140 }}
-                >
-                  Ende asnjë artikull në trend.
-                </div>
+                <SectionEmptyState>Ende asnjë artikull në trend.</SectionEmptyState>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {trending.map((l, i) => (
@@ -516,14 +511,9 @@ function ForYou({
             <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
             <div className="mt-3">
               {newWeekLoading ? (
-                <ProductGridSkeleton count={2} />
+                <SectionLoadingPlaceholder />
               ) : newThisWeek.length === 0 ? (
-                <div
-                  className="box-border flex w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
-                  style={{ borderColor: "#e2e2de", color: MUTED, minHeight: 140 }}
-                >
-                  Ende asnjë artikull këtë javë.
-                </div>
+                <SectionEmptyState>Ende asnjë artikull këtë javë.</SectionEmptyState>
               ) : (
                 <div
                   className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
@@ -617,6 +607,29 @@ function FollowingFeed({
       </div>
       <div className="h-24" />
     </section>
+  );
+}
+
+function SectionLoadingPlaceholder() {
+  return (
+    <div
+      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed"
+      style={{ borderColor: "#e2e2de" }}
+      aria-label="Duke ngarkuar"
+    >
+      <div className="h-3 w-32 animate-pulse rounded-full" style={{ background: "rgba(0,0,0,0.06)" }} />
+    </div>
+  );
+}
+
+function SectionEmptyState({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="box-border flex h-[140px] w-full items-center justify-center rounded-2xl border border-dashed p-6 text-center text-sm"
+      style={{ borderColor: "#e2e2de", color: MUTED }}
+    >
+      {children}
+    </div>
   );
 }
 
