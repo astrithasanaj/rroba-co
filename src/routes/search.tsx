@@ -261,17 +261,32 @@ function SearchPage() {
     let active = true;
     const run = async () => {
       setProfileLoading(true);
-      const term = `%${q.trim()}%`;
+      const rawQ = q.trim();
+      const term = `%${rawQ}%`;
+      // Normalized search term: lowercased, with spaces / -/ _ / . stripped.
+      // Must match the SQL definition of profiles.search_slug.
+      const normQ = rawQ.toLowerCase().replace(/[\s._-]+/g, "");
+      const slugTerm = `%${normQ}%`;
+
+      // Query both the raw fields (preserves prior behaviour) and the normalized
+      // search_slug so "gianni cutz", "gianni-cutz", "GIANNICUTZ" all match.
+      const orClauses = [
+        `username.ilike.${term}`,
+        `display_name.ilike.${term}`,
+        `name.ilike.${term}`,
+      ];
+      if (normQ.length > 0) orClauses.push(`search_slug.ilike.${slugTerm}`);
+
       const { data: profs } = await supabase
         .from("public_profiles")
-        .select("id,name,display_name,username,avatar_url,city")
-        .or(`username.ilike.${term},display_name.ilike.${term},name.ilike.${term}`)
-        .limit(20);
+        .select("id,name,display_name,username,avatar_url,city,search_slug")
+        .or(orClauses.join(","))
+        .limit(40);
       if (!active) return;
-      const list = (profs ?? []) as ProfileRow[];
-      setProfileResults(list);
+      const list = (profs ?? []) as (ProfileRow & { search_slug?: string | null })[];
 
       // Counts of active listings per matched profile
+      let counts: Record<string, number> = {};
       if (list.length > 0) {
         const ids = list.map((p) => p.id);
         const { data: cnt } = await supabase
@@ -279,14 +294,13 @@ function SearchPage() {
           .select("user_id")
           .in("user_id", ids)
           .eq("status", "active");
-        const counts: Record<string, number> = {};
         (cnt ?? []).forEach((r: any) => {
           counts[r.user_id] = (counts[r.user_id] ?? 0) + 1;
         });
         if (active) setProfileCounts(counts);
 
         // Following state for current user
-        const meId = (await getCurrentUserId());
+        const meId = await getCurrentUserId();
         if (meId && active) {
           const { data: mine } = await supabase
             .from("followers")
@@ -304,6 +318,33 @@ function SearchPage() {
       } else {
         setProfileCounts({});
       }
+
+      // Rank: exact username → exact display/name → prefix → substring;
+      // profiles with active listings win ties.
+      const normalize = (s: string | null | undefined) =>
+        (s ?? "").toLowerCase().replace(/[\s._-]+/g, "");
+      const scoreOf = (p: ProfileRow & { search_slug?: string | null }) => {
+        const u = normalize(p.username);
+        const d = normalize(p.display_name);
+        const n = normalize(p.name);
+        const slug = (p.search_slug ?? `${u}${d}${n}`) as string;
+        if (normQ && u === normQ) return 0;
+        if (normQ && (d === normQ || n === normQ)) return 1;
+        if (normQ && (u.startsWith(normQ) || d.startsWith(normQ) || n.startsWith(normQ))) return 2;
+        if (normQ && slug.includes(normQ)) return 3;
+        return 4;
+      };
+      const ranked = [...list].sort((a, b) => {
+        const sa = scoreOf(a);
+        const sb = scoreOf(b);
+        if (sa !== sb) return sa - sb;
+        const ca = counts[a.id] ?? 0;
+        const cb = counts[b.id] ?? 0;
+        if ((cb > 0 ? 1 : 0) !== (ca > 0 ? 1 : 0)) return (cb > 0 ? 1 : 0) - (ca > 0 ? 1 : 0);
+        return cb - ca;
+      });
+      if (active) setProfileResults(ranked.slice(0, 20));
+
 
       // Brand suggestions from listings
       const { data: brandRows } = await supabase
