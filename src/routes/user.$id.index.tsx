@@ -126,8 +126,12 @@ function UserProfile() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followBusy, setFollowBusy] = useState(false);
-  const [followers, setFollowers] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [followers, setFollowers] = useState<number | null>(
+    () => getProfileStats(id)?.followers ?? null,
+  );
+  const [followingCount, setFollowingCount] = useState<number | null>(
+    () => getProfileStats(id)?.following ?? null,
+  );
   const [likesTotal, setLikesTotal] = useState(0);
   const [hasSale, setHasSale] = useState(false);
 
@@ -136,13 +140,25 @@ function UserProfile() {
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
 
+  // When navigating to a different profile, seed from cache (or reset) so we
+  // never briefly show the previous profile's counts.
+  useEffect(() => {
+    const cached = getProfileStats(id);
+    setFollowers(cached?.followers ?? null);
+    setFollowingCount(cached?.following ?? null);
+  }, [id]);
+
   const loadFollows = useCallback(async () => {
+    const requestedId = id;
     const [{ count: fCount }, { count: gCount }] = await Promise.all([
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", id),
     ]);
-    setFollowers(fCount ?? 0);
-    setFollowingCount(gCount ?? 0);
+    const nextFollowers = fCount ?? 0;
+    const nextFollowing = gCount ?? 0;
+    setFollowers(nextFollowers);
+    setFollowingCount(nextFollowing);
+    setProfileStats(requestedId, { followers: nextFollowers, following: nextFollowing });
   }, [id]);
 
   useEffect(() => {
