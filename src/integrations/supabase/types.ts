@@ -622,6 +622,7 @@ export type Database = {
           preferences: Json | null
           rating_avg: number
           rating_count: number
+          search_slug: string | null
           signup_device: string | null
           signup_ip: string | null
           terms_accepted_at: string | null
@@ -655,6 +656,7 @@ export type Database = {
           preferences?: Json | null
           rating_avg?: number
           rating_count?: number
+          search_slug?: string | null
           signup_device?: string | null
           signup_ip?: string | null
           terms_accepted_at?: string | null
@@ -688,6 +690,7 @@ export type Database = {
           preferences?: Json | null
           rating_avg?: number
           rating_count?: number
+          search_slug?: string | null
           signup_device?: string | null
           signup_ip?: string | null
           terms_accepted_at?: string | null
@@ -890,6 +893,7 @@ export type Database = {
           name: string | null
           rating_avg: number | null
           rating_count: number | null
+          search_slug: string | null
           username: string | null
         }
         Insert: {
@@ -903,6 +907,7 @@ export type Database = {
           name?: string | null
           rating_avg?: number | null
           rating_count?: number | null
+          search_slug?: string | null
           username?: string | null
         }
         Update: {
@@ -916,6 +921,7 @@ export type Database = {
           name?: string | null
           rating_avg?: number | null
           rating_count?: number | null
+          search_slug?: string | null
           username?: string | null
         }
         Relationships: [
@@ -969,6 +975,8 @@ export type Database = {
       }
       renew_membership: { Args: { _tier: string }; Returns: undefined }
       reveal_pending_ratings: { Args: never; Returns: undefined }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       report_reason:
