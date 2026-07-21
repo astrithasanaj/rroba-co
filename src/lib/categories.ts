@@ -123,4 +123,11 @@ export const HOME_CATEGORIES = [
     boxColor: "#e0e8e6",
     iconColor: "#5e7d87",
   },
+  {
+    key: "hobi",
+    label: "Hobi",
+    Icon: Gamepad2,
+    boxColor: "#ece3f0",
+    iconColor: "#7a5e94",
+  },
 ] as const;
