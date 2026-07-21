@@ -12,6 +12,7 @@ import {
   Grid2x2,
   Heart,
   HelpCircle,
+  ImageOff,
   Loader2,
   LogOut,
   MessageSquare,
