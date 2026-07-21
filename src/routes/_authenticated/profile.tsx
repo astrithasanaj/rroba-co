@@ -48,6 +48,7 @@ import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
