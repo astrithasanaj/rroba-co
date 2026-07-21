@@ -93,6 +93,7 @@ const CATEGORIES: Category[] = [
   { id: "Art & dizajn", label: "Art & dizajn", Icon: Frame, genderMode: false },
   { id: "Elektronikë & zë", label: "Elektronikë & zë", Icon: Headphones, genderMode: false },
   { id: "Interier & mobilie", label: "Interier & mobilie", Icon: Sofa, genderMode: false },
+  { id: "Hobi", label: "Hobi", Icon: Gamepad2, genderMode: false },
 ];
 
 const ADULT_GENDERS = ["Femra", "Meshkuj"] as const;
