@@ -499,9 +499,9 @@ function ForYou({
                 className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
                 style={{ scrollbarWidth: "none" }}
               >
-                {promoted.map((l) => (
+                {promoted.map((l, i) => (
                   <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                    <ListingCard listing={l} />
+                    <ListingCard listing={l} eager={i < 2} />
                   </div>
                 ))}
               </div>
@@ -536,9 +536,9 @@ function ForYou({
                         <ListingCardSkeleton aspect="3/4" />
                       </div>
                     ))
-                  : newThisWeek.map((l) => (
+                  : newThisWeek.map((l, i) => (
                       <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                        <ListingCard listing={l} />
+                        <ListingCard listing={l} eager={i < 2} />
                       </div>
                     ))}
               </div>
