@@ -493,10 +493,10 @@ function ForYou({
           <section className="mt-8 px-5">
             <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
             <div className="mt-3">
-              {trendingLoading ? (
-                <SectionLoadingPlaceholder />
-              ) : trending.length === 0 ? (
-                <SectionEmptyState>Ende asnjë artikull në trend.</SectionEmptyState>
+              {trendingLoading || trending.length === 0 ? (
+                <SectionStateBox loading={trendingLoading}>
+                  Ende asnjë artikull në trend.
+                </SectionStateBox>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {trending.map((l, i) => (
@@ -510,10 +510,10 @@ function ForYou({
           <section className="mt-8 px-5">
             <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
             <div className="mt-3">
-              {newWeekLoading ? (
-                <SectionLoadingPlaceholder />
-              ) : newThisWeek.length === 0 ? (
-                <SectionEmptyState>Ende asnjë artikull këtë javë.</SectionEmptyState>
+              {newWeekLoading || newThisWeek.length === 0 ? (
+                <SectionStateBox loading={newWeekLoading}>
+                  Ende asnjë artikull këtë javë.
+                </SectionStateBox>
               ) : (
                 <div
                   className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
@@ -528,6 +528,7 @@ function ForYou({
               )}
             </div>
           </section>
+
 
 
           {regularLoading && listings.length === 0 && (
