@@ -32,28 +32,27 @@ export function preloadCurrentProfile(userId: string): Promise<CurrentProfile | 
   const existing = inflight.get(userId);
   if (existing) return existing;
 
-  const p = supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle()
-    .then(({ data }) => {
-      // Validate that the returned row actually belongs to the requested user.
+  const p: Promise<CurrentProfile | null> = (async () => {
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
       const row = data as CurrentProfile | null;
       const safe = row && row.id === userId ? row : null;
       cache.set(userId, safe);
-      inflight.delete(userId);
       notify(userId);
       return safe;
-    })
-    .catch((err) => {
+    } finally {
       inflight.delete(userId);
-      throw err;
-    });
+    }
+  })();
 
   inflight.set(userId, p);
   return p;
 }
+
 
 /** Synchronous peek — returns cached value if present, else undefined. */
 export function getCachedCurrentProfile(userId: string): CurrentProfile | null | undefined {
