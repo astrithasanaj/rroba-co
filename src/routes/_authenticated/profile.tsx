@@ -141,6 +141,9 @@ function ProfilePage() {
   const [following, setFollowing] = useState<number | null>(
     () => getProfileStats(user.id)?.following ?? null,
   );
+  const [articleCount, setArticleCount] = useState<number | null>(
+    () => getProfileStats(user.id)?.articles ?? null,
+  );
 
   const loadAll = useCallback(async () => {
     const requestedUserId = user.id;
