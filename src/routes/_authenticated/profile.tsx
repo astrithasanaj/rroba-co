@@ -112,7 +112,19 @@ function ProfilePage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heightOpen, setHeightOpen] = useState(false);
 
-  const [profile, setProfile] = useState<Profile | null>(null);
+  // Seed profile synchronously from the shared cache so that navigating to
+  // /profile paints the correct name and avatar on first render whenever
+  // the cache has been warmed (login, previous visit, edit, etc.).
+  const cachedProfile = getCachedCurrentProfile(user.id) as Profile | null | undefined;
+  const [profile, setProfile] = useState<Profile | null>(cachedProfile ?? null);
+  // Subscribe to future cache updates for this user.
+  const liveCachedProfile = useCurrentProfile(user.id) as Profile | null;
+  useEffect(() => {
+    if (liveCachedProfile && liveCachedProfile.id === user.id) {
+      setProfile(liveCachedProfile);
+    }
+  }, [liveCachedProfile, user.id]);
+
   const [myListings, setMyListings] = useState<ListingView[]>([]);
   const [likedListings, setLikedListings] = useState<ListingView[]>([]);
   const [savedListings, setSavedListings] = useState<ListingView[]>([]);
