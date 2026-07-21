@@ -139,80 +139,117 @@ function BackButton({ onClick, label = "Kthehu" }: { onClick: () => void; label?
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
   const navigate = useNavigate({ from: "/messages" });
   const [threads, setThreads] = useState<ThreadView[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [hasResolvedOnce, setHasResolvedOnce] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [showInitialSkeleton, setShowInitialSkeleton] = useState(false);
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
   const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [swipeId, setSwipeId] = useState<string | null>(null);
   const touchStartX = useRef(0);
+  const mountedRef = useRef(true);
+  const loadReqIdRef = useRef(0);
 
   const load = async () => {
-    const { data: convs } = await supabase
-      .from("conversations")
-      .select("*")
-      .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
-      .order("last_message_at", { ascending: false });
-    const rows = (convs ?? []) as ThreadRow[];
-    if (rows.length === 0) {
-      setThreads([]);
-      setLoading(false);
-      return;
-    }
-    const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
-    const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
-    const [profs, listings, lastMsgs] = await Promise.all([
-      supabase.from("public_profiles").select("id,name,avatar_url").in("id", otherIds),
-      supabase.from("listings").select("id,title,image_paths,price").in("id", listingIds),
-      supabase.from("messages").select("conversation_id,content,created_at,sender_id").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
-    ]);
-    const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
-    const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
-    const lastMap = new Map<string, { content: string; created_at: string; sender_id: string }>();
-    for (const m of lastMsgs.data ?? []) {
-      if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m);
-    }
-    const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
-    const urls = await signPaths(allCovers, { thumbnail: true });
+    const reqId = ++loadReqIdRef.current;
+    try {
+      const { data: convs, error } = await supabase
+        .from("conversations")
+        .select("*")
+        .or(`buyer_id.eq.${me},seller_id.eq.${me}`)
+        .order("last_message_at", { ascending: false });
+      if (error) throw error;
+      const rows = (convs ?? []) as ThreadRow[];
+      if (rows.length === 0) {
+        if (!mountedRef.current || reqId !== loadReqIdRef.current) return;
+        setThreads([]);
+        setLoadError(false);
+        setHasResolvedOnce(true);
+        return;
+      }
+      const otherIds = Array.from(new Set(rows.map((r) => (r.buyer_id === me ? r.seller_id : r.buyer_id))));
+      const listingIds = Array.from(new Set(rows.map((r) => r.listing_id)));
+      const [profs, listings, lastMsgs] = await Promise.all([
+        supabase.from("public_profiles").select("id,name,avatar_url").in("id", otherIds),
+        supabase.from("listings").select("id,title,image_paths,price").in("id", listingIds),
+        supabase.from("messages").select("conversation_id,content,created_at,sender_id").in("conversation_id", rows.map((r) => r.id)).order("created_at", { ascending: false }),
+      ]);
+      const profMap = new Map((profs.data ?? []).map((p) => [p.id, p]));
+      const listingMap = new Map((listings.data ?? []).map((l) => [l.id, l]));
+      const lastMap = new Map<string, { content: string; created_at: string; sender_id: string }>();
+      for (const m of lastMsgs.data ?? []) {
+        if (!lastMap.has(m.conversation_id)) lastMap.set(m.conversation_id, m);
+      }
+      const allCovers = (listings.data ?? []).flatMap((l) => l.image_paths?.[0] ? [l.image_paths[0]] : []);
+      const urls = await signPaths(allCovers, { thumbnail: true });
 
-    const views: ThreadView[] = rows.map((r) => {
-      const isBuyer = r.buyer_id === me;
-      const otherId = isBuyer ? r.seller_id : r.buyer_id;
-      const prof = profMap.get(otherId);
-      const listing = listingMap.get(r.listing_id);
-      const cover = listing?.image_paths?.[0] ?? "";
-      const last = lastMap.get(r.id);
-      const lastReadAt = isBuyer ? r.last_read_buyer_at : r.last_read_seller_at;
-      const unread = !!last && last.sender_id !== me && (!lastReadAt || new Date(last.created_at) > new Date(lastReadAt));
-      const archived = isBuyer ? r.archived_by_buyer : r.archived_by_seller;
-      return {
-        id: r.id,
-        otherId,
-        otherName: prof?.name || "Përdorues",
-        otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
-        listingId: r.listing_id,
-        listingTitle: listing?.title || "Artikull",
-        listingPrice: listing?.price ?? null,
-        listingCover: urls[cover] || "",
-        lastPreview: last?.content || "Bisedë e re",
-        lastAt: r.last_message_at,
-        unread,
-        isBuyer,
-        archived,
-      };
-    });
-    setThreads(views);
-    setLoading(false);
+      const views: ThreadView[] = rows.map((r) => {
+        const isBuyer = r.buyer_id === me;
+        const otherId = isBuyer ? r.seller_id : r.buyer_id;
+        const prof = profMap.get(otherId);
+        const listing = listingMap.get(r.listing_id);
+        const cover = listing?.image_paths?.[0] ?? "";
+        const last = lastMap.get(r.id);
+        const lastReadAt = isBuyer ? r.last_read_buyer_at : r.last_read_seller_at;
+        const unread = !!last && last.sender_id !== me && (!lastReadAt || new Date(last.created_at) > new Date(lastReadAt));
+        const archived = isBuyer ? r.archived_by_buyer : r.archived_by_seller;
+        return {
+          id: r.id,
+          otherId,
+          otherName: prof?.name || "Përdorues",
+          otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
+          listingId: r.listing_id,
+          listingTitle: listing?.title || "Artikull",
+          listingPrice: listing?.price ?? null,
+          listingCover: urls[cover] || "",
+          lastPreview: last?.content || "Bisedë e re",
+          lastAt: r.last_message_at,
+          unread,
+          isBuyer,
+          archived,
+        };
+      });
+      if (!mountedRef.current || reqId !== loadReqIdRef.current) return;
+      setThreads(views);
+      setLoadError(false);
+      setHasResolvedOnce(true);
+    } catch {
+      if (!mountedRef.current || reqId !== loadReqIdRef.current) return;
+      setLoadError(true);
+      setHasResolvedOnce(true);
+    }
   };
 
+  // Reset state on account switch, then load and subscribe
   useEffect(() => {
+    mountedRef.current = true;
+    setThreads([]);
+    setHasResolvedOnce(false);
+    setLoadError(false);
+    setShowInitialSkeleton(false);
     load();
     const ch = supabase
       .channel(`messages-list:${me}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => load())
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => load())
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      mountedRef.current = false;
+      supabase.removeChannel(ch);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me]);
+
+  // Delayed skeleton: only show if initial load takes >225ms
+  useEffect(() => {
+    if (hasResolvedOnce) {
+      setShowInitialSkeleton(false);
+      return;
+    }
+    const id = window.setTimeout(() => {
+      if (mountedRef.current) setShowInitialSkeleton(true);
+    }, 225);
+    return () => window.clearTimeout(id);
+  }, [hasResolvedOnce, me]);
 
   const filtered = useMemo(() => {
     let list = threads.filter((t) => (mode === "archive" ? t.archived : !t.archived));
@@ -364,7 +401,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
             paddingBottom: 90,
           }}
         >
-          {loading ? (
+          {!hasResolvedOnce && showInitialSkeleton ? (
             <>
               <span className="sr-only" role="status" aria-live="polite">Duke ngarkuar biseda…</span>
               <ul aria-hidden="true">
@@ -384,6 +421,25 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 ))}
               </ul>
             </>
+          ) : !hasResolvedOnce ? (
+            // Initial pre-skeleton blank window (<225ms) — keep layout stable
+            <div aria-hidden="true" />
+          ) : loadError && threads.length === 0 ? (
+            <div
+              role="alert"
+              className="mx-5 mt-10 rounded-2xl border border-dashed p-8 text-center text-sm"
+              style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
+            >
+              <div className="mb-3">Diçka shkoi keq gjatë ngarkimit.</div>
+              <button
+                type="button"
+                onClick={() => { setLoadError(false); load(); }}
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${FOCUS_RING}`}
+                style={{ background: BRAND_GRADIENT }}
+              >
+                Provo përsëri
+              </button>
+            </div>
           ) : filtered.length === 0 ? (
             <div
               role="status"
