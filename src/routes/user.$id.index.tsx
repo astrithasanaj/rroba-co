@@ -291,7 +291,7 @@ function UserProfile() {
           .insert({ follower_id: currentUserId, following_id: id });
         if (error) {
           setIsFollowing(false);
-          setFollowers((n) => n - 1);
+          setFollowers((n) => (n ?? 1) - 1);
           toast.error(error.message);
         }
       }
