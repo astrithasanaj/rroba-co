@@ -252,10 +252,6 @@ function UserProfile() {
     profile?.avatar_url ||
     `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
 
-  const activeCount = useMemo(
-    () => listings.filter((l) => l.status === "active").length,
-    [listings],
-  );
 
   const memberSince = useMemo(() => {
     if (!profile?.created_at) return null;
