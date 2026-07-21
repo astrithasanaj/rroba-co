@@ -48,6 +48,7 @@ import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -134,8 +135,12 @@ function ProfilePage() {
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
   const [listingsLoading, setListingsLoading] = useState(true);
-  const [followers, setFollowers] = useState(0);
-  const [following, setFollowing] = useState(0);
+  const [followers, setFollowers] = useState<number | null>(
+    () => getProfileStats(user.id)?.followers ?? null,
+  );
+  const [following, setFollowing] = useState<number | null>(
+    () => getProfileStats(user.id)?.following ?? null,
+  );
 
   const loadAll = useCallback(async () => {
     const requestedUserId = user.id;
@@ -149,8 +154,9 @@ function ProfilePage() {
     setOffersReceived([]);
     setOffersSent([]);
     setListingTitles({});
-    setFollowers(0);
-    setFollowing(0);
+    // NB: intentionally do NOT reset `followers`/`following` here. They are
+    // seeded from cache and only replaced when a fresh count arrives, so
+    // refetches never flash back to 0 or a placeholder.
 
     const isStale = () => requestedUserId !== user.id;
 
@@ -213,8 +219,14 @@ function ProfilePage() {
         setCurrentProfileCache(requestedUserId, profData);
       }
 
-      setFollowers(fCount.count ?? 0);
-      setFollowing(gCount.count ?? 0);
+      const nextFollowers = fCount.count ?? 0;
+      const nextFollowing = gCount.count ?? 0;
+      setFollowers(nextFollowers);
+      setFollowing(nextFollowing);
+      setProfileStats(requestedUserId, {
+        followers: nextFollowers,
+        following: nextFollowing,
+      });
 
       const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
       setOffersReceived((offRec.data ?? []) as OfferRow[]);
@@ -1019,10 +1031,28 @@ function HeightSheet({
   );
 }
 
-function Stat({ value, label, onClick }: { value: number; label: string; onClick?: () => void }) {
+function Stat({
+  value,
+  label,
+  onClick,
+}: {
+  value: number | null;
+  label: string;
+  onClick?: () => void;
+}) {
   const inner = (
     <>
-      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2, minHeight: "1.2em" }}>
+        {value === null ? (
+          <span
+            aria-hidden="true"
+            className="inline-block rounded bg-muted animate-pulse align-middle"
+            style={{ width: "1.6ch", height: "0.85em" }}
+          />
+        ) : (
+          value
+        )}
+      </p>
       <p
         style={{
           fontSize: 11,

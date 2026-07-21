@@ -21,6 +21,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
+import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
 
 export const Route = createFileRoute("/user/$id/")({
   component: () => (
@@ -60,13 +61,23 @@ function Stat({
   label,
   onClick,
 }: {
-  value: number | string;
+  value: number | string | null;
   label: string;
   onClick?: (e: React.MouseEvent) => void;
 }) {
   const content = (
     <>
-      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2 }}>{value}</p>
+      <p style={{ fontSize: 18, fontWeight: 600, color: INK, lineHeight: 1.2, minHeight: "1.2em" }}>
+        {value === null ? (
+          <span
+            aria-hidden="true"
+            className="inline-block rounded bg-muted animate-pulse align-middle"
+            style={{ width: "1.6ch", height: "0.85em" }}
+          />
+        ) : (
+          value
+        )}
+      </p>
       <p
         style={{
           fontSize: 11,
@@ -115,8 +126,12 @@ function UserProfile() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followBusy, setFollowBusy] = useState(false);
-  const [followers, setFollowers] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [followers, setFollowers] = useState<number | null>(
+    () => getProfileStats(id)?.followers ?? null,
+  );
+  const [followingCount, setFollowingCount] = useState<number | null>(
+    () => getProfileStats(id)?.following ?? null,
+  );
   const [likesTotal, setLikesTotal] = useState(0);
   const [hasSale, setHasSale] = useState(false);
 
@@ -125,13 +140,25 @@ function UserProfile() {
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
 
+  // When navigating to a different profile, seed from cache (or reset) so we
+  // never briefly show the previous profile's counts.
+  useEffect(() => {
+    const cached = getProfileStats(id);
+    setFollowers(cached?.followers ?? null);
+    setFollowingCount(cached?.following ?? null);
+  }, [id]);
+
   const loadFollows = useCallback(async () => {
+    const requestedId = id;
     const [{ count: fCount }, { count: gCount }] = await Promise.all([
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", id),
     ]);
-    setFollowers(fCount ?? 0);
-    setFollowingCount(gCount ?? 0);
+    const nextFollowers = fCount ?? 0;
+    const nextFollowing = gCount ?? 0;
+    setFollowers(nextFollowers);
+    setFollowingCount(nextFollowing);
+    setProfileStats(requestedId, { followers: nextFollowers, following: nextFollowing });
   }, [id]);
 
   useEffect(() => {
@@ -245,7 +272,7 @@ function UserProfile() {
     setFollowBusy(true);
     // optimistic
     setIsFollowing(!prev);
-    setFollowers((n) => n + (prev ? -1 : 1));
+    setFollowers((n) => (n ?? 0) + (prev ? -1 : 1));
     try {
       if (prev) {
         const { error } = await supabase
@@ -255,7 +282,7 @@ function UserProfile() {
           .eq("following_id", id);
         if (error) {
           setIsFollowing(true);
-          setFollowers((n) => n + 1);
+          setFollowers((n) => (n ?? 0) + 1);
           toast.error(error.message);
         }
       } else {
@@ -264,7 +291,7 @@ function UserProfile() {
           .insert({ follower_id: currentUserId, following_id: id });
         if (error) {
           setIsFollowing(false);
-          setFollowers((n) => n - 1);
+          setFollowers((n) => (n ?? 1) - 1);
           toast.error(error.message);
         }
       }
