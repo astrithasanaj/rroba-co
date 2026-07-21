@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Bell, UserPlus, Shirt } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
-import { ProductGridSkeleton } from "@/components/marketplace/Skeletons";
+import { ListingCardSkeleton, ProductGridSkeleton } from "@/components/marketplace/Skeletons";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
