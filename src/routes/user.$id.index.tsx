@@ -272,7 +272,7 @@ function UserProfile() {
     setFollowBusy(true);
     // optimistic
     setIsFollowing(!prev);
-    setFollowers((n) => n + (prev ? -1 : 1));
+    setFollowers((n) => (n ?? 0) + (prev ? -1 : 1));
     try {
       if (prev) {
         const { error } = await supabase
