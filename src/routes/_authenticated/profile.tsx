@@ -141,6 +141,9 @@ function ProfilePage() {
   const [following, setFollowing] = useState<number | null>(
     () => getProfileStats(user.id)?.following ?? null,
   );
+  const [articleCount, setArticleCount] = useState<number | null>(
+    () => getProfileStats(user.id)?.articles ?? null,
+  );
 
   const loadAll = useCallback(async () => {
     const requestedUserId = user.id;
@@ -172,6 +175,8 @@ function ProfilePage() {
         const rows = (res.data ?? []) as ListingRow[];
         if (rows.length === 0) {
           setMyListings([]);
+          setArticleCount(0);
+          setProfileStats(requestedUserId, { articles: 0 });
           setListingsLoading(false);
           return;
         }
@@ -185,6 +190,9 @@ function ProfilePage() {
           ...hydratedMine.filter((p) => p.status === "sold"),
         ];
         setMyListings(sortedMine);
+        const activeLen = sortedMine.filter((p) => p.status === "active").length;
+        setArticleCount(activeLen);
+        setProfileStats(requestedUserId, { articles: activeLen });
         setListingsLoading(false);
       });
 
@@ -208,7 +216,12 @@ function ProfilePage() {
         .from("followers")
         .select("*", { count: "exact", head: true })
         .eq("follower_id", requestedUserId),
-    ]).then(async ([prof, offRec, offSent, fCount, gCount]) => {
+      supabase
+        .from("listings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", requestedUserId)
+        .eq("status", "active"),
+    ]).then(async ([prof, offRec, offSent, fCount, gCount, aCount]) => {
       if (isStale()) return;
       // Beskytt mot at feil profil (annen id) blir satt inn.
       const profData = prof.data as Profile | null;
@@ -221,11 +234,14 @@ function ProfilePage() {
 
       const nextFollowers = fCount.count ?? 0;
       const nextFollowing = gCount.count ?? 0;
+      const nextArticles = aCount.count ?? 0;
       setFollowers(nextFollowers);
       setFollowing(nextFollowing);
+      setArticleCount(nextArticles);
       setProfileStats(requestedUserId, {
         followers: nextFollowers,
         following: nextFollowing,
+        articles: nextArticles,
       });
 
       const allOffers = [...(offRec.data ?? []), ...(offSent.data ?? [])] as OfferRow[];
@@ -515,7 +531,7 @@ function ProfilePage() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat
-                  value={myListings.filter((l) => l.status === "active").length}
+                  value={articleCount}
                   label="artikuj"
                 />
                 <Stat

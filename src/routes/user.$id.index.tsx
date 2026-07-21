@@ -132,6 +132,9 @@ function UserProfile() {
   const [followingCount, setFollowingCount] = useState<number | null>(
     () => getProfileStats(id)?.following ?? null,
   );
+  const [articleCount, setArticleCount] = useState<number | null>(
+    () => getProfileStats(id)?.articles ?? null,
+  );
   const [likesTotal, setLikesTotal] = useState(0);
   const [hasSale, setHasSale] = useState(false);
 
@@ -146,19 +149,31 @@ function UserProfile() {
     const cached = getProfileStats(id);
     setFollowers(cached?.followers ?? null);
     setFollowingCount(cached?.following ?? null);
+    setArticleCount(cached?.articles ?? null);
   }, [id]);
 
   const loadFollows = useCallback(async () => {
     const requestedId = id;
-    const [{ count: fCount }, { count: gCount }] = await Promise.all([
+    const [{ count: fCount }, { count: gCount }, { count: aCount }] = await Promise.all([
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
       supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", id),
+      supabase
+        .from("listings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id)
+        .eq("status", "active"),
     ]);
     const nextFollowers = fCount ?? 0;
     const nextFollowing = gCount ?? 0;
+    const nextArticles = aCount ?? 0;
     setFollowers(nextFollowers);
     setFollowingCount(nextFollowing);
-    setProfileStats(requestedId, { followers: nextFollowers, following: nextFollowing });
+    setArticleCount(nextArticles);
+    setProfileStats(requestedId, {
+      followers: nextFollowers,
+      following: nextFollowing,
+      articles: nextArticles,
+    });
   }, [id]);
 
   useEffect(() => {
@@ -237,10 +252,6 @@ function UserProfile() {
     profile?.avatar_url ||
     `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
 
-  const activeCount = useMemo(
-    () => listings.filter((l) => l.status === "active").length,
-    [listings],
-  );
 
   const memberSince = useMemo(() => {
     if (!profile?.created_at) return null;
@@ -436,7 +447,7 @@ function UserProfile() {
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <Stat value={activeCount} label="artikuj" />
+                <Stat value={articleCount} label="artikuj" />
                 <Stat
                   value={followers}
                   label="ndjekës"
