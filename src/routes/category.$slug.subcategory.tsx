@@ -28,7 +28,6 @@ function SubcategorySelectPage() {
     return node ? node.groups.map((g) => g.label) : [];
   }, [slug]);
   const [selected, setSelected] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
 
   if (!def || subcategories.length === 0) {
     navigate({ to: "/category/$slug/$gender", params: { slug, gender: "all" }, replace: true });
