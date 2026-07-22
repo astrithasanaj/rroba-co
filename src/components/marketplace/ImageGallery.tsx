@@ -66,10 +66,10 @@ export function ImageGallery({ images, alt }: Props) {
         {images.map((src, i) => (
           <div key={i} className="relative h-full w-full flex-shrink-0 snap-center snap-always">
             <TransformWrapper
-              doubleClick={{ mode: "toggle", step: 1.5 }}
+              doubleClick={{ disabled: true }}
               pinch={{ step: 5 }}
               wheel={{ disabled: true }}
-              panning={{ disabled: false }}
+              panning={{ disabled: true }}
               minScale={1}
               maxScale={4}
               onTransform={(_ref: unknown, state: { scale: number }) => {
@@ -78,6 +78,9 @@ export function ImageGallery({ images, alt }: Props) {
                 } else if (zoomedIndex === i) {
                   setZoomedIndex(null);
                 }
+              }}
+              onPinchStop={(ref: ReactZoomPanPinchRef) => {
+                ref.resetTransform();
               }}
             >
               <TransformComponent
