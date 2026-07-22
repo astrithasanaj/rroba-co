@@ -161,6 +161,9 @@ function PromotePage() {
       }
       return;
     }
+    queryClient.invalidateQueries({ queryKey: ["home-promoted-regular"] });
+    queryClient.invalidateQueries({ queryKey: ["home-trending"] });
+    queryClient.invalidateQueries({ queryKey: ["home-new-week"] });
     toast.success("Promovimi u aktivizua!");
     navigate({ to: "/listing/$id/manage", params: { id } });
   };
