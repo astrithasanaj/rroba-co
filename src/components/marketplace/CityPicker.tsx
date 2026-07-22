@@ -37,6 +37,37 @@ export function CityPicker({
 }: CityPickerProps) {
   const { cities, loading } = useCities();
   const [open, setOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [listMaxHeight, setListMaxHeight] = useState<number>(320);
+
+  useEffect(() => {
+    if (!open) return;
+    const vv = typeof window !== "undefined" ? window.visualViewport : null;
+    if (!vv) {
+      setListMaxHeight(320);
+      return;
+    }
+    const recompute = () => {
+      const el = contentRef.current;
+      const topOffset = el ? el.getBoundingClientRect().top : 0;
+      // available = visualViewport height - popover top - bottom safety margin
+      // subtract ~56px for the CommandInput header inside the popover
+      const SAFETY = 16;
+      const HEADER = 56;
+      const available = vv.height - Math.max(topOffset, 0) - HEADER - SAFETY;
+      const clamped = Math.max(140, Math.min(320, available));
+      setListMaxHeight(clamped);
+    };
+    // Defer to allow popover to mount and position
+    const raf = requestAnimationFrame(recompute);
+    vv.addEventListener("resize", recompute);
+    vv.addEventListener("scroll", recompute);
+    return () => {
+      cancelAnimationFrame(raf);
+      vv.removeEventListener("resize", recompute);
+      vv.removeEventListener("scroll", recompute);
+    };
+  }, [open]);
 
   const selected = useMemo(
     () => cities.find((c) => c.id === value) ?? null,
