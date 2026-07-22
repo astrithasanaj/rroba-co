@@ -44,6 +44,7 @@ function actorIdOf(n: Notif): string | null {
     d.follower_id ??
     d.actor_id ??
     d.liker_id ??
+    d.saver_id ??
     null;
   return typeof id === "string" ? id : null;
 }
