@@ -68,7 +68,7 @@ export function ImageGallery({ images, alt }: Props) {
               panning={{ disabled: false }}
               minScale={1}
               maxScale={4}
-              onTransformed={(_ref: unknown, state: { scale: number }) => {
+              onTransform={(_ref: unknown, state: { scale: number }) => {
                 if (state.scale > 1.01) {
                   setZoomedIndex(i);
                 } else if (zoomedIndex === i) {
