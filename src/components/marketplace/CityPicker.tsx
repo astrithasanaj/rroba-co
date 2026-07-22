@@ -120,8 +120,10 @@ export function CityPicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverContent
+        ref={contentRef}
         align="start"
         sideOffset={6}
+        collisionPadding={12}
         className="w-[calc(100vw-32px)] max-w-[380px] p-0 shadow-lg"
         style={{ background: CREAM, border: `1px solid ${DIVIDER}`, borderRadius: 16 }}
       >
@@ -139,7 +141,7 @@ export function CityPicker({
               style={{ color: INK }}
             />
           </div>
-          <CommandList className="max-h-[320px]">
+          <CommandList style={{ maxHeight: listMaxHeight }}>
             {loading ? (
               <div className="px-4 py-6 text-center text-sm" style={{ color: MUTED }}>
                 Duke ngarkuar...
