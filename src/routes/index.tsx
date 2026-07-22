@@ -221,6 +221,7 @@ async function fetchFollowing(uid: string | null): Promise<FollowingData> {
 
 function HomePage() {
   const queryClient = useQueryClient();
+  const hasUnreadNotifications = useUnreadNotifications();
   const [tab, setTab] = useState<Tab>("for-you");
 
   const handleTabChange = (next: Tab) => {
