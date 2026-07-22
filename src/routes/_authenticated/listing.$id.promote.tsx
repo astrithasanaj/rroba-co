@@ -96,6 +96,7 @@ type Balances = {
 function PromotePage() {
   const { id } = useParams({ from: "/_authenticated/listing/$id/promote" });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [balances, setBalances] = useState<Balances>({
     tier: null,
