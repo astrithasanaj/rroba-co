@@ -268,6 +268,8 @@ function NotificationRow({
       ? UserPlus
       : n.type === "like"
       ? Heart
+      : n.type === "save"
+      ? Bookmark
       : Bell;
 
   const actorId = actorIdOf(n);
