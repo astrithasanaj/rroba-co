@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, Loader2, Check, ChevronRight, Copy, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -95,6 +96,7 @@ type Balances = {
 function PromotePage() {
   const { id } = useParams({ from: "/_authenticated/listing/$id/promote" });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [balances, setBalances] = useState<Balances>({
     tier: null,
@@ -159,6 +161,9 @@ function PromotePage() {
       }
       return;
     }
+    queryClient.invalidateQueries({ queryKey: ["home-promoted-regular"] });
+    queryClient.invalidateQueries({ queryKey: ["home-trending"] });
+    queryClient.invalidateQueries({ queryKey: ["home-new-week"] });
     toast.success("Promovimi u aktivizua!");
     navigate({ to: "/listing/$id/manage", params: { id } });
   };
