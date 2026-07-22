@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Bell, UserPlus, Shirt } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -22,7 +23,203 @@ const MUTED = "#a89f94";
 
 type Tab = "for-you" | "following";
 
+// ---------- Data helpers (pure fetchers, reused by useQuery) ----------
+
+type Prefs = {
+  uid: string | null;
+  allowedGenders: string[];
+  genderFilter: string;
+};
+
+function passesPersonalization(
+  r: Pick<ListingRow, "category" | "gender">,
+  allowedGenders: string[],
+) {
+  if (r.gender == null) return true;
+  if (!isGenderSpecificCategory(r.category)) return true;
+  return allowedGenders.includes(r.gender);
+}
+
+async function fetchPrefs(uid: string | null): Promise<Prefs> {
+  let myGenders: string[] = [];
+  if (uid) {
+    const { data: profileRow } = await supabase
+      .from("profiles")
+      .select("preferences")
+      .eq("id", uid)
+      .maybeSingle();
+    const prefs = profileRow?.preferences as { genders?: string[] } | null;
+    myGenders = prefs?.genders ?? [];
+  }
+  const wantsWomen =
+    myGenders.includes("women") || myGenders.includes("both") || myGenders.length === 0;
+  const wantsMen =
+    myGenders.includes("men") || myGenders.includes("both") || myGenders.length === 0;
+
+  const allowedGenders: string[] = [];
+  if (wantsWomen) allowedGenders.push("Femra");
+  if (wantsMen) allowedGenders.push("Meshkuj");
+
+  const neutralCategoriesList = `"${[
+    "Interier & mobilie",
+    "Outdoor & sport",
+    "Art & dizajn",
+    "Elektronikë & zë",
+    "Hobi",
+  ].join('","')}"`;
+  const genderSpecificList = `"${GENDER_SPECIFIC_CATEGORIES.join('","')}"`;
+  const allowedGendersList = allowedGenders.map((g) => `"${g}"`).join(",");
+  const genderFilter = [
+    "gender.is.null",
+    `category.not.in.(${genderSpecificList})`,
+    `category.in.(${neutralCategoriesList})`,
+    allowedGenders.length > 0 ? `gender.in.(${allowedGendersList})` : null,
+  ]
+    .filter(Boolean)
+    .join(",");
+
+  return { uid, allowedGenders, genderFilter };
+}
+
+async function fetchNewThisWeek(genderFilter: string): Promise<ListingView[]> {
+  const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: rows } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "active")
+    .neq("category", "Fëmijë & bebe")
+    .or(genderFilter)
+    .gte("created_at", weekAgoIso)
+    .order("created_at", { ascending: false })
+    .limit(10);
+  const list = (rows ?? []) as ListingRow[];
+  if (list.length === 0) return [];
+  return hydrateListings(list, { thumbnail: true, mode: "cover" });
+}
+
+type PromotedRegular = {
+  promoted: ListingView[];
+  regular: ListingView[];
+  regularRows: ListingRow[];
+};
+
+async function fetchPromotedRegular(): Promise<PromotedRegular> {
+  const nowIso = new Date().toISOString();
+  const { data: promos } = await supabase
+    .from("promotions")
+    .select("listing_id, listings(*)")
+    .eq("type", "feed_top")
+    .eq("status", "active")
+    .eq("payment_confirmed", true)
+    .gt("ends_at", nowIso);
+
+  const promotedRows = ((promos ?? []) as Array<{ listings: ListingRow | null }>)
+    .map((p) => p.listings)
+    .filter((r): r is ListingRow => !!r && r.status === "active");
+  const promotedIds = promotedRows.map((r) => r.id);
+
+  let query = supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(60);
+  if (promotedIds.length > 0) {
+    query = query.not("id", "in", `(${promotedIds.join(",")})`);
+  }
+  const { data: regular } = await query;
+  const regularRows = (regular ?? []) as ListingRow[];
+
+  const [hydratedPromoted, hydratedRegular] = await Promise.all([
+    hydrateListings(promotedRows, { thumbnail: true, mode: "cover" }),
+    hydrateListings(regularRows, { thumbnail: true, mode: "cover" }),
+  ]);
+  const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
+  return {
+    promoted: promotedWithFlag.slice(0, 10),
+    regular: hydratedRegular,
+    regularRows,
+  };
+}
+
+async function fetchTrending(
+  prefs: Prefs,
+  regularRows: ListingRow[],
+): Promise<ListingView[]> {
+  const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: likeRows } = await supabase
+    .from("listing_likes")
+    .select("listing_id")
+    .gte("created_at", weekAgoIso);
+
+  const likeCounts = new Map<string, number>();
+  for (const r of (likeRows ?? []) as Array<{ listing_id: string }>) {
+    likeCounts.set(r.listing_id, (likeCounts.get(r.listing_id) ?? 0) + 1);
+  }
+  const rankedIds = Array.from(likeCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([id]) => id);
+
+  let trendingRows: ListingRow[] = [];
+  if (rankedIds.length > 0) {
+    const { data: trendingActive } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("status", "active")
+      .neq("category", "Fëmijë & bebe")
+      .or(prefs.genderFilter)
+      .in("id", rankedIds);
+    const byId = new Map<string, ListingRow>();
+    for (const row of (trendingActive ?? []) as ListingRow[]) byId.set(row.id, row);
+    trendingRows = rankedIds
+      .map((id) => byId.get(id))
+      .filter((r): r is ListingRow => !!r)
+      .slice(0, 5);
+  }
+
+  if (trendingRows.length < 5) {
+    const have = new Set(trendingRows.map((r) => r.id));
+    const fillers = regularRows.filter(
+      (r) =>
+        !have.has(r.id) &&
+        r.category !== "Fëmijë & bebe" &&
+        passesPersonalization(r, prefs.allowedGenders),
+    );
+    trendingRows = [...trendingRows, ...fillers].slice(0, 5);
+  }
+
+  if (trendingRows.length === 0) return [];
+  return hydrateListings(trendingRows, { thumbnail: true, mode: "cover" });
+}
+
+type FollowingData = { ids: string[]; listings: ListingView[] };
+
+async function fetchFollowing(uid: string | null): Promise<FollowingData> {
+  if (!uid) return { ids: [], listings: [] };
+  const { data: follows } = await supabase
+    .from("followers")
+    .select("following_id")
+    .eq("follower_id", uid);
+  const ids = (follows ?? []).map((f) => f.following_id);
+  if (ids.length === 0) return { ids: [], listings: [] };
+  const { data: rows } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "active")
+    .in("user_id", ids)
+    .order("created_at", { ascending: false })
+    .limit(60);
+  const listings = await hydrateListings((rows ?? []) as ListingRow[], {
+    thumbnail: true,
+    mode: "cover",
+  });
+  return { ids, listings };
+}
+
+// ---------- Component ----------
+
 function HomePage() {
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("for-you");
 
   const handleTabChange = (next: Tab) => {
@@ -34,265 +231,123 @@ function HomePage() {
       scroller.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
-  const [listings, setListings] = useState<ListingView[]>([]);
-  const [promoted, setPromoted] = useState<ListingView[]>([]);
-  const [trendingListings, setTrendingListings] = useState<ListingView[]>([]);
-  const [newThisWeekListings, setNewThisWeekListings] = useState<ListingView[]>([]);
-  const [followingListings, setFollowingListings] = useState<ListingView[]>([]);
-  const [followingIds, setFollowingIds] = useState<string[]>([]);
-  const [regularLoading, setRegularLoading] = useState(true);
-  const [trendingLoading, setTrendingLoading] = useState(true);
-  const [newWeekLoading, setNewWeekLoading] = useState(true);
-  const [followingLoading, setFollowingLoading] = useState(true);
 
+  // Auth — cached so remount doesn't refetch on every navigation.
+  const authQuery = useQuery({
+    queryKey: ["home-auth"] as const,
+    queryFn: async () => (await getCurrentUser())?.id ?? null,
+    staleTime: 60_000,
+    placeholderData: (prev) => prev,
+  });
+  const uid = authQuery.data ?? null;
+  const uidKey = uid ?? "anonymous";
+
+  // Preferences — keyed per user so cross-user contamination is impossible.
+  const prefsQuery = useQuery({
+    queryKey: ["home-prefs", uidKey] as const,
+    queryFn: () => fetchPrefs(uid),
+    staleTime: 60_000,
+    placeholderData: (prev) => prev,
+    enabled: authQuery.isSuccess,
+  });
+  const prefs = prefsQuery.data;
+
+  // Promoted + regular grid.
+  const promotedRegularQuery = useQuery({
+    queryKey: ["home-promoted-regular", uidKey] as const,
+    queryFn: fetchPromotedRegular,
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+
+  // New this week — depends on prefs.
+  const newWeekQuery = useQuery({
+    queryKey: ["home-new-week", uidKey] as const,
+    queryFn: () => fetchNewThisWeek(prefs!.genderFilter),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+    enabled: !!prefs,
+  });
+
+  // Trending — depends on prefs and needs regularRows as filler.
+  // Uses ensureQueryData so a refetch waits for a fresh promoted/regular pull.
+  const trendingQuery = useQuery({
+    queryKey: ["home-trending", uidKey] as const,
+    queryFn: async () => {
+      const pr = await queryClient.ensureQueryData({
+        queryKey: ["home-promoted-regular", uidKey] as const,
+        queryFn: fetchPromotedRegular,
+        staleTime: 30_000,
+      });
+      return fetchTrending(prefs!, pr.regularRows);
+    },
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+    enabled: !!prefs,
+  });
+
+  // Following feed.
+  const followingQuery = useQuery({
+    queryKey: ["home-following", uidKey] as const,
+    queryFn: () => fetchFollowing(uid),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+    enabled: authQuery.isSuccess,
+  });
+
+  // Realtime — invalidate keys instead of resetting state so cached data stays
+  // rendered while the background refetch runs.
   useEffect(() => {
-    let active = true;
-    const load = async () => {
-      setRegularLoading(true);
-      setTrendingLoading(true);
-      setNewWeekLoading(true);
-
-      const nowIso = new Date().toISOString();
-      const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-
-      // Kjør auth + prefs først, men hold det raskt: preferences avgjør bare filter.
-      const authData = { user: await getCurrentUser() };
-      const uid = authData.user?.id;
-
-      let myGenders: string[] = [];
-      if (uid) {
-        const { data: profileRow } = await supabase
-          .from("profiles")
-          .select("preferences")
-          .eq("id", uid)
-          .maybeSingle();
-        const prefs = profileRow?.preferences as { genders?: string[] } | null;
-        myGenders = prefs?.genders ?? [];
-      }
-
-      const wantsWomen =
-        myGenders.includes("women") || myGenders.includes("both") || myGenders.length === 0;
-      const wantsMen =
-        myGenders.includes("men") || myGenders.includes("both") || myGenders.length === 0;
-
-      const allowedGenders: string[] = [];
-      if (wantsWomen) allowedGenders.push("Femra");
-      if (wantsMen) allowedGenders.push("Meshkuj");
-
-      // Personalization only applies to gender-specific categories.
-      // Neutral categories (Interier, Outdoor, Art, Elektronikë, Hobi, …) and
-      // listings without a gender are always allowed.
-      const neutralCategoriesList = `"${["Interier & mobilie", "Outdoor & sport", "Art & dizajn", "Elektronikë & zë", "Hobi"].join('","')}"`;
-      const genderSpecificList = `"${GENDER_SPECIFIC_CATEGORIES.join('","')}"`;
-      const allowedGendersList = allowedGenders.map((g) => `"${g}"`).join(",");
-      // A row passes if: gender is null OR category is not gender-specific OR
-      // gender is in allowed set. Encoded as PostgREST OR:
-      const genderFilter = [
-        "gender.is.null",
-        `category.not.in.(${genderSpecificList})`,
-        `category.in.(${neutralCategoriesList})`,
-        allowedGenders.length > 0 ? `gender.in.(${allowedGendersList})` : null,
-      ].filter(Boolean).join(",");
-
-      const passesPersonalization = (r: Pick<ListingRow, "category" | "gender">) => {
-        if (r.gender == null) return true;
-        if (!isGenderSpecificCategory(r.category)) return true;
-        return allowedGenders.includes(r.gender);
-      };
-
-      // --- Seksjon: "E re këtë javë" — uavhengig ---
-      const newWeekTask = (async () => {
-        const { data: rows } = await supabase
-          .from("listings")
-          .select("*")
-          .eq("status", "active")
-          .neq("category", "Fëmijë & bebe")
-          .or(genderFilter)
-          .gte("created_at", weekAgoIso)
-          .order("created_at", { ascending: false })
-          .limit(10);
-        if (!active) return;
-        const list = (rows ?? []) as ListingRow[];
-        if (list.length === 0) {
-          setNewThisWeekListings([]);
-          setNewWeekLoading(false);
-          return;
-        }
-        const hydrated = await hydrateListings(list, { thumbnail: true, mode: "cover" });
-        if (!active) return;
-        setNewThisWeekListings(hydrated);
-        setNewWeekLoading(false);
-      })();
-
-      // --- Seksjon: promoted + regular ("Të zgjedhura" og hovedgrid) ---
-      const promotedRegularTask = (async () => {
-        const { data: promos } = await supabase
-          .from("promotions")
-          .select("listing_id, listings(*)")
-          .eq("type", "feed_top")
-          .eq("status", "active")
-          .eq("payment_confirmed", true)
-          .gt("ends_at", nowIso);
-
-        const promotedRows = ((promos ?? []) as Array<{ listings: ListingRow | null }>)
-          .map((p) => p.listings)
-          .filter((r): r is ListingRow => !!r && r.status === "active");
-        const promotedIds = promotedRows.map((r) => r.id);
-
-        let query = supabase
-          .from("listings")
-          .select("*")
-          .eq("status", "active")
-          .order("created_at", { ascending: false })
-          .limit(60);
-        if (promotedIds.length > 0) {
-          query = query.not("id", "in", `(${promotedIds.join(",")})`);
-        }
-        const { data: regular } = await query;
-        const regularRows = (regular ?? []) as ListingRow[];
-
-        const [hydratedPromoted, hydratedRegular] = await Promise.all([
-          hydrateListings(promotedRows, { thumbnail: true, mode: "cover" }),
-          hydrateListings(regularRows, { thumbnail: true, mode: "cover" }),
-        ]);
-
-        if (!active) return { regularRows };
-        const promotedWithFlag = hydratedPromoted.map((l) => ({ ...l, is_promoted: true }));
-        setPromoted(promotedWithFlag.slice(0, 10));
-        setListings(hydratedRegular);
-        setRegularLoading(false);
-        return { regularRows };
-      })();
-
-      // --- Seksjon: "Në trend tani" — trenger regularRows som filler ---
-      const trendingTask = (async () => {
-        const { data: likeRows } = await supabase
-          .from("listing_likes")
-          .select("listing_id")
-          .gte("created_at", weekAgoIso);
-
-        const likeCounts = new Map<string, number>();
-        for (const r of (likeRows ?? []) as Array<{ listing_id: string }>) {
-          likeCounts.set(r.listing_id, (likeCounts.get(r.listing_id) ?? 0) + 1);
-        }
-        const rankedIds = Array.from(likeCounts.entries())
-          .sort((a, b) => b[1] - a[1])
-          .map(([id]) => id);
-
-        let trendingRows: ListingRow[] = [];
-        if (rankedIds.length > 0) {
-          const { data: trendingActive } = await supabase
-            .from("listings")
-            .select("*")
-            .eq("status", "active")
-            .neq("category", "Fëmijë & bebe")
-            .or(genderFilter)
-            .in("id", rankedIds);
-
-          const byId = new Map<string, ListingRow>();
-          for (const row of (trendingActive ?? []) as ListingRow[]) byId.set(row.id, row);
-          trendingRows = rankedIds
-            .map((id) => byId.get(id))
-            .filter((r): r is ListingRow => !!r)
-            .slice(0, 5);
-        }
-
-        if (trendingRows.length < 5) {
-          const { regularRows } = (await promotedRegularTask) ?? { regularRows: [] };
-          const have = new Set(trendingRows.map((r) => r.id));
-          const fillers = (regularRows ?? []).filter(
-            (r) => !have.has(r.id) && r.category !== "Fëmijë & bebe" && passesPersonalization(r),
-          );
-          trendingRows = [...trendingRows, ...fillers].slice(0, 5);
-        }
-
-        if (!active) return;
-        if (trendingRows.length === 0) {
-          setTrendingListings([]);
-          setTrendingLoading(false);
-          return;
-        }
-        const hydrated = await hydrateListings(trendingRows, { thumbnail: true, mode: "cover" });
-        if (!active) return;
-        setTrendingListings(hydrated);
-        setTrendingLoading(false);
-      })();
-
-      await Promise.all([newWeekTask, promotedRegularTask, trendingTask]);
+    const invalidateFeed = () => {
+      queryClient.invalidateQueries({ queryKey: ["home-promoted-regular", uidKey] });
+      queryClient.invalidateQueries({ queryKey: ["home-new-week", uidKey] });
+      queryClient.invalidateQueries({ queryKey: ["home-trending", uidKey] });
     };
-    load();
-
     const ch = supabase
       .channel("home-feed")
-      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => load())
-      .on("postgres_changes", { event: "*", schema: "public", table: "promotions" }, () => load())
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "listings" },
+        invalidateFeed,
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "promotions" },
+        invalidateFeed,
+      )
       .subscribe();
     return () => {
-      active = false;
       supabase.removeChannel(ch);
     };
-  }, []);
-
+  }, [queryClient, uidKey]);
 
   useEffect(() => {
-    let active = true;
-    const loadFollowing = async () => {
-      setFollowingLoading(true);
-      const authData = { user: await getCurrentUser() };
-      const uid = authData.user?.id;
-      if (!uid) {
-        if (active) {
-          setFollowingIds([]);
-          setFollowingListings([]);
-          setFollowingLoading(false);
-        }
-        return;
-      }
-      const { data: follows } = await supabase
-        .from("followers")
-        .select("following_id")
-        .eq("follower_id", uid);
-      const ids = (follows ?? []).map((f) => f.following_id);
-      if (ids.length === 0) {
-        if (active) {
-          setFollowingIds([]);
-          setFollowingListings([]);
-          setFollowingLoading(false);
-        }
-        return;
-      }
-      const { data: rows } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("status", "active")
-        .in("user_id", ids)
-        .order("created_at", { ascending: false })
-        .limit(60);
-      const hydrated = await hydrateListings((rows ?? []) as ListingRow[], {
-        thumbnail: true,
-        mode: "cover",
-      });
-      if (active) {
-        setFollowingIds(ids);
-        setFollowingListings(hydrated);
-        setFollowingLoading(false);
-      }
+    const invalidateFollowing = () => {
+      queryClient.invalidateQueries({ queryKey: ["home-following", uidKey] });
     };
-    loadFollowing();
     const ch = supabase
       .channel("home-following")
-      .on("postgres_changes", { event: "*", schema: "public", table: "followers" }, () =>
-        loadFollowing(),
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "followers" },
+        invalidateFollowing,
       )
-      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () =>
-        loadFollowing(),
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "listings" },
+        invalidateFollowing,
       )
       .subscribe();
     return () => {
-      active = false;
       supabase.removeChannel(ch);
     };
-  }, []);
+  }, [queryClient, uidKey]);
+
+  // Skeletons appear only when a query has never had data.
+  const regularData = promotedRegularQuery.data;
+  const newWeekData = newWeekQuery.data;
+  const trendingData = trendingQuery.data;
+  const followingData = followingQuery.data;
 
   return (
     <MobileShell>
@@ -354,19 +409,19 @@ function HomePage() {
         <div key={tab} className="animate-fade-in" style={{ animationDuration: "150ms" }}>
           {tab === "for-you" ? (
             <ForYou
-              regularLoading={regularLoading}
-              trendingLoading={trendingLoading}
-              newWeekLoading={newWeekLoading}
-              listings={listings}
-              promoted={promoted}
-              trending={trendingListings}
-              newThisWeek={newThisWeekListings}
+              regularLoading={regularData === undefined}
+              trendingLoading={trendingData === undefined}
+              newWeekLoading={newWeekData === undefined}
+              listings={regularData?.regular ?? []}
+              promoted={regularData?.promoted ?? []}
+              trending={trendingData ?? []}
+              newThisWeek={newWeekData ?? []}
             />
           ) : (
             <FollowingFeed
-              loading={followingLoading}
-              hasFollowing={followingIds.length > 0}
-              listings={followingListings}
+              loading={followingData === undefined}
+              hasFollowing={(followingData?.ids.length ?? 0) > 0}
+              listings={followingData?.listings ?? []}
             />
           )}
         </div>
