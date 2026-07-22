@@ -321,6 +321,13 @@ function NotificationRow({
         </p>
       );
     }
+    if (n.type === "save") {
+      return (
+        <p className="text-sm" style={{ color: INK }}>
+          {nameEl ? <>{nameEl} ruajti artikullin tënd</> : "Dikush ruajti artikullin tënd"}
+        </p>
+      );
+    }
     return <p className="text-sm" style={{ color: INK }}>Njoftim</p>;
   }, [n, actorId, actorName, onActor]);
 
