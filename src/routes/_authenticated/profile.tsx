@@ -48,6 +48,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { getMembershipPlan } from "@/lib/membership-plans";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
