@@ -194,6 +194,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { likes, saves, loaded: collectionsLoaded } = useUserCollections();
+  const hasUnreadNotifications = useUnreadNotifications();
   const [tab, setTab] = useState<Tab>("mine");
   const [sort, setSort] = useState<SortMode>("new");
   const [ratingsOpen, setRatingsOpen] = useState(false);
