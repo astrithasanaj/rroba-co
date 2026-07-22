@@ -71,7 +71,6 @@ const CONDITION_SUBTITLES: Record<string, string> = {
   "I ri": "Kurrë i përdorur",
   "Mirë përdorur": "Shenja të lehta përdorimi",
   Përdorur: "Shenja të dukshme përdorimi",
-  "Shumë përdorur": "Shenja të forta përdorimi",
 };
 
 type GenderMode = "adult" | "kids" | false;
@@ -1050,7 +1049,7 @@ function FormStep({
             aria-label="Gjendja e artikullit"
             className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1"
           >
-            {CONDITIONS.map((value) => {
+            {CONDITIONS.filter((value) => value !== "Shumë përdorur").map((value) => {
               const active = condition === value;
               return (
                 <button
