@@ -148,7 +148,7 @@ function NotificationsPage() {
       navigate({ to: "/messages", search: { thread: String(n.data.conversation_id), view: "list", tab: "all" } });
       return;
     }
-    if ((n.type === "offer" || n.type === "sold" || n.type === "like") && n.data.listing_id) {
+    if ((n.type === "offer" || n.type === "sold" || n.type === "like" || n.type === "save") && n.data.listing_id) {
       navigate({ to: "/product/$id", params: { id: String(n.data.listing_id) } });
       return;
     }
