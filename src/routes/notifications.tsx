@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus, Bell } from "lucide-react";
+import { ChevronLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus, Bell, Bookmark } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
