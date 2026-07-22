@@ -48,6 +48,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { getMembershipPlan } from "@/lib/membership-plans";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
@@ -193,6 +194,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { likes, saves, loaded: collectionsLoaded } = useUserCollections();
+  const hasUnreadNotifications = useUnreadNotifications();
   const [tab, setTab] = useState<Tab>("mine");
   const [sort, setSort] = useState<SortMode>("new");
   const [ratingsOpen, setRatingsOpen] = useState(false);
@@ -459,11 +461,18 @@ function ProfilePage() {
           >
             <button
               onClick={() => navigate({ to: "/notifications" })}
-              className="profile-btn grid place-items-center"
+              className="profile-btn relative grid place-items-center"
               style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
               aria-label="Njoftimet"
             >
               <Bell style={{ width: 20, height: 20 }} strokeWidth={1.8} />
+              {hasUnreadNotifications && (
+                <span
+                  aria-hidden="true"
+                  className="absolute rounded-full"
+                  style={{ top: 6, right: 6, width: 10, height: 10, backgroundColor: "var(--brand-rose)" }}
+                />
+              )}
             </button>
             <button
               onClick={() => setSortOpen(true)}

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus, Bell } from "lucide-react";
+import { ChevronLeft, Heart, MessageCircle, Tag, Loader2, CheckCircle2, UserPlus, Bell, Bookmark } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
@@ -44,6 +44,7 @@ function actorIdOf(n: Notif): string | null {
     d.follower_id ??
     d.actor_id ??
     d.liker_id ??
+    d.saver_id ??
     null;
   return typeof id === "string" ? id : null;
 }
@@ -147,7 +148,7 @@ function NotificationsPage() {
       navigate({ to: "/messages", search: { thread: String(n.data.conversation_id), view: "list", tab: "all" } });
       return;
     }
-    if ((n.type === "offer" || n.type === "sold" || n.type === "like") && n.data.listing_id) {
+    if ((n.type === "offer" || n.type === "sold" || n.type === "like" || n.type === "save") && n.data.listing_id) {
       navigate({ to: "/product/$id", params: { id: String(n.data.listing_id) } });
       return;
     }
@@ -267,6 +268,8 @@ function NotificationRow({
       ? UserPlus
       : n.type === "like"
       ? Heart
+      : n.type === "save"
+      ? Bookmark
       : Bell;
 
   const actorId = actorIdOf(n);
@@ -315,6 +318,13 @@ function NotificationRow({
       return (
         <p className="text-sm" style={{ color: INK }}>
           {nameEl ? <>{nameEl} pëlqeu artikullin tënd</> : "Dikush pëlqeu artikullin tënd"}
+        </p>
+      );
+    }
+    if (n.type === "save") {
+      return (
+        <p className="text-sm" style={{ color: INK }}>
+          {nameEl ? <>{nameEl} ruajti artikullin tënd</> : "Dikush ruajti artikullin tënd"}
         </p>
       );
     }

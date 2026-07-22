@@ -9,6 +9,7 @@ import { ListingCardSkeleton, ProductGridSkeleton } from "@/components/marketpla
 
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { isGenderSpecificCategory, GENDER_SPECIFIC_CATEGORIES } from "@/lib/category-taxonomy";
@@ -220,6 +221,7 @@ async function fetchFollowing(uid: string | null): Promise<FollowingData> {
 
 function HomePage() {
   const queryClient = useQueryClient();
+  const hasUnreadNotifications = useUnreadNotifications();
   const [tab, setTab] = useState<Tab>("for-you");
 
   const handleTabChange = (next: Tab) => {
@@ -384,10 +386,17 @@ function HomePage() {
             </div>
             <Link
               to="/notifications"
-              className="grid h-12 w-12 place-items-center rounded-full"
+              className="relative grid h-12 w-12 place-items-center rounded-full"
               aria-label="Njoftime"
             >
               <Bell className="h-6 w-6" strokeWidth={1.7} style={{ color: INK }} />
+              {hasUnreadNotifications && (
+                <span
+                  aria-hidden="true"
+                  className="absolute h-2.5 w-2.5 rounded-full"
+                  style={{ top: 10, right: 10, backgroundColor: "var(--brand-rose)" }}
+                />
+              )}
             </Link>
           </div>
           <div className="px-[18px] pb-3">
