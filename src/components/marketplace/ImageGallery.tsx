@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 type Props = {
   images: string[];
@@ -7,8 +8,10 @@ type Props = {
 
 export function ImageGallery({ images, alt }: Props) {
   const [active, setActive] = useState(0);
+  const [zoomedIndex, setZoomedIndex] = useState<number | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const multiple = images.length > 1;
+  const isZoomed = zoomedIndex !== null;
 
   // Preload neighbors
   useEffect(() => {
@@ -35,7 +38,7 @@ export function ImageGallery({ images, alt }: Props) {
   };
 
   const handleTap = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!multiple) return;
+    if (!multiple || isZoomed) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const third = rect.width / 3;
@@ -49,17 +52,42 @@ export function ImageGallery({ images, alt }: Props) {
         ref={scrollerRef}
         onScroll={onScroll}
         onClick={handleTap}
-        className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ scrollSnapType: "x mandatory", touchAction: "pan-x", willChange: "transform" }}
+        className="flex h-full w-full snap-x snap-mandatory overflow-y-hidden scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          scrollSnapType: isZoomed ? "none" : "x mandatory",
+          overflowX: isZoomed ? "hidden" : "auto",
+          willChange: "transform",
+        }}
       >
         {images.map((src, i) => (
           <div key={i} className="relative h-full w-full flex-shrink-0 snap-center snap-always">
-            <img
-              src={src}
-              alt={`${alt} ${i + 1}`}
-              draggable={false}
-              className="h-full w-full object-cover"
-            />
+            <TransformWrapper
+              doubleClick={{ mode: "toggle", step: 1.5 }}
+              pinch={{ step: 5 }}
+              wheel={{ disabled: true }}
+              panning={{ disabled: false }}
+              minScale={1}
+              maxScale={4}
+              onTransform={(_ref: unknown, state: { scale: number }) => {
+                if (state.scale > 1.01) {
+                  setZoomedIndex(i);
+                } else if (zoomedIndex === i) {
+                  setZoomedIndex(null);
+                }
+              }}
+            >
+              <TransformComponent
+                wrapperStyle={{ width: "100%", height: "100%" }}
+                contentStyle={{ width: "100%", height: "100%" }}
+              >
+                <img
+                  src={src}
+                  alt={`${alt} ${i + 1}`}
+                  draggable={false}
+                  className="h-full w-full object-cover"
+                />
+              </TransformComponent>
+            </TransformWrapper>
           </div>
         ))}
       </div>
