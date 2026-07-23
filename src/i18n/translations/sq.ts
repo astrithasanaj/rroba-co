@@ -68,4 +68,8 @@ export const sq = {
   },
 } satisfies Record<string, Dict>;
 
-export type TranslationSchema = typeof sq;
+type Widen<T> = T extends string
+  ? string
+  : { [K in keyof T]: Widen<T[K]> };
+
+export type TranslationSchema = Widen<typeof sq>;
