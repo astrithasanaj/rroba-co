@@ -192,6 +192,19 @@ search: {
     bebe: "Bebe",
   },
 
+  category: {
+    who_looking_for: "Për kend po kërkon?",
+    what_looking_for: "Çfarë je duke kërkuar?",
+    apply_filters: "Apliko filtrat",
+    not_found: "Kategoria nuk u gjet",
+    items_count: "{n} artikuj",
+    loading: "Po ngarkohet...",
+    no_results: "Asnjë artikull u gjet për këtë kategori",
+    new_badge: "E re",
+    filter_brand: "Brendi",
+    filter_brand_ph: "P.sh. Nike",
+  },
+
   messages: {
     title: "Mesazhe",
     title_archive: "Arkiva",

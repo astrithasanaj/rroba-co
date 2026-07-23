@@ -191,6 +191,19 @@ search: {
     bebe: "Baby",
   },
 
+  category: {
+    who_looking_for: "Who are you shopping for?",
+    what_looking_for: "What are you looking for?",
+    apply_filters: "Apply filters",
+    not_found: "Category not found",
+    items_count: "{n} items",
+    loading: "Loading...",
+    no_results: "No items found for this category",
+    new_badge: "New",
+    filter_brand: "Brand",
+    filter_brand_ph: "e.g. Nike",
+  },
+
   messages: {
     title: "Messages",
     title_archive: "Archive",

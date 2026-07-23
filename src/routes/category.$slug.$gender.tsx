@@ -18,6 +18,8 @@ import { Label } from "@/components/ui/label";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
 import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
@@ -49,6 +51,7 @@ type Filters = {
 function CategoryResultsPage() {
   const { slug, gender } = useParams({ from: "/category/$slug/$gender" });
   const search = Route.useSearch();
+  const { t } = useTranslation();
   const subcategoryList = useMemo(
     () => (search.subcategories ? search.subcategories.split(",").filter(Boolean) : []),
     [search.subcategories],
@@ -68,8 +71,9 @@ function CategoryResultsPage() {
 
   const title = useMemo(() => {
     if (!def) return "";
-    return genderOption ? `${def.label} · ${genderOption.label}` : def.label;
-  }, [def, genderOption]);
+    const base = tCategory(def.label, t);
+    return genderOption ? `${base} · ${tCategory(genderOption.label, t)}` : base;
+  }, [def, genderOption, t]);
 
   useEffect(() => {
     if (!def) return;
@@ -118,7 +122,7 @@ function CategoryResultsPage() {
           style={{ backgroundColor: BG, minHeight: "100vh", color: INK }}
           className="p-10 text-center"
         >
-          Kategoria nuk u gjet
+          {t("category.not_found")}
         </div>
       </MobileShell>
     );
@@ -135,7 +139,7 @@ function CategoryResultsPage() {
           <button
             type="button"
             onClick={backTo}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -158,7 +162,7 @@ function CategoryResultsPage() {
 
         <div className="px-5 flex items-center justify-between gap-2">
           <p className="text-xs" style={{ color: MUTED }}>
-            {loading ? "Po ngarkohet..." : `${results.length} artikuj`}
+            {loading ? t("category.loading") : t("category.items_count", { n: results.length })}
           </p>
           <button
             type="button"
@@ -167,7 +171,7 @@ function CategoryResultsPage() {
             style={{ backgroundColor: CARD, color: INK }}
           >
             <LayoutGrid aria-hidden="true" className="h-3.5 w-3.5" />
-            Kategoritë
+            {t("home.categories")}
           </button>
         </div>
 
@@ -179,7 +183,7 @@ function CategoryResultsPage() {
                 className="h-6 w-6 animate-spin"
                 style={{ color: MUTED }}
               />
-              <span className="sr-only">Po ngarkohet</span>
+              <span className="sr-only">{t("category.loading")}</span>
             </div>
           ) : results.length === 0 ? (
             <div
@@ -188,7 +192,7 @@ function CategoryResultsPage() {
               style={{ backgroundColor: CARD, color: MUTED }}
             >
               <PackageSearch aria-hidden="true" className="h-10 w-10" strokeWidth={1.4} />
-              Asnjë artikull u gjet për këtë kategori
+              {t("category.no_results")}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -206,7 +210,7 @@ function CategoryResultsPage() {
           style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
         >
           <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
-          <span className="text-sm font-semibold">Filtro</span>
+          <span className="text-sm font-semibold">{t("common.filter")}</span>
           {activeCount > 0 && (
             <span
               className="ml-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold"
@@ -249,6 +253,7 @@ function CategoryResultsPage() {
 }
 
 function ResultCard({ listing, eager = false }: { listing: ListingView; eager?: boolean }) {
+  const { t } = useTranslation();
   const isNew = useMemo(() => {
     const created = new Date(listing.created_at).getTime();
     return Date.now() - created < 7 * 24 * 60 * 60 * 1000;
@@ -275,7 +280,7 @@ function ResultCard({ listing, eager = false }: { listing: ListingView; eager?: 
             className="absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold"
             style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
-            E re
+            {t("category.new_badge")}
           </span>
         )}
         
@@ -313,6 +318,7 @@ function FiltersSheet({
   filters: Filters;
   setFilters: (f: Filters | ((p: Filters) => Filters)) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -325,7 +331,7 @@ function FiltersSheet({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -337,44 +343,44 @@ function FiltersSheet({
           >
             <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
-          <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
+          <SheetTitle style={{ color: INK }}>{t("search.filters_title")}</SheetTitle>
         </div>
         <div className="mt-4 space-y-5">
           <Chips
-            label="Gjendja"
+            label={t("search.filter_condition")}
             value={filters.condition}
             onChange={(v) => setFilters((p) => ({ ...p, condition: v }))}
             options={[...CONDITIONS]}
           />
           <Chips
-            label="Qyteti"
+            label={t("search.filter_city")}
             value={filters.city}
             onChange={(v) => setFilters((p) => ({ ...p, city: v }))}
             options={[...CITIES]}
           />
           <div>
-            <Label style={{ color: INK }}>Madhësia</Label>
+            <Label style={{ color: INK }}>{t("search.filter_size")}</Label>
             <Input
               value={filters.size ?? ""}
               onChange={(e) => setFilters((p) => ({ ...p, size: e.target.value }))}
-              placeholder="P.sh. M"
+              placeholder={t("search.filter_size_ph")}
               className="mt-1 border-0"
               style={{ backgroundColor: CARD, color: INK }}
             />
           </div>
           <div>
-            <Label style={{ color: INK }}>Brendi</Label>
+            <Label style={{ color: INK }}>{t("category.filter_brand")}</Label>
             <Input
               value={filters.brand ?? ""}
               onChange={(e) => setFilters((p) => ({ ...p, brand: e.target.value }))}
-              placeholder="P.sh. Nike"
+              placeholder={t("category.filter_brand_ph")}
               className="mt-1 border-0"
               style={{ backgroundColor: CARD, color: INK }}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label style={{ color: INK }}>Çmimi min (€)</Label>
+              <Label style={{ color: INK }}>{t("search.filter_price_min")}</Label>
               <Input
                 type="number"
                 value={filters.priceMin ?? ""}
@@ -384,7 +390,7 @@ function FiltersSheet({
               />
             </div>
             <div>
-              <Label style={{ color: INK }}>Çmimi maks (€)</Label>
+              <Label style={{ color: INK }}>{t("search.filter_price_max")}</Label>
               <Input
                 type="number"
                 value={filters.priceMax ?? ""}
@@ -400,14 +406,14 @@ function FiltersSheet({
               className="flex-1 rounded-full py-3 text-sm font-medium"
               style={{ backgroundColor: CARD, color: INK }}
             >
-              Pastro
+              {t("search.clear")}
             </button>
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
               style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
-              Apliko
+              {t("common.apply")}
             </button>
           </div>
         </div>

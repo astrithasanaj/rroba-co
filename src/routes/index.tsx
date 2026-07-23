@@ -14,6 +14,7 @@ import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { isGenderSpecificCategory, GENDER_SPECIFIC_CATEGORIES } from "@/lib/category-taxonomy";
 import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -546,7 +547,7 @@ function ForYou({
                   className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
                   style={{ color: INK, fontSize: 11, width: 84 }}
                 >
-                  {label}
+                  {tCategory(label, t)}
                 </span>
               </Link>
             );

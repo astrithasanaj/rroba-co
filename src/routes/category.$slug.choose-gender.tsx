@@ -4,6 +4,8 @@ import { ChevronLeft } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, SUBCATEGORY_OPTIONS, type GenderSlug } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/category/$slug/choose-gender")({
 function GenderSelectPage() {
   const { slug } = useParams({ from: "/category/$slug/choose-gender" });
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const def = getCategory(slug);
   const [selectedGender, setSelectedGender] = useState<GenderSlug | null>(null);
   const [selectedSubs, setSelectedSubs] = useState<string[]>([]);
@@ -69,7 +72,7 @@ function GenderSelectPage() {
           <button
             type="button"
             onClick={() => window.history.back()}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -83,13 +86,13 @@ function GenderSelectPage() {
             <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
-            {def.label}
+            {tCategory(def.label, t)}
           </h1>
         </header>
 
         <div className="px-5 pt-8">
           <h2 className="text-[22px] font-bold leading-tight" style={{ color: INK }}>
-            Për kend po kërkon?
+            {t("category.who_looking_for")}
           </h2>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
@@ -110,7 +113,7 @@ function GenderSelectPage() {
                 >
                   <span style={{ fontSize: 36, lineHeight: 1, color: INK }}>{g.symbol}</span>
                   <span className="mt-3 text-[15px] font-bold" style={{ color: INK }}>
-                    {g.label}
+                    {tCategory(g.label, t)}
                   </span>
                 </button>
               );
@@ -124,7 +127,7 @@ function GenderSelectPage() {
               style={{ animationDuration: "200ms" }}
             >
               <h3 className="mt-5 text-[18px] font-bold" style={{ color: INK }}>
-                Çfarë je duke kërkuar?
+                {t("category.what_looking_for")}
               </h3>
 
               <div className="mt-3 grid grid-cols-3 gap-2">
@@ -156,7 +159,7 @@ function GenderSelectPage() {
             className="mt-5 flex h-12 w-full items-center justify-center rounded-full border text-[14px] font-semibold disabled:opacity-50"
             style={{ borderColor: INK, color: INK, backgroundColor: "transparent" }}
           >
-            Shiko të gjitha
+            {t("common.seeAll")}
           </button>
 
           {selectedGender && (
@@ -171,7 +174,7 @@ function GenderSelectPage() {
                   selectedSubs.length === 0 ? "var(--brand-ink-secondary)" : "var(--brand-surface)",
               }}
             >
-              Apliko filtrat
+              {t("category.apply_filters")}
             </button>
           )}
         </div>
