@@ -372,17 +372,17 @@ function ProfilePage() {
   const respondOffer = async (o: OfferRow, status: "accepted" | "declined") => {
     const { error } = await supabase.from("offers").update({ status }).eq("id", o.id);
     if (error) toast.error(error.message);
-    else toast.success(status === "accepted" ? "Oferta u pranua" : "Oferta u refuzua");
+    else toast.success(status === "accepted" ? t("profile.offer_accepted") : t("profile.offer_declined"));
   };
 
   const handleShare = async () => {
     const url = `${window.location.origin}/user/${user.id}`;
-    const shareData = { url, title: displayName, text: "Shiko profilin tim në Rroba" };
+    const shareData = { url, title: displayName, text: t("profile.share_text") };
     try {
       if (navigator.share) await navigator.share(shareData);
       else {
         await navigator.clipboard.writeText(url);
-        toast.success("Lidhja u kopjua!");
+        toast.success(t("profile.link_copied"));
       }
     } catch {
       // Bruker avbrøt native share-dialog – ignorer.
@@ -464,7 +464,7 @@ function ProfilePage() {
               onClick={() => navigate({ to: "/notifications" })}
               className="profile-btn relative grid place-items-center"
               style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
-              aria-label="Njoftimet"
+              aria-label={t("home.notifications_aria")}
             >
               <Bell style={{ width: 20, height: 20 }} strokeWidth={1.8} />
               {hasUnreadNotifications && (
@@ -479,7 +479,7 @@ function ProfilePage() {
               onClick={() => setSortOpen(true)}
               className="profile-btn grid place-items-center"
               style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
-              aria-label="Filtro"
+              aria-label={t("common.filter")}
             >
               <SlidersHorizontal style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
@@ -502,7 +502,7 @@ function ProfilePage() {
               onClick={handleShare}
               className="profile-btn grid place-items-center"
               style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
-              aria-label="Shpërndaj"
+              aria-label={t("common.share")}
             >
               <IosShareIcon size={20} color={INK} strokeWidth={1.6} />
             </button>
@@ -510,7 +510,7 @@ function ProfilePage() {
               onClick={() => setSettingsOpen(true)}
               className="profile-btn grid place-items-center"
               style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
-              aria-label="Cilësimet"
+              aria-label={t("common.settings")}
             >
               <SettingsIcon style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
@@ -553,16 +553,16 @@ function ProfilePage() {
               <div style={{ display: "flex", justifyContent: "space-around" }}>
                 <Stat
                   value={articleCount}
-                  label="artikuj"
+                  label={t("profile.stat_articles")}
                 />
                 <Stat
                   value={followers}
-                  label="ndjekës"
+                  label={t("profile.stat_followers")}
                   onClick={() => navigate({ to: "/user/$id/followers", params: { id: user.id } })}
                 />
                 <Stat
                   value={following}
-                  label="ndjek"
+                  label={t("profile.stat_following")}
                   onClick={() => navigate({ to: "/user/$id/following", params: { id: user.id } })}
                 />
               </div>
@@ -589,7 +589,7 @@ function ProfilePage() {
                   }}
                 >
                   <Gem style={{ width: 12, height: 12 }} strokeWidth={1.8} />
-                  Përfitimet
+                  {t("profile.benefits")}
                 </button>
                 <button
                   onClick={() => setRatingsOpen(true)}
@@ -618,7 +618,7 @@ function ProfilePage() {
                       {(profile?.rating_avg ?? 0).toFixed(1)}
                     </>
                   ) : (
-                    "Asnjë vlerësim"
+                    t("profile.no_rating")
                   )}
                 </button>
               </div>
@@ -670,7 +670,7 @@ function ProfilePage() {
                     {profile.height_cm} cm
                   </>
                 ) : (
-                  "+ Shto gjatësinë"
+                  t("profile.add_height")
                 )}
               </button>
             </div>
@@ -692,7 +692,7 @@ function ProfilePage() {
         <div>
           <div
             role="tablist"
-            aria-label="Seksionet e profilit"
+            aria-label={t("profile.sections_aria")}
             className="grid grid-cols-4"
             style={{ backgroundColor: CREAM }}
           >
@@ -700,10 +700,10 @@ function ProfilePage() {
               const Icon = t.icon;
               const active = tab === t.id;
               const tabLabels: Record<Tab, string> = {
-                mine: "Artikujt e mi",
-                liked: "Të pëlqyera",
-                saved: "Të ruajtura",
-                wardrobe: "Të shitura",
+                mine: t("profile.tab_mine"),
+                liked: t("profile.tab_liked"),
+                saved: t("profile.tab_saved"),
+                wardrobe: t("profile.tab_wardrobe"),
               };
               return (
                 <button
@@ -773,7 +773,7 @@ function ProfilePage() {
             <button
               type="button"
               onClick={() => setSortOpen(false)}
-              aria-label="Kthehu"
+              aria-label={t("common.back")}
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
               style={{
                 width: 44,
@@ -786,15 +786,15 @@ function ProfilePage() {
               <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
             </button>
             <h2 className="text-[17px] font-bold" style={{ color: INK }}>
-              Rendit sipas
+              {t("profile.sort_by")}
             </h2>
           </div>
           <div className="px-5 pb-8 pt-2">
             {(
               [
-                { id: "new", label: "Më të rejat" },
-                { id: "low", label: "Çmimi: ulët-lartë" },
-                { id: "high", label: "Çmimi: lartë-ulët" },
+                { id: "new", label: t("profile.sort_newest") },
+                { id: "low", label: t("profile.sort_low_high") },
+                { id: "high", label: t("profile.sort_high_low") },
               ] as const
             ).map((o) => (
               <button
@@ -863,8 +863,8 @@ function ProfilePage() {
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Përfitimet</div>
-              <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>e shitësit</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>{t("profile.benefits")}</div>
+              <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>{t("profile.benefits_subtitle")}</div>
             </div>
             <div style={{ width: 72 }} />
           </div>
@@ -880,27 +880,27 @@ function ProfilePage() {
                 margin: 0,
               }}
             >
-              Sa më shumë shet, aq më shumë përfitime.
+              {t("profile.benefits_body")}
             </p>
             <TierCard
               emoji="🥉"
-              title="Fillestar"
-              range="0–4 shitje"
-              body="Akses bazë në listim dhe shitje."
+              title={t("profile.tier_starter")}
+              range={t("profile.tier_starter_range")}
+              body={t("profile.tier_starter_body")}
               active={tier === "starter"}
             />
             <TierCard
               emoji="🥈"
-              title="I besueshëm"
-              range="5–19 shitje"
-              body="Prioritet në kërkim dhe shenjë e verifikuar."
+              title={t("profile.tier_trusted")}
+              range={t("profile.tier_trusted_range")}
+              body={t("profile.tier_trusted_body")}
               active={tier === "trusted"}
             />
             <TierCard
               emoji="🥇"
-              title="Top shitës"
-              range="20+ shitje"
-              body="Promovim falas, shenjë e artë dhe shfaqje në kryefaqe."
+              title={t("profile.tier_top")}
+              range={t("profile.tier_top_range")}
+              body={t("profile.tier_top_body")}
               active={tier === "top"}
             />
           </div>
@@ -926,7 +926,7 @@ function ProfilePage() {
           style={{ backgroundColor: CREAM }}
         >
           <SheetHeader>
-            <SheetTitle>Ofertat</SheetTitle>
+            <SheetTitle>{t("profile.offers_title")}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 flex gap-2">
             {(["received", "sent"] as const).map((s) => (
@@ -939,7 +939,7 @@ function ProfilePage() {
                   color: offerSub === s ? "white" : INK,
                 }}
               >
-                {s === "received" ? "Të marra" : "Të dërguara"}
+                {s === "received" ? t("profile.offers_received") : t("profile.offers_sent")}
               </button>
             ))}
           </div>
@@ -989,6 +989,7 @@ function HeightSheet({
   current: number | null;
   onSaved: () => void;
 }) {
+  const { t } = useTranslation();
   const [value, setValue] = useState<number>(current ?? 175);
   const [saving, setSaving] = useState(false);
 
@@ -1018,7 +1019,7 @@ function HeightSheet({
         style={{ backgroundColor: CREAM }}
       >
         <SheetHeader className="px-5 pt-5">
-          <SheetTitle style={{ color: INK }}>Gjatësia (cm)</SheetTitle>
+          <SheetTitle style={{ color: INK }}>{t("profile.height_title")}</SheetTitle>
         </SheetHeader>
         <div
           className="mx-5 mt-4 overflow-y-auto rounded-2xl"
@@ -1050,7 +1051,7 @@ function HeightSheet({
             className="h-12 w-full rounded-full text-[15px] font-bold text-white disabled:opacity-60"
             style={{ backgroundColor: INK }}
           >
-            {saving ? "Duke ruajtur..." : "Ruaj"}
+            {saving ? t("common.saving") : t("common.save")}
           </button>
         </div>
       </SheetContent>
@@ -1359,6 +1360,7 @@ function ListingGridTile({
 }
 
 function SoldRibbon() {
+  const { t } = useTranslation();
   return (
     <div
       className="pointer-events-none absolute"
@@ -1378,27 +1380,28 @@ function SoldRibbon() {
         textTransform: "uppercase",
       }}
     >
-      Shitur
+      {t("profile.sold_ribbon")}
     </div>
   );
 }
 
 function TabEmptyState({ tab }: { tab: Tab }) {
+  const { t } = useTranslation();
   const Icon =
     tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : tab === "saved" ? Bookmark : Shirt;
   const subtitle =
     tab === "mine"
-      ? "Artikujt që liston do të shfaqen këtu"
+      ? t("profile.empty_mine")
       : tab === "liked"
-        ? "Artikujt që i pëlqen do të shfaqen këtu"
+        ? t("profile.empty_liked")
         : tab === "saved"
-          ? "Artikujt që i ruan do të shfaqen këtu"
-          : "Artikujt e shitur do të shfaqen këtu";
+          ? t("profile.empty_saved")
+          : t("profile.empty_wardrobe");
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
       <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
       <p className="mt-4 text-[15px] font-bold" style={{ color: INK }}>
-        Asnjë artikull ende
+        {t("profile.no_items_yet")}
       </p>
       <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
         {subtitle}
@@ -1437,10 +1440,11 @@ function OffersList({
   canRespond: boolean;
   onRespond: (o: OfferRow, status: "accepted" | "declined") => void;
 }) {
+  const { t } = useTranslation();
   if (offers.length === 0)
     return (
       <p className="py-6 text-center text-sm" style={{ color: MUTED }}>
-        Asnjë ofertë.
+        {t("profile.no_offers")}
       </p>
     );
   return (
@@ -1450,7 +1454,7 @@ function OffersList({
           <div className="flex items-center justify-between">
             <Link to="/product/$id" params={{ id: o.listing_id }} className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold" style={{ color: INK }}>
-                {titles[o.listing_id] ?? "Artikull"}
+                {titles[o.listing_id] ?? t("profile.offer_item_fallback")}
               </p>
               <p className="text-xs" style={{ color: MUTED }}>
                 {new Date(o.created_at).toLocaleString()}
@@ -1474,10 +1478,10 @@ function OffersList({
               }}
             >
               {o.status === "pending"
-                ? "Në pritje"
+                ? t("profile.offer_pending")
                 : o.status === "accepted"
-                  ? "Pranuar"
-                  : "Refuzuar"}
+                  ? t("profile.offer_accepted_status")
+                  : t("profile.offer_declined_status")}
             </span>
             {canRespond && o.status === "pending" && (
               <div className="flex gap-2">
@@ -1485,7 +1489,7 @@ function OffersList({
                   onClick={() => onRespond(o, "declined")}
                   className="grid h-11 w-11 place-items-center rounded-full"
                   style={{ backgroundColor: DIVIDER }}
-                  aria-label="Refuzo"
+                  aria-label={t("profile.offer_reject_aria")}
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -1493,7 +1497,7 @@ function OffersList({
                   onClick={() => onRespond(o, "accepted")}
                   className="grid h-11 w-11 place-items-center rounded-full text-white"
                   style={{ backgroundColor: INK }}
-                  aria-label="Prano"
+                  aria-label={t("profile.offer_accept_aria")}
                 >
                   <Check className="h-3.5 w-3.5" />
                 </button>
@@ -1914,26 +1918,28 @@ function LegalPage({ title, paragraphs }: { title: string; paragraphs: string[] 
 }
 
 function PrivacyView() {
+  const { t } = useTranslation();
   return (
     <LegalPage
-      title="Privatësia"
+      title={t("profile.privacy_title")}
       paragraphs={[
-        "Ne respektojmë privatësinë tënde. Të dhënat që mbledhim përdoren vetëm për të ofruar shërbimin Rroba dhe për të përmirësuar përvojën tënde.",
-        "Emri, email-i dhe fotoja e profilit shfaqen publikisht kur listoni artikuj. Adresa dhe informacionet e pagesës mbahen private.",
-        "Ti mund të kërkosh fshirjen e llogarisë dhe të dhënave në çdo kohë përmes seksionit të mbështetjes.",
+        t("profile.privacy_p1"),
+        t("profile.privacy_p2"),
+        t("profile.privacy_p3"),
       ]}
     />
   );
 }
 
 function TermsView() {
+  const { t } = useTranslation();
   return (
     <LegalPage
-      title="Kushtet e shërbimit"
+      title={t("profile.terms_title")}
       paragraphs={[
-        "Duke përdorur Rroba, ti pranon këto kushte. Përdoruesit janë përgjegjës për saktësinë e informacionit të artikujve dhe për transaksionet e tyre.",
-        "Ndalohen artikujt e falsifikuar, të vjedhur ose të papërshtatshëm. Rroba rezervon të drejtën të heqë artikuj që shkelin këto kushte.",
-        "Pagesat, kthimet dhe mosmarrëveshjet trajtohen sipas politikave tona. Për pyetje, kontakto mbështetjen.",
+        t("profile.terms_p1"),
+        t("profile.terms_p2"),
+        t("profile.terms_p3"),
       ]}
     />
   );
@@ -1950,6 +1956,7 @@ function ProfileForm({
   onSaved: () => void;
   onDirtyChange?: (dirty: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [name, setName] = useState(profile?.name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
@@ -2004,7 +2011,7 @@ function ProfileForm({
         .createSignedUrl(path, 60 * 60 * 24 * 365);
       if (signed?.signedUrl) setAvatarUrl(signed.signedUrl);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Ngarkimi dështoi");
+      toast.error(err instanceof Error ? err.message : t("profile.upload_failed"));
     } finally {
       setUploading(false);
     }
@@ -2027,7 +2034,7 @@ function ProfileForm({
       const path = extractStoragePath(avatarUrl);
       if (path) {
         const { error: removeError } = await supabase.storage.from("photos").remove([path]);
-        if (removeError) console.error("Fotoja në storage nuk u fshi:", removeError.message);
+        if (removeError) console.error(t("profile.storage_delete_error"), removeError.message);
       }
       const { error } = await supabase
         .from("profiles")
@@ -2036,11 +2043,11 @@ function ProfileForm({
       if (error) throw error;
       updateCurrentProfileCache(profile.id, { avatar_url: null });
       setAvatarUrl("");
-      toast.success("Fotoja e profilit u hoq");
+      toast.success(t("profile.photo_removed"));
       onSaved();
 
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Diçka shkoi keq");
+      toast.error(err instanceof Error ? err.message : t("common.something_went_wrong"));
     } finally {
       setRemovingPhoto(false);
       setRemovePhotoOpen(false);
@@ -2066,7 +2073,7 @@ function ProfileForm({
         avatar_url: avatarUrl || null,
         height_cm: h,
       });
-      toast.success("Profili u ruajt");
+      toast.success(t("profile.profile_saved"));
       onSaved();
     }
   };
@@ -2096,7 +2103,7 @@ function ProfileForm({
               borderRadius: 9999,
             }}
           >
-            {uploading ? "Po ngarkohet..." : "Ndrysho foton"}
+            {uploading ? t("profile.uploading") : t("profile.change_photo")}
             <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
           </label>
           {avatarUrl && !avatarUrl.includes("dicebear.com") && (
@@ -2112,7 +2119,7 @@ function ProfileForm({
                 cursor: "pointer",
               }}
             >
-              Hiq foton
+              {t("profile.remove_photo")}
             </button>
           )}
         </div>
@@ -2125,7 +2132,7 @@ function ProfileForm({
       />
       <div>
         <div className="flex items-center justify-between">
-          <Label style={{ color: INK }}>Email</Label>
+          <Label style={{ color: INK }}>{t("profile.email_label")}</Label>
           <button
             type="button"
             onClick={() => navigate({ to: "/profile/change-email" })}
@@ -2139,13 +2146,13 @@ function ProfileForm({
               cursor: "pointer",
             }}
           >
-            Ndrysho email-in
+            {t("profile.change_email")}
           </button>
         </div>
         <Input value={email} disabled style={inputStyle} />
       </div>
       <div>
-        <Label style={{ color: INK }}>Emri</Label>
+        <Label style={{ color: INK }}>{t("profile.name_label")}</Label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -2154,7 +2161,7 @@ function ProfileForm({
         />
       </div>
       <div>
-        <Label style={{ color: INK }}>Bio</Label>
+        <Label style={{ color: INK }}>{t("profile.bio_label")}</Label>
         <Textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
@@ -2164,7 +2171,7 @@ function ProfileForm({
         />
       </div>
       <div>
-        <Label style={{ color: INK }}>Lartësia (cm)</Label>
+        <Label style={{ color: INK }}>{t("profile.height_label")}</Label>
         <Input
           type="number"
           inputMode="numeric"
@@ -2172,12 +2179,12 @@ function ProfileForm({
           max={260}
           value={height}
           onChange={(e) => setHeight(e.target.value)}
-          placeholder="p.sh. 175"
+          placeholder={t("profile.height_placeholder")}
           style={inputStyle}
         />
       </div>
       <div>
-        <Label style={{ color: INK }}>Qyteti</Label>
+        <Label style={{ color: INK }}>{t("profile.city_label")}</Label>
         <div className="mt-1">
           <CityPicker
             value={cityId}
@@ -2200,7 +2207,7 @@ function ProfileForm({
         }}
       >
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-        Ruaj
+        {t("common.save")}
       </button>
     </div>
   );
@@ -2263,6 +2270,7 @@ function ToggleRow({
 }
 
 function NotificationsView() {
+  const { t } = useTranslation();
   const [push, setPush] = useState(true);
   const [emailNotif, setEmailNotif] = useState(false);
   const [offers, setOffers] = useState(true);
@@ -2270,29 +2278,29 @@ function NotificationsView() {
   const [marketing, setMarketing] = useState(false);
   return (
     <div>
-      <SectionHeader>Kanalet</SectionHeader>
+      <SectionHeader>{t("profile.notif_channels")}</SectionHeader>
       <ToggleRow
-        title="Njoftime push"
-        subtitle="Në telefonin tënd"
+        title={t("profile.notif_push_title")}
+        subtitle={t("profile.notif_push_subtitle")}
         value={push}
         onChange={setPush}
       />
       <RowDivider />
       <ToggleRow
-        title="Email"
-        subtitle="Përmbledhje në email"
+        title={t("profile.notif_email_title")}
+        subtitle={t("profile.notif_email_subtitle")}
         value={emailNotif}
         onChange={setEmailNotif}
       />
       <SectionDivider />
-      <SectionHeader>Llojet</SectionHeader>
-      <ToggleRow title="Oferta të reja" value={offers} onChange={setOffers} />
+      <SectionHeader>{t("profile.notif_types")}</SectionHeader>
+      <ToggleRow title={t("profile.notif_new_offers")} value={offers} onChange={setOffers} />
       <RowDivider />
-      <ToggleRow title="Mesazhe" value={messages} onChange={setMessages} />
+      <ToggleRow title={t("profile.notif_messages_title")} value={messages} onChange={setMessages} />
       <RowDivider />
       <ToggleRow
-        title="Promovime"
-        subtitle="Lajme dhe oferta speciale"
+        title={t("profile.notif_promotions_title")}
+        subtitle={t("profile.notif_promotions_subtitle")}
         value={marketing}
         onChange={setMarketing}
       />
@@ -2301,48 +2309,21 @@ function NotificationsView() {
 }
 
 
-const FAQS = [
-  {
-    q: "Si mund të shes një artikull?",
-    a: 'Shko te butonin "+" në fund të ekranit, ngarko deri në 10 foto, plotëso detajet (kategoria, madhësia, çmimi, gjendja) dhe publiko. Artikulli yt do të shfaqet menjëherë në feed.',
-  },
-  {
-    q: "Si funksionojnë ofertat?",
-    a: "Blerësit mund të dërgojnë një ofertë më të ulët se çmimi. Ti mund ta pranosh, refuzosh ose të kundërpërgjigjesh me një çmim tjetër nëpërmjet mesazheve.",
-  },
-  {
-    q: "Si bëhet pagesa?",
-    a: "Blerësi dhe shitësi takohen personalisht dhe pagesa bëhet me para në dorë. Rroba nuk përpunon pagesa — çdo transaksion ndodh drejtpërdrejt midis palëve.",
-  },
-  {
-    q: "Si organizohet takimi?",
-    a: "Pasi blerësi shfaq interes, komunikoni nëpërmjet mesazheve në aplikacion dhe vendosni vendin dhe orën e takimit. Rekomandojmë takime në vende publike dhe të sigurta.",
-  },
-  {
-    q: "Çfarë ndodh nëse artikulli nuk është siç përshkruhet?",
-    a: 'Na kontakto nga "Mbështetje" brenda 7 ditëve nga takimi dhe ne do të hetojmë rastin.',
-  },
-  {
-    q: "A është e sigurt të takohem me blerës/shitës të panjohur?",
-    a: "Rekomandojmë gjithmonë takime në vende publike si qendra tregtare, kafene ose zona të frekuentuara. Mos u takoni kurrë në vende të izoluara.",
-  },
-  {
-    q: "Si të raportoj një përdorues problematik?",
-    a: 'Shko te profili i përdoruesit ose njoftimi, trokit "⋯" dhe zgjidh "Raporto". Ekipi ynë do të shqyrtojë rastin brenda 24 orëve.',
-  },
-  {
-    q: "Si funksionon sistemi i vlerësimeve?",
-    a: "Pas çdo shitjeje të konfirmuar, blerësi mund të lërë një vlerësim me yje (1-5) dhe koment për shitësin. Vlerësimet ndihmojnë komunitetin të blejë me besim.",
-  },
-  {
-    q: "A mund të anuloj një shitje?",
-    a: "Po, mund të anulosh një shitje para takimit duke e njoftuar blerësin nëpërmjet mesazheve. Rekomandojmë komunikim të hapur dhe të respektosh blerësin.",
-  },
-  {
-    q: "Sa kohë mbetet aktiv një njoftim?",
-    a: "Njoftimet mbeten aktive 60 ditë (90 ditë për Designer/Premium dhe 45 ditë për Elektronikë). Pas kësaj, mund ta rinovosh falas deri në 3 herë.",
-  },
-];
+function useFaqs() {
+  const { t } = useTranslation();
+  return [
+    { q: t("profile.faq_q1"), a: t("profile.faq_a1") },
+    { q: t("profile.faq_q2"), a: t("profile.faq_a2") },
+    { q: t("profile.faq_q3"), a: t("profile.faq_a3") },
+    { q: t("profile.faq_q4"), a: t("profile.faq_a4") },
+    { q: t("profile.faq_q5"), a: t("profile.faq_a5") },
+    { q: t("profile.faq_q6"), a: t("profile.faq_a6") },
+    { q: t("profile.faq_q7"), a: t("profile.faq_a7") },
+    { q: t("profile.faq_q8"), a: t("profile.faq_a8") },
+    { q: t("profile.faq_q9"), a: t("profile.faq_a9") },
+    { q: t("profile.faq_q10"), a: t("profile.faq_a10") },
+  ];
+}
 
 function FaqItem({
   q,
@@ -2446,6 +2427,7 @@ function LanguageView() {
 }
 
 function FaqView() {
+  const FAQS = useFaqs();
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   return (
     <div className="pt-2">
@@ -2465,6 +2447,7 @@ function FaqView() {
 }
 
 function SupportView() {
+  const { t } = useTranslation();
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
@@ -2475,7 +2458,7 @@ function SupportView() {
 
   const send = async () => {
     if (!subject.trim() || !body.trim()) {
-      toast.error("Plotëso të gjitha fushat");
+      toast.error(t("profile.support_fill_all"));
       return;
     }
     setSending(true);
@@ -2483,7 +2466,7 @@ function SupportView() {
     setSending(false);
     setSubject("");
     setBody("");
-    toast.success("Mesazhi u dërgua");
+    toast.success(t("profile.support_sent"));
   };
 
   return (
@@ -2491,14 +2474,14 @@ function SupportView() {
       <input
         value={subject}
         onChange={(e) => setSubject(e.target.value)}
-        placeholder="Tema"
+        placeholder={t("profile.support_subject")}
         className={inputBase}
         style={{ ...inputStyle, ...placeholderStyle }}
       />
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Përshkruaj problemin..."
+        placeholder={t("profile.support_body_ph")}
         rows={6}
         className={inputBase + " resize-none"}
         style={{ ...inputStyle, ...placeholderStyle }}
@@ -2511,7 +2494,7 @@ function SupportView() {
         style={{ backgroundColor: INK, color: "#ffffff" }}
       >
         {sending && <Loader2 className="h-4 w-4 animate-spin" />}
-        Dërgo
+        {t("common.send")}
       </button>
     </div>
   );
@@ -2526,6 +2509,7 @@ function LogoutConfirm({
   onOpenChange: (v: boolean) => void;
   onConfirm: () => void;
 }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     if (!open) setBusy(false);
@@ -2581,7 +2565,7 @@ function LogoutConfirm({
           id="logout-title"
           style={{ fontSize: 16, fontWeight: 600, color: "#ffffff" }}
         >
-          A jeni i sigurt?
+          {t("profile.logout_confirm_title")}
         </span>
       </div>
       <div
@@ -2594,7 +2578,7 @@ function LogoutConfirm({
         }}
       >
         <div id="logout-desc" style={{ fontSize: 13, color: MUTED, marginBottom: 20 }}>
-          Do të dilni nga llogaria juaj.
+          {t("profile.logout_confirm_body")}
         </div>
         <div className="flex flex-col gap-2">
           <button
@@ -2620,7 +2604,7 @@ function LogoutConfirm({
               border: "none",
             }}
           >
-            {busy ? "Duke dalë…" : "Po, dilni"}
+            {busy ? t("profile.logging_out") : t("common.yes_sure")}
           </button>
           <button
             type="button"
@@ -2640,7 +2624,7 @@ function LogoutConfirm({
               cursor: busy ? "default" : "pointer",
             }}
           >
-            Anulo
+            {t("common.cancel")}
           </button>
         </div>
       </div>
@@ -2659,6 +2643,7 @@ function RemovePhotoDialog({
   onConfirm: () => void;
   loading: boolean;
 }) {
+  const { t } = useTranslation();
   if (!open) return null;
   return (
     <div
@@ -2702,13 +2687,13 @@ function RemovePhotoDialog({
           id="remove-photo-title"
           style={{ fontSize: 16, fontWeight: 600, color: INK, marginTop: 16 }}
         >
-          Hiq foton e profilit?
+          {t("profile.remove_photo_title")}
         </div>
         <div
           id="remove-photo-desc"
           style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 6 }}
         >
-          Do të kthehesh te avatari standard. Kjo veprim nuk mund të kthehet.
+          {t("profile.remove_photo_body")}
         </div>
         <div className="mt-5 flex flex-col gap-2">
           <button
@@ -2730,7 +2715,7 @@ function RemovePhotoDialog({
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading ? "Duke hequr..." : "Hiq foton"}
+            {loading ? t("profile.removing") : t("profile.remove_photo")}
           </button>
           <button
             type="button"
@@ -2767,6 +2752,7 @@ function UnsavedChangesDialog({
   onOpenChange: (v: boolean) => void;
   onDiscard: () => void;
 }) {
+  const { t } = useTranslation();
   if (!open) return null;
   return (
     <div
@@ -2795,13 +2781,13 @@ function UnsavedChangesDialog({
         onClick={(e) => e.stopPropagation()}
       >
         <div id="unsaved-title" style={{ fontSize: 16, fontWeight: 600, color: INK }}>
-          Ndryshimet e paruajtura
+          {t("profile.unsaved_title")}
         </div>
         <div
           id="unsaved-desc"
           style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 8 }}
         >
-          Ke ndryshime që nuk janë ruajtur ende. A dëshiron të largohesh pa i ruajtur?
+          {t("profile.unsaved_body")}
         </div>
         <div className="mt-5 flex flex-col gap-2">
           <button
@@ -2820,7 +2806,7 @@ function UnsavedChangesDialog({
               cursor: "pointer",
             }}
           >
-            Largohu pa ruajtur
+            {t("profile.leave_without_saving")}
           </button>
           <button
             type="button"
@@ -2839,7 +2825,7 @@ function UnsavedChangesDialog({
               cursor: "pointer",
             }}
           >
-            Vazhdo redaktimin
+            {t("profile.continue_editing")}
           </button>
         </div>
       </div>
