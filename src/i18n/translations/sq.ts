@@ -1,6 +1,8 @@
 // Albanian translations (default / fallback).
 // Keys are stable identifiers. Add new keys here first, then mirror in en.ts.
 
+type Dict = { [key: string]: string | Dict };
+
 export const sq = {
   common: {
     back: "Kthehu",
