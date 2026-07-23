@@ -331,16 +331,16 @@ export function ReviewsSheet({
             >
               {(
                 [
-                  { id: "all", label: "Të gjitha" },
-                  { id: "sold", label: "Shitur" },
-                  { id: "bought", label: "Blerë" },
+                  { id: "all", label: t("reviews.tab_all") },
+                  { id: "sold", label: t("reviews.tab_sold") },
+                  { id: "bought", label: t("reviews.tab_bought") },
                 ] as const
-              ).map((t) => {
-                const active = tab === t.id;
+              ).map((tabItem) => {
+                const active = tab === tabItem.id;
                 return (
                   <button
-                    key={t.id}
-                    onClick={() => setTab(t.id)}
+                    key={tabItem.id}
+                    onClick={() => setTab(tabItem.id)}
                     style={{
                       flex: 1,
                       border: 0,
@@ -353,7 +353,7 @@ export function ReviewsSheet({
                       cursor: "pointer",
                     }}
                   >
-                    {t.label}
+                    {tabItem.label}
                   </button>
                 );
               })}
