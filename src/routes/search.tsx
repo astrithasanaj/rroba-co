@@ -1097,8 +1097,6 @@ function TabbedResults({
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {matchedCategories.map(({ key, label, Icon, boxColor, iconColor }) => (
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              null || (
               <button
                 key={key}
                 type="button"
@@ -1108,7 +1106,7 @@ function TabbedResults({
               >
                 <Icon className="h-8 w-8" strokeWidth={1.5} style={{ color: iconColor }} />
                 <span className="text-[15px] font-bold leading-tight" style={{ color: INK }}>
-                  {label}
+                  {tCategory(label, t)}
                 </span>
               </button>
             ))}
