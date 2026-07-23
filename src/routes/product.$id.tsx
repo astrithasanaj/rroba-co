@@ -346,11 +346,7 @@ function ProductDetail() {
         </div>
         <button
           type="button"
-          onClick={() => {
-            if (!me) return navigate({ to: "/auth" });
-            if (isOwn) return;
-            navigate({ to: "/buy/$id", params: { id: listing.id } });
-          }}
+          onClick={sendMessage}
           disabled={isSold || isOwn}
           className="px-5 text-base font-bold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
           style={{
@@ -362,9 +358,10 @@ function ProductDetail() {
             boxShadow: "0 2px 8px color-mix(in oklab, var(--brand-rose) 35%, transparent)",
           }}
         >
-          {isSold ? "Shitur" : "Bli"}
+          {isSold ? "Shitur" : "Shkruaj shitësit"}
         </button>
       </div>
+
 
       {/* Social proof line */}
       {likeInfo.count > 0 && (
