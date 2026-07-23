@@ -13,6 +13,7 @@ import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { HOME_CATEGORIES } from "@/lib/categories";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { isGenderSpecificCategory, GENDER_SPECIFIC_CATEGORIES } from "@/lib/category-taxonomy";
+import { useTranslation } from "@/i18n";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -222,6 +223,7 @@ async function fetchFollowing(uid: string | null): Promise<FollowingData> {
 function HomePage() {
   const queryClient = useQueryClient();
   const hasUnreadNotifications = useUnreadNotifications();
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>("for-you");
 
   const handleTabChange = (next: Tab) => {
@@ -387,7 +389,7 @@ function HomePage() {
             <Link
               to="/notifications"
               className="relative grid h-12 w-12 place-items-center rounded-full"
-              aria-label="Njoftime"
+              aria-label={t("home.notifications_aria")}
             >
               <Bell className="h-6 w-6" strokeWidth={1.7} style={{ color: INK }} />
               {hasUnreadNotifications && (
@@ -406,10 +408,10 @@ function HomePage() {
               role="tablist"
             >
               <TabButton active={tab === "for-you"} onClick={() => handleTabChange("for-you")}>
-                Për ty
+                {t("home.tab_for_you")}
               </TabButton>
               <TabButton active={tab === "following"} onClick={() => handleTabChange("following")}>
-                Duke ndjekur
+                {t("home.tab_following")}
               </TabButton>
             </div>
           </div>
@@ -484,6 +486,7 @@ function ForYou({
   trending: ListingView[];
   newThisWeek: ListingView[];
 }) {
+  const { t } = useTranslation();
   const noContentAtAll =
     !regularLoading &&
     !trendingLoading &&
@@ -498,7 +501,7 @@ function ForYou({
       {/* Categories */}
       <section className="mt-2">
         <h2 className="px-[18px] text-[16px] font-bold" style={{ color: INK }}>
-          Kategoritë
+          {t("home.categories")}
         </h2>
         <div className="category-scroll mt-3 pb-1">
           {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
@@ -556,14 +559,14 @@ function ForYou({
           className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
           style={{ borderColor: "#e2e2de", color: MUTED }}
         >
-          Ende nuk ka artikuj. Bëhu i pari që publikon!
+          {t("home.empty_no_items")}
         </div>
       ) : (
         <>
           {promoted.length > 0 && (
             <section className="mt-7">
               <div className="px-5">
-                <SectionHeader title="Të zgjedhura" />
+                <SectionHeader title={t("home.section_featured")} />
               </div>
               <div
                 className="mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden"
@@ -580,7 +583,7 @@ function ForYou({
 
           {(trendingLoading || trending.length > 0) && (
             <section className="mt-8 px-5">
-              <SectionHeader title="Në trend tani" seeAllSearch={{ section: "trending" }} />
+              <SectionHeader title={t("home.section_trending")} seeAllSearch={{ section: "trending" }} />
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {trendingLoading
                   ? Array.from({ length: 4 }).map((_, i) => (
@@ -595,7 +598,7 @@ function ForYou({
 
           {(newWeekLoading || newThisWeek.length > 0) && (
             <section className="mt-8 px-5">
-              <SectionHeader title="E re këtë javë" seeAllSearch={{ section: "new" }} />
+              <SectionHeader title={t("home.section_new_week")} seeAllSearch={{ section: "new" }} />
               <div
                 className="mt-3 flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
                 style={{ scrollbarWidth: "none" }}
@@ -638,6 +641,7 @@ function FollowingFeed({
   hasFollowing: boolean;
   listings: ListingView[];
 }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <section className="mt-6 px-[18px]">
@@ -656,17 +660,17 @@ function FollowingFeed({
           <UserPlus className="h-7 w-7" strokeWidth={1.6} style={{ color: INK }} />
         </div>
         <h3 className="text-lg font-bold" style={{ color: INK }}>
-          Nuk ndjek ende askënd
+          {t("home.following_empty_title")}
         </h3>
         <p className="mt-2 max-w-xs text-sm" style={{ color: MUTED }}>
-          Eksploro dhe fillo të ndjekësh shitës që të pëlqejnë.
+          {t("home.following_empty_body")}
         </p>
         <Link
           to="/search"
           className="mt-6 rounded-full px-6 py-3 text-sm font-semibold"
           style={{ backgroundColor: INK, color: "#ffffff" }}
         >
-          Eksploro
+          {t("home.following_empty_cta")}
         </Link>
       </div>
     );
@@ -678,7 +682,7 @@ function FollowingFeed({
         className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
         style={{ borderColor: "#e2e2de", color: MUTED }}
       >
-        Ende asnjë artikull nga profilet që ndjek.
+        {t("home.following_no_listings")}
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { signPaths } from "@/lib/listings";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n";
 
 // Design tokens (from src/styles.css)
 const INK = "var(--brand-ink)";
@@ -193,6 +194,7 @@ async function fetchThreads(me: string): Promise<ThreadView[]> {
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
   const navigate = useNavigate({ from: "/messages" });
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const queryKey = useMemo(() => ["messages-threads", me] as const, [me]);
 
   const {
@@ -293,8 +295,8 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     else if (dx > 30) setSwipeId(null);
   };
 
-  const title = mode === "archive" ? "Arkiva" : "Mesazhe";
-  const emptyMsg = mode === "archive" ? "Asnjë bisedë e arkivuar" : "Ende nuk ke biseda.";
+  const title = mode === "archive" ? t("messages.title_archive") : t("messages.title");
+  const emptyMsg = mode === "archive" ? t("messages.empty_archived") : t("messages.empty_inbox");
 
   const openThread = (t: ThreadView) => {
     if (swipeId === t.id) { setSwipeId(null); return; }
@@ -609,6 +611,7 @@ type ProfileResult = { id: string; name: string | null; avatar_url: string | nul
 
 function NewMessage({ me }: { me: string }) {
   const navigate = useNavigate({ from: "/messages" });
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<ProfileResult[]>([]);
   const [recent, setRecent] = useState<ProfileResult[]>([]);
@@ -720,7 +723,7 @@ function NewMessage({ me }: { me: string }) {
           </div>
         ) : list.length === 0 ? (
           <p role="status" aria-live="polite" className="px-5 py-10 text-center text-sm" style={{ color: INK_SECONDARY }}>
-            {q.trim() ? "Asnjë përdorues u gjet" : "Ende nuk ke kontakte"}
+            {q.trim() ? t("messages.no_users_found") : t("messages.no_contacts_yet")}
           </p>
         ) : (
           <ul>
@@ -757,6 +760,7 @@ function NewMessage({ me }: { me: string }) {
 type MessageRow = { id: string; sender_id: string; content: string; created_at: string };
 
 function Thread({ id, me }: { id: string; me: string }) {
+  const { t } = useTranslation();
   const [info, setInfo] = useState<{
     otherName: string; otherAvatar: string; listingId: string; listingTitle: string; listingPrice: number | null; listingCover: string; isBuyer: boolean;
   } | null>(null);
@@ -789,7 +793,7 @@ function Thread({ id, me }: { id: string; me: string }) {
       const urls = cover ? await signPaths([cover], { thumbnail: true }) : {};
       if (!active) return;
       setInfo({
-        otherName: prof.data?.name || "Përdorues",
+        otherName: prof.data?.name || t("messages.other_user_fallback"),
         otherAvatar: prof.data?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof.data?.name || "U")}`,
         listingId: conv.listing_id,
         listingTitle: listing.data?.title || "Artikull",
@@ -800,7 +804,7 @@ function Thread({ id, me }: { id: string; me: string }) {
       const loaded = (msgRes.data ?? []) as MessageRow[];
       setMsgs(loaded);
       if (loaded.length === 0 && isBuyer) {
-        setInput("Përshëndetje! A është ende në dispozicion?");
+        setInput(t("messages.prefill_greeting"));
       }
       setLoading(false);
 
@@ -1038,15 +1042,15 @@ function Thread({ id, me }: { id: string; me: string }) {
           {loading ? (
             <div className="grid flex-1 place-items-center" role="status" aria-live="polite">
               <Loader2 className="h-6 w-6 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
-              <span className="sr-only">Duke ngarkuar mesazhet…</span>
+              <span className="sr-only">{t("messages.loading_sr")}</span>
             </div>
           ) : loadError ? (
             <div role="alert" className="grid flex-1 place-items-center px-6 text-center text-sm" style={{ color: INK_SECONDARY }}>
-              Biseda nuk u gjet.
+              {t("messages.thread_not_found")}
             </div>
           ) : msgs.length === 0 ? (
             <div role="status" aria-live="polite" className="grid flex-1 place-items-center px-6 text-center text-sm" style={{ color: INK_SECONDARY }}>
-              Filloni bisedën me një mesazh.
+              {t("messages.start_conversation")}
             </div>
           ) : (
             <div className="flex flex-col gap-1">
@@ -1067,7 +1071,7 @@ function Thread({ id, me }: { id: string; me: string }) {
                         whiteSpace: "pre-wrap",
                       }}
                     >
-                      <span className="sr-only">{mine ? "Ti: " : `${info?.otherName ?? "Përdoruesi"}: `}</span>
+                      <span className="sr-only">{mine ? `${t("messages.you_prefix")} ` : `${info?.otherName ?? t("messages.other_user_fallback")}: `}</span>
                       {m.content}
                     </div>
                     {showTime && (
@@ -1095,14 +1099,14 @@ function Thread({ id, me }: { id: string; me: string }) {
             willChange: "transform",
           }}
         >
-          <label htmlFor="thread-composer" className="sr-only">Shkruaj një mesazh</label>
+          <label htmlFor="thread-composer" className="sr-only">{t("messages.write_aria")}</label>
           <div className="flex items-center gap-2">
             <input
               id="thread-composer"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Shkruaj një mesazh..."
-              aria-label="Shkruaj një mesazh"
+              placeholder={t("messages.write_placeholder")}
+              aria-label={t("messages.write_aria")}
               enterKeyHint="send"
               disabled={sending}
               className={`flex-1 rounded-full px-4 ${FOCUS_RING}`}
