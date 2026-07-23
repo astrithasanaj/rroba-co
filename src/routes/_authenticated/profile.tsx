@@ -191,6 +191,7 @@ async function fetchListingsByIds(ids: string[]): Promise<ListingView[]> {
 }
 
 function ProfilePage() {
+  const { t } = useTranslation();
   const { user } = Route.useRouteContext();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
