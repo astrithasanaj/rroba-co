@@ -4,6 +4,8 @@ import { ChevronLeft } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory, SUBCATEGORY_OPTIONS, type GenderSlug } from "@/lib/categories";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/category/$slug/choose-gender")({
 function GenderSelectPage() {
   const { slug } = useParams({ from: "/category/$slug/choose-gender" });
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const def = getCategory(slug);
   const [selectedGender, setSelectedGender] = useState<GenderSlug | null>(null);
   const [selectedSubs, setSelectedSubs] = useState<string[]>([]);
