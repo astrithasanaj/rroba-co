@@ -660,17 +660,17 @@ function FollowingFeed({
           <UserPlus className="h-7 w-7" strokeWidth={1.6} style={{ color: INK }} />
         </div>
         <h3 className="text-lg font-bold" style={{ color: INK }}>
-          Nuk ndjek ende askënd
+          {t("home.following_empty_title")}
         </h3>
         <p className="mt-2 max-w-xs text-sm" style={{ color: MUTED }}>
-          Eksploro dhe fillo të ndjekësh shitës që të pëlqejnë.
+          {t("home.following_empty_body")}
         </p>
         <Link
           to="/search"
           className="mt-6 rounded-full px-6 py-3 text-sm font-semibold"
           style={{ backgroundColor: INK, color: "#ffffff" }}
         >
-          Eksploro
+          {t("home.following_empty_cta")}
         </Link>
       </div>
     );
@@ -682,7 +682,7 @@ function FollowingFeed({
         className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
         style={{ borderColor: "#e2e2de", color: MUTED }}
       >
-        Ende asnjë artikull nga profilet që ndjek.
+        {t("home.following_no_listings")}
       </div>
     );
   }
