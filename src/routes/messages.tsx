@@ -295,8 +295,8 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     else if (dx > 30) setSwipeId(null);
   };
 
-  const title = mode === "archive" ? "Arkiva" : "Mesazhe";
-  const emptyMsg = mode === "archive" ? "Asnjë bisedë e arkivuar" : "Ende nuk ke biseda.";
+  const title = mode === "archive" ? t("messages.title_archive") : t("messages.title");
+  const emptyMsg = mode === "archive" ? t("messages.empty_archived") : t("messages.empty_inbox");
 
   const openThread = (t: ThreadView) => {
     if (swipeId === t.id) { setSwipeId(null); return; }
