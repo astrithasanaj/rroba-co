@@ -498,7 +498,7 @@ export function ReviewsSheet({
               <button
                 type="button"
                 onClick={() => setRateOpen(false)}
-                aria-label="Kthehu"
+                aria-label={t("common.back")}
                 className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
                 style={{
                   width: 36,
@@ -510,7 +510,7 @@ export function ReviewsSheet({
               >
                 <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
-              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerëso shitësin</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>{t("reviews.rate_title")}</div>
             </div>
             <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 20 }}>
               {[1, 2, 3, 4, 5].map((n) => (
