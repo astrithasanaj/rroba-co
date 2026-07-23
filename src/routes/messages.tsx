@@ -194,6 +194,7 @@ async function fetchThreads(me: string): Promise<ThreadView[]> {
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
   const navigate = useNavigate({ from: "/messages" });
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const queryKey = useMemo(() => ["messages-threads", me] as const, [me]);
 
   const {
