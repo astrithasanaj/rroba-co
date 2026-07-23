@@ -66,6 +66,6 @@ export const sq = {
     message_seller: "Shkruaj shitësit",
     prefill_greeting: "Përshëndetje! A është ende në dispozicion?",
   },
-} as const;
+} satisfies Record<string, Dict>;
 
 export type TranslationSchema = typeof sq;
