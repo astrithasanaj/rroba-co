@@ -723,7 +723,7 @@ function NewMessage({ me }: { me: string }) {
           </div>
         ) : list.length === 0 ? (
           <p role="status" aria-live="polite" className="px-5 py-10 text-center text-sm" style={{ color: INK_SECONDARY }}>
-            {q.trim() ? "Asnjë përdorues u gjet" : "Ende nuk ke kontakte"}
+            {q.trim() ? t("messages.no_users_found") : t("messages.no_contacts_yet")}
           </p>
         ) : (
           <ul>
