@@ -2399,6 +2399,52 @@ function FaqItem({
   );
 }
 
+function LanguageView() {
+  const { t, language, setLanguage } = useTranslation();
+  const options: Array<{ key: Language; label: string; hint: string }> = [
+    { key: "sq", label: t("settings.language_sq"), hint: "Shqip" },
+    { key: "en", label: t("settings.language_en"), hint: "English" },
+  ];
+  return (
+    <div className="pt-2">
+      {options.map((opt, i) => {
+        const active = language === opt.key;
+        return (
+          <button
+            key={opt.key}
+            type="button"
+            onClick={() => setLanguage(opt.key)}
+            className="settings-row"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              padding: "16px 20px",
+              background: "transparent",
+              border: "none",
+              borderTop: i === 0 ? `1px solid ${DIVIDER}` : "none",
+              borderBottom: `1px solid ${DIVIDER}`,
+              textAlign: "left",
+              cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+              minHeight: 56,
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontSize: 15, fontWeight: 500, color: INK, lineHeight: 1.3 }}>
+                {opt.label}
+              </span>
+              <span style={{ fontSize: 12, color: MUTED, lineHeight: 1.3 }}>{opt.hint}</span>
+            </div>
+            {active && <Check size={20} color={INK} strokeWidth={2.25} />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function FaqView() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   return (
