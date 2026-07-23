@@ -81,7 +81,7 @@ function ProductDetail() {
         return;
       }
       if (["expired", "removed", "flagged"].includes((row as ListingRow).status)) {
-        toast.info("Ky artikull nuk është më i disponueshëm.");
+        toast.info(t("product.unavailable"));
         navigate({ to: "/" });
         return;
       }
@@ -128,7 +128,7 @@ function ProductDetail() {
     }
     if (!listing) return;
     if (me === listing.user_id) {
-      toast.error("Nuk mund të dërgosh mesazh vetes");
+      toast.error(t("product.cannot_message_self"));
       return;
     }
     // Find or create conversation
@@ -173,13 +173,13 @@ function ProductDetail() {
     return (
       <MobileShell>
         <div className="p-10 text-center" style={META_TEXT_INK}>
-          <p>Artikulli nuk u gjet.</p>
+          <p>{t("product.not_found")}</p>
           <Link
             to="/"
             className="underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2 rounded"
             style={{ color: "var(--brand-rose)" }}
           >
-            Kthehu në kreu
+            {t("product.back_to_home")}
           </Link>
         </div>
       </MobileShell>
@@ -187,14 +187,14 @@ function ProductDetail() {
   }
 
   const meta: [string, string][] = [
-    ["Kategoria", listing.category],
-    ["Lloji i produktit", listing.subcategory || "—"],
-    ["Marka", listing.brand || "—"],
-    ["Gjendja", listing.condition],
-    ["Madhësia", listing.size],
-    ["Ngjyra", listing.color || "—"],
-    ["Gjinia", listing.gender],
-    ["Qyteti", listing.city || "—"],
+    [t("product.meta_category"), listing.category],
+    [t("product.meta_type"), listing.subcategory || t("product.dash")],
+    [t("product.meta_brand"), listing.brand || t("product.dash")],
+    [t("product.meta_condition"), listing.condition],
+    [t("product.meta_size"), listing.size],
+    [t("product.meta_color"), listing.color || t("product.dash")],
+    [t("product.meta_gender"), listing.gender],
+    [t("product.meta_city"), listing.city || t("product.dash")],
   ];
 
   const images = listing.imageUrls.length ? listing.imageUrls : [listing.coverUrl];
@@ -216,7 +216,7 @@ function ProductDetail() {
         <button
           type="button"
           onClick={() => window.history.back()}
-          aria-label="Kthehu"
+          aria-label={t("common.back")}
           className={ICON_BTN}
           style={{
             backgroundColor: "rgba(255,255,255,0.7)",
@@ -238,7 +238,7 @@ function ProductDetail() {
         <button
           type="button"
           onClick={() => setMoreOpen(true)}
-          aria-label="Më shumë"
+          aria-label={t("product.more")}
           className={`${ICON_BTN} border`}
           style={{ borderColor: "var(--brand-border)", backgroundColor: "var(--brand-surface)" }}
         >
@@ -268,7 +268,7 @@ function ProductDetail() {
             />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold" style={META_TEXT_INK}>
-                {seller.name || "Përdorues"}
+                {seller.name || t("product.user_fallback")}
               </p>
               <p className="text-xs" style={META_TEXT_MUTED}>
                 {listing.city || "—"}
@@ -295,7 +295,7 @@ function ProductDetail() {
           className="w-full px-5 py-3 text-center text-sm font-bold"
           style={{ backgroundColor: "var(--brand-rose)", color: "#ffffff" }}
         >
-          Ky artikull është shitur
+          {t("product.is_sold_banner")}
         </div>
       )}
 
@@ -311,7 +311,7 @@ function ProductDetail() {
               if (!me) return navigate({ to: "/auth" });
               toggleLike(listing.id);
             }}
-            aria-label={likes.has(listing.id) ? "Hiq pëlqimin" : "Pëlqe"}
+            aria-label={likes.has(listing.id) ? t("product.unlike") : t("product.like")}
             aria-pressed={likes.has(listing.id)}
             className={`${ICON_BTN} border`}
             style={{ borderColor: "var(--brand-border)" }}
@@ -330,7 +330,7 @@ function ProductDetail() {
               if (!me) return navigate({ to: "/auth" });
               toggleSave(listing.id);
             }}
-            aria-label={saves.has(listing.id) ? "Hiq nga të ruajturat" : "Ruaj"}
+            aria-label={saves.has(listing.id) ? t("product.unsave") : t("product.save")}
             aria-pressed={saves.has(listing.id)}
             className={ICON_BTN}
           >
@@ -346,7 +346,7 @@ function ProductDetail() {
             type="button"
             onClick={sendMessage}
             disabled={isOwn}
-            aria-label="Dërgo mesazh"
+            aria-label={t("product.send_message_aria")}
             className={`${ICON_BTN} disabled:opacity-40 disabled:active:scale-100`}
           >
             <MessageCircle
@@ -382,11 +382,11 @@ function ProductDetail() {
           className="px-[18px] py-1 text-[13px]"
           style={META_TEXT_INK}
           aria-label={
-            likeInfo.count === 1 ? "Pëlqyer nga 1 person" : `Pëlqyer nga ${likeInfo.count} persona`
+            likeInfo.count === 1 ? t("product.liked_by_1") : t("product.liked_by_n").replace("{n}", String(likeInfo.count))
           }
         >
-          <span className="font-semibold">Pëlqyer nga</span>{" "}
-          {likeInfo.count === 1 ? "1 person" : `${likeInfo.count} persona`}
+          <span className="font-semibold">{t("product.liked_by_label")}</span>{" "}
+          {likeInfo.count === 1 ? t("product.person_1") : t("product.persons_n").replace("{n}", String(likeInfo.count))}
         </p>
       )}
 
@@ -401,12 +401,12 @@ function ProductDetail() {
               style={META_TEXT_INK}
               aria-expanded={descExpanded}
             >
-              <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
+              <span className="font-semibold">{seller?.name || t("product.user_fallback")}</span>{" "}
               {descriptionPreview}
             </button>
           ) : (
             <p className="px-[18px] pb-3 pt-1 text-left text-[13px]" style={META_TEXT_INK}>
-              <span className="font-semibold">{seller?.name || "Përdorues"}</span>{" "}
+              <span className="font-semibold">{seller?.name || t("product.user_fallback")}</span>{" "}
               {listing.description}
             </p>
           )}
@@ -453,7 +453,7 @@ function ProductDetail() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1">
               <p className="truncate text-sm font-semibold" style={META_TEXT_INK}>
-                {seller.name || "Përdorues"}
+                {seller.name || t("product.user_fallback")}
               </p>
               <BadgeCheck
                 className="h-4 w-4 shrink-0"
@@ -467,7 +467,7 @@ function ProductDetail() {
                 <Star className="h-3 w-3" fill="currentColor" aria-hidden="true" />{" "}
                 {seller.rating_avg.toFixed(1)}
               </span>
-              <span>· {seller.rating_count} vlerësime</span>
+              <span>· {t("product.ratings_count").replace("{n}", String(seller.rating_count))}</span>
             </div>
           </div>
           <Link
@@ -480,7 +480,7 @@ function ProductDetail() {
               backgroundColor: "var(--brand-surface)",
             }}
           >
-            Shiko profilin
+            {t("product.view_profile")}
           </Link>
         </div>
       )}
@@ -489,7 +489,7 @@ function ProductDetail() {
       {similar.length > 0 && (
         <section id="similar-section" className="mt-8">
           <h3 className="mb-3 px-[18px] font-display text-2xl" style={META_TEXT_INK}>
-            Artikuj të ngjashëm
+            {t("product.similar_items")}
           </h3>
           <div className="flex gap-3 overflow-x-auto px-[18px] pb-4 no-scrollbar snap-x snap-mandatory">
             {similar.map((p) => (
