@@ -253,6 +253,7 @@ function CategoryResultsPage() {
 }
 
 function ResultCard({ listing, eager = false }: { listing: ListingView; eager?: boolean }) {
+  const { t } = useTranslation();
   const isNew = useMemo(() => {
     const created = new Date(listing.created_at).getTime();
     return Date.now() - created < 7 * 24 * 60 * 60 * 1000;
@@ -279,7 +280,7 @@ function ResultCard({ listing, eager = false }: { listing: ListingView; eager?: 
             className="absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold"
             style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
-            E re
+            {t("category.new_badge")}
           </span>
         )}
         
