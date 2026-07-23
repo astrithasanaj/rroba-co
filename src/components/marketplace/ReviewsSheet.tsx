@@ -202,7 +202,7 @@ export function ReviewsSheet({
       toast.error(error.message);
       return;
     }
-    toast.success("Vlerësimi u dërgua!");
+    toast.success(t("reviews.submitted_toast"));
     setRateOpen(false);
     // refresh
     const { data } = await supabase
