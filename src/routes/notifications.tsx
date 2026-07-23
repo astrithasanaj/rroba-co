@@ -239,12 +239,7 @@ function NotificationsPage() {
                 actor={aid ? actors[aid] ?? null : null}
                 onOpen={() => goToTarget(n)}
                 onActor={(e, id) => goToActor(e, id, n)}
-                t={t}
               />
-              // eslint-disable-next-line
-              // Note: NotificationRow accepts t via props; see below
-              // (No need to add extra JSX here.)
-              /* @ts-ignore */
             );
           })}
         </ul>
