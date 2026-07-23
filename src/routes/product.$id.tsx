@@ -248,30 +248,41 @@ function ProductDetail() {
       <div className="h-16" />
 
       {/* Seller info row */}
-      {seller && (
-        <div
-          className="flex items-center gap-3 border-b px-[18px] py-3"
-          style={{ borderColor: "var(--brand-border)" }}
-        >
-          <img
-            src={
-              seller.avatar_url ||
-              `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
-            }
-            alt=""
-            aria-hidden="true"
-            className="h-9 w-9 shrink-0 rounded-full object-cover"
-          />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold" style={META_TEXT_INK}>
-              {seller.name || "Përdorues"}
-            </p>
-            <p className="text-xs" style={META_TEXT_MUTED}>
-              {listing.city || "—"}
-            </p>
+      <div
+        className="flex items-center gap-3 border-b px-[18px] py-3"
+        style={{ borderColor: "var(--brand-border)" }}
+        aria-hidden={seller ? undefined : "true"}
+      >
+        {seller ? (
+          <>
+            <img
+              src={
+                seller.avatar_url ||
+                `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(seller.name || "U")}`
+              }
+              alt=""
+              aria-hidden="true"
+              className="h-9 w-9 shrink-0 rounded-full object-cover"
+            />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold" style={META_TEXT_INK}>
+                {seller.name || "Përdorues"}
+              </p>
+              <p className="text-xs" style={META_TEXT_MUTED}>
+                {listing.city || "—"}
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center gap-3" aria-hidden="true">
+            <div className="h-9 w-9 shrink-0 rounded-full bg-[var(--brand-border)]" />
+            <div className="min-w-0">
+              <div className="h-5 w-24 rounded bg-[var(--brand-border)]" />
+              <div className="mt-1 h-4 w-16 rounded bg-[var(--brand-border)]" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Image gallery */}
       <ImageGallery images={images} alt={listing.title} />
