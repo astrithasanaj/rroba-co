@@ -223,6 +223,7 @@ async function fetchFollowing(uid: string | null): Promise<FollowingData> {
 function HomePage() {
   const queryClient = useQueryClient();
   const hasUnreadNotifications = useUnreadNotifications();
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>("for-you");
 
   const handleTabChange = (next: Tab) => {
@@ -388,7 +389,7 @@ function HomePage() {
             <Link
               to="/notifications"
               className="relative grid h-12 w-12 place-items-center rounded-full"
-              aria-label="Njoftime"
+              aria-label={t("home.notifications_aria")}
             >
               <Bell className="h-6 w-6" strokeWidth={1.7} style={{ color: INK }} />
               {hasUnreadNotifications && (
@@ -407,10 +408,10 @@ function HomePage() {
               role="tablist"
             >
               <TabButton active={tab === "for-you"} onClick={() => handleTabChange("for-you")}>
-                Për ty
+                {t("home.tab_for_you")}
               </TabButton>
               <TabButton active={tab === "following"} onClick={() => handleTabChange("following")}>
-                Duke ndjekur
+                {t("home.tab_following")}
               </TabButton>
             </div>
           </div>
