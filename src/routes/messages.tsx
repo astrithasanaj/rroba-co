@@ -760,6 +760,7 @@ function NewMessage({ me }: { me: string }) {
 type MessageRow = { id: string; sender_id: string; content: string; created_at: string };
 
 function Thread({ id, me }: { id: string; me: string }) {
+  const { t } = useTranslation();
   const [info, setInfo] = useState<{
     otherName: string; otherAvatar: string; listingId: string; listingTitle: string; listingPrice: number | null; listingCover: string; isBuyer: boolean;
   } | null>(null);
@@ -792,7 +793,7 @@ function Thread({ id, me }: { id: string; me: string }) {
       const urls = cover ? await signPaths([cover], { thumbnail: true }) : {};
       if (!active) return;
       setInfo({
-        otherName: prof.data?.name || "Përdorues",
+        otherName: prof.data?.name || t("messages.other_user_fallback"),
         otherAvatar: prof.data?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof.data?.name || "U")}`,
         listingId: conv.listing_id,
         listingTitle: listing.data?.title || "Artikull",
@@ -803,7 +804,7 @@ function Thread({ id, me }: { id: string; me: string }) {
       const loaded = (msgRes.data ?? []) as MessageRow[];
       setMsgs(loaded);
       if (loaded.length === 0 && isBuyer) {
-        setInput("Përshëndetje! A është ende në dispozicion?");
+        setInput(t("messages.prefill_greeting"));
       }
       setLoading(false);
 
