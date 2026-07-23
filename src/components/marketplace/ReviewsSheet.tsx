@@ -538,7 +538,7 @@ export function ReviewsSheet({
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Shkruaj një koment (opsionale)..."
+              placeholder={t("reviews.comment_placeholder")}
               rows={4}
               style={{
                 width: "100%",
