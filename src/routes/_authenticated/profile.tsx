@@ -46,6 +46,7 @@ import {
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getMembershipPlan } from "@/lib/membership-plans";
+import { useTranslation, type Language } from "@/i18n";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
