@@ -708,6 +708,7 @@ function SectionHeader({
   title: string;
   seeAllSearch?: { section?: "new" | "trending" };
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
       <h3 className="text-[16px] font-bold" style={{ color: INK }}>
@@ -719,7 +720,7 @@ function SectionHeader({
         className="text-xs font-medium"
         style={{ color: MUTED }}
       >
-        Shiko të gjitha
+        {t("common.seeAll")}
       </Link>
     </div>
   );
