@@ -194,7 +194,7 @@ async function fetchThreads(me: string): Promise<ThreadView[]> {
 function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "archive"; tab: "all" | "buy" | "sell" }) {
   const navigate = useNavigate({ from: "/messages" });
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t: tr } = useTranslation();
   const queryKey = useMemo(() => ["messages-threads", me] as const, [me]);
 
   const {
@@ -261,10 +261,10 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     );
     const { error } = await supabase.from("conversations").update(patch).eq("id", t.id);
     if (error) {
-      toast.error(t("common.something_went_wrong"));
+      toast.error(tr("common.something_went_wrong"));
       refetch();
     } else {
-      toast.success(archived ? t("messages.archived_toast") : t("messages.unarchived_toast"));
+      toast.success(archived ? tr("messages.archived_toast") : tr("messages.unarchived_toast"));
     }
   };
 
@@ -273,8 +273,8 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
       (prev ?? []).filter((x) => x.id !== t.id),
     );
     const { error } = await supabase.from("conversations").delete().eq("id", t.id);
-    if (error) { toast.error(t("common.something_went_wrong")); refetch(); }
-    else toast.success("U fshi");
+    if (error) { toast.error(tr("common.something_went_wrong")); refetch(); }
+    else toast.success(tr("messages.deleted_toast"));
   };
 
   const startPress = (id: string, e: React.TouchEvent | React.MouseEvent) => {
@@ -295,8 +295,8 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     else if (dx > 30) setSwipeId(null);
   };
 
-  const title = mode === "archive" ? t("messages.title_archive") : t("messages.title");
-  const emptyMsg = mode === "archive" ? t("messages.empty_archived") : t("messages.empty_inbox");
+  const title = mode === "archive" ? tr("messages.title_archive") : tr("messages.title");
+  const emptyMsg = mode === "archive" ? tr("messages.empty_archived") : tr("messages.empty_inbox");
 
   const openThread = (t: ThreadView) => {
     if (swipeId === t.id) { setSwipeId(null); return; }
@@ -332,7 +332,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
               <button
                 type="button"
                 onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "archive", tab }) })}
-                aria-label="Arkiva"
+                aria-label={tr("messages.title_archive")}
                 className={`grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-[0.97] ${FOCUS_RING}`}
               >
                 <InboxIcon />
@@ -340,7 +340,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
               <button
                 type="button"
                 onClick={() => navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, view: "new", tab }) })}
-                aria-label="Mesazh i ri"
+                aria-label={tr("messages.new_message") ?? "Mesazh i ri"}
                 className={`grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-[0.97] ${FOCUS_RING}`}
               >
                 <ComposeIcon />
@@ -353,7 +353,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
           <div className="px-5 pb-3" style={{ flexShrink: 0, height: 68 }}>
             <div
               role="tablist"
-              aria-label="Filtro biseda"
+              aria-label={tr("messages.filter_threads") ?? ""}
               className="relative flex rounded-full p-1"
               style={{ backgroundColor: CREAM_SOFT, height: 48 }}
             >
@@ -403,7 +403,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
         >
           {showInitialSkeleton ? (
             <>
-              <span className="sr-only" role="status" aria-live="polite">{t("messages.loading_threads_sr")}</span>
+              <span className="sr-only" role="status" aria-live="polite">{tr("messages.loading_threads_sr")}</span>
               <ul aria-hidden="true">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <li
@@ -427,14 +427,14 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
               className="mx-5 mt-10 rounded-2xl border border-dashed p-8 text-center text-sm"
               style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
             >
-              <div className="mb-3">{t("messages.load_error")}</div>
+              <div className="mb-3">{tr("messages.load_error")}</div>
               <button
                 type="button"
                 onClick={() => { refetch(); }}
                 className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${FOCUS_RING}`}
                 style={{ background: BRAND_GRADIENT }}
               >
-                {t("common.retry")}
+                {tr("common.retry")}
               </button>
             </div>
           ) : filtered.length === 0 ? (
@@ -453,11 +453,11 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                   <button
                     type="button"
                     onClick={() => { setSwipeId(null); setArchived(t, mode !== "archive"); }}
-                    aria-label={mode === "archive" ? t("messages.unarchive_thread") : t("messages.archive_thread")}
+                    aria-label={mode === "archive" ? tr("messages.unarchive_thread") : tr("messages.archive_thread")}
                     className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
                     style={{ backgroundColor: ROSE, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
                   >
-                    {mode === "archive" ? t("messages.unarchive") : t("messages.archive")}
+                    {mode === "archive" ? tr("messages.unarchive") : tr("messages.archive")}
                   </button>
                   <div
                     role="button"
@@ -569,7 +569,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 onClick={() => { const t = threads.find((x) => x.id === menu.id); if (t) setArchived(t, !t.archived); setMenu(null); }}
               >
                 <Inbox className="h-4 w-4" aria-hidden="true" />
-                {mode === "archive" ? t("messages.unarchive") : t("messages.archive")}
+                {mode === "archive" ? tr("messages.unarchive") : tr("messages.archive")}
               </button>
               <div style={{ height: 1, backgroundColor: DIVIDER }} />
               <button
