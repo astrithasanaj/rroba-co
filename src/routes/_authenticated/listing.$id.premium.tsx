@@ -24,6 +24,7 @@ const FOCUS_CLASS =
   "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 
 function PremiumPage() {
+  const { t } = useTranslation();
   return (
     <MobileShell hideNav>
       <div className="min-h-screen" style={{ backgroundColor: CREAM }}>
