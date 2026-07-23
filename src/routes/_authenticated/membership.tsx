@@ -120,7 +120,7 @@ function MembershipPage() {
             className="flex-1 px-3 text-center font-display italic"
             style={{ color: INK, fontSize: 22 }}
           >
-            Anëtarësimi
+            {t("membership_page.title")}
           </h1>
           <div style={{ width: 44 }} />
         </header>
@@ -132,13 +132,13 @@ function MembershipPage() {
             className="flex items-center justify-center py-24"
           >
             <Loader2 className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
-            <span className="sr-only">Duke ngarkuar…</span>
+            <span className="sr-only">{t("membership_page.loading")}</span>
           </div>
         ) : (
           <div className="px-4 pb-32 pt-2">
             {activePlan ? (
               <section
-                aria-label="Statusi i anëtarësimit"
+                aria-label={t("membership_page.your_plan")}
                 className="mb-6"
                 style={{
                   backgroundColor: CARD,
@@ -156,13 +156,13 @@ function MembershipPage() {
                     letterSpacing: 1,
                   }}
                 >
-                  Plani yt
+                  {t("membership_page.your_plan")}
                 </p>
                 <div className="mt-1 flex items-baseline gap-2">
                   <p
                     style={{ color: INK, fontSize: 22, fontWeight: 700 }}
                   >
-                    {activePlan.label}
+                    {t(activePlan.labelKey)}
                   </p>
                   <span
                     style={{
@@ -172,21 +172,21 @@ function MembershipPage() {
                       letterSpacing: 0.5,
                     }}
                   >
-                    Aktiv
+                    {t("membership_page.active")}
                   </span>
                 </div>
                 <dl className="mt-4 space-y-2 text-[14px]" style={{ color: INK }}>
                   <div className="flex justify-between">
-                    <dt style={{ color: MUTED }}>Kredite për krye të kërkimit</dt>
+                    <dt style={{ color: MUTED }}>{t("membership_page.top_credits")}</dt>
                     <dd style={{ fontWeight: 600 }}>{status.topCredits}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt style={{ color: MUTED }}>Ditë plasim i paguar</dt>
+                    <dt style={{ color: MUTED }}>{t("membership_page.pp_days")}</dt>
                     <dd style={{ fontWeight: 600 }}>{status.ppDays}</dd>
                   </div>
                   {renewedAt && (
                     <div className="flex justify-between">
-                      <dt style={{ color: MUTED }}>Aktivizuar / rinovuar më</dt>
+                      <dt style={{ color: MUTED }}>{t("membership_page.renewed_at")}</dt>
                       <dd style={{ fontWeight: 600 }}>{renewedAt}</dd>
                     </div>
                   )}
@@ -194,7 +194,7 @@ function MembershipPage() {
               </section>
             ) : (
               <section
-                aria-label="Rreth anëtarësimit"
+                aria-label={t("membership_page.view_plans_title")}
                 className="mb-6"
                 style={{
                   backgroundColor: CARD,
@@ -204,10 +204,10 @@ function MembershipPage() {
                 }}
               >
                 <p style={{ color: INK, fontSize: 15, fontWeight: 600 }}>
-                  Shiko planet dhe përfitimet
+                  {t("membership_page.view_plans_title")}
                 </p>
                 <p className="mt-1" style={{ color: MUTED, fontSize: 13 }}>
-                  Anëtarësimet do të jenë të disponueshme së shpejti.
+                  {t("membership_page.coming_soon")}
                 </p>
               </section>
             )}
@@ -222,15 +222,16 @@ function MembershipPage() {
                 padding: "4px 4px 12px",
               }}
             >
-              Planet
+              {t("membership_page.plans_heading")}
             </h2>
 
             {MEMBERSHIP_PLANS.map((plan) => {
               const isActive = activePlan?.key === plan.key;
+              const label = t(plan.labelKey);
               return (
                 <article
                   key={plan.key}
-                  aria-label={plan.label}
+                  aria-label={label}
                   className="mb-4"
                   style={{
                     backgroundColor: CARD,
@@ -249,7 +250,7 @@ function MembershipPage() {
                         letterSpacing: 1,
                       }}
                     >
-                      {plan.label}
+                      {label}
                     </p>
                     {isActive && (
                       <span
@@ -260,7 +261,7 @@ function MembershipPage() {
                           letterSpacing: 0.5,
                         }}
                       >
-                        Aktiv
+                        {t("membership_page.active")}
                       </span>
                     )}
                   </div>
@@ -272,15 +273,15 @@ function MembershipPage() {
                       marginTop: 4,
                     }}
                   >
-                    {plan.monthlyPrice}
+                    {plan.monthlyAmount} / {t("membership_page.per_month_suffix")}
                   </p>
                   <p style={{ color: MUTED, fontSize: 13, marginTop: 2 }}>
-                    ose {plan.yearlyPrice}
+                    {t("membership_page.price_or_yearly")} {plan.yearlyAmount} / {t("membership_page.per_year_suffix")}
                   </p>
                   <ul className="mt-4 space-y-2">
-                    {plan.perks.map((perk) => (
+                    {plan.perkKeys.map((perkKey) => (
                       <li
-                        key={perk}
+                        key={perkKey}
                         className="flex items-start gap-2 text-[13px]"
                         style={{ color: INK }}
                       >
@@ -289,7 +290,7 @@ function MembershipPage() {
                           aria-hidden="true"
                           style={{ color: ROSE }}
                         />
-                        <span>{perk}</span>
+                        <span>{t(perkKey)}</span>
                       </li>
                     ))}
                   </ul>
@@ -301,7 +302,7 @@ function MembershipPage() {
               className="mt-6 text-center"
               style={{ color: MUTED, fontSize: 12 }}
             >
-              Anëtarësimet do të jenë të disponueshme së shpejti.
+              {t("membership_page.coming_soon")}
             </p>
           </div>
         )}
