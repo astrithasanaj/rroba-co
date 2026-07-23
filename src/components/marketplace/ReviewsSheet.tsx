@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useTranslation } from "@/i18n";
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
@@ -23,22 +24,25 @@ type Row = {
 
 type RaterProfile = { id: string; name: string | null; avatar_url: string | null };
 
-function formatReviewDate(date: string) {
-  const d = new Date(date);
-  const now = new Date();
-  const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
-  if (diffDays <= 0) return "sot";
-  if (diffDays === 1) return "dje";
-  if (diffDays < 7) return `${diffDays} ditë`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} javë`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} muaj`;
-  return `${Math.floor(diffDays / 365)} vjet`;
+function useFormatReviewDate() {
+  const { t } = useTranslation();
+  return (date: string) => {
+    const d = new Date(date);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
+    if (diffDays <= 0) return t("reviews.time_today");
+    if (diffDays === 1) return t("reviews.time_yesterday");
+    if (diffDays < 7) return t("reviews.time_days", { n: diffDays });
+    if (diffDays < 30) return t("reviews.time_weeks", { n: Math.floor(diffDays / 7) });
+    if (diffDays < 365) return t("reviews.time_months", { n: Math.floor(diffDays / 30) });
+    return t("reviews.time_years", { n: Math.floor(diffDays / 365) });
+  };
 }
 
-function formatMemberSince(iso?: string | null) {
+function formatMemberSince(iso: string | null | undefined, locale: string) {
   if (!iso) return "—";
   const d = new Date(iso);
-  return d.toLocaleDateString("sq-AL", { month: "long", year: "numeric" });
+  return d.toLocaleDateString(locale, { month: "long", year: "numeric" });
 }
 
 function StarBar({ value, size = 14 }: { value: number; size?: number }) {
@@ -105,6 +109,8 @@ export function ReviewsSheet({
   listingId?: string;
 }) {
   const navigate = useNavigate();
+  const { t, locale } = useTranslation();
+  const formatReviewDate = useFormatReviewDate();
   const [rows, setRows] = useState<Row[]>([]);
   const [raters, setRaters] = useState<Record<string, RaterProfile>>({});
   const [loading, setLoading] = useState(true);
@@ -196,7 +202,7 @@ export function ReviewsSheet({
       toast.error(error.message);
       return;
     }
-    toast.success("Vlerësimi u dërgua!");
+    toast.success(t("reviews.submitted_toast"));
     setRateOpen(false);
     // refresh
     const { data } = await supabase
@@ -235,7 +241,7 @@ export function ReviewsSheet({
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                aria-label="Kthehu"
+                aria-label={t("common.back")}
                 className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
                 style={{
                   width: 36,
@@ -250,10 +256,10 @@ export function ReviewsSheet({
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerësimet</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>{t("reviews.title")}</div>
               {sellerUsername && (
                 <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
-                  për {sellerUsername}
+                  {t("reviews.for_user", { name: sellerUsername })}
                 </div>
               )}
             </div>
@@ -279,12 +285,12 @@ export function ReviewsSheet({
                     fontWeight: 600,
                   }}
                 >
-                  VLERËSIM
+                  {t("reviews.rating_label")}
                 </div>
                 <div style={{ fontSize: 42, fontWeight: 700, color: INK, lineHeight: 1.1, marginTop: 4 }}>
                   {avg.toFixed(1)}
                 </div>
-                <div style={{ fontSize: 12, color: MUTED }}>nga 5.0</div>
+                <div style={{ fontSize: 12, color: MUTED }}>{t("reviews.out_of")}</div>
               </div>
               <div
                 style={{
@@ -299,15 +305,15 @@ export function ReviewsSheet({
               >
                 <Info
                   icon={<BadgeCheck size={16} color={CORAL} strokeWidth={2.2} />}
-                  text={<b style={{ fontWeight: 700 }}>Shitës i besuar</b>}
+                  text={<b style={{ fontWeight: 700 }}>{t("reviews.trusted_seller")}</b>}
                 />
                 <Info
                   icon={<Star size={16} color={INK} strokeWidth={2} />}
-                  text={<>{rows.length} vlerësime</>}
+                  text={<>{t("reviews.count", { n: rows.length })}</>}
                 />
                 <Info
                   icon={<UserIcon size={16} color={INK} strokeWidth={2} />}
-                  text={<>U bë anëtar në {formatMemberSince(sellerCreatedAt)}</>}
+                  text={<>{t("reviews.member_since", { date: formatMemberSince(sellerCreatedAt, locale) })}</>}
                 />
               </div>
             </div>
@@ -325,16 +331,16 @@ export function ReviewsSheet({
             >
               {(
                 [
-                  { id: "all", label: "Të gjitha" },
-                  { id: "sold", label: "Shitur" },
-                  { id: "bought", label: "Blerë" },
+                  { id: "all", label: t("reviews.tab_all") },
+                  { id: "sold", label: t("reviews.tab_sold") },
+                  { id: "bought", label: t("reviews.tab_bought") },
                 ] as const
-              ).map((t) => {
-                const active = tab === t.id;
+              ).map((tabItem) => {
+                const active = tab === tabItem.id;
                 return (
                   <button
-                    key={t.id}
-                    onClick={() => setTab(t.id)}
+                    key={tabItem.id}
+                    onClick={() => setTab(tabItem.id)}
                     style={{
                       flex: 1,
                       border: 0,
@@ -347,7 +353,7 @@ export function ReviewsSheet({
                       cursor: "pointer",
                     }}
                   >
-                    {t.label}
+                    {tabItem.label}
                   </button>
                 );
               })}
@@ -371,7 +377,7 @@ export function ReviewsSheet({
                   cursor: "pointer",
                 }}
               >
-                Lër një vlerësim
+                {t("reviews.leave_review")}
               </button>
             )}
 
@@ -385,16 +391,16 @@ export function ReviewsSheet({
                 <div style={{ textAlign: "center", padding: "60px 20px" }}>
                   <Star size={48} color={DIVIDER} strokeWidth={1.5} style={{ margin: "0 auto" }} />
                   <div style={{ fontSize: 16, fontWeight: 700, color: INK, marginTop: 12 }}>
-                    Ende asnjë vlerësim
+                    {t("reviews.empty_title")}
                   </div>
                   <div style={{ fontSize: 13, color: MUTED, marginTop: 6 }}>
-                    Vlerësimet shfaqen pasi të kryhet një shitje
+                    {t("reviews.empty_body")}
                   </div>
                 </div>
               ) : (
                 filtered.map((r) => {
                   const rp = raters[r.rater_id];
-                  const name = rp?.name || "Përdorues";
+                  const name = rp?.name || t("reviews.user_fallback");
                   const goToProfile = (e: React.MouseEvent) => {
                     e.stopPropagation();
                     onOpenChange(false);
@@ -466,7 +472,7 @@ export function ReviewsSheet({
                           <StarBar value={r.stars} />
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2 }}>
-                          <div style={{ fontSize: 12, color: MUTED }}>Blerës · Takim personal</div>
+                          <div style={{ fontSize: 12, color: MUTED }}>{t("reviews.buyer_meeting")}</div>
                           <div style={{ fontSize: 12, color: MUTED }}>{formatReviewDate(r.created_at)}</div>
                         </div>
                         {r.comment && (
@@ -492,7 +498,7 @@ export function ReviewsSheet({
               <button
                 type="button"
                 onClick={() => setRateOpen(false)}
-                aria-label="Kthehu"
+                aria-label={t("common.back")}
                 className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
                 style={{
                   width: 36,
@@ -504,7 +510,7 @@ export function ReviewsSheet({
               >
                 <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
-              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerëso shitësin</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>{t("reviews.rate_title")}</div>
             </div>
             <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 20 }}>
               {[1, 2, 3, 4, 5].map((n) => (
@@ -532,7 +538,7 @@ export function ReviewsSheet({
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Shkruaj një koment (opsionale)..."
+              placeholder={t("reviews.comment_placeholder")}
               rows={4}
               style={{
                 width: "100%",
@@ -569,7 +575,7 @@ export function ReviewsSheet({
               }}
             >
               {submitting && <Loader2 className="animate-spin" size={16} />}
-              Dërgo vlerësimin
+              {t("reviews.submit")}
             </button>
           </div>
         </SheetContent>
