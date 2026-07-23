@@ -86,7 +86,7 @@ function MessagesPage() {
           aria-live="polite"
         >
           <Loader2 className="h-6 w-6 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
-          <span className="sr-only">Duke ngarkuar…</span>
+          <span className="sr-only">{t("common.loading")}</span>
         </div>
       </MobileShell>
     );
@@ -176,13 +176,13 @@ async function fetchThreads(me: string): Promise<ThreadView[]> {
     return {
       id: r.id,
       otherId,
-      otherName: prof?.name || "Përdorues",
+      otherName: prof?.name || t("messages.user_fallback"),
       otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
       listingId: r.listing_id,
-      listingTitle: listing?.title || "Artikull",
+      listingTitle: listing?.title || t("messages.listing_fallback"),
       listingPrice: listing?.price ?? null,
       listingCover: urls[cover] || "",
-      lastPreview: last?.content || "Bisedë e re",
+      lastPreview: last?.content || t("messages.new_conversation"),
       lastAt: r.last_message_at,
       unread,
       isBuyer,
@@ -261,10 +261,10 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
     );
     const { error } = await supabase.from("conversations").update(patch).eq("id", t.id);
     if (error) {
-      toast.error("Diçka shkoi keq");
+      toast.error(t("common.something_went_wrong"));
       refetch();
     } else {
-      toast.success(archived ? "U arkivua" : "U çarkivua");
+      toast.success(archived ? t("messages.archived_toast") : t("messages.unarchived_toast"));
     }
   };
 
@@ -273,7 +273,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
       (prev ?? []).filter((x) => x.id !== t.id),
     );
     const { error } = await supabase.from("conversations").delete().eq("id", t.id);
-    if (error) { toast.error("Diçka shkoi keq"); refetch(); }
+    if (error) { toast.error(t("common.something_went_wrong")); refetch(); }
     else toast.success("U fshi");
   };
 
@@ -369,7 +369,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
               />
               {(["all", "buy", "sell"] as const).map((t) => {
                 const active = tab === t;
-                const label = t === "all" ? "Të gjitha" : t === "buy" ? "Blerje" : "Shitje";
+                const label = t === "all" ? tr("messages.tab_all") : t === "buy" ? tr("messages.tab_buy") : tr("messages.tab_sell");
                 return (
                   <button
                     key={t}
@@ -403,7 +403,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
         >
           {showInitialSkeleton ? (
             <>
-              <span className="sr-only" role="status" aria-live="polite">Duke ngarkuar biseda…</span>
+              <span className="sr-only" role="status" aria-live="polite">{t("messages.loading_threads_sr")}</span>
               <ul aria-hidden="true">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <li
@@ -427,14 +427,14 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
               className="mx-5 mt-10 rounded-2xl border border-dashed p-8 text-center text-sm"
               style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
             >
-              <div className="mb-3">Diçka shkoi keq gjatë ngarkimit.</div>
+              <div className="mb-3">{t("messages.load_error")}</div>
               <button
                 type="button"
                 onClick={() => { refetch(); }}
                 className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${FOCUS_RING}`}
                 style={{ background: BRAND_GRADIENT }}
               >
-                Provo përsëri
+                {t("common.retry")}
               </button>
             </div>
           ) : filtered.length === 0 ? (
@@ -453,16 +453,16 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                   <button
                     type="button"
                     onClick={() => { setSwipeId(null); setArchived(t, mode !== "archive"); }}
-                    aria-label={mode === "archive" ? "Zharkivo bisedën" : "Arkivo bisedën"}
+                    aria-label={mode === "archive" ? t("messages.unarchive_thread") : t("messages.archive_thread")}
                     className="absolute right-0 top-0 flex h-full items-center justify-center px-6 text-sm font-semibold text-white transition-opacity"
                     style={{ backgroundColor: ROSE, opacity: swipeId === t.id ? 1 : 0, pointerEvents: swipeId === t.id ? "auto" : "none" }}
                   >
-                    {mode === "archive" ? "Zharkivo" : "Arkivo"}
+                    {mode === "archive" ? t("messages.unarchive") : t("messages.archive")}
                   </button>
                   <div
                     role="button"
                     tabIndex={0}
-                    aria-label={`Bisedë me ${t.otherName}${t.unread ? ", i palexuar" : ""}`}
+                    aria-label={`${tr("messages.thread_with").replace("{name}", t.otherName)}${t.unread ? tr("messages.unread_suffix") : ""}`}
                     className={`relative flex items-center gap-3 px-5 py-3.5 transition-transform duration-200 ease-out active:scale-[0.98] ${FOCUS_RING}`}
                     style={{
                       backgroundColor: t.unread ? CREAM_SOFT : SURFACE,
@@ -569,7 +569,7 @@ function ConversationList({ me, mode, tab }: { me: string; mode: "inbox" | "arch
                 onClick={() => { const t = threads.find((x) => x.id === menu.id); if (t) setArchived(t, !t.archived); setMenu(null); }}
               >
                 <Inbox className="h-4 w-4" aria-hidden="true" />
-                {mode === "archive" ? "Zharkivo" : "Arkivo"}
+                {mode === "archive" ? t("messages.unarchive") : t("messages.archive")}
               </button>
               <div style={{ height: 1, backgroundColor: DIVIDER }} />
               <button
@@ -660,7 +660,7 @@ function NewMessage({ me }: { me: string }) {
       navigate({ to: "/messages", search: (prev: MessagesSearch) => ({ ...prev, thread: existing[0].id }) });
       return;
     }
-    toast.error("Nis një bisedë nga faqja e produktit");
+    toast.error(t("messages.start_from_product"));
   };
 
   const list = q.trim() ? results : recent;
@@ -697,7 +697,7 @@ function NewMessage({ me }: { me: string }) {
           <h1 className="text-[18px] font-bold" style={{ color: INK }}>Mesazh i ri</h1>
         </header>
         <div className="px-5 pb-3">
-          <label className="sr-only" htmlFor="new-message-search">Kërko përdoruesin</label>
+          <label className="sr-only" htmlFor="new-message-search">{t("messages.search_user_label")}</label>
           <div className="flex items-center gap-2 rounded-full px-4" style={{ backgroundColor: CREAM_SOFT, minHeight: 44 }}>
             <SearchIcon className="h-4 w-4" style={{ color: INK_SECONDARY }} aria-hidden="true" />
             <input
@@ -705,7 +705,7 @@ function NewMessage({ me }: { me: string }) {
               autoFocus
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Kërko përdoruesin..."
+              placeholder={t("messages.search_user_placeholder")}
               className="flex-1 bg-transparent text-sm outline-none"
               style={{ color: INK, minHeight: 44 }}
               inputMode="search"
@@ -719,7 +719,7 @@ function NewMessage({ me }: { me: string }) {
         {loading ? (
           <div className="grid place-items-center py-10" role="status" aria-live="polite">
             <Loader2 className="h-5 w-5 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
-            <span className="sr-only">Duke kërkuar…</span>
+            <span className="sr-only">{t("messages.searching")}</span>
           </div>
         ) : list.length === 0 ? (
           <p role="status" aria-live="polite" className="px-5 py-10 text-center text-sm" style={{ color: INK_SECONDARY }}>
@@ -744,7 +744,7 @@ function NewMessage({ me }: { me: string }) {
                     style={{ backgroundColor: CREAM_SOFT }}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold" style={{ color: INK }}>{p.name || "Përdorues"}</p>
+                    <p className="truncate text-sm font-semibold" style={{ color: INK }}>{p.name || t("messages.user_fallback")}</p>
                     {p.city && <p className="truncate text-xs" style={{ color: INK_SECONDARY }}>{p.city}</p>}
                   </div>
                 </button>
@@ -796,7 +796,7 @@ function Thread({ id, me }: { id: string; me: string }) {
         otherName: prof.data?.name || t("messages.other_user_fallback"),
         otherAvatar: prof.data?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof.data?.name || "U")}`,
         listingId: conv.listing_id,
-        listingTitle: listing.data?.title || "Artikull",
+        listingTitle: listing.data?.title || t("messages.listing_fallback"),
         listingPrice: listing.data?.price ?? null,
         listingCover: urls[cover] || "",
         isBuyer,
@@ -908,7 +908,7 @@ function Thread({ id, me }: { id: string; me: string }) {
     if (error) {
       // Restore user's text so they don't lose their message
       setInput(text);
-      toast.error("Mesazhi nuk u dërgua");
+      toast.error(t("messages.send_failed"));
     }
     setSending(false);
   };
@@ -987,7 +987,7 @@ function Thread({ id, me }: { id: string; me: string }) {
             <Link
               to="/product/$id"
               params={{ id: info.listingId }}
-              aria-label={`Artikull: ${info.listingTitle}`}
+              aria-label={tr("messages.listing_aria").replace("{title}", info.listingTitle)}
               className={`flex items-center gap-3 rounded-xl p-2.5 ${FOCUS_RING}`}
               style={{ backgroundColor: CREAM_SOFT }}
             >
@@ -1027,7 +1027,7 @@ function Thread({ id, me }: { id: string; me: string }) {
           ref={scrollRef}
           role="log"
           aria-live="polite"
-          aria-label="Mesazhet e bisedës"
+          aria-label={t("messages.messages_thread_aria")}
           style={{
             flex: 1,
             minHeight: 0,
@@ -1115,7 +1115,7 @@ function Thread({ id, me }: { id: string; me: string }) {
             <button
               type="submit"
               disabled={!input.trim() || sending}
-              aria-label="Dërgo mesazhin"
+              aria-label={t("messages.send_aria")}
               className={`grid h-11 w-11 place-items-center rounded-full transition-transform active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100 ${FOCUS_RING}`}
               style={{ backgroundColor: INK }}
             >
