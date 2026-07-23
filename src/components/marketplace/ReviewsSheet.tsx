@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useTranslation } from "@/i18n";
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
