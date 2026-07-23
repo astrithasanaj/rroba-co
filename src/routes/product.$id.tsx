@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
-import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
+
 import { MoreSheet } from "@/components/marketplace/MoreSheet";
 import { ProductPageSkeleton } from "@/components/marketplace/Skeletons";
 import { useUserCollections } from "@/lib/user-collections";
@@ -55,7 +55,7 @@ function ProductDetail() {
   const [similar, setSimilar] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(!cached);
   const [me, setMe] = useState<string | null>(null);
-  const [offerOpen, setOfferOpen] = useState(false);
+  
   const [moreOpen, setMoreOpen] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
   const [likeInfo, setLikeInfo] = useState<{
@@ -490,14 +490,8 @@ function ProductDetail() {
 
       <div className="h-8" />
 
-      <MakeOfferDialog
-        open={offerOpen}
-        onOpenChange={setOfferOpen}
-        listingId={listing.id}
-        sellerId={listing.user_id}
-        buyerId={me}
-        listingPrice={listing.price}
-      />
+
+
 
       <MoreSheet
         open={moreOpen}
