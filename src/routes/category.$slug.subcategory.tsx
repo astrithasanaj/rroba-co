@@ -96,7 +96,7 @@ function SubcategorySelectPage() {
                     border: active ? "none" : "1px solid var(--brand-border)",
                   }}
                 >
-                  {s}
+                  {tCategory(s, t)}
                 </button>
               );
             })}
