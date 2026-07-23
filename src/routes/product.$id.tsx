@@ -23,6 +23,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { getListingLikeInfo } from "@/lib/likes.functions";
+import { useTranslation } from "@/i18n";
 
 export const Route = createFileRoute("/product/$id")({
   component: () => (
@@ -49,6 +50,7 @@ const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
   const navigate = useNavigate({ from: "/messages" });
+  const { t } = useTranslation();
   const cached = getCachedListing(id);
   const [listing, setListing] = useState<ListingView | null>(cached);
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -369,7 +371,7 @@ function ProductDetail() {
             boxShadow: "0 2px 8px color-mix(in oklab, var(--brand-rose) 35%, transparent)",
           }}
         >
-          {isSold ? "Shitur" : "Shkruaj shitësit"}
+          {isSold ? t("product.sold") : t("product.message_seller")}
         </button>
       </div>
 
