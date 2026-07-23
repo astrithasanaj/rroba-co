@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { signPaths } from "@/lib/listings";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n";
 
 // Design tokens (from src/styles.css)
 const INK = "var(--brand-ink)";
