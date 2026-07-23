@@ -109,6 +109,8 @@ export function ReviewsSheet({
   listingId?: string;
 }) {
   const navigate = useNavigate();
+  const { t, locale } = useTranslation();
+  const formatReviewDate = useFormatReviewDate();
   const [rows, setRows] = useState<Row[]>([]);
   const [raters, setRaters] = useState<Record<string, RaterProfile>>({});
   const [loading, setLoading] = useState(true);
