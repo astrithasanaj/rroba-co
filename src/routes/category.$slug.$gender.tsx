@@ -18,6 +18,8 @@ import { Label } from "@/components/ui/label";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { CategoryPickerSheet } from "@/components/marketplace/CategoryPickerSheet";
 import { emptySelection, type CategorySelection } from "@/lib/category-taxonomy";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "var(--brand-surface)";
 const CARD = "var(--brand-surface)";
@@ -49,6 +51,7 @@ type Filters = {
 function CategoryResultsPage() {
   const { slug, gender } = useParams({ from: "/category/$slug/$gender" });
   const search = Route.useSearch();
+  const { t } = useTranslation();
   const subcategoryList = useMemo(
     () => (search.subcategories ? search.subcategories.split(",").filter(Boolean) : []),
     [search.subcategories],
