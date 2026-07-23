@@ -1735,6 +1735,7 @@ function SettingsMain({
   onDeleteAccount: () => void;
   onOpenMembership: () => void;
 }) {
+  const { t, language } = useTranslation();
   const [membershipTier, setMembershipTier] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
@@ -1750,56 +1751,68 @@ function SettingsMain({
   }, []);
   const activePlan = getMembershipPlan(membershipTier);
   const membershipSubtitle = activePlan
-    ? `${activePlan.label} · Aktiv`
-    : "Shiko planet dhe përfitimet";
+    ? `${activePlan.label} · ${t("settings.membership_active_suffix")}`
+    : t("settings.membership_view_plans");
+  const languageSubtitle =
+    language === "en" ? t("settings.language_en") : t("settings.language_sq");
   return (
     <div>
-      <SectionHeader>Llogaria</SectionHeader>
+      <SectionHeader>{t("settings.section_account")}</SectionHeader>
       <div>
         <Row
           icon="ti-user"
-          title="Ndrysho profilin"
-          subtitle="Emri, bio, foto, qyteti"
+          title={t("settings.edit_profile")}
+          subtitle={t("settings.edit_profile_subtitle")}
           onClick={() => onNavigate("profile")}
         />
         <Row
           icon="ti-bell"
-          title="Njoftimet"
-          subtitle="Menaxho njoftimet push dhe email"
+          title={t("settings.notifications")}
+          subtitle={t("settings.notifications_subtitle")}
           onClick={() => onNavigate("notifications")}
         />
         <Row
           icon="ti-crown"
-          title="Anëtarësimi"
+          title={t("settings.membership")}
           subtitle={membershipSubtitle}
           onClick={onOpenMembership}
           isLast
         />
       </div>
 
-
-      <SectionHeader>Ndihmë</SectionHeader>
+      <SectionHeader>{t("settings.section_preferences")}</SectionHeader>
       <div>
-        <Row icon="ti-help-circle" title="Pyetjet e shpeshta" onClick={() => onNavigate("faq")} />
+        <Row
+          icon="ti-language"
+          title={t("settings.language")}
+          subtitle={languageSubtitle}
+          onClick={() => onNavigate("language")}
+          isLast
+        />
+      </div>
+
+      <SectionHeader>{t("settings.section_help")}</SectionHeader>
+      <div>
+        <Row icon="ti-help-circle" title={t("settings.faq")} onClick={() => onNavigate("faq")} />
         <Row
           icon="ti-message"
-          title="Kontakto mbështetjen"
+          title={t("settings.contact_support")}
           onClick={() => onNavigate("support")}
           isLast
         />
       </div>
 
-      <SectionHeader>Tjetër</SectionHeader>
+      <SectionHeader>{t("settings.section_other")}</SectionHeader>
       <div>
         <Row
           icon="ti-shield"
-          title="Privatësia"
-          subtitle="Politikat dhe të dhënat e tua"
+          title={t("settings.privacy")}
+          subtitle={t("settings.privacy_subtitle")}
           onClick={() => onNavigate("privacy")}
         />
         <Row
           icon="ti-file-text"
-          title="Kushtet e shërbimit"
+          title={t("settings.terms")}
           onClick={() => onNavigate("terms")}
           isLast
         />
@@ -1818,7 +1831,7 @@ function SettingsMain({
           padding: "18px 20px",
         }}
       >
-        <span style={{ fontSize: 14, fontWeight: 500, color: SOLD }}>Dilni nga llogaria</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: SOLD }}>{t("settings.sign_out")}</span>
       </button>
 
       {/* Delete account */}
@@ -1826,7 +1839,7 @@ function SettingsMain({
       <button
         type="button"
         onClick={onDeleteAccount}
-        aria-label="Fshij llogarinë"
+        aria-label={t("settings.delete_account")}
         className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         style={{
           display: "flex",
@@ -1851,10 +1864,10 @@ function SettingsMain({
           <div
             style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-danger)", lineHeight: 1.3 }}
           >
-            Fshij llogarinë
+            {t("settings.delete_account")}
           </div>
           <div style={{ fontSize: 12, color: MUTED, marginTop: 2, lineHeight: 1.3 }}>
-            Fshi përgjithmonë të gjitha të dhënat tuaja
+            {t("settings.delete_account_subtitle")}
           </div>
         </div>
       </button>
