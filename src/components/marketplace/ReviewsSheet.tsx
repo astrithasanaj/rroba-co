@@ -377,7 +377,7 @@ export function ReviewsSheet({
                   cursor: "pointer",
                 }}
               >
-                Lër një vlerësim
+                {t("reviews.leave_review")}
               </button>
             )}
 
