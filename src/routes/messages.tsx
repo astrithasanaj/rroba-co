@@ -768,6 +768,7 @@ function Thread({ id, me }: { id: string; me: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputBarRef = useRef<HTMLFormElement>(null);
+  const chatPageRef = useRef<HTMLDivElement>(null);
   const didInitialScroll = useRef(false);
   const nearBottomRef = useRef(true);
   const lastOwnSendRef = useRef(0);
@@ -857,26 +858,32 @@ function Thread({ id, me }: { id: string; me: string }) {
     }
   }, [msgs, loading]);
 
-  // Keyboard-aware input bar via visualViewport (iOS PWA)
+  // Keyboard-aware chat container via visualViewport (iOS PWA)
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
-    const bar = inputBarRef.current;
-    const onResize = () => {
-      if (!bar) return;
-      const offset = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop || 0));
-      bar.style.transform = `translateY(-${offset}px)`;
+    const update = () => {
+      const page = chatPageRef.current;
+      if (!page) return;
+      page.style.height = `${vv.height}px`;
+      page.style.top = `${vv.offsetTop}px`;
       const el = scrollRef.current;
       if (el && nearBottomRef.current) el.scrollTop = el.scrollHeight;
     };
-    vv.addEventListener("resize", onResize);
-    vv.addEventListener("scroll", onResize);
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
     return () => {
-      vv.removeEventListener("resize", onResize);
-      vv.removeEventListener("scroll", onResize);
-      if (bar) bar.style.transform = "";
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      const page = chatPageRef.current;
+      if (page) {
+        page.style.height = "";
+        page.style.top = "";
+      }
     };
   }, []);
+
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -897,6 +904,7 @@ function Thread({ id, me }: { id: string; me: string }) {
   return (
     <MobileShell fixed>
       <div
+        ref={chatPageRef}
         className="chat-page"
         style={{
           position: "absolute",
