@@ -95,7 +95,8 @@ export const sq = {
   },
 
   messages: {
-    title: "Mesazhet",
+    title: "Mesazhe",
+    title_archive: "Arkiva",
     write_placeholder: "Shkruaj një mesazh…",
     write_aria: "Shkruaj një mesazh",
     send_aria: "Dërgo mesazhin",
