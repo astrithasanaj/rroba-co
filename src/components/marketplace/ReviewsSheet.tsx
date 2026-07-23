@@ -241,7 +241,7 @@ export function ReviewsSheet({
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                aria-label="Kthehu"
+                aria-label={t("common.back")}
                 className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
                 style={{
                   width: 36,
