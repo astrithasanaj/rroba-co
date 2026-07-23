@@ -768,6 +768,7 @@ function Thread({ id, me }: { id: string; me: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputBarRef = useRef<HTMLFormElement>(null);
+  const chatPageRef = useRef<HTMLDivElement>(null);
   const didInitialScroll = useRef(false);
   const nearBottomRef = useRef(true);
   const lastOwnSendRef = useRef(0);
