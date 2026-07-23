@@ -256,10 +256,10 @@ export function ReviewsSheet({
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>Vlerësimet</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>{t("reviews.title")}</div>
               {sellerUsername && (
                 <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
-                  për {sellerUsername}
+                  {t("reviews.for_user", { name: sellerUsername })}
                 </div>
               )}
             </div>
