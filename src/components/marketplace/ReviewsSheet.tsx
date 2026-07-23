@@ -400,7 +400,7 @@ export function ReviewsSheet({
               ) : (
                 filtered.map((r) => {
                   const rp = raters[r.rater_id];
-                  const name = rp?.name || "Përdorues";
+                  const name = rp?.name || t("reviews.user_fallback");
                   const goToProfile = (e: React.MouseEvent) => {
                     e.stopPropagation();
                     onOpenChange(false);
