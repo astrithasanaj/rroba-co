@@ -136,12 +136,19 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const messagesThread = useRouterState({
+    select: (s) =>
+      s.location.pathname === "/messages"
+        ? (s.location.search as { thread?: string } | undefined)?.thread
+        : undefined,
+  });
   const hideBottomNav =
     pathname === "/sell" ||
     pathname === "/onboarding" ||
     pathname === "/blocked" ||
     pathname === "/reset-password" ||
     pathname.startsWith("/auth") ||
+    (pathname === "/messages" && Boolean(messagesThread)) ||
     /^\/listing\/[^/]+\/(edit|promote|premium)$/.test(pathname);
 
   const [navRoot, setNavRoot] = useState<HTMLElement | null>(null);
