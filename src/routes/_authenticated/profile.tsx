@@ -1510,6 +1510,7 @@ type SettingsView =
   | "main"
   | "profile"
   | "notifications"
+  | "language"
   | "faq"
   | "support"
   | "privacy"
