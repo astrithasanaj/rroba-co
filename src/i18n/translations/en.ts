@@ -95,6 +95,7 @@ export const en: TranslationSchema = {
 
   messages: {
     title: "Messages",
+    title_archive: "Archive",
     write_placeholder: "Write a message…",
     write_aria: "Write a message",
     send_aria: "Send message",
