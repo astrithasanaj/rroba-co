@@ -58,7 +58,7 @@ function SubcategorySelectPage() {
           <button
             type="button"
             onClick={() => window.history.back()}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -72,13 +72,13 @@ function SubcategorySelectPage() {
             <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <h1 className="text-[17px] font-bold" style={{ color: INK }}>
-            {def.label}
+            {tCategory(def.label, t)}
           </h1>
         </header>
 
         <div className="px-5 pt-8">
           <h3 className="text-[18px] font-bold" style={{ color: INK }}>
-            Çfarë je duke kërkuar?
+            {t("category.what_looking_for")}
           </h3>
 
           <div className="mt-3 grid grid-cols-3 gap-2">
@@ -108,7 +108,7 @@ function SubcategorySelectPage() {
             className="mt-6 flex h-12 w-full items-center justify-center rounded-full border text-[14px] font-semibold"
             style={{ borderColor: INK, color: INK, backgroundColor: "transparent" }}
           >
-            Shiko të gjitha
+            {t("common.seeAll")}
           </button>
 
           <button
@@ -121,7 +121,7 @@ function SubcategorySelectPage() {
               color: selected.length === 0 ? "var(--brand-ink-secondary)" : "var(--brand-surface)",
             }}
           >
-            Apliko filtrat
+            {t("category.apply_filters")}
           </button>
         </div>
       </div>
