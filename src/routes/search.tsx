@@ -636,11 +636,12 @@ function GenderTabs({
   value: "Femra" | "Meshkuj" | "Fëmijë" | null;
   onChange: (v: "Femra" | "Meshkuj" | "Fëmijë" | null) => void;
 }) {
+  const { t } = useTranslation();
   const tabs: ("Femra" | "Meshkuj" | "Fëmijë")[] = ["Femra", "Meshkuj", "Fëmijë"];
   return (
     <div
       role="tablist"
-      aria-label="Filtro sipas gjinisë"
+      aria-label={t("search.gender_tabs_aria")}
       className="mt-4 flex items-center gap-6"
       style={{ borderBottom: "1px solid var(--brand-border)" }}
     >
@@ -659,7 +660,7 @@ function GenderTabs({
               fontWeight: active ? 600 : 500,
             }}
           >
-            {t}
+            {t === "Femra" ? tt("search.gender_femra") : t === "Meshkuj" ? tt("search.gender_meshkuj") : tt("search.gender_femije")}
             {active && (
               <span
                 aria-hidden="true"
@@ -688,6 +689,7 @@ function EksploreList({
   genderTab: "Femra" | "Meshkuj" | "Fëmijë" | null;
   onOpenPicker: (key?: string, initialBucket?: boolean, groupLabel?: string) => void;
 }) {
+  const { t } = useTranslation();
   const femijeRows = CATEGORY_TAXONOMY.find((n) => n.key === "femije")?.groups ?? [];
   const UNIVERSAL_KEYS = ["interior", "art", "elektronik", "hobi"];
   const rows = EKSPLORE_ROWS.filter(
@@ -725,7 +727,7 @@ function EksploreList({
                 <Icon size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
               </span>
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
-                {label}
+                {tCategory(label, t)}
               </span>
               <ChevronRight
                 aria-hidden="true"
@@ -758,7 +760,7 @@ function EksploreList({
                 <Icon size={18} strokeWidth={1.7} style={{ color: "var(--brand-coral)" }} />
               </span>
               <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
-                {label}
+                {tCategory(label, t)}
               </span>
               <ChevronRight
                 aria-hidden="true"
@@ -791,7 +793,7 @@ function EksploreList({
               />
             </span>
             <span className="flex-1 text-[15px] font-medium" style={{ color: INK }}>
-              Për të gjithë
+              {t("search.for_everyone")}
             </span>
             <ChevronRight
               aria-hidden="true"
@@ -816,14 +818,15 @@ function RecentSearches({
   onRemove: (t: string) => void;
   onClear: () => void;
 }) {
+  const { t } = useTranslation();
   if (items.length === 0) {
     return (
       <section className="mt-8 px-5">
         <h2 className="text-[20px] font-bold" style={{ color: INK }}>
-          Kërkimet e fundit
+          {t("search.recent")}
         </h2>
         <p className="mt-4 text-sm" style={{ color: MUTED }}>
-          Asnjë kërkim ende.
+          {t("search.no_recent")}
         </p>
       </section>
     );
@@ -832,10 +835,10 @@ function RecentSearches({
     <section className="mt-8 px-5">
       <div className="flex items-center justify-between">
         <h2 className="text-[20px] font-bold" style={{ color: INK }}>
-          Kërkimet e fundit
+          {t("search.recent")}
         </h2>
         <button type="button" onClick={onClear} className="text-sm" style={{ color: MUTED }}>
-          Pastro të gjitha
+          {t("search.clear_all")}
         </button>
       </div>
       <ul className="mt-3">
@@ -863,7 +866,7 @@ function RecentSearches({
                 e.preventDefault();
                 onRemove(t);
               }}
-              aria-label="Hiq"
+              aria-label={t("search.remove_chip")}
             >
               <X className="h-4 w-4" style={{ color: MUTED }} />
             </button>
@@ -875,16 +878,17 @@ function RecentSearches({
 }
 
 function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
+  const { t } = useTranslation();
   const items: { key: Tab; label: string }[] = [
-    { key: "main", label: "Kryesore" },
-    { key: "profile", label: "Profili" },
-    { key: "brand", label: "Marka" },
-    { key: "category", label: "Kategori" },
+    { key: "main", label: t("search.tab_main") },
+    { key: "profile", label: t("search.tab_profile") },
+    { key: "brand", label: t("search.tab_brand") },
+    { key: "category", label: t("search.tab_category") },
   ];
   return (
     <div
       role="tablist"
-      aria-label="Filtro rezultatet"
+aria-label={t("search.filter_results_aria")}
       className="mt-3 flex gap-2 overflow-x-auto no-scrollbar"
     >
       {items.map((it) => {
@@ -923,6 +927,7 @@ function BrowseAndRecent({
   onRemove: (t: string) => void;
   onClear: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <>
       <section className="mt-6 px-5">
@@ -943,10 +948,10 @@ function BrowseAndRecent({
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold" style={{ color: INK }}>
-              Të gjithë përdoruesit
+              {t("search.all_users")}
             </p>
             <p className="text-xs" style={{ color: MUTED }}>
-              Shfleto profilet e Rroba
+              {t("search.browse_rroba")}
             </p>
           </div>
           <ChevronRight aria-hidden="true" className="h-5 w-5" style={{ color: MUTED }} />
@@ -986,16 +991,17 @@ function TabbedResults({
   onPickBrand: (b: string) => void;
   onPickCategory: (key: string) => void;
 }) {
+  const { t } = useTranslation();
   if (tab === "profile") {
     return (
       <section className="mt-6 px-5">
         <p className="mb-3 text-xs" style={{ color: MUTED }}>
-          {profileLoading ? "Po kërkon..." : `${profiles.length} profile`}
+          {profileLoading ? t("search.searching") : t("search.profiles_count").replace("{n}", String(profiles.length))}
         </p>
         {profileLoading ? (
           <div role="status" aria-live="polite" className="grid place-items-center py-10">
             <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
-            <span className="sr-only">Po ngarkohet</span>
+            <span className="sr-only">{t("search.loading_sr")}</span>
           </div>
         ) : profiles.length === 0 ? (
           <div
@@ -1003,7 +1009,7 @@ function TabbedResults({
             className="rounded-2xl p-10 text-center text-sm"
             style={{ backgroundColor: CARD, color: MUTED }}
           >
-            Asnjë profil u gjet
+            {t("search.no_profiles")}
           </div>
         ) : (
           <ul className="divide-y" style={{ borderColor: DIVIDER }}>
@@ -1028,7 +1034,7 @@ function TabbedResults({
     return (
       <section className="mt-6 px-5">
         <p className="mb-3 text-xs" style={{ color: MUTED }}>
-          {brands.length} marka
+          {t("search.brands_count").replace("{n}", String(brands.length))}
         </p>
         {brands.length === 0 ? (
           <div
@@ -1036,7 +1042,7 @@ function TabbedResults({
             className="rounded-2xl p-10 text-center text-sm"
             style={{ backgroundColor: CARD, color: MUTED }}
           >
-            Asnjë markë u gjet
+            {t("search.no_brands")}
           </div>
         ) : (
           <ul>
@@ -1067,11 +1073,13 @@ function TabbedResults({
             className="rounded-2xl p-10 text-center text-sm"
             style={{ backgroundColor: CARD, color: MUTED }}
           >
-            Asnjë kategori
+            {t("search.no_categories")}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {matchedCategories.map(({ key, label, Icon, boxColor, iconColor }) => (
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              null || (
               <button
                 key={key}
                 type="button"
@@ -1097,7 +1105,7 @@ function TabbedResults({
       {profiles.length > 0 && (
         <section className="mt-6 px-5">
           <h3 className="mb-2 text-sm font-bold" style={{ color: INK }}>
-            Profile
+            {t("search.profiles_heading")}
           </h3>
           <ul>
             {profiles.slice(0, 3).map((p) => (
@@ -1117,7 +1125,7 @@ function TabbedResults({
       {matchedCategories.length > 0 && (
         <section className="mt-4 px-5">
           <h3 className="mb-2 text-sm font-bold" style={{ color: INK }}>
-            Kategoritë
+            {t("search.categories_heading")}
           </h3>
           <div className="flex flex-wrap gap-2">
             {matchedCategories.map(({ key, label }) => (
@@ -1154,7 +1162,8 @@ function ProfileListRow({
   canFollow: boolean;
   onToggleFollow: () => void;
 }) {
-  const label = profile.display_name || profile.name || profile.username || "Përdorues";
+  const { t } = useTranslation();
+  const label = profile.display_name || profile.name || profile.username || t("search.user_fallback");
   return (
     <li className="flex items-center gap-3 border-b py-3" style={{ borderColor: DIVIDER }}>
       <Link
@@ -1176,7 +1185,7 @@ function ProfileListRow({
             {label}
           </p>
           <p className="truncate text-xs" style={{ color: MUTED }}>
-            {[profile.city, `${count} ${count === 1 ? "artikull" : "artikuj"}`]
+            {[profile.city, `${count} ${count === 1 ? t("search.item_singular") : t("search.item_plural")}`]
               .filter(Boolean)
               .join(" · ")}
           </p>
@@ -1198,7 +1207,7 @@ function ProfileListRow({
             fontWeight: 600,
           }}
         >
-          {isFollowing ? "Duke ndjekur" : "Ndiq"}
+          {isFollowing ? t("search.following") : t("search.follow")}
         </button>
       )}
     </li>
@@ -1206,15 +1215,16 @@ function ProfileListRow({
 }
 
 function ResultsSection({ loading, results }: { loading: boolean; results: ListingView[] }) {
+  const { t } = useTranslation();
   return (
     <section className="mt-6 px-5" aria-busy={loading}>
       <p className="mb-3 text-xs" style={{ color: MUTED }} aria-live="polite">
-        {loading ? "Po kërkon..." : `${results.length} rezultate`}
+        {loading ? t("search.searching") : t("search.results_count").replace("{n}", String(results.length))}
       </p>
       {loading ? (
         <div role="status" aria-live="polite" className="grid place-items-center py-10">
           <Loader2 aria-hidden="true" className="h-6 w-6 animate-spin" style={{ color: MUTED }} />
-          <span className="sr-only">Po kërkon</span>
+          <span className="sr-only">{t("search.searching_sr")}</span>
         </div>
       ) : results.length === 0 ? (
         <div
@@ -1222,7 +1232,7 @@ function ResultsSection({ loading, results }: { loading: boolean; results: Listi
           className="rounded-2xl p-10 text-center text-sm"
           style={{ backgroundColor: CARD, color: MUTED }}
         >
-          Asnjë rezultat u gjet
+          {t("search.no_results")}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
@@ -1287,6 +1297,7 @@ function FiltersSheet({
   filters: Filters;
   setFilters: (f: Filters | ((p: Filters) => Filters)) => void;
 }) {
+  const { t } = useTranslation();
   const { cities } = useCities();
   const cityNames = cities.map((c) => c.name);
 
@@ -1302,7 +1313,7 @@ function FiltersSheet({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -1314,40 +1325,40 @@ function FiltersSheet({
           >
             <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
-          <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
+          <SheetTitle style={{ color: INK }}>{t("search.filters_title")}</SheetTitle>
         </div>
         <div className="mt-4 space-y-5">
           <FilterChips
-            label="Gjendja"
+label={t("search.filter_condition")}
             value={filters.condition}
             onChange={(v) => setFilters((p) => ({ ...p, condition: v }))}
             options={[...CONDITIONS]}
           />
           <FilterChips
-            label="Qyteti"
+label={t("search.filter_city")}
             value={filters.city}
             onChange={(v) => setFilters((p) => ({ ...p, city: v }))}
             options={cityNames}
           />
           <FilterChips
-            label="Gjinia"
+label={t("search.filter_gender")}
             value={filters.gender}
             onChange={(v) => setFilters((p) => ({ ...p, gender: v }))}
             options={[...GENDERS]}
           />
           <div>
-            <Label style={{ color: INK }}>Madhësia</Label>
+            <Label style={{ color: INK }}>{t("search.filter_size")}</Label>
             <Input
               value={filters.size ?? ""}
               onChange={(e) => setFilters((p) => ({ ...p, size: e.target.value }))}
-              placeholder="P.sh. M"
+              placeholder={t("search.filter_size_ph")}
               className="mt-1 border-0"
               style={{ backgroundColor: CARD, color: INK }}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label style={{ color: INK }}>Çmimi min (€)</Label>
+              <Label style={{ color: INK }}>{t("search.filter_price_min")}</Label>
               <Input
                 type="number"
                 value={filters.priceMin ?? ""}
@@ -1357,7 +1368,7 @@ function FiltersSheet({
               />
             </div>
             <div>
-              <Label style={{ color: INK }}>Çmimi maks (€)</Label>
+              <Label style={{ color: INK }}>{t("search.filter_price_max")}</Label>
               <Input
                 type="number"
                 value={filters.priceMax ?? ""}
@@ -1373,14 +1384,14 @@ function FiltersSheet({
               className="flex-1 rounded-full py-3 text-sm font-medium"
               style={{ backgroundColor: CARD, color: INK }}
             >
-              Pastro
+              {t("search.clear")}
             </button>
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
               style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
-              Apliko
+              {t("search.apply")}
             </button>
           </div>
         </div>
@@ -1400,6 +1411,7 @@ function FilterChips({
   onChange: (v: string) => void;
   options: string[];
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <Label style={{ color: INK }}>{label}</Label>
