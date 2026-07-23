@@ -285,12 +285,12 @@ export function ReviewsSheet({
                     fontWeight: 600,
                   }}
                 >
-                  VLERËSIM
+                  {t("reviews.rating_label")}
                 </div>
                 <div style={{ fontSize: 42, fontWeight: 700, color: INK, lineHeight: 1.1, marginTop: 4 }}>
                   {avg.toFixed(1)}
                 </div>
-                <div style={{ fontSize: 12, color: MUTED }}>nga 5.0</div>
+                <div style={{ fontSize: 12, color: MUTED }}>{t("reviews.out_of")}</div>
               </div>
               <div
                 style={{
