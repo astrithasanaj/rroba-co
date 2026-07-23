@@ -611,6 +611,7 @@ type ProfileResult = { id: string; name: string | null; avatar_url: string | nul
 
 function NewMessage({ me }: { me: string }) {
   const navigate = useNavigate({ from: "/messages" });
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<ProfileResult[]>([]);
   const [recent, setRecent] = useState<ProfileResult[]>([]);
