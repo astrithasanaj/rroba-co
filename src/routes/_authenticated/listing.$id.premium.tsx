@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, Check } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
 import { MEMBERSHIP_PLANS } from "@/lib/membership-plans";
+
 
 export const Route = createFileRoute("/_authenticated/listing/$id/premium")({
   component: () => (
@@ -22,6 +24,7 @@ const FOCUS_CLASS =
   "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
 
 function PremiumPage() {
+  const { t } = useTranslation();
   return (
     <MobileShell hideNav>
       <div className="min-h-screen" style={{ backgroundColor: CREAM }}>
@@ -53,10 +56,12 @@ function PremiumPage() {
         </header>
 
         <div className="px-4 pt-2 pb-32">
-          {MEMBERSHIP_PLANS.map((plan) => (
+          {MEMBERSHIP_PLANS.map((plan) => {
+            const label = t(plan.labelKey);
+            return (
             <article
               key={plan.key}
-              aria-label={plan.label}
+              aria-label={label}
               className="mb-4"
               style={{
                 backgroundColor: CARD,
@@ -74,7 +79,7 @@ function PremiumPage() {
                   letterSpacing: 1,
                 }}
               >
-                {plan.label}
+                {label}
               </p>
               <p
                 style={{
@@ -84,15 +89,15 @@ function PremiumPage() {
                   marginTop: 4,
                 }}
               >
-                {plan.monthlyPrice}
+                {plan.monthlyAmount} / {t("membership_page.per_month_suffix")}
               </p>
               <p style={{ color: MUTED, fontSize: 13, marginTop: 2 }}>
-                ose {plan.yearlyPrice}
+                {t("membership_page.price_or_yearly")} {plan.yearlyAmount} / {t("membership_page.per_year_suffix")}
               </p>
               <ul className="mt-4 space-y-2">
-                {plan.perks.map((perk) => (
+                {plan.perkKeys.map((perkKey) => (
                   <li
-                    key={perk}
+                    key={perkKey}
                     className="flex items-start gap-2 text-[13px]"
                     style={{ color: INK }}
                   >
@@ -101,12 +106,13 @@ function PremiumPage() {
                       aria-hidden="true"
                       style={{ color: ROSE }}
                     />
-                    <span>{perk}</span>
+                    <span>{t(perkKey)}</span>
                   </li>
                 ))}
               </ul>
             </article>
-          ))}
+            );
+          })}
 
           <p
             className="mt-6 text-center"
