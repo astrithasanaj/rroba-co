@@ -796,8 +796,13 @@ function Thread({ id, me }: { id: string; me: string }) {
         listingCover: urls[cover] || "",
         isBuyer,
       });
-      setMsgs((msgRes.data ?? []) as MessageRow[]);
+      const loaded = (msgRes.data ?? []) as MessageRow[];
+      setMsgs(loaded);
+      if (loaded.length === 0 && isBuyer) {
+        setInput("Përshëndetje! A është ende në dispozicion?");
+      }
       setLoading(false);
+
       const readPatch = isBuyer
         ? { last_read_buyer_at: new Date().toISOString() }
         : { last_read_seller_at: new Date().toISOString() };
