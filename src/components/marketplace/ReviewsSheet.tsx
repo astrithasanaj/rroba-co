@@ -305,15 +305,15 @@ export function ReviewsSheet({
               >
                 <Info
                   icon={<BadgeCheck size={16} color={CORAL} strokeWidth={2.2} />}
-                  text={<b style={{ fontWeight: 700 }}>Shitës i besuar</b>}
+                  text={<b style={{ fontWeight: 700 }}>{t("reviews.trusted_seller")}</b>}
                 />
                 <Info
                   icon={<Star size={16} color={INK} strokeWidth={2} />}
-                  text={<>{rows.length} vlerësime</>}
+                  text={<>{t("reviews.count", { n: rows.length })}</>}
                 />
                 <Info
                   icon={<UserIcon size={16} color={INK} strokeWidth={2} />}
-                  text={<>U bë anëtar në {formatMemberSince(sellerCreatedAt)}</>}
+                  text={<>{t("reviews.member_since", { date: formatMemberSince(sellerCreatedAt, locale) })}</>}
                 />
               </div>
             </div>
