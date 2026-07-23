@@ -20,6 +20,7 @@ import {
   Venus,
   Mars,
 } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
@@ -111,6 +112,7 @@ function saveRecent(list: string[]) {
 }
 
 function SearchPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { q: initialQ, category: initialCategory, section } = Route.useSearch();
   const [q, setQ] = useState(initialQ ?? "");
@@ -457,7 +459,7 @@ function SearchPage() {
       <div style={{ backgroundColor: BG, minHeight: "100vh" }} className="pb-32">
         <header className="px-5 pt-10">
           <h1 className="text-[32px] font-bold leading-none tracking-tight" style={{ color: INK }}>
-            Eksploro
+            {t("search.title")}
           </h1>
 
           <div
@@ -478,11 +480,11 @@ function SearchPage() {
                   inputRef.current?.blur();
                 }
               }}
-              placeholder="Kërko"
+              placeholder={t("search.search_placeholder")}
               enterKeyHint="search"
               inputMode="search"
               autoComplete="off"
-              aria-label="Kërko"
+              aria-label={t("search.search_aria")}
               className="flex-1 bg-transparent text-[16px] outline-none placeholder:font-normal"
               style={{ color: INK }}
             />
@@ -493,7 +495,7 @@ function SearchPage() {
                   setQ("");
                   inputRef.current?.focus();
                 }}
-                aria-label="Pastro kërkimin"
+                aria-label={t("search.clear_search")}
                 className="-mr-2 grid h-11 w-11 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)]"
               >
                 <X aria-hidden="true" className="h-5 w-5" style={{ color: MUTED }} />
@@ -514,7 +516,7 @@ function SearchPage() {
                   style={{ backgroundColor: CORAL }}
                 >
                   {c.label}
-                  <button type="button" onClick={() => removeChip(c.id)} aria-label="Hiq">
+                  <button type="button" onClick={() => removeChip(c.id)} aria-label={t("search.remove_chip")}>
                     <X className="h-3 w-3" />
                   </button>
                 </span>
@@ -572,7 +574,7 @@ function SearchPage() {
             style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
           >
             <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
-            <span className="text-sm font-semibold">Filtro</span>
+            <span className="text-sm font-semibold">{t("search.filter_button")}</span>
             {activeCount > 0 && (
               <span
                 className="ml-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold"
