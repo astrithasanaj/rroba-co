@@ -5,6 +5,8 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { getCategory } from "@/lib/categories";
 import { CATEGORY_TAXONOMY } from "@/lib/category-taxonomy";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "var(--brand-surface)";
 const CHIP = "var(--brand-surface)";
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/category/$slug/subcategory")({
 function SubcategorySelectPage() {
   const { slug } = useParams({ from: "/category/$slug/subcategory" });
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const def = getCategory(slug);
   const subcategories = useMemo<string[]>(() => {
     const node = CATEGORY_TAXONOMY.find((n) => n.key === slug);
