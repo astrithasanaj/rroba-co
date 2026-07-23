@@ -144,7 +144,7 @@ function GenderSelectPage() {
                         color: active ? "var(--brand-surface)" : INK,
                       }}
                     >
-                      {s}
+                      {tCategory(s, t)}
                     </button>
                   );
                 })}
