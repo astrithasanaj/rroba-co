@@ -18,22 +18,22 @@ import { BottomNav } from "@/components/marketplace/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { UserCollectionsProvider } from "@/lib/user-collections";
+import { LanguageProvider, useTranslation } from "@/i18n";
 
 function NotFoundComponent() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Faqja nuk u gjet</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Faqja që po kërkon nuk ekziston ose është zhvendosur.
-        </p>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">{t("root.notFoundTitle")}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{t("root.notFoundBody")}</p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Kthehu në ballinë
+            {t("common.back_home")}
           </Link>
         </div>
       </div>
@@ -44,6 +44,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const { t } = useTranslation();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -52,11 +53,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Kjo faqe nuk u ngarkua
+          {t("root.errorTitle")}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Diçka shkoi keq nga ana jonë. Provo ta rifreskosh ose kthehu në ballinë.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{t("root.errorBody")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -65,13 +64,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Provo përsëri
+            {t("common.retry")}
           </button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Kthehu në ballinë
+            {t("common.back_home")}
           </a>
         </div>
       </div>
@@ -119,7 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="sq">
       <head>
         <HeadContent />
       </head>
@@ -175,22 +174,24 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UserCollectionsProvider>
-        <div
-          style={{
-            position: "relative",
-            width: "100%",
-            height: "100dvh",
-            overflow: "hidden",
-          }}
-        >
-          <OnboardingGate />
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </div>
-        <Toaster />
-        {navRoot && !hideBottomNav ? createPortal(<BottomNav />, navRoot) : null}
-      </UserCollectionsProvider>
+      <LanguageProvider>
+        <UserCollectionsProvider>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "100dvh",
+              overflow: "hidden",
+            }}
+          >
+            <OnboardingGate />
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </div>
+          <Toaster />
+          {navRoot && !hideBottomNav ? createPortal(<BottomNav />, navRoot) : null}
+        </UserCollectionsProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

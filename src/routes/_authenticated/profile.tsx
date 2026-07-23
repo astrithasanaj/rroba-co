@@ -46,6 +46,7 @@ import {
 import { compressImage, AVATAR_OPTIONS } from "@/utils/compressImage";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { getMembershipPlan } from "@/lib/membership-plans";
+import { useTranslation, type Language } from "@/i18n";
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
@@ -1509,6 +1510,7 @@ type SettingsView =
   | "main"
   | "profile"
   | "notifications"
+  | "language"
   | "faq"
   | "support"
   | "privacy"
@@ -1554,14 +1556,16 @@ function SettingsSheet({
     else onOpenChange(false);
   };
 
+  const { t } = useTranslation();
   const titles: Record<SettingsView, string> = {
-    main: "Cilësimet",
-    profile: "Ndrysho profilin",
-    notifications: "Njoftimet",
-    faq: "Pyetjet e shpeshta",
-    support: "Mbështetje",
-    privacy: "Privatësia",
-    terms: "Kushtet e shërbimit",
+    main: t("settings.title"),
+    profile: t("settings.edit_profile"),
+    notifications: t("settings.notifications"),
+    language: t("settings.language"),
+    faq: t("settings.faq"),
+    support: t("settings.contact_support"),
+    privacy: t("settings.privacy"),
+    terms: t("settings.terms"),
   };
 
   return (
@@ -1585,7 +1589,7 @@ function SettingsSheet({
           <button
             type="button"
             onClick={handleBack}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
             style={{
               width: 44,
@@ -1635,6 +1639,7 @@ function SettingsSheet({
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
+          {view === "language" && <LanguageView />}
           {view === "faq" && <FaqView />}
           {view === "support" && <SupportView />}
           {view === "privacy" && <PrivacyView />}
@@ -1730,6 +1735,7 @@ function SettingsMain({
   onDeleteAccount: () => void;
   onOpenMembership: () => void;
 }) {
+  const { t, language } = useTranslation();
   const [membershipTier, setMembershipTier] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
@@ -1745,56 +1751,68 @@ function SettingsMain({
   }, []);
   const activePlan = getMembershipPlan(membershipTier);
   const membershipSubtitle = activePlan
-    ? `${activePlan.label} · Aktiv`
-    : "Shiko planet dhe përfitimet";
+    ? `${activePlan.label} · ${t("settings.membership_active_suffix")}`
+    : t("settings.membership_view_plans");
+  const languageSubtitle =
+    language === "en" ? t("settings.language_en") : t("settings.language_sq");
   return (
     <div>
-      <SectionHeader>Llogaria</SectionHeader>
+      <SectionHeader>{t("settings.section_account")}</SectionHeader>
       <div>
         <Row
           icon="ti-user"
-          title="Ndrysho profilin"
-          subtitle="Emri, bio, foto, qyteti"
+          title={t("settings.edit_profile")}
+          subtitle={t("settings.edit_profile_subtitle")}
           onClick={() => onNavigate("profile")}
         />
         <Row
           icon="ti-bell"
-          title="Njoftimet"
-          subtitle="Menaxho njoftimet push dhe email"
+          title={t("settings.notifications")}
+          subtitle={t("settings.notifications_subtitle")}
           onClick={() => onNavigate("notifications")}
         />
         <Row
           icon="ti-crown"
-          title="Anëtarësimi"
+          title={t("settings.membership")}
           subtitle={membershipSubtitle}
           onClick={onOpenMembership}
           isLast
         />
       </div>
 
-
-      <SectionHeader>Ndihmë</SectionHeader>
+      <SectionHeader>{t("settings.section_preferences")}</SectionHeader>
       <div>
-        <Row icon="ti-help-circle" title="Pyetjet e shpeshta" onClick={() => onNavigate("faq")} />
+        <Row
+          icon="ti-language"
+          title={t("settings.language")}
+          subtitle={languageSubtitle}
+          onClick={() => onNavigate("language")}
+          isLast
+        />
+      </div>
+
+      <SectionHeader>{t("settings.section_help")}</SectionHeader>
+      <div>
+        <Row icon="ti-help-circle" title={t("settings.faq")} onClick={() => onNavigate("faq")} />
         <Row
           icon="ti-message"
-          title="Kontakto mbështetjen"
+          title={t("settings.contact_support")}
           onClick={() => onNavigate("support")}
           isLast
         />
       </div>
 
-      <SectionHeader>Tjetër</SectionHeader>
+      <SectionHeader>{t("settings.section_other")}</SectionHeader>
       <div>
         <Row
           icon="ti-shield"
-          title="Privatësia"
-          subtitle="Politikat dhe të dhënat e tua"
+          title={t("settings.privacy")}
+          subtitle={t("settings.privacy_subtitle")}
           onClick={() => onNavigate("privacy")}
         />
         <Row
           icon="ti-file-text"
-          title="Kushtet e shërbimit"
+          title={t("settings.terms")}
           onClick={() => onNavigate("terms")}
           isLast
         />
@@ -1813,7 +1831,7 @@ function SettingsMain({
           padding: "18px 20px",
         }}
       >
-        <span style={{ fontSize: 14, fontWeight: 500, color: SOLD }}>Dilni nga llogaria</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: SOLD }}>{t("settings.sign_out")}</span>
       </button>
 
       {/* Delete account */}
@@ -1821,7 +1839,7 @@ function SettingsMain({
       <button
         type="button"
         onClick={onDeleteAccount}
-        aria-label="Fshij llogarinë"
+        aria-label={t("settings.delete_account")}
         className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         style={{
           display: "flex",
@@ -1846,10 +1864,10 @@ function SettingsMain({
           <div
             style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-danger)", lineHeight: 1.3 }}
           >
-            Fshij llogarinë
+            {t("settings.delete_account")}
           </div>
           <div style={{ fontSize: 12, color: MUTED, marginTop: 2, lineHeight: 1.3 }}>
-            Fshi përgjithmonë të gjitha të dhënat tuaja
+            {t("settings.delete_account_subtitle")}
           </div>
         </div>
       </button>
@@ -2377,6 +2395,52 @@ function FaqItem({
           {a}
         </div>
       </div>
+    </div>
+  );
+}
+
+function LanguageView() {
+  const { t, language, setLanguage } = useTranslation();
+  const options: Array<{ key: Language; label: string; hint: string }> = [
+    { key: "sq", label: t("settings.language_sq"), hint: "Shqip" },
+    { key: "en", label: t("settings.language_en"), hint: "English" },
+  ];
+  return (
+    <div className="pt-2">
+      {options.map((opt, i) => {
+        const active = language === opt.key;
+        return (
+          <button
+            key={opt.key}
+            type="button"
+            onClick={() => setLanguage(opt.key)}
+            className="settings-row"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              padding: "16px 20px",
+              background: "transparent",
+              border: "none",
+              borderTop: i === 0 ? `1px solid ${DIVIDER}` : "none",
+              borderBottom: `1px solid ${DIVIDER}`,
+              textAlign: "left",
+              cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+              minHeight: 56,
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontSize: 15, fontWeight: 500, color: INK, lineHeight: 1.3 }}>
+                {opt.label}
+              </span>
+              <span style={{ fontSize: 12, color: MUTED, lineHeight: 1.3 }}>{opt.hint}</span>
+            </div>
+            {active && <Check size={20} color={INK} strokeWidth={2.25} />}
+          </button>
+        );
+      })}
     </div>
   );
 }
