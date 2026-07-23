@@ -575,7 +575,7 @@ export function ReviewsSheet({
               }}
             >
               {submitting && <Loader2 className="animate-spin" size={16} />}
-              Dërgo vlerësimin
+              {t("reviews.submit")}
             </button>
           </div>
         </SheetContent>
