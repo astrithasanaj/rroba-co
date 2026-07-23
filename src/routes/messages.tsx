@@ -1042,15 +1042,15 @@ function Thread({ id, me }: { id: string; me: string }) {
           {loading ? (
             <div className="grid flex-1 place-items-center" role="status" aria-live="polite">
               <Loader2 className="h-6 w-6 animate-spin" style={{ color: INK_SECONDARY }} aria-hidden="true" />
-              <span className="sr-only">Duke ngarkuar mesazhet…</span>
+              <span className="sr-only">{t("messages.loading_sr")}</span>
             </div>
           ) : loadError ? (
             <div role="alert" className="grid flex-1 place-items-center px-6 text-center text-sm" style={{ color: INK_SECONDARY }}>
-              Biseda nuk u gjet.
+              {t("messages.thread_not_found")}
             </div>
           ) : msgs.length === 0 ? (
             <div role="status" aria-live="polite" className="grid flex-1 place-items-center px-6 text-center text-sm" style={{ color: INK_SECONDARY }}>
-              Filloni bisedën me një mesazh.
+              {t("messages.start_conversation")}
             </div>
           ) : (
             <div className="flex flex-col gap-1">
@@ -1071,7 +1071,7 @@ function Thread({ id, me }: { id: string; me: string }) {
                         whiteSpace: "pre-wrap",
                       }}
                     >
-                      <span className="sr-only">{mine ? "Ti: " : `${info?.otherName ?? "Përdoruesi"}: `}</span>
+                      <span className="sr-only">{mine ? `${t("messages.you_prefix")} ` : `${info?.otherName ?? t("messages.other_user_fallback")}: `}</span>
                       {m.content}
                     </div>
                     {showTime && (
@@ -1099,14 +1099,14 @@ function Thread({ id, me }: { id: string; me: string }) {
             willChange: "transform",
           }}
         >
-          <label htmlFor="thread-composer" className="sr-only">Shkruaj një mesazh</label>
+          <label htmlFor="thread-composer" className="sr-only">{t("messages.write_aria")}</label>
           <div className="flex items-center gap-2">
             <input
               id="thread-composer"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Shkruaj një mesazh..."
-              aria-label="Shkruaj një mesazh"
+              placeholder={t("messages.write_placeholder")}
+              aria-label={t("messages.write_aria")}
               enterKeyHint="send"
               disabled={sending}
               className={`flex-1 rounded-full px-4 ${FOCUS_RING}`}
