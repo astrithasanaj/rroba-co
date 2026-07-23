@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, Check } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
 import { MEMBERSHIP_PLANS } from "@/lib/membership-plans";
+
 
 export const Route = createFileRoute("/_authenticated/listing/$id/premium")({
   component: () => (
