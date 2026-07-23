@@ -71,8 +71,9 @@ function CategoryResultsPage() {
 
   const title = useMemo(() => {
     if (!def) return "";
-    return genderOption ? `${def.label} · ${genderOption.label}` : def.label;
-  }, [def, genderOption]);
+    const base = tCategory(def.label, t);
+    return genderOption ? `${base} · ${tCategory(genderOption.label, t)}` : base;
+  }, [def, genderOption, t]);
 
   useEffect(() => {
     if (!def) return;
