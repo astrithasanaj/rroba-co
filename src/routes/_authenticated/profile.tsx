@@ -697,9 +697,9 @@ function ProfilePage() {
             className="grid grid-cols-4"
             style={{ backgroundColor: CREAM }}
           >
-            {tabs.map((t) => {
-              const Icon = t.icon;
-              const active = tab === t.id;
+            {tabs.map((tabItem) => {
+              const Icon = tabItem.icon;
+              const active = tab === tabItem.id;
               const tabLabels: Record<Tab, string> = {
                 mine: t("profile.tab_mine"),
                 liked: t("profile.tab_liked"),
@@ -708,14 +708,14 @@ function ProfilePage() {
               };
               return (
                 <button
-                  key={t.id}
-                  id={`profile-tab-${t.id}`}
+                  key={tabItem.id}
+                  id={`profile-tab-${tabItem.id}`}
                   role="tab"
                   aria-selected={active}
-                  aria-controls={`profile-panel-${t.id}`}
+                  aria-controls={`profile-panel-${tabItem.id}`}
                   tabIndex={active ? 0 : -1}
-                  aria-label={tabLabels[t.id]}
-                  onClick={() => setTab(t.id)}
+                  aria-label={tabLabels[tabItem.id]}
+                  onClick={() => setTab(tabItem.id)}
                   className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
                   style={{ height: 52, background: "transparent", border: "none" }}
                 >
