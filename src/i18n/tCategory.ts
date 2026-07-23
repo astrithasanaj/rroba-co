@@ -1,5 +1,5 @@
-// Shared helper to translate category, gender, and subcategory labels
-// while preserving the underlying database/source values.
+// Shared helper to translate category, gender, subcategory, condition, and
+// color labels while preserving the underlying database/source values.
 const LABEL_TO_KEY: Record<string, string> = {
   // Top-level categories
   "Modë & aksesorë": "categories.mode",
@@ -16,6 +16,31 @@ const LABEL_TO_KEY: Record<string, string> = {
   "Vajza": "categories.vajza",
   "Djem": "categories.djem",
   "Bebe": "categories.bebe",
+  // Conditions
+  "I ri": "conditions.new",
+  "Mirë përdorur": "conditions.good",
+  "Përdorur": "conditions.used",
+  "Shumë përdorur": "conditions.heavy",
+  // Colors
+  "E zezë": "colors.black",
+  "Gri": "colors.gray",
+  "E bardhë": "colors.white",
+  "Shumëngjyrësh": "colors.multi",
+  "Bezhë": "colors.beige",
+  "E gjelbër": "colors.green",
+  "Kaki": "colors.khaki",
+  "Blu": "colors.blue",
+  "Blu marine": "colors.navy",
+  "Turkez": "colors.turquoise",
+  "Vjollcë": "colors.purple",
+  "Rozë": "colors.pink",
+  "E kuqe": "colors.red",
+  "Burgundy": "colors.burgundy",
+  "Kafe": "colors.brown",
+  "Portokalli": "colors.orange",
+  "E verdhë": "colors.yellow",
+  "Argjend": "colors.silver",
+  "Ari": "colors.gold",
   // Subcategories — fashion
   "Veshje": "subcats.veshje",
   "Bluza": "subcats.bluza",

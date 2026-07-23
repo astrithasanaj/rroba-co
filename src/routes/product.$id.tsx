@@ -24,6 +24,7 @@ import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { getListingLikeInfo } from "@/lib/likes.functions";
 import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 export const Route = createFileRoute("/product/$id")({
   component: () => (
@@ -187,13 +188,13 @@ function ProductDetail() {
   }
 
   const meta: [string, string][] = [
-    [t("product.meta_category"), listing.category],
-    [t("product.meta_type"), listing.subcategory || t("product.dash")],
+    [t("product.meta_category"), tCategory(listing.category, t)],
+    [t("product.meta_type"), listing.subcategory ? tCategory(listing.subcategory, t) : t("product.dash")],
     [t("product.meta_brand"), listing.brand || t("product.dash")],
-    [t("product.meta_condition"), listing.condition],
+    [t("product.meta_condition"), tCategory(listing.condition, t)],
     [t("product.meta_size"), listing.size],
-    [t("product.meta_color"), listing.color || t("product.dash")],
-    [t("product.meta_gender"), listing.gender],
+    [t("product.meta_color"), listing.color ? tCategory(listing.color, t) : t("product.dash")],
+    [t("product.meta_gender"), tCategory(listing.gender, t)],
     [t("product.meta_city"), listing.city || t("product.dash")],
   ];
 
