@@ -122,7 +122,7 @@ function CategoryResultsPage() {
           style={{ backgroundColor: BG, minHeight: "100vh", color: INK }}
           className="p-10 text-center"
         >
-          Kategoria nuk u gjet
+          {t("category.not_found")}
         </div>
       </MobileShell>
     );
@@ -139,7 +139,7 @@ function CategoryResultsPage() {
           <button
             type="button"
             onClick={backTo}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="absolute left-5 top-6 grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -162,7 +162,7 @@ function CategoryResultsPage() {
 
         <div className="px-5 flex items-center justify-between gap-2">
           <p className="text-xs" style={{ color: MUTED }}>
-            {loading ? "Po ngarkohet..." : `${results.length} artikuj`}
+            {loading ? t("category.loading") : t("category.items_count", { n: results.length })}
           </p>
           <button
             type="button"
@@ -171,7 +171,7 @@ function CategoryResultsPage() {
             style={{ backgroundColor: CARD, color: INK }}
           >
             <LayoutGrid aria-hidden="true" className="h-3.5 w-3.5" />
-            Kategoritë
+            {t("home.categories")}
           </button>
         </div>
 
@@ -183,7 +183,7 @@ function CategoryResultsPage() {
                 className="h-6 w-6 animate-spin"
                 style={{ color: MUTED }}
               />
-              <span className="sr-only">Po ngarkohet</span>
+              <span className="sr-only">{t("category.loading")}</span>
             </div>
           ) : results.length === 0 ? (
             <div
@@ -192,7 +192,7 @@ function CategoryResultsPage() {
               style={{ backgroundColor: CARD, color: MUTED }}
             >
               <PackageSearch aria-hidden="true" className="h-10 w-10" strokeWidth={1.4} />
-              Asnjë artikull u gjet për këtë kategori
+              {t("category.no_results")}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -210,7 +210,7 @@ function CategoryResultsPage() {
           style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
         >
           <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
-          <span className="text-sm font-semibold">Filtro</span>
+          <span className="text-sm font-semibold">{t("common.filter")}</span>
           {activeCount > 0 && (
             <span
               className="ml-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold"
