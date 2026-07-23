@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
 
 export const Route = createFileRoute("/favorites")({
   component: () => (
@@ -22,6 +23,7 @@ type LoadState = "loading" | "ready" | "error";
 
 function Favorites() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [items, setItems] = useState<ListingView[]>([]);
   const [state, setState] = useState<LoadState>("loading");
   const [reloadKey, setReloadKey] = useState(0);
@@ -92,7 +94,7 @@ function Favorites() {
           className="font-display text-3xl truncate"
           style={{ color: "var(--brand-ink)" }}
         >
-          Të ruajtura
+          {t("favorites.title")}
         </h1>
         <span
           aria-live="polite"
@@ -109,7 +111,7 @@ function Favorites() {
           aria-live="polite"
           className="grid grid-cols-2 gap-3 px-5 py-3"
         >
-          <span className="sr-only">Duke ngarkuar të ruajturat…</span>
+          <span className="sr-only">{t("favorites.loading_sr")}</span>
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -126,8 +128,8 @@ function Favorites() {
         <div role="alert" className="px-5 py-10">
           <EmptyState
             icon={<Heart className="h-6 w-6" aria-hidden="true" />}
-            title="Diçka shkoi keq."
-            description="Nuk arritëm t'i ngarkojmë të ruajturat. Provo përsëri."
+            title={t("favorites.error_title")}
+            description={t("favorites.error_body")}
             action={
               <button
                 type="button"
@@ -138,7 +140,7 @@ function Favorites() {
                   color: "var(--brand-surface)",
                 }}
               >
-                Provo përsëri
+                {t("common.retry")}
               </button>
             }
           />
@@ -146,11 +148,11 @@ function Favorites() {
       ) : count === 0 ? (
         <EmptyState
           icon={<Heart className="h-6 w-6" aria-hidden="true" />}
-          title="Ruaj artikujt që të pëlqejnë."
-          description="Prek zemrën në çdo artikull për ta gjetur më vonë."
+          title={t("favorites.empty_title")}
+          description={t("favorites.empty_body")}
           action={
             <Link to="/" className="focus-visible:outline-none">
-              <PrimaryButton>Shfleto artikuj</PrimaryButton>
+              <PrimaryButton>{t("favorites.empty_cta")}</PrimaryButton>
             </Link>
           }
         />
