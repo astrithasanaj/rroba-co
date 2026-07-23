@@ -1,55 +1,56 @@
 // Delt / kanonisk konfigurasjon for medlemskapsplaner.
 // Ikke dupliser denne listen i andre komponenter — importer herfra.
+// UI-etiketter og fordeler oversettes via i18n (`membership_page.*`).
 
 export type MembershipPlanKey = "basic" | "mid" | "pro";
 
 export type MembershipPlan = {
   key: MembershipPlanKey;
-  label: string; // vist i UI (albansk, all caps)
-  monthlyPrice: string;
-  yearlyPrice: string;
-  perks: string[];
+  labelKey: string; // i18n key for uppercase label
+  monthlyAmount: string; // e.g. "€2.99"
+  yearlyAmount: string; // e.g. "€24.99"
+  perkKeys: string[]; // i18n keys for perks
   highlight?: boolean;
 };
 
 export const MEMBERSHIP_PLANS: MembershipPlan[] = [
   {
     key: "basic",
-    label: "BAZË",
-    monthlyPrice: "€2.99 / muaj",
-    yearlyPrice: "€24.99 / vit",
-    perks: [
-      "5 kredite për krye të kërkimit në muaj",
-      "5 ditë plasim i paguar në muaj",
-      "Distinktiv i verifikuar",
-      "Statistika",
+    labelKey: "membership_page.plan_basic_label",
+    monthlyAmount: "€2.99",
+    yearlyAmount: "€24.99",
+    perkKeys: [
+      "membership_page.perk_basic_1",
+      "membership_page.perk_basic_2",
+      "membership_page.perk_basic_3",
+      "membership_page.perk_basic_4",
     ],
   },
   {
     key: "mid",
-    label: "MESATAR",
-    monthlyPrice: "€4.99 / muaj",
-    yearlyPrice: "€39.99 / vit",
+    labelKey: "membership_page.plan_mid_label",
+    monthlyAmount: "€4.99",
+    yearlyAmount: "€39.99",
     highlight: true,
-    perks: [
-      "12 kredite për krye të kërkimit në muaj",
-      "12 ditë plasim i paguar në muaj",
-      "Distinktiv i artë",
-      "Përparësi në kërkim",
-      "Statistika",
+    perkKeys: [
+      "membership_page.perk_mid_1",
+      "membership_page.perk_mid_2",
+      "membership_page.perk_mid_3",
+      "membership_page.perk_mid_4",
+      "membership_page.perk_mid_5",
     ],
   },
   {
     key: "pro",
-    label: "PRO",
-    monthlyPrice: "€8.99 / muaj",
-    yearlyPrice: "€69.99 / vit",
-    perks: [
-      "20 kredite për krye të kërkimit në muaj",
-      "30 ditë plasim i paguar në muaj",
-      "Distinktiv PRO",
-      "Paraqitje në ballinë",
-      "Mbështetje me përparësi",
+    labelKey: "membership_page.plan_pro_label",
+    monthlyAmount: "€8.99",
+    yearlyAmount: "€69.99",
+    perkKeys: [
+      "membership_page.perk_pro_1",
+      "membership_page.perk_pro_2",
+      "membership_page.perk_pro_3",
+      "membership_page.perk_pro_4",
+      "membership_page.perk_pro_5",
     ],
   },
 ];
