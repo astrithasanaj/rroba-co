@@ -24,22 +24,25 @@ type Row = {
 
 type RaterProfile = { id: string; name: string | null; avatar_url: string | null };
 
-function formatReviewDate(date: string) {
-  const d = new Date(date);
-  const now = new Date();
-  const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
-  if (diffDays <= 0) return "sot";
-  if (diffDays === 1) return "dje";
-  if (diffDays < 7) return `${diffDays} ditë`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} javë`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} muaj`;
-  return `${Math.floor(diffDays / 365)} vjet`;
+function useFormatReviewDate() {
+  const { t } = useTranslation();
+  return (date: string) => {
+    const d = new Date(date);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
+    if (diffDays <= 0) return t("reviews.time_today");
+    if (diffDays === 1) return t("reviews.time_yesterday");
+    if (diffDays < 7) return t("reviews.time_days", { n: diffDays });
+    if (diffDays < 30) return t("reviews.time_weeks", { n: Math.floor(diffDays / 7) });
+    if (diffDays < 365) return t("reviews.time_months", { n: Math.floor(diffDays / 30) });
+    return t("reviews.time_years", { n: Math.floor(diffDays / 365) });
+  };
 }
 
-function formatMemberSince(iso?: string | null) {
+function formatMemberSince(iso: string | null | undefined, locale: string) {
   if (!iso) return "—";
   const d = new Date(iso);
-  return d.toLocaleDateString("sq-AL", { month: "long", year: "numeric" });
+  return d.toLocaleDateString(locale, { month: "long", year: "numeric" });
 }
 
 function StarBar({ value, size = 14 }: { value: number; size?: number }) {
