@@ -5,6 +5,7 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
+import { useTranslation } from "@/i18n";
 
 export const Route = createFileRoute("/notifications")({
   component: () => (<SwipeBackWrapper><NotificationsPage /></SwipeBackWrapper>),
@@ -49,22 +50,23 @@ function actorIdOf(n: Notif): string | null {
   return typeof id === "string" ? id : null;
 }
 
-function formatNotifTime(iso: string) {
+function formatNotifTime(iso: string, t: (k: string, p?: Record<string, string | number>) => string, locale: string) {
   const d = new Date(iso);
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
   const min = Math.floor(diffMs / 60000);
-  if (min < 1) return "tani";
-  if (min < 60) return `${min} min`;
+  if (min < 1) return t("notifications.time_now");
+  if (min < 60) return t("notifications.time_min", { n: min });
   const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr} h`;
+  if (hr < 24) return t("notifications.time_hour", { n: hr });
   const day = Math.floor(hr / 24);
-  if (day < 7) return `${day} d`;
-  return d.toLocaleDateString("sq-AL", { day: "numeric", month: "short" });
+  if (day < 7) return t("notifications.time_day", { n: day });
+  return d.toLocaleDateString(locale, { day: "numeric", month: "short" });
 }
 
 function NotificationsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [me, setMe] = useState<string | null>(null);
   const [items, setItems] = useState<Notif[]>([]);
   const [actors, setActors] = useState<Record<string, ActorProfile>>({});
@@ -175,7 +177,7 @@ function NotificationsPage() {
         <button
           type="button"
           onClick={() => window.history.back()}
-          aria-label="Kthehu"
+          aria-label={t("common.back")}
           className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_RING}`}
           style={{
             backgroundColor: GLASS_BG,
@@ -186,12 +188,12 @@ function NotificationsPage() {
         >
           <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" style={{ color: INK }} />
         </button>
-        <h1 className="font-display text-2xl" style={{ color: INK }}>Njoftimet</h1>
+        <h1 className="font-display text-2xl" style={{ color: INK }}>{t("notifications.title")}</h1>
       </header>
 
       {loading ? (
         <>
-          <span className="sr-only" role="status" aria-live="polite">Duke ngarkuar njoftimet…</span>
+          <span className="sr-only" role="status" aria-live="polite">{t("notifications.loading_sr")}</span>
           <ul aria-hidden="true">
             {Array.from({ length: 6 }).map((_, i) => (
               <li
@@ -214,7 +216,7 @@ function NotificationsPage() {
           className="mx-5 mt-6 rounded-2xl border border-dashed p-10 text-center text-sm"
           style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
         >
-          Diçka shkoi keq. Provo më vonë.
+          {t("notifications.error")}
         </div>
       ) : items.length === 0 ? (
         <div
@@ -224,7 +226,7 @@ function NotificationsPage() {
           style={{ borderColor: DIVIDER, color: INK_SECONDARY }}
         >
           <Bell className="mx-auto mb-3 h-8 w-8" style={{ color: INK_SECONDARY }} aria-hidden="true" />
-          Ende nuk ke njoftime.
+          {t("notifications.empty")}
         </div>
       ) : (
         <ul>
