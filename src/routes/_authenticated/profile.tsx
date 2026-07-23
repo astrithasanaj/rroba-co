@@ -1556,14 +1556,16 @@ function SettingsSheet({
     else onOpenChange(false);
   };
 
+  const { t } = useTranslation();
   const titles: Record<SettingsView, string> = {
-    main: "Cilësimet",
-    profile: "Ndrysho profilin",
-    notifications: "Njoftimet",
-    faq: "Pyetjet e shpeshta",
-    support: "Mbështetje",
-    privacy: "Privatësia",
-    terms: "Kushtet e shërbimit",
+    main: t("settings.title"),
+    profile: t("settings.edit_profile"),
+    notifications: t("settings.notifications"),
+    language: t("settings.language"),
+    faq: t("settings.faq"),
+    support: t("settings.contact_support"),
+    privacy: t("settings.privacy"),
+    terms: t("settings.terms"),
   };
 
   return (
@@ -1587,7 +1589,7 @@ function SettingsSheet({
           <button
             type="button"
             onClick={handleBack}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]"
             style={{
               width: 44,
@@ -1637,6 +1639,7 @@ function SettingsSheet({
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
+          {view === "language" && <LanguageView />}
           {view === "faq" && <FaqView />}
           {view === "support" && <SupportView />}
           {view === "privacy" && <PrivacyView />}
