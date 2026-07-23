@@ -1756,7 +1756,7 @@ function SettingsMain({
   }, []);
   const activePlan = getMembershipPlan(membershipTier);
   const membershipSubtitle = activePlan
-    ? `${activePlan.label} · ${t("settings.membership_active_suffix")}`
+    ? `${t(activePlan.labelKey)} · ${t("settings.membership_active_suffix")}`
     : t("settings.membership_view_plans");
   const languageSubtitle =
     language === "en" ? t("settings.language_en") : t("settings.language_sq");
