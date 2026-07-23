@@ -259,6 +259,7 @@ function NotificationRow({
   onOpen: () => void;
   onActor: (e: React.MouseEvent | React.KeyboardEvent, actorId: string) => void;
 }) {
+  const { t, locale } = useTranslation();
   const Icon =
     n.type === "offer"
       ? Tag
@@ -275,7 +276,7 @@ function NotificationRow({
       : Bell;
 
   const actorId = actorIdOf(n);
-  const actorName = actor?.name || (actorId ? "Përdorues" : null);
+  const actorName = actor?.name || (actorId ? t("notifications.default_user") : null);
 
   const body = useMemo(() => {
     const nameEl = actorId && actorName ? (
@@ -293,7 +294,7 @@ function NotificationRow({
     if (n.type === "offer") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} bëri një ofertë: </> : "Ofertë e re: "}
+          {nameEl ? <>{nameEl} {t("notifications.offer_by", { name: "" }).replace("{name}", "").trim()} </> : `${t("notifications.offer_new")} `}
           <span className="font-semibold">€{String(n.data.amount ?? "?")}</span>
         </p>
       );
@@ -301,37 +302,37 @@ function NotificationRow({
     if (n.type === "message") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} të dërgoi një mesazh: </> : "Mesazh i ri: "}
+          {nameEl ? <>{nameEl} {t("notifications.message_by", { name: "" }).replace("{name}", "").trim()} </> : `${t("notifications.message_new")} `}
           <span style={{ color: INK_SECONDARY }}>{String(n.data.preview ?? "")}</span>
         </p>
       );
     }
     if (n.type === "sold") {
-      return <p className="text-sm" style={{ color: INK }}>Artikulli yt u shit! 🎉</p>;
+      return <p className="text-sm" style={{ color: INK }}>{t("notifications.sold")}</p>;
     }
     if (n.type === "new_follower") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ?? "Dikush"} filloi të të ndjekë
+          {nameEl ? <>{nameEl} {t("notifications.follower_by", { name: "" }).replace("{name}", "").trim()}</> : t("notifications.follower_generic")}
         </p>
       );
     }
     if (n.type === "like") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} pëlqeu artikullin tënd</> : "Dikush pëlqeu artikullin tënd"}
+          {nameEl ? <>{nameEl} {t("notifications.like_by", { name: "" }).replace("{name}", "").trim()}</> : t("notifications.like_generic")}
         </p>
       );
     }
     if (n.type === "save") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} ruajti artikullin tënd</> : "Dikush ruajti artikullin tënd"}
+          {nameEl ? <>{nameEl} {t("notifications.save_by", { name: "" }).replace("{name}", "").trim()}</> : t("notifications.save_generic")}
         </p>
       );
     }
-    return <p className="text-sm" style={{ color: INK }}>Njoftim</p>;
-  }, [n, actorId, actorName, onActor]);
+    return <p className="text-sm" style={{ color: INK }}>{t("notifications.generic")}</p>;
+  }, [n, actorId, actorName, onActor, t]);
 
   return (
     <li style={{ borderBottom: `1px solid ${DIVIDER}` }}>
@@ -345,7 +346,7 @@ function NotificationRow({
             onOpen();
           }
         }}
-        aria-label={`${n.read ? "" : "E palexuar. "}Hap njoftimin`}
+        aria-label={`${n.read ? "" : `${t("notifications.unread_prefix")} `}${t("notifications.open_aria")}`}
         className={`flex cursor-pointer items-center gap-3 px-5 py-4 transition-colors ${FOCUS_RING}`}
         style={{
           backgroundColor: n.read ? SURFACE : ROSE_SOFT,
@@ -358,7 +359,7 @@ function NotificationRow({
             onClick={(e) => onActor(e, actorId)}
             className={`relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full active:opacity-70 ${FOCUS_RING}`}
             style={{ backgroundColor: CREAM_SOFT }}
-            aria-label={actor.name ? `Profili i ${actor.name}` : "Profili"}
+            aria-label={actor.name ? t("notifications.profile_of", { name: actor.name }) : t("notifications.profile")}
           >
             <img
               src={actor.avatar_url}
@@ -389,8 +390,8 @@ function NotificationRow({
         <div className="min-w-0 flex-1">
           <div className="truncate">{body}</div>
           <p className="text-[11px]" style={{ color: INK_SECONDARY, marginTop: 2 }}>
-            <time dateTime={n.created_at} title={new Date(n.created_at).toLocaleString("sq-AL")}>
-              {formatNotifTime(n.created_at)}
+            <time dateTime={n.created_at} title={new Date(n.created_at).toLocaleString(locale)}>
+              {formatNotifTime(n.created_at, t, locale)}
             </time>
           </p>
         </div>
@@ -398,7 +399,7 @@ function NotificationRow({
           <span
             className="h-2.5 w-2.5 shrink-0 rounded-full"
             style={{ backgroundColor: ROSE }}
-            aria-label="E palexuar"
+            aria-label={t("notifications.unread_aria")}
           />
         )}
       </div>
