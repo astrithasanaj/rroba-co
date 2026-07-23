@@ -391,10 +391,10 @@ export function ReviewsSheet({
                 <div style={{ textAlign: "center", padding: "60px 20px" }}>
                   <Star size={48} color={DIVIDER} strokeWidth={1.5} style={{ margin: "0 auto" }} />
                   <div style={{ fontSize: 16, fontWeight: 700, color: INK, marginTop: 12 }}>
-                    Ende asnjë vlerësim
+                    {t("reviews.empty_title")}
                   </div>
                   <div style={{ fontSize: 13, color: MUTED, marginTop: 6 }}>
-                    Vlerësimet shfaqen pasi të kryhet një shitje
+                    {t("reviews.empty_body")}
                   </div>
                 </div>
               ) : (
