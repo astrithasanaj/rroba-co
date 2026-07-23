@@ -5,6 +5,7 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
+import { useTranslation } from "@/i18n";
 import {
   MEMBERSHIP_PLANS,
   getMembershipPlan,
