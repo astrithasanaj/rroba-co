@@ -904,6 +904,7 @@ function Thread({ id, me }: { id: string; me: string }) {
   return (
     <MobileShell fixed>
       <div
+        ref={chatPageRef}
         className="chat-page"
         style={{
           position: "absolute",
