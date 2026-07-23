@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ImageGallery } from "@/components/marketplace/ImageGallery";
 import { ListingCard } from "@/components/marketplace/ListingCard";
-import { MakeOfferDialog } from "@/components/marketplace/MakeOfferDialog";
+
 import { MoreSheet } from "@/components/marketplace/MoreSheet";
 import { ProductPageSkeleton } from "@/components/marketplace/Skeletons";
 import { useUserCollections } from "@/lib/user-collections";
@@ -55,7 +55,7 @@ function ProductDetail() {
   const [similar, setSimilar] = useState<ListingView[]>([]);
   const [loading, setLoading] = useState(!cached);
   const [me, setMe] = useState<string | null>(null);
-  const [offerOpen, setOfferOpen] = useState(false);
+  
   const [moreOpen, setMoreOpen] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
   const [likeInfo, setLikeInfo] = useState<{
@@ -346,11 +346,7 @@ function ProductDetail() {
         </div>
         <button
           type="button"
-          onClick={() => {
-            if (!me) return navigate({ to: "/auth" });
-            if (isOwn) return;
-            navigate({ to: "/buy/$id", params: { id: listing.id } });
-          }}
+          onClick={sendMessage}
           disabled={isSold || isOwn}
           className="px-5 text-base font-bold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
           style={{
@@ -362,9 +358,10 @@ function ProductDetail() {
             boxShadow: "0 2px 8px color-mix(in oklab, var(--brand-rose) 35%, transparent)",
           }}
         >
-          {isSold ? "Shitur" : "Bli"}
+          {isSold ? "Shitur" : "Shkruaj shitësit"}
         </button>
       </div>
+
 
       {/* Social proof line */}
       {likeInfo.count > 0 && (
@@ -493,14 +490,8 @@ function ProductDetail() {
 
       <div className="h-8" />
 
-      <MakeOfferDialog
-        open={offerOpen}
-        onOpenChange={setOfferOpen}
-        listingId={listing.id}
-        sellerId={listing.user_id}
-        buyerId={me}
-        listingPrice={listing.price}
-      />
+
+
 
       <MoreSheet
         open={moreOpen}
