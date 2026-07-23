@@ -1,4 +1,5 @@
-// American English translations. Must mirror the shape of sq.ts.
+// American English translations. Keep keys in sync with sq.ts.
+
 import type { TranslationSchema } from "./sq";
 
 export const en: TranslationSchema = {
@@ -21,13 +22,93 @@ export const en: TranslationSchema = {
     reset: "Reset",
     next: "Continue",
     back_home: "Back to home",
+    something_went_wrong: "Something went wrong.",
+    something_went_wrong_try_later: "Something went wrong. Try again later.",
   },
 
   root: {
     notFoundTitle: "Page not found",
-    notFoundBody: "The page you are looking for does not exist or has moved.",
-    errorTitle: "This page did not load",
+    notFoundBody: "The page you're looking for doesn't exist or has been moved.",
+    errorTitle: "This page didn't load",
     errorBody: "Something went wrong on our end. Try refreshing or go back home.",
+  },
+
+  home: {
+    app_title: "Rroba",
+    notifications_aria: "Notifications",
+    tab_for_you: "For you",
+    tab_following: "Following",
+    categories: "Categories",
+    section_featured: "Featured",
+    section_trending: "Trending now",
+    section_new_week: "New this week",
+    empty_no_items: "No listings yet. Be the first to publish!",
+    following_empty_title: "You're not following anyone yet",
+    following_empty_body: "Explore and start following sellers you like.",
+    following_empty_cta: "Explore",
+    following_no_listings: "No listings yet from the profiles you follow.",
+  },
+
+  favorites: {
+    title: "Favorites",
+    loading_sr: "Loading favorites…",
+    error_title: "Something went wrong.",
+    error_body: "We couldn't load your favorites. Try again.",
+    empty_title: "Save items you love.",
+    empty_body: "Tap the heart on any listing to find it later.",
+    empty_cta: "Browse listings",
+  },
+
+  notifications: {
+    title: "Notifications",
+    loading_sr: "Loading notifications…",
+    empty: "You don't have any notifications yet.",
+    error: "Something went wrong. Try again later.",
+    unread_aria: "Unread",
+    open_aria: "Open notification",
+    unread_prefix: "Unread.",
+    time_now: "now",
+    time_min: "{n} min",
+    time_hour: "{n} h",
+    time_day: "{n} d",
+    default_user: "User",
+    profile_of: "{name}'s profile",
+    profile: "Profile",
+    offer_by: "{name} made an offer:",
+    offer_new: "New offer:",
+    message_by: "{name} sent you a message:",
+    message_new: "New message:",
+    sold: "Your listing sold! 🎉",
+    follower_by: "{name} started following you",
+    follower_generic: "Someone started following you",
+    like_by: "{name} liked your listing",
+    like_generic: "Someone liked your listing",
+    save_by: "{name} saved your listing",
+    save_generic: "Someone saved your listing",
+    generic: "Notification",
+  },
+
+  product: {
+    message_seller: "Message seller",
+    sold: "Sold",
+  },
+
+  messages: {
+    title: "Messages",
+    write_placeholder: "Write a message…",
+    write_aria: "Write a message",
+    send_aria: "Send message",
+    start_conversation: "Start the conversation with a message.",
+    message_seller: "Message seller",
+    prefill_greeting: "Hi! Is this still available?",
+    loading_sr: "Loading messages…",
+    thread_not_found: "Conversation not found.",
+    empty_inbox: "You don't have any conversations yet.",
+    empty_archived: "No archived conversations",
+    no_users_found: "No users found",
+    no_contacts_yet: "You don't have any contacts yet",
+    other_user_fallback: "User",
+    you_prefix: "You:",
   },
 
   settings: {
@@ -42,7 +123,7 @@ export const en: TranslationSchema = {
     notifications_subtitle: "Manage push and email notifications",
     membership: "Membership",
     membership_active_suffix: "Active",
-    membership_view_plans: "See plans and benefits",
+    membership_view_plans: "View plans and benefits",
     language: "Language",
     language_sq: "Albanian",
     language_en: "English",
@@ -55,13 +136,5 @@ export const en: TranslationSchema = {
     delete_account: "Delete account",
     delete_account_subtitle: "Permanently delete all your data",
     edit_profile_view: "Edit profile",
-  },
-
-  messages: {
-    title: "Messages",
-    write_placeholder: "Write a message…",
-    start_conversation: "Start the conversation",
-    message_seller: "Message seller",
-    prefill_greeting: "Hi! Is this still available?",
   },
 };
