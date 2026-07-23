@@ -472,7 +472,7 @@ export function ReviewsSheet({
                           <StarBar value={r.stars} />
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2 }}>
-                          <div style={{ fontSize: 12, color: MUTED }}>Blerës · Takim personal</div>
+                          <div style={{ fontSize: 12, color: MUTED }}>{t("reviews.buyer_meeting")}</div>
                           <div style={{ fontSize: 12, color: MUTED }}>{formatReviewDate(r.created_at)}</div>
                         </div>
                         {r.comment && (
