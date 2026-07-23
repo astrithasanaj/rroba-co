@@ -21,6 +21,25 @@ import {
   Mars,
 } from "lucide-react";
 import { useTranslation } from "@/i18n";
+const CAT_LABEL_TO_KEY: Record<string, string> = {
+  "Modë & aksesorë": "categories.mode",
+  "Fëmijë & bebe": "categories.femije",
+  "Interier & mobilie": "categories.interior",
+  "Outdoor & sport": "categories.outdoor",
+  "Art & dizajn": "categories.art",
+  "Elektronikë & zë": "categories.elektronik",
+  "Hobi": "categories.hobi",
+  "Vajza": "categories.vajza",
+  "Djem": "categories.djem",
+  "Bebe": "categories.bebe",
+};
+function tCategory(label: string, translate: (k: string) => string): string {
+  const key = CAT_LABEL_TO_KEY[label];
+  if (!key) return label;
+  const out = translate(key);
+  return out === key ? label : out;
+}
+
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
@@ -645,22 +664,22 @@ function GenderTabs({
       className="mt-4 flex items-center gap-6"
       style={{ borderBottom: "1px solid var(--brand-border)" }}
     >
-      {tabs.map((t) => {
-        const active = value === t;
+      {tabs.map((g) => {
+        const active = value === g;
         return (
           <button
-            key={t}
+            key={g}
             type="button"
             role="tab"
             aria-selected={active}
-            onClick={() => onChange(active ? null : t)}
+            onClick={() => onChange(active ? null : g)}
             className="relative pb-3 pt-1 text-[15px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] rounded-sm"
             style={{
               color: active ? INK : MUTED,
               fontWeight: active ? 600 : 500,
             }}
           >
-            {t === "Femra" ? tt("search.gender_femra") : t === "Meshkuj" ? tt("search.gender_meshkuj") : tt("search.gender_femije")}
+            {g === "Femra" ? t("search.gender_femra") : g === "Meshkuj" ? t("search.gender_meshkuj") : t("search.gender_femije")}
             {active && (
               <span
                 aria-hidden="true"
@@ -842,9 +861,9 @@ function RecentSearches({
         </button>
       </div>
       <ul className="mt-3">
-        {items.map((t) => (
+        {items.map((item) => (
           <li
-            key={t}
+            key={item}
             className="flex items-center gap-3 border-b py-3"
             style={{ borderColor: DIVIDER }}
           >
@@ -853,18 +872,18 @@ function RecentSearches({
               type="button"
               onMouseDown={(e) => {
                 e.preventDefault();
-                onPick(t);
+                onPick(item);
               }}
               className="flex-1 text-left text-[15px]"
               style={{ color: INK }}
             >
-              {t}
+              {item}
             </button>
             <button
               type="button"
               onMouseDown={(e) => {
                 e.preventDefault();
-                onRemove(t);
+                onRemove(item);
               }}
               aria-label={t("search.remove_chip")}
             >
