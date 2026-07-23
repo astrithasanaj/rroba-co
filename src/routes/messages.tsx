@@ -68,6 +68,7 @@ function MessagesPage() {
   const { thread, view, tab } = useSearch({ from: "/messages" });
   const navigate = useNavigate({ from: "/messages" });
   const [me, setMe] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -176,13 +177,13 @@ async function fetchThreads(me: string): Promise<ThreadView[]> {
     return {
       id: r.id,
       otherId,
-      otherName: prof?.name || t("messages.user_fallback"),
+      otherName: prof?.name || "Përdorues",
       otherAvatar: prof?.avatar_url || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prof?.name || "U")}`,
       listingId: r.listing_id,
-      listingTitle: listing?.title || t("messages.listing_fallback"),
+      listingTitle: listing?.title || "Artikull",
       listingPrice: listing?.price ?? null,
       listingCover: urls[cover] || "",
-      lastPreview: last?.content || t("messages.new_conversation"),
+      lastPreview: last?.content || "Bisedë e re",
       lastAt: r.last_message_at,
       unread,
       isBuyer,
@@ -987,7 +988,7 @@ function Thread({ id, me }: { id: string; me: string }) {
             <Link
               to="/product/$id"
               params={{ id: info.listingId }}
-              aria-label={tr("messages.listing_aria").replace("{title}", info.listingTitle)}
+              aria-label={t("messages.listing_aria").replace("{title}", info.listingTitle)}
               className={`flex items-center gap-3 rounded-xl p-2.5 ${FOCUS_RING}`}
               style={{ backgroundColor: CREAM_SOFT }}
             >
