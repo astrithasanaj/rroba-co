@@ -50,6 +50,7 @@ function formatDate(iso: string | null): string | null {
 }
 
 function MembershipPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<Status>({
     tier: null,
