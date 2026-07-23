@@ -1,0 +1,67 @@
+// American English translations. Must mirror the shape of sq.ts.
+import type { TranslationSchema } from "./sq";
+
+export const en: TranslationSchema = {
+  common: {
+    back: "Back",
+    save: "Save",
+    cancel: "Cancel",
+    delete: "Delete",
+    edit: "Edit",
+    close: "Close",
+    confirm: "Confirm",
+    ok: "OK",
+    yes: "Yes",
+    no: "No",
+    loading: "Loading…",
+    retry: "Try again",
+    search: "Search",
+    seeAll: "See all",
+    apply: "Apply",
+    reset: "Reset",
+    next: "Continue",
+    back_home: "Back to home",
+  },
+
+  root: {
+    notFoundTitle: "Page not found",
+    notFoundBody: "The page you are looking for does not exist or has moved.",
+    errorTitle: "This page did not load",
+    errorBody: "Something went wrong on our end. Try refreshing or go back home.",
+  },
+
+  settings: {
+    title: "Settings",
+    section_account: "Account",
+    section_preferences: "Preferences",
+    section_help: "Help",
+    section_other: "Other",
+    edit_profile: "Edit profile",
+    edit_profile_subtitle: "Name, bio, photo, city",
+    notifications: "Notifications",
+    notifications_subtitle: "Manage push and email notifications",
+    membership: "Membership",
+    membership_active_suffix: "Active",
+    membership_view_plans: "See plans and benefits",
+    language: "Language",
+    language_sq: "Albanian",
+    language_en: "English",
+    faq: "Frequently asked questions",
+    contact_support: "Contact support",
+    privacy: "Privacy",
+    privacy_subtitle: "Policies and your data",
+    terms: "Terms of service",
+    sign_out: "Sign out",
+    delete_account: "Delete account",
+    delete_account_subtitle: "Permanently delete all your data",
+    edit_profile_view: "Edit profile",
+  },
+
+  messages: {
+    title: "Messages",
+    write_placeholder: "Write a message…",
+    start_conversation: "Start the conversation",
+    message_seller: "Message seller",
+    prefill_greeting: "Hi! Is this still available?",
+  },
+};
