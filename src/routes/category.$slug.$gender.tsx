@@ -318,6 +318,7 @@ function FiltersSheet({
   filters: Filters;
   setFilters: (f: Filters | ((p: Filters) => Filters)) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -330,7 +331,7 @@ function FiltersSheet({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            aria-label="Kthehu"
+            aria-label={t("common.back")}
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
             style={{
               width: 44,
@@ -342,44 +343,44 @@ function FiltersSheet({
           >
             <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
-          <SheetTitle style={{ color: INK }}>Filtra</SheetTitle>
+          <SheetTitle style={{ color: INK }}>{t("search.filters_title")}</SheetTitle>
         </div>
         <div className="mt-4 space-y-5">
           <Chips
-            label="Gjendja"
+            label={t("search.filter_condition")}
             value={filters.condition}
             onChange={(v) => setFilters((p) => ({ ...p, condition: v }))}
             options={[...CONDITIONS]}
           />
           <Chips
-            label="Qyteti"
+            label={t("search.filter_city")}
             value={filters.city}
             onChange={(v) => setFilters((p) => ({ ...p, city: v }))}
             options={[...CITIES]}
           />
           <div>
-            <Label style={{ color: INK }}>Madhësia</Label>
+            <Label style={{ color: INK }}>{t("search.filter_size")}</Label>
             <Input
               value={filters.size ?? ""}
               onChange={(e) => setFilters((p) => ({ ...p, size: e.target.value }))}
-              placeholder="P.sh. M"
+              placeholder={t("search.filter_size_ph")}
               className="mt-1 border-0"
               style={{ backgroundColor: CARD, color: INK }}
             />
           </div>
           <div>
-            <Label style={{ color: INK }}>Brendi</Label>
+            <Label style={{ color: INK }}>{t("category.filter_brand")}</Label>
             <Input
               value={filters.brand ?? ""}
               onChange={(e) => setFilters((p) => ({ ...p, brand: e.target.value }))}
-              placeholder="P.sh. Nike"
+              placeholder={t("category.filter_brand_ph")}
               className="mt-1 border-0"
               style={{ backgroundColor: CARD, color: INK }}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label style={{ color: INK }}>Çmimi min (€)</Label>
+              <Label style={{ color: INK }}>{t("search.filter_price_min")}</Label>
               <Input
                 type="number"
                 value={filters.priceMin ?? ""}
@@ -389,7 +390,7 @@ function FiltersSheet({
               />
             </div>
             <div>
-              <Label style={{ color: INK }}>Çmimi maks (€)</Label>
+              <Label style={{ color: INK }}>{t("search.filter_price_max")}</Label>
               <Input
                 type="number"
                 value={filters.priceMax ?? ""}
@@ -405,14 +406,14 @@ function FiltersSheet({
               className="flex-1 rounded-full py-3 text-sm font-medium"
               style={{ backgroundColor: CARD, color: INK }}
             >
-              Pastro
+              {t("search.clear")}
             </button>
             <button
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-full py-3 text-sm font-semibold"
               style={{ backgroundColor: INK, color: "var(--brand-surface)" }}
             >
-              Apliko
+              {t("common.apply")}
             </button>
           </div>
         </div>
