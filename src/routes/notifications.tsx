@@ -294,7 +294,7 @@ function NotificationRow({
     if (n.type === "offer") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} {t("notifications.offer_by", { name: "" }).replace("{name}", "").trim()} </> : `${t("notifications.offer_new")} `}
+          {nameEl ? <>{nameEl} {t("notifications.offer_verb")} </> : `${t("notifications.offer_new")} `}
           <span className="font-semibold">€{String(n.data.amount ?? "?")}</span>
         </p>
       );
@@ -302,7 +302,7 @@ function NotificationRow({
     if (n.type === "message") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} {t("notifications.message_by", { name: "" }).replace("{name}", "").trim()} </> : `${t("notifications.message_new")} `}
+          {nameEl ? <>{nameEl} {t("notifications.message_verb")} </> : `${t("notifications.message_new")} `}
           <span style={{ color: INK_SECONDARY }}>{String(n.data.preview ?? "")}</span>
         </p>
       );
@@ -313,21 +313,21 @@ function NotificationRow({
     if (n.type === "new_follower") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} {t("notifications.follower_by", { name: "" }).replace("{name}", "").trim()}</> : t("notifications.follower_generic")}
+          {nameEl ? <>{nameEl} {t("notifications.follower_verb")}</> : t("notifications.follower_generic")}
         </p>
       );
     }
     if (n.type === "like") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} {t("notifications.like_by", { name: "" }).replace("{name}", "").trim()}</> : t("notifications.like_generic")}
+          {nameEl ? <>{nameEl} {t("notifications.like_verb")}</> : t("notifications.like_generic")}
         </p>
       );
     }
     if (n.type === "save") {
       return (
         <p className="text-sm" style={{ color: INK }}>
-          {nameEl ? <>{nameEl} {t("notifications.save_by", { name: "" }).replace("{name}", "").trim()}</> : t("notifications.save_generic")}
+          {nameEl ? <>{nameEl} {t("notifications.save_verb")}</> : t("notifications.save_generic")}
         </p>
       );
     }
