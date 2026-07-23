@@ -858,15 +858,22 @@ function Thread({ id, me }: { id: string; me: string }) {
     }
   }, [msgs, loading]);
 
-  // Keyboard-aware chat container via visualViewport (iOS PWA)
+  // Keyboard-aware chat container via visualViewport (iOS PWA).
+  // Keep the chat-page anchored to its parent (inset:0) and translate any
+  // keyboard occlusion into a `bottom` inset. Never override `height`/`top`,
+  // otherwise the container can exceed the clipped MobileShell and push the
+  // composer out of the visible area.
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
     const update = () => {
       const page = chatPageRef.current;
       if (!page) return;
-      page.style.height = `${vv.height}px`;
-      page.style.top = `${vv.offsetTop}px`;
+      const keyboard = Math.max(
+        0,
+        window.innerHeight - vv.height - vv.offsetTop,
+      );
+      page.style.bottom = keyboard > 0 ? `${keyboard}px` : "";
       const el = scrollRef.current;
       if (el && nearBottomRef.current) el.scrollTop = el.scrollHeight;
     };
@@ -878,6 +885,7 @@ function Thread({ id, me }: { id: string; me: string }) {
       vv.removeEventListener("scroll", update);
       const page = chatPageRef.current;
       if (page) {
+        page.style.bottom = "";
         page.style.height = "";
         page.style.top = "";
       }
