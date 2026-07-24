@@ -299,7 +299,7 @@ search: {
     membership_active_suffix: "Aktiv",
     membership_view_plans: "Shiko planet dhe përfitimet",
     language: "Gjuha",
-    language_sq: "Shqip",
+    language_sq: "Albanian",
     language_en: "English",
     faq: "Pyetjet e shpeshta",
     contact_support: "Kontakto mbështetjen",
