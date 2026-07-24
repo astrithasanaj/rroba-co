@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 
-export const Route = createFileRoute("/_authenticated/profile/change-email")({
+export const Route = createFileRoute("/_authenticated/profile_/change-email")({
   ssr: false,
   component: ChangeEmailPage,
 });
