@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { MobileShell } from "@/components/marketplace/MobileShell";
+import { useTranslation } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/profile_/change-email")({
   ssr: false,
@@ -11,7 +12,6 @@ export const Route = createFileRoute("/_authenticated/profile_/change-email")({
 });
 
 const CREAM = "#ffffff";
-const CARD = "#ffffff";
 const INK = "#2d1521";
 const MUTED = "#a89f94";
 const RED = "#e53935";
@@ -19,6 +19,7 @@ const RED = "#e53935";
 function ChangeEmailPage() {
   const router = useRouter();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [currentEmail, setCurrentEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -62,7 +63,7 @@ function ChangeEmailPage() {
     });
     setVerifying(false);
     if (err) {
-      setError("Fjalëkalimi është i gabuar");
+      setError(t("membership_page.change_email_wrong_password"));
       return;
     }
     setStep(2);
@@ -72,11 +73,11 @@ function ChangeEmailPage() {
     const trimmed = newEmail.trim();
     if (!trimmed) return;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setError("Email-i nuk është valid");
+      setError(t("membership_page.change_email_invalid"));
       return;
     }
     if (trimmed.toLowerCase() === currentEmail.toLowerCase()) {
-      setError("Email-i i ri duhet të jetë ndryshe nga aktuali");
+      setError(t("membership_page.change_email_same"));
       return;
     }
     setSubmitting(true);
@@ -91,11 +92,11 @@ function ChangeEmailPage() {
         msg.includes("exists") ||
         msg.includes("taken")
       ) {
-        setError("Ky email është tashmë në përdorim nga një llogari tjetër");
+        setError(t("membership_page.change_email_taken"));
       } else if (msg.includes("invalid")) {
-        setError("Email-i nuk është valid");
+        setError(t("membership_page.change_email_invalid"));
       } else {
-        setError("Diçka shkoi keq. Provo sërish.");
+        setError(t("membership_page.change_email_generic_error"));
       }
       return;
     }
@@ -127,7 +128,11 @@ function ChangeEmailPage() {
   };
 
   const title =
-    step === 1 ? "Konfirmo identitetin tënd" : step === 2 ? "Email-i i ri" : "Kontrollo email-in";
+    step === 1
+      ? t("membership_page.change_email_title_step1")
+      : step === 2
+        ? t("membership_page.change_email_title_step2")
+        : t("membership_page.change_email_title_step3");
 
   return (
     <MobileShell>
@@ -139,7 +144,7 @@ function ChangeEmailPage() {
           <button
             type="button"
             onClick={goBack}
-            aria-label="Kthehu"
+            aria-label={t("membership_page.change_email_back")}
             className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
             style={{
               width: 36,
@@ -162,7 +167,7 @@ function ChangeEmailPage() {
           {step === 1 && (
             <>
               <div style={{ fontSize: 13, color: INK, lineHeight: 1.55 }}>
-                Për siguri, shkruaj fjalëkalimin tënd për të ndryshuar email-in.
+                {t("membership_page.change_email_step1_desc")}
               </div>
               <div style={{ position: "relative", marginTop: 18 }}>
                 <input
@@ -172,7 +177,7 @@ function ChangeEmailPage() {
                     setPassword(e.target.value);
                     setError(null);
                   }}
-                  placeholder="Fjalëkalimi juaj"
+                  placeholder={t("membership_page.change_email_password_ph")}
                   autoFocus
                   autoComplete="current-password"
                   style={{ ...inputBox, paddingRight: 44 }}
@@ -180,7 +185,11 @@ function ChangeEmailPage() {
                 <button
                   type="button"
                   onClick={() => setShowPw((v) => !v)}
-                  aria-label={showPw ? "Fshih" : "Shfaq"}
+                  aria-label={
+                    showPw
+                      ? t("membership_page.change_email_hide")
+                      : t("membership_page.change_email_show")
+                  }
                   style={{
                     position: "absolute",
                     right: 12,
@@ -211,7 +220,9 @@ function ChangeEmailPage() {
                 disabled={verifying || !password}
                 onClick={verifyPassword}
               >
-                {verifying ? "Duke verifikuar…" : "Vazhdo"}
+                {verifying
+                  ? t("membership_page.change_email_verifying")
+                  : t("membership_page.change_email_continue")}
               </button>
             </>
           )}
@@ -219,7 +230,7 @@ function ChangeEmailPage() {
           {step === 2 && (
             <>
               <div style={{ fontSize: 13, color: INK, lineHeight: 1.55 }}>
-                Do të dërgojmë një link konfirmimi te adresa e re. Email-i i llogarisë do të ndryshojë vetëm pasi ta klikosh atë link.
+                {t("membership_page.change_email_step2_desc")}
               </div>
               <div style={{ marginTop: 18 }}>
                 <input
@@ -229,7 +240,7 @@ function ChangeEmailPage() {
                     setNewEmail(e.target.value);
                     setError(null);
                   }}
-                  placeholder="email@shembull.com"
+                  placeholder={t("membership_page.change_email_new_ph")}
                   autoFocus
                   autoComplete="email"
                   autoCapitalize="none"
@@ -249,22 +260,26 @@ function ChangeEmailPage() {
                 disabled={submitting || !newEmail.trim()}
                 onClick={submitEmail}
               >
-                {submitting ? "Duke dërguar…" : "Dërgo linkun e konfirmimit"}
+                {submitting
+                  ? t("membership_page.change_email_sending")
+                  : t("membership_page.change_email_send_link")}
               </button>
             </>
           )}
 
           {step === 3 && (
             <>
-              <div style={{ fontSize: 14, color: INK, lineHeight: 1.55 }}>
-                Dërguam një link konfirmimi te <b>{sentTo}</b>. Kliko linkun për ta aktivizuar
-                këtë email si adresën tënde të re.
-              </div>
+              <div
+                style={{ fontSize: 14, color: INK, lineHeight: 1.55 }}
+                dangerouslySetInnerHTML={{
+                  __html: t("membership_page.change_email_step3_desc", { email: sentTo }),
+                }}
+              />
               <button
                 style={{ ...btnDark, marginTop: 24 }}
                 onClick={() => navigate({ to: "/profile" })}
               >
-                Në rregull
+                {t("membership_page.change_email_ok")}
               </button>
             </>
           )}
