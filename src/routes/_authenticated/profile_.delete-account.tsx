@@ -8,7 +8,7 @@ import { getCurrentUser } from "@/hooks/useCurrentUser";
 import { deleteMyAccount } from "@/lib/delete-account.functions";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 
-export const Route = createFileRoute("/_authenticated/profile/delete-account")({
+export const Route = createFileRoute("/_authenticated/profile_/delete-account")({
   ssr: false,
   component: DeleteAccountPage,
 });

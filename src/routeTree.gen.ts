@@ -44,8 +44,8 @@ import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.
 import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
 import { Route as ApiPublicNotifyPendingPromotionRouteImport } from './routes/api/public/notify-pending-promotion'
 import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
-import { Route as AuthenticatedProfileDeleteAccountRouteImport } from './routes/_authenticated/profile.delete-account'
-import { Route as AuthenticatedProfileChangeEmailRouteImport } from './routes/_authenticated/profile.change-email'
+import { Route as AuthenticatedProfileDeleteAccountRouteImport } from './routes/_authenticated/profile_.delete-account'
+import { Route as AuthenticatedProfileChangeEmailRouteImport } from './routes/_authenticated/profile_.change-email'
 import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
@@ -242,15 +242,15 @@ const ApiPublicNotifyNewReportRoute =
   } as any)
 const AuthenticatedProfileDeleteAccountRoute =
   AuthenticatedProfileDeleteAccountRouteImport.update({
-    id: '/delete-account',
-    path: '/delete-account',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile_/delete-account',
+    path: '/profile/delete-account',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedProfileChangeEmailRoute =
   AuthenticatedProfileChangeEmailRouteImport.update({
-    id: '/change-email',
-    path: '/change-email',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile_/change-email',
+    path: '/profile/change-email',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedBuyIdRoute = AuthenticatedBuyIdRouteImport.update({
   id: '/buy/$id',
@@ -345,7 +345,7 @@ export interface FileRoutesByFullPath {
   '/membership': typeof AuthenticatedMembershipRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/profile': typeof AuthenticatedProfileRouteWithChildren
+  '/profile': typeof AuthenticatedProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -395,7 +395,7 @@ export interface FileRoutesByTo {
   '/membership': typeof AuthenticatedMembershipRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/profile': typeof AuthenticatedProfileRouteWithChildren
+  '/profile': typeof AuthenticatedProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -448,7 +448,7 @@ export interface FileRoutesById {
   '/_authenticated/membership': typeof AuthenticatedMembershipRoute
   '/_authenticated/my-promotions': typeof AuthenticatedMyPromotionsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -462,8 +462,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/buy/$id': typeof AuthenticatedBuyIdRoute
-  '/_authenticated/profile/change-email': typeof AuthenticatedProfileChangeEmailRoute
-  '/_authenticated/profile/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
+  '/_authenticated/profile_/change-email': typeof AuthenticatedProfileChangeEmailRoute
+  '/_authenticated/profile_/delete-account': typeof AuthenticatedProfileDeleteAccountRoute
   '/api/public/notify-new-report': typeof ApiPublicNotifyNewReportRoute
   '/api/public/notify-pending-promotion': typeof ApiPublicNotifyPendingPromotionRoute
   '/category/$slug/$gender': typeof CategorySlugGenderRoute
@@ -617,8 +617,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/users'
     | '/_authenticated/buy/$id'
-    | '/_authenticated/profile/change-email'
-    | '/_authenticated/profile/delete-account'
+    | '/_authenticated/profile_/change-email'
+    | '/_authenticated/profile_/delete-account'
     | '/api/public/notify-new-report'
     | '/api/public/notify-pending-promotion'
     | '/category/$slug/$gender'
@@ -916,19 +916,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNotifyNewReportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/profile/delete-account': {
-      id: '/_authenticated/profile/delete-account'
-      path: '/delete-account'
+    '/_authenticated/profile_/delete-account': {
+      id: '/_authenticated/profile_/delete-account'
+      path: '/profile/delete-account'
       fullPath: '/profile/delete-account'
       preLoaderRoute: typeof AuthenticatedProfileDeleteAccountRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile/change-email': {
-      id: '/_authenticated/profile/change-email'
-      path: '/change-email'
+    '/_authenticated/profile_/change-email': {
+      id: '/_authenticated/profile_/change-email'
+      path: '/profile/change-email'
       fullPath: '/profile/change-email'
       preLoaderRoute: typeof AuthenticatedProfileChangeEmailRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/buy/$id': {
       id: '/_authenticated/buy/$id'
@@ -1024,29 +1024,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedProfileRouteChildren {
-  AuthenticatedProfileChangeEmailRoute: typeof AuthenticatedProfileChangeEmailRoute
-  AuthenticatedProfileDeleteAccountRoute: typeof AuthenticatedProfileDeleteAccountRoute
-}
-
-const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
-  AuthenticatedProfileChangeEmailRoute: AuthenticatedProfileChangeEmailRoute,
-  AuthenticatedProfileDeleteAccountRoute:
-    AuthenticatedProfileDeleteAccountRoute,
-}
-
-const AuthenticatedProfileRouteWithChildren =
-  AuthenticatedProfileRoute._addFileChildren(AuthenticatedProfileRouteChildren)
-
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedMembershipRoute: typeof AuthenticatedMembershipRoute
   AuthenticatedMyPromotionsRoute: typeof AuthenticatedMyPromotionsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedAdminPromotionsRoute: typeof AuthenticatedAdminPromotionsRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedBuyIdRoute: typeof AuthenticatedBuyIdRoute
+  AuthenticatedProfileChangeEmailRoute: typeof AuthenticatedProfileChangeEmailRoute
+  AuthenticatedProfileDeleteAccountRoute: typeof AuthenticatedProfileDeleteAccountRoute
   AuthenticatedListingIdEditRoute: typeof AuthenticatedListingIdEditRoute
   AuthenticatedListingIdManageRoute: typeof AuthenticatedListingIdManageRoute
   AuthenticatedListingIdPremiumRoute: typeof AuthenticatedListingIdPremiumRoute
@@ -1057,11 +1045,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMembershipRoute: AuthenticatedMembershipRoute,
   AuthenticatedMyPromotionsRoute: AuthenticatedMyPromotionsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedAdminPromotionsRoute: AuthenticatedAdminPromotionsRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedBuyIdRoute: AuthenticatedBuyIdRoute,
+  AuthenticatedProfileChangeEmailRoute: AuthenticatedProfileChangeEmailRoute,
+  AuthenticatedProfileDeleteAccountRoute:
+    AuthenticatedProfileDeleteAccountRoute,
   AuthenticatedListingIdEditRoute: AuthenticatedListingIdEditRoute,
   AuthenticatedListingIdManageRoute: AuthenticatedListingIdManageRoute,
   AuthenticatedListingIdPremiumRoute: AuthenticatedListingIdPremiumRoute,
