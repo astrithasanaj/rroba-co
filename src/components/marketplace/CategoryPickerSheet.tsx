@@ -22,6 +22,8 @@ import {
   type CategorySelection,
   type SubcategoryNode,
 } from "@/lib/category-taxonomy";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "#ffffff";
 const INK = "#2d1521";
