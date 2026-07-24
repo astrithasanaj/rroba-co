@@ -494,14 +494,19 @@ function LeafList({
   onPickAll: () => void;
   onToggleLeaf: (leaf: string) => void;
 }) {
+  const { t } = useTranslation();
   const leaves = groupLeafLabels(group);
   return (
     <div style={{ paddingBottom: selected.size > 0 ? 100 : 0 }}>
-      <Row label={`Të gjitha ${group.label.toLowerCase()}`} bold onClick={onPickAll} />
+      <Row
+        label={t("categoryPicker.all_of", { name: tCategory(group.label, t).toLowerCase() })}
+        bold
+        onClick={onPickAll}
+      />
       {leaves.map((leaf) => (
         <CheckRow
           key={leaf}
-          label={leaf}
+          label={tCategory(leaf, t)}
           checked={selected.has(leaf)}
           onToggle={() => onToggleLeaf(leaf)}
         />
