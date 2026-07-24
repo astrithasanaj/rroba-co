@@ -233,12 +233,12 @@ export function CategoryPickerSheet({
 
   const title =
     level.kind === "root"
-      ? "Kategoritë"
+      ? t("categoryPicker.title")
       : level.kind === "bucket"
-        ? "Për të gjithë"
+        ? t("categoryPicker.for_everyone")
         : level.kind === "groups"
-          ? level.node.label
-          : level.group.label;
+          ? tCategory(level.node.label, t)
+          : tCategory(level.group.label, t);
 
   return (
     <div
