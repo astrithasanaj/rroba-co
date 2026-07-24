@@ -1640,7 +1640,9 @@ function SettingsSheet({
                 email={email}
                 onSaved={onSaved}
                 onDirtyChange={setProfileDirty}
+                onCloseSettings={() => onOpenChange(false)}
               />
+
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
@@ -1951,12 +1953,15 @@ function ProfileForm({
   email,
   onSaved,
   onDirtyChange,
+  onCloseSettings,
 }: {
   profile: Profile | null;
   email: string;
   onSaved: () => void;
   onDirtyChange?: (dirty: boolean) => void;
+  onCloseSettings?: () => void;
 }) {
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [name, setName] = useState(profile?.name ?? "");
@@ -2136,7 +2141,10 @@ function ProfileForm({
           <Label style={{ color: INK }}>{t("profile.email_label")}</Label>
           <button
             type="button"
-            onClick={() => navigate({ to: "/profile/change-email" })}
+            onClick={() => {
+              onCloseSettings?.();
+              navigate({ to: "/profile/change-email" });
+            }}
             className="text-xs font-semibold"
             style={{
               color: "#ffffff",
