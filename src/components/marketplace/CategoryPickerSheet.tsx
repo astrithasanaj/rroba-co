@@ -22,6 +22,8 @@ import {
   type CategorySelection,
   type SubcategoryNode,
 } from "@/lib/category-taxonomy";
+import { useTranslation } from "@/i18n";
+import { tCategory } from "@/i18n/tCategory";
 
 const BG = "#ffffff";
 const INK = "#2d1521";
@@ -73,6 +75,7 @@ export function CategoryPickerSheet({
   initialBucket?: boolean;
   gender?: Gender;
 }) {
+  const { t } = useTranslation();
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
   const [level, setLevel] = useState<Level>({ kind: "root" });
@@ -230,12 +233,12 @@ export function CategoryPickerSheet({
 
   const title =
     level.kind === "root"
-      ? "Kategoritë"
+      ? t("categoryPicker.title")
       : level.kind === "bucket"
-        ? "Për të gjithë"
+        ? t("categoryPicker.for_everyone")
         : level.kind === "groups"
-          ? level.node.label
-          : level.group.label;
+          ? tCategory(level.node.label, t)
+          : tCategory(level.group.label, t);
 
   return (
     <div
@@ -269,7 +272,7 @@ export function CategoryPickerSheet({
         <button
           type="button"
           onClick={goBack}
-          aria-label={level.kind === "root" ? "Mbyll" : "Kthehu"}
+          aria-label={level.kind === "root" ? t("categoryPicker.close") : t("categoryPicker.back")}
           className="transition-transform duration-150 active:scale-90"
           style={{
             width: 36,
@@ -368,7 +371,7 @@ export function CategoryPickerSheet({
               letterSpacing: "0.2px",
             }}
           >
-            Apliko ({leafDraft.size})
+            {t("categoryPicker.apply_with_count", { n: leafDraft.size })}
           </button>
         </div>
       )}
@@ -385,6 +388,7 @@ function RootList({
   onPickNode: (node: CategoryNode) => void;
   onOpenBucket: () => void;
 }) {
+  const { t } = useTranslation();
   const genderSpecific = CATEGORY_TAXONOMY.filter(
     (n) => n.key !== FEMIJE_KEY && !UNIVERSAL_KEYS.includes(n.key),
   );
@@ -396,7 +400,7 @@ function RootList({
         return (
           <Row
             key={node.key}
-            label={node.label}
+            label={tCategory(node.label, t)}
             active={active}
             icon={
               Icon ? (
@@ -412,7 +416,7 @@ function RootList({
         );
       })}
       <Row
-        label="Për të gjithë"
+        label={t("categoryPicker.for_everyone")}
         icon={<LayoutGrid size={18} strokeWidth={1.6} color={INK} />}
         onClick={onOpenBucket}
       />
@@ -421,6 +425,7 @@ function RootList({
 }
 
 function BucketList({ onPickNode }: { onPickNode: (node: CategoryNode) => void }) {
+  const { t } = useTranslation();
   const universal = CATEGORY_TAXONOMY.filter((n) => UNIVERSAL_KEYS.includes(n.key));
   return (
     <div>
@@ -429,7 +434,7 @@ function BucketList({ onPickNode }: { onPickNode: (node: CategoryNode) => void }
         return (
           <Row
             key={node.key}
-            label={node.label}
+            label={tCategory(node.label, t)}
             icon={Icon ? <Icon size={18} strokeWidth={1.6} color={INK} /> : undefined}
             onClick={() => onPickNode(node)}
           />
@@ -454,16 +459,21 @@ function NodeGroupList({
   onPickAll: () => void;
   onPickGroup: (group: SubcategoryNode) => void;
 }) {
+  const { t } = useTranslation();
   const isFemije = node.key === FEMIJE_KEY;
   return (
     <div>
-      <Row label={`Të gjitha ${node.label.toLowerCase()}`} bold onClick={onPickAll} />
+      <Row
+        label={t("categoryPicker.all_of", { name: tCategory(node.label, t).toLowerCase() })}
+        bold
+        onClick={onPickAll}
+      />
       {node.groups.map((g) => {
         const Icon = isFemije ? FEMIJE_GROUP_ICONS[g.label] : undefined;
         return (
           <Row
             key={g.label}
-            label={g.label}
+            label={tCategory(g.label, t)}
             icon={Icon ? <Icon size={18} strokeWidth={1.6} color={INK} /> : undefined}
             onClick={() => onPickGroup(g)}
           />
@@ -484,14 +494,19 @@ function LeafList({
   onPickAll: () => void;
   onToggleLeaf: (leaf: string) => void;
 }) {
+  const { t } = useTranslation();
   const leaves = groupLeafLabels(group);
   return (
     <div style={{ paddingBottom: selected.size > 0 ? 100 : 0 }}>
-      <Row label={`Të gjitha ${group.label.toLowerCase()}`} bold onClick={onPickAll} />
+      <Row
+        label={t("categoryPicker.all_of", { name: tCategory(group.label, t).toLowerCase() })}
+        bold
+        onClick={onPickAll}
+      />
       {leaves.map((leaf) => (
         <CheckRow
           key={leaf}
-          label={leaf}
+          label={tCategory(leaf, t)}
           checked={selected.has(leaf)}
           onToggle={() => onToggleLeaf(leaf)}
         />

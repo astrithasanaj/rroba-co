@@ -232,6 +232,15 @@ search: {
     filter_brand_ph: "e.g. Nike",
   },
 
+  categoryPicker: {
+    title: "Categories",
+    for_everyone: "For everyone",
+    all_of: "All {name}",
+    apply_with_count: "Apply ({n})",
+    close: "Close",
+    back: "Back",
+  },
+
   messages: {
     title: "Messages",
     title_archive: "Archive",
