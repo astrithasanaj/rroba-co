@@ -2136,7 +2136,10 @@ function ProfileForm({
           <Label style={{ color: INK }}>{t("profile.email_label")}</Label>
           <button
             type="button"
-            onClick={() => navigate({ to: "/profile/change-email" })}
+            onClick={() => {
+              onOpenChange(false);
+              navigate({ to: "/profile/change-email" });
+            }}
             className="text-xs font-semibold"
             style={{
               color: "#ffffff",
