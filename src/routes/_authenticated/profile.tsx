@@ -1640,7 +1640,9 @@ function SettingsSheet({
                 email={email}
                 onSaved={onSaved}
                 onDirtyChange={setProfileDirty}
+                onCloseSettings={() => onOpenChange(false)}
               />
+
             </div>
           )}
           {view === "notifications" && <NotificationsView />}
