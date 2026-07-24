@@ -425,6 +425,7 @@ function RootList({
 }
 
 function BucketList({ onPickNode }: { onPickNode: (node: CategoryNode) => void }) {
+  const { t } = useTranslation();
   const universal = CATEGORY_TAXONOMY.filter((n) => UNIVERSAL_KEYS.includes(n.key));
   return (
     <div>
@@ -433,7 +434,7 @@ function BucketList({ onPickNode }: { onPickNode: (node: CategoryNode) => void }
         return (
           <Row
             key={node.key}
-            label={node.label}
+            label={tCategory(node.label, t)}
             icon={Icon ? <Icon size={18} strokeWidth={1.6} color={INK} /> : undefined}
             onClick={() => onPickNode(node)}
           />
