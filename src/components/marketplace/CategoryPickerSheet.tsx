@@ -388,6 +388,7 @@ function RootList({
   onPickNode: (node: CategoryNode) => void;
   onOpenBucket: () => void;
 }) {
+  const { t } = useTranslation();
   const genderSpecific = CATEGORY_TAXONOMY.filter(
     (n) => n.key !== FEMIJE_KEY && !UNIVERSAL_KEYS.includes(n.key),
   );
@@ -399,7 +400,7 @@ function RootList({
         return (
           <Row
             key={node.key}
-            label={node.label}
+            label={tCategory(node.label, t)}
             active={active}
             icon={
               Icon ? (
@@ -415,7 +416,7 @@ function RootList({
         );
       })}
       <Row
-        label="Për të gjithë"
+        label={t("categoryPicker.for_everyone")}
         icon={<LayoutGrid size={18} strokeWidth={1.6} color={INK} />}
         onClick={onOpenBucket}
       />
