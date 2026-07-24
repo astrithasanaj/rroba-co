@@ -1953,12 +1953,15 @@ function ProfileForm({
   email,
   onSaved,
   onDirtyChange,
+  onCloseSettings,
 }: {
   profile: Profile | null;
   email: string;
   onSaved: () => void;
   onDirtyChange?: (dirty: boolean) => void;
+  onCloseSettings?: () => void;
 }) {
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [name, setName] = useState(profile?.name ?? "");
