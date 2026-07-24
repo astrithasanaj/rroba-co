@@ -371,7 +371,7 @@ export function CategoryPickerSheet({
               letterSpacing: "0.2px",
             }}
           >
-            Apliko ({leafDraft.size})
+            {t("categoryPicker.apply_with_count", { n: leafDraft.size })}
           </button>
         </div>
       )}
