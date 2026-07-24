@@ -459,16 +459,21 @@ function NodeGroupList({
   onPickAll: () => void;
   onPickGroup: (group: SubcategoryNode) => void;
 }) {
+  const { t } = useTranslation();
   const isFemije = node.key === FEMIJE_KEY;
   return (
     <div>
-      <Row label={`Të gjitha ${node.label.toLowerCase()}`} bold onClick={onPickAll} />
+      <Row
+        label={t("categoryPicker.all_of", { name: tCategory(node.label, t).toLowerCase() })}
+        bold
+        onClick={onPickAll}
+      />
       {node.groups.map((g) => {
         const Icon = isFemije ? FEMIJE_GROUP_ICONS[g.label] : undefined;
         return (
           <Row
             key={g.label}
-            label={g.label}
+            label={tCategory(g.label, t)}
             icon={Icon ? <Icon size={18} strokeWidth={1.6} color={INK} /> : undefined}
             onClick={() => onPickGroup(g)}
           />
