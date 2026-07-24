@@ -534,7 +534,7 @@ function SearchPage() {
                   className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-white"
                   style={{ backgroundColor: CORAL }}
                 >
-                  {c.label}
+                  {tCategory(c.label, t)}
                   <button type="button" onClick={() => removeChip(c.id)} aria-label={t("search.remove_chip")}>
                     <X className="h-3 w-3" />
                   </button>
