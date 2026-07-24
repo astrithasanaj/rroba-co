@@ -272,7 +272,7 @@ export function CategoryPickerSheet({
         <button
           type="button"
           onClick={goBack}
-          aria-label={level.kind === "root" ? "Mbyll" : "Kthehu"}
+          aria-label={level.kind === "root" ? t("categoryPicker.close") : t("categoryPicker.back")}
           className="transition-transform duration-150 active:scale-90"
           style={{
             width: 36,
