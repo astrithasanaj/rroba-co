@@ -233,6 +233,15 @@ search: {
     filter_brand_ph: "P.sh. Nike",
   },
 
+  categoryPicker: {
+    title: "Kategoritë",
+    for_everyone: "Për të gjithë",
+    all_of: "Të gjitha {name}",
+    apply_with_count: "Apliko ({n})",
+    close: "Mbyll",
+    back: "Kthehu",
+  },
+
   messages: {
     title: "Mesazhe",
     title_archive: "Arkiva",
