@@ -2142,7 +2142,7 @@ function ProfileForm({
           <button
             type="button"
             onClick={() => {
-              onOpenChange(false);
+              onCloseSettings?.();
               navigate({ to: "/profile/change-email" });
             }}
             className="text-xs font-semibold"
