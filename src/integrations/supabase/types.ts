@@ -342,6 +342,38 @@ export type Database = {
           },
         ]
       }
+      listing_sales: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          listing_id: string
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          listing_id: string
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          listing_id?: string
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_sales_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_saves: {
         Row: {
           created_at: string
@@ -386,7 +418,6 @@ export type Database = {
           price: number
           size: string
           sold: boolean
-          sold_to_user_id: string | null
           status: string
           subcategory: string | null
           title: string
@@ -410,7 +441,6 @@ export type Database = {
           price: number
           size: string
           sold?: boolean
-          sold_to_user_id?: string | null
           status?: string
           subcategory?: string | null
           title: string
@@ -434,7 +464,6 @@ export type Database = {
           price?: number
           size?: string
           sold?: boolean
-          sold_to_user_id?: string | null
           status?: string
           subcategory?: string | null
           title?: string
@@ -447,20 +476,6 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "listings_sold_to_user_id_fkey"
-            columns: ["sold_to_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "listings_sold_to_user_id_fkey"
-            columns: ["sold_to_user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
