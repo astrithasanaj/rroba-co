@@ -2280,42 +2280,18 @@ function ToggleRow({
 
 function NotificationsView() {
   const { t } = useTranslation();
-  const [push, setPush] = useState(true);
-  const [emailNotif, setEmailNotif] = useState(false);
   const [offers, setOffers] = useState(true);
   const [messages, setMessages] = useState(true);
-  const [marketing, setMarketing] = useState(false);
   return (
     <div>
-      <SectionHeader>{t("profile.notif_channels")}</SectionHeader>
-      <ToggleRow
-        title={t("profile.notif_push_title")}
-        subtitle={t("profile.notif_push_subtitle")}
-        value={push}
-        onChange={setPush}
-      />
-      <RowDivider />
-      <ToggleRow
-        title={t("profile.notif_email_title")}
-        subtitle={t("profile.notif_email_subtitle")}
-        value={emailNotif}
-        onChange={setEmailNotif}
-      />
-      <SectionDivider />
       <SectionHeader>{t("profile.notif_types")}</SectionHeader>
       <ToggleRow title={t("profile.notif_new_offers")} value={offers} onChange={setOffers} />
       <RowDivider />
       <ToggleRow title={t("profile.notif_messages_title")} value={messages} onChange={setMessages} />
-      <RowDivider />
-      <ToggleRow
-        title={t("profile.notif_promotions_title")}
-        subtitle={t("profile.notif_promotions_subtitle")}
-        value={marketing}
-        onChange={setMarketing}
-      />
     </div>
   );
 }
+
 
 
 function useFaqs() {
