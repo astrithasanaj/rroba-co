@@ -223,7 +223,9 @@ const en: PolicyDoc = {
       body: [
         "Database, authentication and photo storage infrastructure: Supabase.",
         "Application hosting and delivery: Lovable / Cloudflare.",
-        "Transactional email (account confirmation, password reset, administrative notices): Resend.",
+        "Transactional email: most emails (account confirmation, password reset, account notices) are sent through Lovable's email service, while certain specific emails — such as promotion/admin notifications and the account deletion confirmation — are sent through Resend.",
+        "For every email sent we keep a send log (email_send_log) containing the recipient address, the template name, the delivery status and, on failure, the error message.",
+
         "Technical error reporting: Rroba's hosting platform.",
         "We do not sell personal data and do not share it with advertising networks. Data may be disclosed to authorities only where legally required.",
       ],
