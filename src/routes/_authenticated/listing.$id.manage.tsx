@@ -184,15 +184,21 @@ function ManageListingPage() {
       .update({
         sold: true,
         status: "sold",
-        sold_to_user_id: buyer.id,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
+    if (!error) {
+      await supabase.from("listing_sales").upsert(
+        { listing_id: id, seller_id: listing?.user_id ?? "", buyer_id: buyer.id },
+        { onConflict: "listing_id" },
+      );
+    }
     setWorking(false);
     if (error) {
       toast.error(error.message);
       return;
     }
+
     setBuyerPickerOpen(false);
     toast.success("Artikulli u shënua si i shitur");
     setRateBuyer(buyer);

@@ -75,7 +75,9 @@ const sq: PolicyDoc = {
       body: [
         "Infrastruktura e bazës së të dhënave, autentikimi dhe ruajtja e fotove: Supabase.",
         "Hosting dhe shpërndarje e aplikacionit: Lovable / Cloudflare.",
-        "Email transaksionale (konfirmim llogarie, rivendosje fjalëkalimi, njoftime administrative): Resend.",
+        "Email transaksionale: pjesa më e madhe e email-eve (konfirmim llogarie, rivendosje fjalëkalimi, njoftime të llogarisë) dërgohet përmes shërbimit të email-it të Lovable, ndërsa disa email-e specifike — si njoftimet për promovime/administrim dhe email-i i konfirmimit të fshirjes së llogarisë — dërgohen përmes Resend.",
+        "Për çdo email të dërguar ruajmë një regjistër (email_send_log) me adresën e marrësit, emrin e shabllonit, statusin e dërgimit dhe, në rast dështimi, mesazhin e gabimit.",
+
         "Raportim i gabimeve teknike të aplikacionit: platforma e hostimit të Rroba.",
         "Ne nuk shesim të dhënat personale dhe nuk i ndajmë me rrjete reklamash. Të dhënat mund t'i zbulohen autoriteteve vetëm kur kërkohet me ligj.",
       ],
@@ -221,7 +223,9 @@ const en: PolicyDoc = {
       body: [
         "Database, authentication and photo storage infrastructure: Supabase.",
         "Application hosting and delivery: Lovable / Cloudflare.",
-        "Transactional email (account confirmation, password reset, administrative notices): Resend.",
+        "Transactional email: most emails (account confirmation, password reset, account notices) are sent through Lovable's email service, while certain specific emails — such as promotion/admin notifications and the account deletion confirmation — are sent through Resend.",
+        "For every email sent we keep a send log (email_send_log) containing the recipient address, the template name, the delivery status and, on failure, the error message.",
+
         "Technical error reporting: Rroba's hosting platform.",
         "We do not sell personal data and do not share it with advertising networks. Data may be disclosed to authorities only where legally required.",
       ],

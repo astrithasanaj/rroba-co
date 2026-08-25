@@ -271,8 +271,9 @@ function DeleteAccountPage() {
           {step === 3 && (
             <>
               <div style={{ fontSize: 14, color: INK, lineHeight: 1.55 }}>
-                Llogaria juaj do të fshihet brenda 30 ditëve sipas rregullores GDPR të BE-së. Deri atëherë, mund të anuloni kërkesën duke na kontaktuar.
+                Llogaria juaj dhe të dhënat tuaja do të fshihen menjëherë dhe përgjithmonë. Ky veprim nuk mund të anulohet apo zhbëhet.
               </div>
+
               <button
                 type="button"
                 style={{ ...btnDanger, marginTop: 24, opacity: isDeleting ? 0.6 : 1 }}
