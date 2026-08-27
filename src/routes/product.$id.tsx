@@ -86,24 +86,31 @@ function ProductDetail() {
         navigate({ to: "/" });
         return;
       }
-      const [hydrated] = await hydrateListings([row as ListingRow]);
-      const { data: prof } = await supabase
-        .from("public_profiles")
-        .select("id,name,avatar_url,rating_avg,rating_count")
-        .eq("id", row.user_id)
-        .maybeSingle();
-      const { data: sim } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("category", row.category)
-        .neq("id", row.id)
-        .eq("status", "active")
-        .eq("sold", false)
-        .limit(8);
-      const simHydrated = await hydrateListings((sim ?? []) as ListingRow[], {
-        thumbnail: true,
-        mode: "cover",
-      });
+      // Listing-hydrering, selger og "lignende" hentes parallelt — de er
+      // uavhengige av hverandre og trenger bare listing-raden.
+      const [[hydrated], profRes, simHydrated] = await Promise.all([
+        hydrateListings([row as ListingRow]),
+        supabase
+          .from("public_profiles")
+          .select("id,name,avatar_url,rating_avg,rating_count")
+          .eq("id", row.user_id)
+          .maybeSingle(),
+        (async () => {
+          const { data: sim } = await supabase
+            .from("listings")
+            .select("*")
+            .eq("category", row.category)
+            .neq("id", row.id)
+            .eq("status", "active")
+            .eq("sold", false)
+            .limit(8);
+          return hydrateListings((sim ?? []) as ListingRow[], {
+            thumbnail: true,
+            mode: "cover",
+          });
+        })(),
+      ]);
+      const prof = profRes.data;
       if (!active) return;
       setListing(hydrated);
       setSeller(prof as Seller | null);

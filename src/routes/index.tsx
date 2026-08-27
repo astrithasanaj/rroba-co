@@ -300,53 +300,54 @@ function HomePage() {
     enabled: authQuery.isSuccess,
   });
 
-  // Realtime — invalidate keys instead of resetting state so cached data stays
-  // rendered while the background refetch runs.
+  // Realtime — one channel for both feed and following (they share the
+  // `listings` event source). Invalidation is debounced so a burst of listing
+  // events triggers a single refetch instead of one per event. Cached data
+  // stays rendered while the background refetch runs.
   useEffect(() => {
-    const invalidateFeed = () => {
-      queryClient.invalidateQueries({ queryKey: ["home-promoted-regular", uidKey] });
-      queryClient.invalidateQueries({ queryKey: ["home-new-week", uidKey] });
-      queryClient.invalidateQueries({ queryKey: ["home-trending", uidKey] });
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const pending = { feed: false, following: false };
+
+    const flush = () => {
+      timer = null;
+      if (pending.feed) {
+        pending.feed = false;
+        queryClient.invalidateQueries({ queryKey: ["home-promoted-regular", uidKey] });
+        queryClient.invalidateQueries({ queryKey: ["home-new-week", uidKey] });
+        queryClient.invalidateQueries({ queryKey: ["home-trending", uidKey] });
+      }
+      if (pending.following) {
+        pending.following = false;
+        queryClient.invalidateQueries({ queryKey: ["home-following", uidKey] });
+      }
     };
+
+    const schedule = (what: "feed" | "following" | "both") => {
+      if (what === "feed" || what === "both") pending.feed = true;
+      if (what === "following" || what === "both") pending.following = true;
+      if (timer) return;
+      timer = setTimeout(flush, 3000);
+    };
+
     const ch = supabase
-      .channel("home-feed")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "listings" },
-        invalidateFeed,
+      .channel("home-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () =>
+        schedule("both"),
       )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "promotions" },
-        invalidateFeed,
+      .on("postgres_changes", { event: "*", schema: "public", table: "promotions" }, () =>
+        schedule("feed"),
+      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "followers" }, () =>
+        schedule("following"),
       )
       .subscribe();
+
     return () => {
+      if (timer) clearTimeout(timer);
       supabase.removeChannel(ch);
     };
   }, [queryClient, uidKey]);
 
-  useEffect(() => {
-    const invalidateFollowing = () => {
-      queryClient.invalidateQueries({ queryKey: ["home-following", uidKey] });
-    };
-    const ch = supabase
-      .channel("home-following")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "followers" },
-        invalidateFollowing,
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "listings" },
-        invalidateFollowing,
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
-  }, [queryClient, uidKey]);
 
   // Skeletons appear only when a query has never had data.
   const regularData = promotedRegularQuery.data;
