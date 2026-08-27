@@ -210,6 +210,19 @@ function SearchPage() {
     return () => clearTimeout(timer);
   }, [q]);
 
+  // Hold søketeksten i URL-en (replace) slik at tilbake-navigasjon fra en
+  // annonse gjenoppretter samme søk — og treffer query-cachen.
+  useEffect(() => {
+    const current = (initialQ ?? "").trim();
+    if (current === debouncedQ) return;
+    navigate({
+      to: "/search",
+      search: (prev) => ({ ...prev, q: debouncedQ || undefined }),
+      replace: true,
+    });
+  }, [debouncedQ]);
+
+
   const resultsQuery = useQuery({
     queryKey: [
       "search-results",
