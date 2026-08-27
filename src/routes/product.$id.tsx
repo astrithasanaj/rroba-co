@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
   MessageCircle,
@@ -23,6 +24,7 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { getListingLikeInfo } from "@/lib/likes.functions";
+import { prefetchPublicProfile } from "@/lib/profile-queries";
 import { useTranslation } from "@/i18n";
 import { tCategory } from "@/i18n/tCategory";
 
@@ -48,86 +50,98 @@ const ICON_BTN =
 const META_TEXT_INK = { color: "var(--brand-ink)" } as const;
 const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
 
+async function fetchProductListing(id: string): Promise<ListingView | "unavailable" | null> {
+  const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
+  if (!row) return null;
+  if (["expired", "removed", "flagged"].includes((row as ListingRow).status)) return "unavailable";
+  const [hydrated] = await hydrateListings([row as ListingRow]);
+  return hydrated;
+}
+
+async function fetchProductSeller(userId: string): Promise<Seller | null> {
+  const { data } = await supabase
+    .from("public_profiles")
+    .select("id,name,avatar_url,rating_avg,rating_count")
+    .eq("id", userId)
+    .maybeSingle();
+  return (data as Seller | null) ?? null;
+}
+
+async function fetchSimilarListings(category: string, excludeId: string): Promise<ListingView[]> {
+  const { data: sim } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("category", category)
+    .neq("id", excludeId)
+    .eq("status", "active")
+    .eq("sold", false)
+    .limit(8);
+  return hydrateListings((sim ?? []) as ListingRow[], { thumbnail: true, mode: "cover" });
+}
+
+const EMPTY_LIKE_INFO = { count: 0, recentLiker: null as string | null, recentLikerId: null as string | null };
+
 function ProductDetail() {
   const { id } = useParams({ from: "/product/$id" });
   const navigate = useNavigate({ from: "/messages" });
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const cached = getCachedListing(id);
-  const [listing, setListing] = useState<ListingView | null>(cached);
-  const [seller, setSeller] = useState<Seller | null>(null);
-  const [similar, setSimilar] = useState<ListingView[]>([]);
-  const [loading, setLoading] = useState(!cached);
   const [me, setMe] = useState<string | null>(null);
-  
+
   const [moreOpen, setMoreOpen] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
-  const [likeInfo, setLikeInfo] = useState<{
-    count: number;
-    recentLiker: string | null;
-    recentLikerId: string | null;
-  }>({ count: 0, recentLiker: null, recentLikerId: null });
   const { likes, saves, toggleLike, toggleSave } = useUserCollections();
 
   useEffect(() => {
     getCurrentUserId().then((id) => setMe(id));
   }, []);
 
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      if (!cached) setLoading(true);
-      const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
-      if (!row) {
-        setLoading(false);
-        return;
-      }
-      if (["expired", "removed", "flagged"].includes((row as ListingRow).status)) {
-        toast.info(t("product.unavailable"));
-        navigate({ to: "/" });
-        return;
-      }
-      // Listing-hydrering, selger og "lignende" hentes parallelt — de er
-      // uavhengige av hverandre og trenger bare listing-raden.
-      const [[hydrated], profRes, simHydrated] = await Promise.all([
-        hydrateListings([row as ListingRow]),
-        supabase
-          .from("public_profiles")
-          .select("id,name,avatar_url,rating_avg,rating_count")
-          .eq("id", row.user_id)
-          .maybeSingle(),
-        (async () => {
-          const { data: sim } = await supabase
-            .from("listings")
-            .select("*")
-            .eq("category", row.category)
-            .neq("id", row.id)
-            .eq("status", "active")
-            .eq("sold", false)
-            .limit(8);
-          return hydrateListings((sim ?? []) as ListingRow[], {
-            thumbnail: true,
-            mode: "cover",
-          });
-        })(),
-      ]);
-      const prof = profRes.data;
-      if (!active) return;
-      setListing(hydrated);
-      setSeller(prof as Seller | null);
-      setSimilar(simHydrated);
-      setLoading(false);
-    };
-    load();
-    return () => {
-      active = false;
-    };
-  }, [id]);
+  const listingQuery = useQuery({
+    queryKey: ["product-listing", id] as const,
+    queryFn: () => fetchProductListing(id),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev ?? (cached ? cached : undefined),
+  });
+
+  const listingData = listingQuery.data;
+  const listing = listingData && listingData !== "unavailable" ? listingData : null;
+
+  // Selger og "lignende" hentes parallelt så snart listing-raden finnes.
+  const sellerQuery = useQuery({
+    queryKey: ["product-seller", listing?.user_id ?? null] as const,
+    queryFn: () => fetchProductSeller(listing!.user_id),
+    enabled: !!listing?.user_id,
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const seller = sellerQuery.data ?? null;
+
+  const similarQuery = useQuery({
+    queryKey: ["product-similar", listing?.category ?? null, id] as const,
+    queryFn: () => fetchSimilarListings(listing!.category, id),
+    enabled: !!listing?.category,
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const similar = similarQuery.data ?? [];
+
+  const likeInfoQuery = useQuery({
+    queryKey: ["product-like-info", id] as const,
+    queryFn: () => getListingLikeInfo({ data: { listingId: id } }),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+  const likeInfo = likeInfoQuery.data ?? EMPTY_LIKE_INFO;
+
+  const loading = listingQuery.isPending;
 
   useEffect(() => {
-    getListingLikeInfo({ data: { listingId: id } })
-      .then((info) => setLikeInfo(info))
-      .catch(() => {});
-  }, [id]);
+    if (listingData === "unavailable") {
+      toast.info(t("product.unavailable"));
+      navigate({ to: "/" });
+    }
+  }, [listingData]);
 
   const sendMessage = async () => {
     if (!me) {
@@ -481,6 +495,9 @@ function ProductDetail() {
           <Link
             to="/user/$id"
             params={{ id: seller.id }}
+            onMouseEnter={() => prefetchPublicProfile(queryClient, seller.id)}
+            onTouchStart={() => prefetchPublicProfile(queryClient, seller.id)}
+            onFocus={() => prefetchPublicProfile(queryClient, seller.id)}
             className="shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
             style={{
               borderColor: "var(--brand-border)",

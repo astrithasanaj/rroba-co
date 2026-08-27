@@ -3,7 +3,10 @@ import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import type { ListingView } from "@/lib/listings";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { prefetchListing, warmImage } from "@/lib/prefetch";
+import { prefetchPublicProfile } from "@/lib/profile-queries";
 
 export function ListingCard({
   listing,
@@ -21,9 +24,13 @@ export function ListingCard({
   const isSold = listing.sold || listing.status === "sold";
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageBroken, setImageBroken] = useState(false);
+  const queryClient = useQueryClient();
   const prefetch = () => {
     prefetchListing(listing.id);
     if (listing.coverUrl) warmImage(listing.coverUrl);
+    // Selgerprofilen er neste naturlige steg fra et kort — kun ved intent,
+    // aldri for hele feeden.
+    if (listing.user_id) prefetchPublicProfile(queryClient, listing.user_id);
   };
 
   // Bruk imageCount når tilgjengelig, fall tilbake til imageUrls (bakover-
