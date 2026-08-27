@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Search as SearchIcon,
   X,
@@ -52,6 +53,7 @@ import {
   type ListingView,
 } from "@/lib/listings";
 import { useCities } from "@/hooks/useCities";
+import { prefetchPublicProfile } from "@/lib/profile-queries";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -170,8 +172,6 @@ function SearchPage() {
     return sel;
   });
 
-  const [results, setResults] = useState<ListingView[]>([]);
-  const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecent());
   const inputRef = useRef<HTMLInputElement>(null);
   const [tab, setTab] = useState<Tab>("main");
@@ -203,17 +203,25 @@ function SearchPage() {
   const hasCategory = selectionCount(catSelection) > 0;
   const showResults = hasQuery || hasCategory || !!section;
 
+  // Debounced søketekst — holder query-key stabil mens brukeren skriver.
+  const [debouncedQ, setDebouncedQ] = useState(q.trim());
   useEffect(() => {
-    if (!showResults) {
-      setResults([]);
-      return;
-    }
-    let active = true;
-    const run = async () => {
-      setLoading(true);
+    const timer = setTimeout(() => setDebouncedQ(q.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [q]);
+
+  const resultsQuery = useQuery({
+    queryKey: [
+      "search-results",
+      { q: debouncedQ, dbCategories, subLabels, filters, genderTab, section: section ?? null },
+    ] as const,
+    enabled: showResults,
+    staleTime: 30_000,
+    placeholderData: (previous) => previous,
+    queryFn: async () => {
       let query = supabase.from("listings").select("*").eq("status", "active");
-      if (q.trim()) {
-        const term = `%${q.trim()}%`;
+      if (debouncedQ) {
+        const term = `%${debouncedQ}%`;
         query = query.or(`title.ilike.${term},description.ilike.${term},brand.ilike.${term}`);
       }
       if (dbCategories.length > 0) query = query.in("category", dbCategories);
@@ -255,21 +263,15 @@ function SearchPage() {
         return bBoosted - aBoosted;
       });
 
-      const hydrated = await hydrateListings(sorted as ListingRow[], {
+      return hydrateListings(sorted as ListingRow[], {
         thumbnail: true,
         mode: "cover",
       });
-      if (active) {
-        setResults(hydrated);
-        setLoading(false);
-      }
-    };
-    const t = setTimeout(run, 250);
-    return () => {
-      active = false;
-      clearTimeout(t);
-    };
-  }, [q, filters, section, showResults, dbCategories, subLabels, genderTab]);
+    },
+  });
+
+  const results: ListingView[] = showResults ? (resultsQuery.data ?? []) : [];
+  const loading = showResults && resultsQuery.isFetching;
 
   // Profile + brand search
   useEffect(() => {
@@ -1180,12 +1182,17 @@ function ProfileListRow({
   onToggleFollow: () => void;
 }) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const prefetch = () => prefetchPublicProfile(queryClient, profile.id);
   const label = profile.display_name || profile.name || profile.username || t("search.user_fallback");
   return (
     <li className="flex items-center gap-3 border-b py-3" style={{ borderColor: DIVIDER }}>
       <Link
         to="/user/$id"
         params={{ id: profile.id }}
+        onMouseEnter={prefetch}
+        onTouchStart={prefetch}
+        onFocus={prefetch}
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         <img

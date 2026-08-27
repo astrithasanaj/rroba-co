@@ -18,11 +18,19 @@ import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/hooks/useCurrentUser";
-import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
+import { type ListingView } from "@/lib/listings";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
 import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
+import {
+  fetchPublicProfile,
+  fetchUserPublicListings,
+  fetchUserStats,
+  publicProfileKey,
+  publicProfileListingsKey,
+  publicProfileStatsKey,
+} from "@/lib/profile-queries";
 
 export const Route = createFileRoute("/user/$id/")({
   component: () => (
@@ -31,18 +39,6 @@ export const Route = createFileRoute("/user/$id/")({
     </SwipeBackWrapper>
   ),
 });
-
-type Profile = {
-  id: string;
-  name: string;
-  username: string | null;
-  avatar_url: string | null;
-  city: string;
-  bio: string;
-  rating_avg: number;
-  rating_count: number;
-  created_at?: string;
-};
 
 
 type SortMode = "new" | "low" | "high" | "popular";
@@ -128,69 +124,7 @@ function Stat({
   return <div style={{ textAlign: "center", minWidth: "5ch" }}>{content}</div>;
 }
 
-// ---- Fetchers --------------------------------------------------------------
-
-async function fetchPublicProfile(id: string): Promise<Profile | null> {
-  const { data } = await supabase
-    .from("public_profiles")
-    .select("id,name,username,avatar_url,city,bio,rating_avg,rating_count,created_at")
-    .eq("id", id)
-    .maybeSingle();
-  return (data as Profile | null) ?? null;
-}
-
-async function fetchUserPublicListings(id: string): Promise<{
-  listings: ListingWithLikes[];
-  hasSale: boolean;
-  totalLikes: number;
-}> {
-  const { data } = await supabase
-    .from("listings")
-    .select("*")
-    .eq("user_id", id)
-    .in("status", ["active", "sold"])
-    .order("created_at", { ascending: false });
-  const rows = (data ?? []) as ListingRow[];
-  const hydrated = await hydrateListings(rows, { thumbnail: true, mode: "cover" });
-
-  const ids = rows.map((r) => r.id);
-  const likesMap: Record<string, number> = {};
-  let totalLikes = 0;
-  if (ids.length) {
-    const { data: lk } = await supabase
-      .from("listing_likes")
-      .select("listing_id")
-      .in("listing_id", ids);
-    for (const row of lk ?? []) {
-      likesMap[row.listing_id] = (likesMap[row.listing_id] ?? 0) + 1;
-      totalLikes++;
-    }
-  }
-  return {
-    listings: hydrated.map((h) => ({ ...h, _likes: likesMap[h.id] ?? 0 })),
-    hasSale: rows.some((r) => r.status === "sold"),
-    totalLikes,
-  };
-}
-
-async function fetchUserStats(
-  id: string,
-): Promise<{ followers: number; following: number; articles: number }> {
-  const [fRes, gRes, aRes] = await Promise.all([
-    supabase.from("followers").select("*", { count: "exact", head: true }).eq("following_id", id),
-    supabase.from("followers").select("*", { count: "exact", head: true }).eq("follower_id", id),
-    supabase
-      .from("listings")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", id)
-      .eq("status", "active"),
-  ]);
-  return {
-    followers: fRes.count ?? 0,
-    following: gRes.count ?? 0,
-    articles: aRes.count ?? 0,
-  };
-}
+// ---- Fetchers live in @/lib/profile-queries (shared with intent prefetch) ---
 
 function UserProfile() {
   const { id } = useParams({ from: "/user/$id/" });
@@ -209,7 +143,7 @@ function UserProfile() {
   // ---- Queries ------------------------------------------------------------
 
   const profileQuery = useQuery({
-    queryKey: ["user-public-profile", id] as const,
+    queryKey: publicProfileKey(id),
     queryFn: () => fetchPublicProfile(id),
     staleTime: 60_000,
     placeholderData: (prev) => prev,
@@ -217,7 +151,7 @@ function UserProfile() {
   const profile = profileQuery.data ?? null;
 
   const listingsQuery = useQuery({
-    queryKey: ["user-public-listings", id] as const,
+    queryKey: publicProfileListingsKey(id),
     queryFn: () => fetchUserPublicListings(id),
     staleTime: 30_000,
     placeholderData: (prev) => prev,
@@ -227,7 +161,7 @@ function UserProfile() {
   const likesTotal = listingsQuery.data?.totalLikes ?? 0;
 
   const statsQuery = useQuery({
-    queryKey: ["user-public-stats", id] as const,
+    queryKey: publicProfileStatsKey(id),
     queryFn: () => fetchUserStats(id),
     staleTime: 30_000,
     placeholderData: (prev) => prev,
@@ -278,7 +212,7 @@ function UserProfile() {
   const setFollowers = useCallback(
     (mut: (n: number) => number) => {
       queryClient.setQueryData<{ followers: number; following: number; articles: number }>(
-        ["user-public-stats", id],
+        publicProfileStatsKey(id),
         (prev) => (prev ? { ...prev, followers: mut(prev.followers) } : prev),
       );
     },
