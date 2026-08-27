@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useRouterState } from "@tanstack/react-router";
 
 export function MobileShell({
   children,
@@ -10,6 +11,12 @@ export function MobileShell({
    * owns an inner scroll container. Prevents PWA/mobile viewport jumping. */
   fixed?: boolean;
 }) {
+  // The shell scroller — not window — is the real scroll container, so it needs
+  // an explicit id for TanStack Router's scroll restoration to track it.
+  const routeId = useRouterState({
+    select: (s) => s.matches[s.matches.length - 1]?.routeId ?? "root",
+  });
+
   if (fixed) {
     return (
       <div
@@ -25,7 +32,7 @@ export function MobileShell({
     );
   }
   return (
-    <div className="page-wrapper bg-muted/40">
+    <div className="page-wrapper bg-muted/40" data-scroll-restoration-id={routeId}>
       <div
         className="relative mx-auto w-full max-w-[480px] bg-background"
         style={{ minHeight: "100%" }}
