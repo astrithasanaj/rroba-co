@@ -61,6 +61,7 @@ export async function normalizeFile(file: File): Promise<File> {
     file.type === "image/heif" ||
     /\.(heic|heif)$/i.test(file.name);
   if (!isHeic) return file;
+  const { default: heic2any } = await import("heic2any");
   const converted = (await heic2any({
     blob: file,
     toType: "image/jpeg",
