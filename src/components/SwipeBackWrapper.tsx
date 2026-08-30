@@ -5,6 +5,7 @@ interface SwipeBackWrapperProps {
   children: ReactNode;
   enabled?: boolean;
   className?: string;
+  onBack?: () => void;
 }
 
 /**
@@ -18,9 +19,10 @@ export function SwipeBackWrapper({
   children,
   enabled = true,
   className,
+  onBack,
 }: SwipeBackWrapperProps) {
   const { pageRef, overlayRef, onTouchStart, onTouchMove, onTouchEnd } =
-    useSwipeBack(enabled);
+    useSwipeBack(enabled, onBack);
 
   return (
     <>

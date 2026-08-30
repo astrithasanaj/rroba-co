@@ -13,11 +13,7 @@ import {
 } from "@/lib/membership-plans";
 
 export const Route = createFileRoute("/_authenticated/membership")({
-  component: () => (
-    <SwipeBackWrapper>
-      <MembershipPage />
-    </SwipeBackWrapper>
-  ),
+  component: () => <MembershipPage />,
 });
 
 const CREAM = "var(--brand-surface)";
@@ -112,6 +108,7 @@ function MembershipPage() {
   const renewedAt = formatDate(status.renewedAt);
 
   return (
+    <SwipeBackWrapper onBack={handleBack}>
     <MobileShell hideNav>
       <div className="min-h-screen" style={{ backgroundColor: CREAM }}>
         <header
@@ -324,5 +321,6 @@ function MembershipPage() {
         )}
       </div>
     </MobileShell>
+    </SwipeBackWrapper>
   );
 }
