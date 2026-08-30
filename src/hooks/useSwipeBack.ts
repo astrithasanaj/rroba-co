@@ -8,13 +8,15 @@ const EASING = "cubic-bezier(0.25, 0.46, 0.45, 0.94)";
  * iOS-style swipe-back gesture.
  * Attach the returned refs/handlers to a full-viewport wrapper.
  */
-export function useSwipeBack(enabled: boolean = true) {
+export function useSwipeBack(enabled: boolean = true, onBack?: () => void) {
   const pageRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const active = useRef(false);
   const canGoBack = useRef(true);
+  const onBackRef = useRef(onBack);
+  onBackRef.current = onBack;
 
   useEffect(() => {
     // If there's no history to go back to, disable.
@@ -95,7 +97,8 @@ export function useSwipeBack(enabled: boolean = true) {
       pageRef.current.style.transform = `translateX(${screenWidth}px)`;
       if (overlayRef.current) overlayRef.current.style.opacity = "0";
       window.setTimeout(() => {
-        window.history.back();
+        if (onBackRef.current) onBackRef.current();
+        else window.history.back();
       }, 280);
     } else {
       pageRef.current.style.transform = "translateX(0)";
