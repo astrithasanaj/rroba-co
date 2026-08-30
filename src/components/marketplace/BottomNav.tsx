@@ -1,9 +1,8 @@
-import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 
 type NavRoute = "/" | "/search" | "/sell" | "/messages" | "/profile";
 
 export const BottomNav = () => {
-  const navigate = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   const items: { icon: string; route: NavRoute }[] = [
@@ -46,9 +45,11 @@ export const BottomNav = () => {
 
         if (item.icon === "plus") {
           return (
-            <button
+            <Link
               key={item.route}
-              onClick={() => navigate({ to: item.route })}
+              to={item.route}
+              preload="intent"
+              aria-label="Sell"
               className="nav-sell-btn tap-icon"
               style={{
                 width: "52px",
@@ -67,6 +68,7 @@ export const BottomNav = () => {
                 padding: "0",
                 margin: "0",
                 flexShrink: 0,
+                textDecoration: "none",
               }}
             >
               <i
@@ -77,14 +79,15 @@ export const BottomNav = () => {
                   lineHeight: 1,
                 }}
               />
-            </button>
+            </Link>
           );
         }
 
         return (
-          <button
+          <Link
             key={item.route}
-            onClick={() => navigate({ to: item.route })}
+            to={item.route}
+            preload="intent"
             className="nav-item tap-icon"
             style={{
               width: "52px",
@@ -103,6 +106,7 @@ export const BottomNav = () => {
               padding: "0",
               margin: "0",
               flexShrink: 0,
+              textDecoration: "none",
             }}
           >
             <i
@@ -116,7 +120,7 @@ export const BottomNav = () => {
                 height: "24px",
               }}
             />
-          </button>
+          </Link>
         );
       })}
     </div>
