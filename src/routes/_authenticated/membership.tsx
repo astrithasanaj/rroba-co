@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ChevronLeft, Check, Loader2 } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
@@ -51,6 +51,22 @@ function formatDate(iso: string | null): string | null {
 
 function MembershipPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromSettings = Boolean(
+    (location.state as { fromSettings?: boolean } | undefined)?.fromSettings,
+  );
+  const handleBack = () => {
+    if (fromSettings) {
+      navigate({
+        to: "/profile",
+        replace: true,
+        state: { openSettings: true } as never,
+      });
+    } else {
+      window.history.back();
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<Status>({
     tier: null,
@@ -104,7 +120,7 @@ function MembershipPage() {
         >
           <button
             type="button"
-            onClick={() => window.history.back()}
+            onClick={handleBack}
             aria-label="Kthehu"
             className={`grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_CLASS}`}
             style={{

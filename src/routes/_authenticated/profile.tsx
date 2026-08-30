@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -204,6 +204,12 @@ function ProfilePage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [offersOpen, setOffersOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => {
+    if ((location.state as { openSettings?: boolean } | undefined)?.openSettings) {
+      setSettingsOpen(true);
+    }
+  }, [location.state]);
   const [heightOpen, setHeightOpen] = useState(false);
   const [offerSub, setOfferSub] = useState<"received" | "sent">("received");
 
@@ -1630,7 +1636,9 @@ function SettingsSheet({
               onNavigate={setView}
               onLogout={() => setConfirmLogout(true)}
               onDeleteAccount={() => navigate({ to: "/profile/delete-account" })}
-              onOpenMembership={() => navigate({ to: "/membership" })}
+              onOpenMembership={() =>
+                navigate({ to: "/membership", state: { fromSettings: true } as never })
+              }
             />
           )}
           {view === "profile" && (
