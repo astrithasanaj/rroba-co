@@ -308,76 +308,63 @@ function ProductDetail() {
 
       {/* Inline action bar */}
       <div
-        className="flex items-center justify-between border-b px-[18px] py-3"
+        className="flex items-center gap-3 border-b px-[18px] py-3"
         style={{ backgroundColor: "var(--brand-surface)", borderColor: "var(--brand-border)" }}
       >
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              if (!me) return navigate({ to: "/auth" });
-              toggleLike(listing.id);
-            }}
-            aria-label={likes.has(listing.id) ? t("product.unlike") : t("product.like")}
-            aria-pressed={likes.has(listing.id)}
-            className={`${ICON_BTN} border`}
-            style={{ borderColor: "var(--brand-border)" }}
-          >
-            <Heart
-              size={22}
-              strokeWidth={1.5}
-              color="var(--brand-rose)"
-              fill={likes.has(listing.id) ? "var(--brand-rose)" : "none"}
-              aria-hidden="true"
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (!me) return navigate({ to: "/auth" });
-              toggleSave(listing.id);
-            }}
-            aria-label={saves.has(listing.id) ? t("product.unsave") : t("product.save")}
-            aria-pressed={saves.has(listing.id)}
-            className={ICON_BTN}
-          >
-            <Bookmark
-              size={22}
-              strokeWidth={1.5}
-              color="var(--brand-ink)"
-              fill={saves.has(listing.id) ? "var(--brand-ink)" : "none"}
-              aria-hidden="true"
-            />
-          </button>
-          <button
-            type="button"
-            onClick={sendMessage}
-            disabled={isOwn}
-            aria-label={t("product.send_message_aria")}
-            className={`${ICON_BTN} disabled:opacity-40 disabled:active:scale-100`}
-          >
-            <MessageCircle
-              size={22}
-              strokeWidth={1.5}
-              color="var(--brand-ink)"
-              aria-hidden="true"
-            />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => {
+            if (!me) return navigate({ to: "/auth" });
+            toggleLike(listing.id);
+          }}
+          aria-label={likes.has(listing.id) ? t("product.unlike") : t("product.like")}
+          aria-pressed={likes.has(listing.id)}
+          className={`${ICON_BTN} border`}
+          style={{ borderColor: "var(--brand-border)" }}
+        >
+          <Heart
+            size={22}
+            strokeWidth={1.5}
+            color="var(--brand-rose)"
+            fill={likes.has(listing.id) ? "var(--brand-rose)" : "none"}
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (!me) return navigate({ to: "/auth" });
+            toggleSave(listing.id);
+          }}
+          aria-label={saves.has(listing.id) ? t("product.unsave") : t("product.save")}
+          aria-pressed={saves.has(listing.id)}
+          className={ICON_BTN}
+        >
+          <Bookmark
+            size={22}
+            strokeWidth={1.5}
+            color="var(--brand-ink)"
+            fill={saves.has(listing.id) ? "var(--brand-ink)" : "none"}
+            aria-hidden="true"
+          />
+        </button>
         <button
           type="button"
           onClick={sendMessage}
           disabled={isSold || isOwn}
-          className="px-5 text-base font-bold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl px-5 text-base font-bold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2"
           style={{
             background: "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))",
             color: "#ffffff",
-            minWidth: 96,
-            height: 44,
-            borderRadius: 14,
-            boxShadow: "0 2px 8px color-mix(in oklab, var(--brand-rose) 35%, transparent)",
+            height: 52,
+            boxShadow: "0 3px 12px color-mix(in oklab, var(--brand-rose) 30%, transparent)",
           }}
         >
+          <MessageCircle
+            size={20}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
           {isSold ? t("product.sold") : t("product.message_seller")}
         </button>
       </div>
