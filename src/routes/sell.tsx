@@ -1269,11 +1269,16 @@ function FormStep({
           </div>
           <div ref={cityRef}>
             <Label htmlFor="sell-city">Qyteti</Label>
-            <CityPicker
-              value={cityId}
-              onChange={(id, c) => onCityChange(id, c.name)}
-              className="border border-[var(--brand-border)]"
-            />
+            <div
+              className="flex h-[52px] w-full items-center rounded-2xl px-4"
+              style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
+            >
+              <CityPicker
+                value={cityId}
+                onChange={(id, c) => onCityChange(id, c.name)}
+                className="!h-full w-full !bg-transparent px-0 border-0"
+              />
+            </div>
           </div>
         </div>
 
