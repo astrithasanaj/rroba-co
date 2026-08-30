@@ -2273,7 +2273,7 @@ function ToggleRow({
           className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-transform duration-200 ease-out"
           style={{
             transform: `translateX(${value ? 24 : 2}px)`,
-            backgroundColor: SURFACE,
+            backgroundColor: CREAM,
             boxShadow: "0 1px 2px rgba(0,0,0,0.12)",
           }}
         />
