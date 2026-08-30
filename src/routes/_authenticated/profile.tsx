@@ -2258,26 +2258,30 @@ function ToggleRow({
         role="switch"
         aria-checked={value}
         aria-label={title}
-        className="relative shrink-0 rounded-full transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-        style={{
-          height: 26,
-          width: 46,
-          minHeight: 44,
-          minWidth: 44,
-          padding: 0,
-          backgroundColor: value ? INK : DIVIDER,
-        }}
+        className="relative grid shrink-0 place-items-center bg-transparent p-0 focus-visible:outline-none"
+        style={{ height: 44, width: 46 }}
       >
         <span
           aria-hidden="true"
-          className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-transform duration-200 ease-out"
+          className="relative block rounded-full transition-colors duration-200 ease-out"
           style={{
-            transform: `translateX(${value ? 24 : 2}px)`,
-            backgroundColor: CREAM,
-            boxShadow: "0 1px 2px rgba(0,0,0,0.12)",
+            height: 26,
+            width: 46,
+            backgroundColor: value ? INK : DIVIDER,
           }}
-        />
+        >
+          <span
+            aria-hidden="true"
+            className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-transform duration-200 ease-out"
+            style={{
+              transform: `translateX(${value ? 24 : 2}px)`,
+              backgroundColor: CREAM,
+              boxShadow: "0 1px 2px rgba(0,0,0,0.12)",
+            }}
+          />
+        </span>
       </button>
+
     </label>
   );
 }
