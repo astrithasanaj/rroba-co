@@ -21,10 +21,18 @@ import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
-import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { getListingLikeInfo } from "@/lib/likes.functions";
-import { prefetchPublicProfile } from "@/lib/profile-queries";
+import {
+  fetchPublicProfile,
+  prefetchPublicProfile,
+  publicProfileKey,
+} from "@/lib/profile-queries";
+import {
+  fetchProductListing,
+  PRODUCT_LISTING_STALE_MS,
+  productListingKey,
+} from "@/lib/product-queries";
 import { useTranslation } from "@/i18n";
 import { tCategory } from "@/i18n/tCategory";
 
