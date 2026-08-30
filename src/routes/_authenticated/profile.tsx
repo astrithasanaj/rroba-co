@@ -2194,13 +2194,17 @@ function ProfileForm({
       </div>
       <div>
         <Label style={{ color: INK }}>{t("profile.city_label")}</Label>
-        <div className="mt-1">
+        <div
+          className="mt-1 flex h-[52px] w-full items-center rounded-2xl px-4"
+          style={{ background: CARD, border: `1px solid ${DIVIDER}` }}
+        >
           <CityPicker
             value={cityId}
             onChange={(id, c) => {
               setCityId(id);
               setCity(c.name);
             }}
+            className="!h-full w-full !bg-transparent px-0 border-0"
           />
         </div>
       </div>
