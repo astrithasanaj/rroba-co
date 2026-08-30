@@ -1,4 +1,3 @@
-import heic2any from "heic2any";
 
 export interface CompressionOptions {
   maxWidth?: number;
