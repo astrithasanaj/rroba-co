@@ -21,10 +21,18 @@ import { useUserCollections } from "@/lib/user-collections";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
 import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listings";
-import { getCachedListing } from "@/lib/prefetch";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { getListingLikeInfo } from "@/lib/likes.functions";
-import { prefetchPublicProfile } from "@/lib/profile-queries";
+import {
+  fetchPublicProfile,
+  prefetchPublicProfile,
+  publicProfileKey,
+} from "@/lib/profile-queries";
+import {
+  fetchProductListing,
+  PRODUCT_LISTING_STALE_MS,
+  productListingKey,
+} from "@/lib/product-queries";
 import { useTranslation } from "@/i18n";
 import { tCategory } from "@/i18n/tCategory";
 
@@ -36,36 +44,11 @@ export const Route = createFileRoute("/product/$id")({
   ),
 });
 
-type Seller = {
-  id: string;
-  name: string;
-  avatar_url: string | null;
-  rating_avg: number;
-  rating_count: number;
-};
-
 // Delte klasse-strenger for konsekvent stil
 const ICON_BTN =
   "grid h-12 w-12 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
 const META_TEXT_INK = { color: "var(--brand-ink)" } as const;
 const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
-
-async function fetchProductListing(id: string): Promise<ListingView | "unavailable" | null> {
-  const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
-  if (!row) return null;
-  if (["expired", "removed", "flagged"].includes((row as ListingRow).status)) return "unavailable";
-  const [hydrated] = await hydrateListings([row as ListingRow]);
-  return hydrated;
-}
-
-async function fetchProductSeller(userId: string): Promise<Seller | null> {
-  const { data } = await supabase
-    .from("public_profiles")
-    .select("id,name,avatar_url,rating_avg,rating_count")
-    .eq("id", userId)
-    .maybeSingle();
-  return (data as Seller | null) ?? null;
-}
 
 async function fetchSimilarListings(category: string, excludeId: string): Promise<ListingView[]> {
   const { data: sim } = await supabase
@@ -86,7 +69,7 @@ function ProductDetail() {
   const navigate = useNavigate({ from: "/messages" });
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const cached = getCachedListing(id);
+  
   const [me, setMe] = useState<string | null>(null);
 
   const [moreOpen, setMoreOpen] = useState(false);
@@ -98,21 +81,23 @@ function ProductDetail() {
   }, []);
 
   const listingQuery = useQuery({
-    queryKey: ["product-listing", id] as const,
+    queryKey: productListingKey(id),
     queryFn: () => fetchProductListing(id),
-    staleTime: 30_000,
-    placeholderData: (prev) => prev ?? (cached ? cached : undefined),
+    staleTime: PRODUCT_LISTING_STALE_MS,
+    placeholderData: (prev) => prev,
   });
 
   const listingData = listingQuery.data;
   const listing = listingData && listingData !== "unavailable" ? listingData : null;
 
   // Selger og "lignende" hentes parallelt så snart listing-raden finnes.
+  // Selgeren bruker samme key/fetcher som profilsiden og profil-prefetch,
+  // så ett kall dekker begge.
   const sellerQuery = useQuery({
-    queryKey: ["product-seller", listing?.user_id ?? null] as const,
-    queryFn: () => fetchProductSeller(listing!.user_id),
+    queryKey: publicProfileKey(listing?.user_id ?? ""),
+    queryFn: () => fetchPublicProfile(listing!.user_id),
     enabled: !!listing?.user_id,
-    staleTime: 30_000,
+    staleTime: 60_000,
     placeholderData: (prev) => prev,
   });
   const seller = sellerQuery.data ?? null;

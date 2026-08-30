@@ -5,7 +5,8 @@ import type { ListingView } from "@/lib/listings";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { prefetchListing, warmImage } from "@/lib/prefetch";
+import { warmImage } from "@/lib/prefetch";
+import { prefetchProductListing } from "@/lib/product-queries";
 import { prefetchPublicProfile } from "@/lib/profile-queries";
 
 export function ListingCard({
@@ -26,7 +27,7 @@ export function ListingCard({
   const [imageBroken, setImageBroken] = useState(false);
   const queryClient = useQueryClient();
   const prefetch = () => {
-    prefetchListing(listing.id);
+    prefetchProductListing(queryClient, listing.id);
     if (listing.coverUrl) warmImage(listing.coverUrl);
     // Selgerprofilen er neste naturlige steg fra et kort — kun ved intent,
     // aldri for hele feeden.
