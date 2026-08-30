@@ -44,36 +44,11 @@ export const Route = createFileRoute("/product/$id")({
   ),
 });
 
-type Seller = {
-  id: string;
-  name: string;
-  avatar_url: string | null;
-  rating_avg: number;
-  rating_count: number;
-};
-
 // Delte klasse-strenger for konsekvent stil
 const ICON_BTN =
   "grid h-12 w-12 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-2";
 const META_TEXT_INK = { color: "var(--brand-ink)" } as const;
 const META_TEXT_MUTED = { color: "var(--brand-ink-muted)" } as const;
-
-async function fetchProductListing(id: string): Promise<ListingView | "unavailable" | null> {
-  const { data: row } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
-  if (!row) return null;
-  if (["expired", "removed", "flagged"].includes((row as ListingRow).status)) return "unavailable";
-  const [hydrated] = await hydrateListings([row as ListingRow]);
-  return hydrated;
-}
-
-async function fetchProductSeller(userId: string): Promise<Seller | null> {
-  const { data } = await supabase
-    .from("public_profiles")
-    .select("id,name,avatar_url,rating_avg,rating_count")
-    .eq("id", userId)
-    .maybeSingle();
-  return (data as Seller | null) ?? null;
-}
 
 async function fetchSimilarListings(category: string, excludeId: string): Promise<ListingView[]> {
   const { data: sim } = await supabase
