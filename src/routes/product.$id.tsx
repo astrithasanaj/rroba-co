@@ -81,21 +81,23 @@ function ProductDetail() {
   }, []);
 
   const listingQuery = useQuery({
-    queryKey: ["product-listing", id] as const,
+    queryKey: productListingKey(id),
     queryFn: () => fetchProductListing(id),
-    staleTime: 30_000,
-    placeholderData: (prev) => prev ?? (cached ? cached : undefined),
+    staleTime: PRODUCT_LISTING_STALE_MS,
+    placeholderData: (prev) => prev,
   });
 
   const listingData = listingQuery.data;
   const listing = listingData && listingData !== "unavailable" ? listingData : null;
 
   // Selger og "lignende" hentes parallelt så snart listing-raden finnes.
+  // Selgeren bruker samme key/fetcher som profilsiden og profil-prefetch,
+  // så ett kall dekker begge.
   const sellerQuery = useQuery({
-    queryKey: ["product-seller", listing?.user_id ?? null] as const,
-    queryFn: () => fetchProductSeller(listing!.user_id),
+    queryKey: publicProfileKey(listing?.user_id ?? ""),
+    queryFn: () => fetchPublicProfile(listing!.user_id),
     enabled: !!listing?.user_id,
-    staleTime: 30_000,
+    staleTime: 60_000,
     placeholderData: (prev) => prev,
   });
   const seller = sellerQuery.data ?? null;
