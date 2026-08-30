@@ -69,7 +69,7 @@ function ProductDetail() {
   const navigate = useNavigate({ from: "/messages" });
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const cached = getCachedListing(id);
+  
   const [me, setMe] = useState<string | null>(null);
 
   const [moreOpen, setMoreOpen] = useState(false);
