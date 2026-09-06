@@ -418,10 +418,6 @@ function ProfilePage() {
     const sold = myListings.filter((l) => l.status === "sold").sort(sortFn);
     return [...active, ...sold];
   }, [myListings, sort]);
-  const wardrobeListings = useMemo(
-    () => myListings.filter((l) => l.status === "sold").sort(sortFn),
-    [myListings, sort],
-  );
   const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
   const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
 
