@@ -23,7 +23,6 @@ import {
   Settings as SettingsIcon,
   
   ShieldCheck,
-  SlidersHorizontal,
   Star,
   Trash2,
   User as UserIcon,
@@ -62,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 type Tab = "mine" | "liked" | "saved";
-type SortMode = "new" | "low" | "high";
+
 
 type Profile = {
   id: string;
@@ -198,10 +197,8 @@ function ProfilePage() {
   const { likes, saves, loaded: collectionsLoaded } = useUserCollections();
   const hasUnreadNotifications = useUnreadNotifications();
   const [tab, setTab] = useState<Tab>("mine");
-  const [sort, setSort] = useState<SortMode>("new");
   const [ratingsOpen, setRatingsOpen] = useState(false);
   const [benefitsOpen, setBenefitsOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
   const [offersOpen, setOffersOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const location = useLocation();
@@ -407,19 +404,16 @@ function ProfilePage() {
     : "";
 
 
-  const sortFn = (a: ListingView, b: ListingView) => {
-    if (sort === "low") return a.price - b.price;
-    if (sort === "high") return b.price - a.price;
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  };
+  const sortFn = (a: ListingView, b: ListingView) =>
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
 
   const mineListings = useMemo(() => {
     const active = myListings.filter((l) => l.status === "active").sort(sortFn);
     const sold = myListings.filter((l) => l.status === "sold").sort(sortFn);
     return [...active, ...sold];
-  }, [myListings, sort]);
-  const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
-  const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
+  }, [myListings]);
+  const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings]);
+  const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings]);
 
   const salesCount = useMemo(
     () => myListings.filter((l) => l.status === "sold").length,
@@ -470,14 +464,6 @@ function ProfilePage() {
                   style={{ top: 6, right: 6, width: 10, height: 10, backgroundColor: "var(--brand-rose)" }}
                 />
               )}
-            </button>
-            <button
-              onClick={() => setSortOpen(true)}
-              className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
-              aria-label={t("common.filter")}
-            >
-              <SlidersHorizontal style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             </button>
           </div>
           <h1
@@ -756,58 +742,6 @@ function ProfilePage() {
 
       </div>
 
-      {/* Sort sheet */}
-      <Sheet open={sortOpen} onOpenChange={setSortOpen}>
-        <SheetContent
-          side="bottom"
-          hideClose
-          className="border-0 p-0"
-          style={{ backgroundColor: CARD }}
-        >
-          <div className="flex items-center gap-3 px-5 pt-4 pb-2">
-            <button
-              type="button"
-              onClick={() => setSortOpen(false)}
-              aria-label={t("common.back")}
-              className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97]"
-              style={{
-                width: 44,
-                height: 44,
-                backgroundColor: GLASS_BG,
-                border: `1px solid ${GLASS_BORDER}`,
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} />
-            </button>
-            <h2 className="text-[17px] font-bold" style={{ color: INK }}>
-              {t("profile.sort_by")}
-            </h2>
-          </div>
-          <div className="px-5 pb-8 pt-2">
-            {(
-              [
-                { id: "new", label: t("profile.sort_newest") },
-                { id: "low", label: t("profile.sort_low_high") },
-                { id: "high", label: t("profile.sort_high_low") },
-              ] as const
-            ).map((o) => (
-              <button
-                key={o.id}
-                onClick={() => {
-                  setSort(o.id);
-                  setSortOpen(false);
-                }}
-                className="flex w-full items-center justify-between py-3 text-left text-[15px]"
-                style={{ color: INK, borderBottom: `1px solid ${DIVIDER}` }}
-              >
-                {o.label}
-                {sort === o.id && <Check className="h-4 w-4" />}
-              </button>
-            ))}
-          </div>
-        </SheetContent>
-      </Sheet>
 
       {/* Benefits sheet — full-page slide-in from right */}
       <Sheet open={benefitsOpen} onOpenChange={setBenefitsOpen}>
