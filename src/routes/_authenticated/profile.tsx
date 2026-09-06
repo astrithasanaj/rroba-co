@@ -21,7 +21,7 @@ import {
   Plus,
   Ruler,
   Settings as SettingsIcon,
-  Shirt,
+  
   ShieldCheck,
   SlidersHorizontal,
   Star,
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
-type Tab = "mine" | "liked" | "saved" | "wardrobe";
+type Tab = "mine" | "liked" | "saved";
 type SortMode = "new" | "low" | "high";
 
 type Profile = {
@@ -418,10 +418,6 @@ function ProfilePage() {
     const sold = myListings.filter((l) => l.status === "sold").sort(sortFn);
     return [...active, ...sold];
   }, [myListings, sort]);
-  const wardrobeListings = useMemo(
-    () => myListings.filter((l) => l.status === "sold").sort(sortFn),
-    [myListings, sort],
-  );
   const sortedLiked = useMemo(() => [...likedListings].sort(sortFn), [likedListings, sort]);
   const sortedSaved = useMemo(() => [...savedListings].sort(sortFn), [savedListings, sort]);
 
@@ -435,17 +431,10 @@ function ProfilePage() {
     { id: "mine", icon: Grid2x2 },
     { id: "liked", icon: Heart },
     { id: "saved", icon: Bookmark },
-    { id: "wardrobe", icon: Shirt },
   ];
 
   const currentGrid =
-    tab === "mine"
-      ? mineListings
-      : tab === "liked"
-        ? sortedLiked
-        : tab === "saved"
-          ? sortedSaved
-          : wardrobeListings;
+    tab === "mine" ? mineListings : tab === "liked" ? sortedLiked : sortedSaved;
 
   return (
     <MobileShell>
@@ -700,7 +689,7 @@ function ProfilePage() {
           <div
             role="tablist"
             aria-label={t("profile.sections_aria")}
-            className="grid grid-cols-4"
+            className="grid grid-cols-3"
             style={{ backgroundColor: CREAM }}
           >
             {tabs.map((tabItem) => {
@@ -710,7 +699,6 @@ function ProfilePage() {
                 mine: t("profile.tab_mine"),
                 liked: t("profile.tab_liked"),
                 saved: t("profile.tab_saved"),
-                wardrobe: t("profile.tab_wardrobe"),
               };
               return (
                 <button
@@ -1154,13 +1142,7 @@ function ProfileTabGrid({
   isSavedLoading: boolean;
 }) {
   const loading =
-    tab === "mine"
-      ? isMineLoading
-      : tab === "liked"
-        ? isLikedLoading
-        : tab === "saved"
-          ? isSavedLoading
-          : isMineLoading; // wardrobe derives from mine listings
+    tab === "mine" ? isMineLoading : tab === "liked" ? isLikedLoading : isSavedLoading;
   return (
     <section
       id={`profile-panel-${tab}`}
@@ -1395,15 +1377,13 @@ function SoldRibbon() {
 function TabEmptyState({ tab }: { tab: Tab }) {
   const { t } = useTranslation();
   const Icon =
-    tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : tab === "saved" ? Bookmark : Shirt;
+    tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : Bookmark;
   const subtitle =
     tab === "mine"
       ? t("profile.empty_mine")
       : tab === "liked"
         ? t("profile.empty_liked")
-        : tab === "saved"
-          ? t("profile.empty_saved")
-          : t("profile.empty_wardrobe");
+        : t("profile.empty_saved");
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
       <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
