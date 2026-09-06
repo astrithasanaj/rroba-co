@@ -22,6 +22,7 @@ import {
   Mars,
 } from "lucide-react";
 import { useTranslation } from "@/i18n";
+import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 const CAT_LABEL_TO_KEY: Record<string, string> = {
   "Modë & aksesorë": "categories.mode",
   "Fëmijë & bebe": "categories.femije",
