@@ -107,7 +107,7 @@ function PrivacyPage() {
         <div className="mt-4 space-y-3">
           {doc.intro.map((p, i) => (
             <p key={i} style={{ fontSize: 14, lineHeight: 1.6, color: INK }}>
-              {p}
+              {renderText(p, `intro-${i}`)}
             </p>
           ))}
         </div>
@@ -118,7 +118,7 @@ function PrivacyPage() {
             <div className="mt-2 space-y-2">
               {s.body.map((p, i) => (
                 <p key={i} style={{ fontSize: 14, lineHeight: 1.6, color: INK }}>
-                  {p}
+                  {renderText(p, `${s.heading}-${i}`)}
                 </p>
               ))}
             </div>
