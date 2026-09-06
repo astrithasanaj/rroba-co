@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
-type Tab = "mine" | "liked" | "saved" | "wardrobe";
+type Tab = "mine" | "liked" | "saved";
 type SortMode = "new" | "low" | "high";
 
 type Profile = {
