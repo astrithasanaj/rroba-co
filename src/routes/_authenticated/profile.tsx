@@ -689,7 +689,7 @@ function ProfilePage() {
           <div
             role="tablist"
             aria-label={t("profile.sections_aria")}
-            className="grid grid-cols-4"
+            className="grid grid-cols-3"
             style={{ backgroundColor: CREAM }}
           >
             {tabs.map((tabItem) => {
