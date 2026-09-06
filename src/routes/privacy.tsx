@@ -28,6 +28,40 @@ const CREAM = "#ffffff";
 const INK = "#2d1521";
 const MUTED = "rgba(45,21,33,0.6)";
 
+// Renders text with clickable hello@rroba.co (mailto) and rroba.co links.
+function renderText(text: string, keyBase: string) {
+  const pattern = /(hello@rroba\.co|rroba\.co)/g;
+  const parts = text.split(pattern);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => {
+    if (part === "hello@rroba.co") {
+      return (
+        <a
+          key={`${keyBase}-${i}`}
+          href="mailto:hello@rroba.co"
+          style={{ color: INK, textDecoration: "underline" }}
+        >
+          {part}
+        </a>
+      );
+    }
+    if (part === "rroba.co") {
+      return (
+        <a
+          key={`${keyBase}-${i}`}
+          href="https://rroba.co"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: INK, textDecoration: "underline" }}
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 function PrivacyPage() {
   const { language } = useTranslation();
   const doc = PRIVACY_POLICY[language] ?? PRIVACY_POLICY.sq;
