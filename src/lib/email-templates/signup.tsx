@@ -50,6 +50,17 @@ export const SignupEmail = ({
         <Button style={button} href={confirmationUrl}>
           Verifiko email-in
         </Button>
+        {token ? (
+          <>
+            <Text style={{ ...text, margin: '30px 0 8px' }}>
+              Ose shkruaj këtë kod në aplikacion:
+            </Text>
+            <Text style={code}>{token}</Text>
+            <Text style={{ ...text, margin: '0' }}>
+              Kodi skadon pas 1 ore.
+            </Text>
+          </>
+        ) : null}
         <Text style={footer}>
           Nëse nuk e ke krijuar këtë llogari, mund ta injorosh këtë email.
         </Text>
