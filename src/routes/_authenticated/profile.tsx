@@ -47,6 +47,8 @@ import { hydrateListings, type ListingRow, type ListingView } from "@/lib/listin
 import { getMembershipPlan } from "@/lib/membership-plans";
 import { useTranslation, type Language } from "@/i18n";
 import { PRIVACY_POLICY } from "@/lib/privacy-policy-content";
+import { TERMS_OF_SERVICE } from "@/lib/terms-content";
+import { LegalText } from "@/components/legal/LegalText";
 
 import { CityPicker } from "@/components/marketplace/CityPicker";
 import { useUserCollections } from "@/lib/user-collections";
