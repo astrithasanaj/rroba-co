@@ -17,6 +17,7 @@ interface SignupEmailProps {
   siteUrl: string
   recipient: string
   confirmationUrl: string
+  token?: string
 }
 
 export const SignupEmail = ({
@@ -24,6 +25,7 @@ export const SignupEmail = ({
   siteUrl,
   recipient,
   confirmationUrl,
+  token,
 }: SignupEmailProps) => (
   <Html lang="sq" dir="ltr">
     <Head />
@@ -48,6 +50,17 @@ export const SignupEmail = ({
         <Button style={button} href={confirmationUrl}>
           Verifiko email-in
         </Button>
+        {token ? (
+          <>
+            <Text style={{ ...text, margin: '30px 0 8px' }}>
+              Ose shkruaj këtë kod në aplikacion:
+            </Text>
+            <Text style={code}>{token}</Text>
+            <Text style={{ ...text, margin: '0' }}>
+              Kodi skadon pas 1 ore.
+            </Text>
+          </>
+        ) : null}
         <Text style={footer}>
           Nëse nuk e ke krijuar këtë llogari, mund ta injorosh këtë email.
         </Text>
@@ -82,3 +95,10 @@ const button = {
   textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const code = {
+  fontSize: '30px',
+  fontWeight: 'bold' as const,
+  letterSpacing: '6px',
+  color: '#000000',
+  margin: '0 0 12px',
+}
