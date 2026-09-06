@@ -93,7 +93,11 @@ export const Route = createFileRoute("/search")({
     category: typeof s.category === "string" ? s.category : undefined,
     section: s.section === "new" || s.section === "trending" ? s.section : undefined,
   }),
-  component: SearchPage,
+  component: () => (
+    <SwipeBackWrapper>
+      <SearchPage />
+    </SwipeBackWrapper>
+  ),
 });
 
 type Filters = {
