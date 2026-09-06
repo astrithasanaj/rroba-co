@@ -434,13 +434,7 @@ function ProfilePage() {
   ];
 
   const currentGrid =
-    tab === "mine"
-      ? mineListings
-      : tab === "liked"
-        ? sortedLiked
-        : tab === "saved"
-          ? sortedSaved
-          : wardrobeListings;
+    tab === "mine" ? mineListings : tab === "liked" ? sortedLiked : sortedSaved;
 
   return (
     <MobileShell>
