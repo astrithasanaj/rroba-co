@@ -22,6 +22,7 @@ import { type ListingView } from "@/lib/listings";
 import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ReviewsSheet } from "@/components/marketplace/ReviewsSheet";
+import { ShareProfileSheet } from "@/components/marketplace/ShareProfileSheet";
 import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
 import {
   fetchPublicProfile,
@@ -136,6 +137,7 @@ function UserProfile() {
   const [followBusy, setFollowBusy] = useState(false);
 
   const [moreOpen, setMoreOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("new");
@@ -288,18 +290,11 @@ function UserProfile() {
     }
   };
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}/user/${id}`;
-    try {
-      if (navigator.share) await navigator.share({ url, title: displayName });
-      else {
-        await navigator.clipboard.writeText(url);
-        toast.success("Lidhja u kopjua");
-      }
-    } catch {
-      /* cancelled */
-    }
+  const profileUrl = `${typeof window !== "undefined" ? window.location.origin : "https://rroba.co"}/user/${id}`;
+
+  const handleShare = () => {
     setMoreOpen(false);
+    setTimeout(() => setShareOpen(true), 220);
   };
 
   const loading = profileQuery.isPending && !profileQuery.data;
@@ -825,6 +820,16 @@ function UserProfile() {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Share profile */}
+      <ShareProfileSheet
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        profileUrl={profileUrl}
+        displayName={displayName}
+        username={username}
+        avatarUrl={avatar}
+      />
 
       {/* Reviews */}
       <ReviewsSheet
