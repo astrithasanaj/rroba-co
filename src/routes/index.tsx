@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Bell, UserPlus, Shirt } from "lucide-react";
+import { Bell, UserPlus } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ListingCardSkeleton, ProductGridSkeleton } from "@/components/marketplace/Skeletons";
@@ -364,18 +364,6 @@ function HomePage() {
         >
           <div className="flex items-center justify-between px-[18px] py-4">
             <div className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className="grid place-items-center"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: "#2d1521",
-                }}
-              >
-                <Shirt size={18} strokeWidth={1.8} style={{ color: "#e8836a" }} />
-              </span>
               <h1
                 className="text-3xl italic"
                 style={{
