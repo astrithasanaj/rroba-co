@@ -9,298 +9,346 @@ export type PolicyDoc = {
   sections: PolicySection[];
 };
 
-const sq: PolicyDoc = {
-  title: "Politika e privatësisë",
-  updated: "Përditësuar: 25 gusht 2026",
-  intro: [
-    "Rroba është një treg online për blerjen dhe shitjen e veshjeve dhe artikujve të dorës së dytë. Kjo politikë shpjegon çfarë të dhëna personale mbledhim, pse i përdorim, çfarë është publike, me kë i ndajmë dhe si mund t'i kontrollosh.",
-    "Kontrollues i të dhënave: Rroba. Kontakt: support@rroba.app",
-  ],
-  sections: [
-    {
-      heading: "1. Të dhënat që mbledhim",
-      body: [
-        "Të dhënat e llogarisë: emri dhe mbiemri, emri i shfaqur, emri i përdoruesit, email-i, fjalëkalimi (i ruajtur vetëm i hash-uar nga ofruesi i autentikimit), numri i telefonit, data e lindjes, gjinia, qyteti, biografia dhe fotoja e profilit.",
-        "Përmbajtja që publikon: titulli, përshkrimi, kategoria, madhësia, ngjyra, gjendja, marka, çmimi, qyteti, opsionet e dorëzimit dhe fotot e artikujve.",
-        "Aktiviteti: mesazhet me përdoruesit e tjerë, ndjekjet (followers/following), pëlqimet, artikujt e ruajtur, vlerësimet dhe komentet, raportimet, njoftimet dhe statusi i shitjes (përfshirë blerësin që zgjedh kur shënon një artikull si të shitur).",
-        "Të dhëna teknike: user-agent i pajisjes në momentin e regjistrimit, adresa IP e përpunuar nga infrastruktura tona për sigurinë dhe parandalimin e abuzimit, koha e pranimit të kushteve, dhe regjistrat e gabimeve nga aplikacioni.",
-        "Të dhëna të promovimeve dhe anëtarësimit: paketa e zgjedhur, çmimi, metoda e pagesës që deklaron (PayPal ose transfertë bankare) dhe referenca e pagesës që shkruan vetë.",
-        "Nuk mbledhim adresë postare, nuk ruajmë numra kartash dhe nuk kemi sistem të integruar pagesash ose transporti brenda aplikacionit.",
-      ],
-    },
-    {
-      heading: "2. Pse i përdorim",
-      body: [
-        "Për të krijuar dhe administruar llogarinë tënde dhe për të bërë të mundur autentikimin.",
-        "Për të publikuar artikujt e tu, për të bërë të mundur kërkimin, filtrimin dhe personalizimin bazë të faqes kryesore sipas preferencave të tua.",
-        "Për të lejuar komunikimin mes blerësit dhe shitësit dhe për të dërguar njoftime brenda aplikacionit.",
-        "Për të verifikuar promovimet dhe anëtarësimet e paguara manualisht.",
-        "Për sigurinë, moderimin, trajtimin e raportimeve dhe bllokimin e llogarive që shkelin kushtet.",
-      ],
-    },
-    {
-      heading: "3. Çfarë është publike",
-      body: [
-        "Publikisht të dukshme janë: emri i shfaqur, emri i përdoruesit, fotoja e profilit, biografia, qyteti, data e krijimit të llogarisë, vlerësimi mesatar dhe numri i vlerësimeve, artikujt aktivë me fotot dhe përshkrimet, ndjekësit dhe personat që ndjek, si edhe vlerësimet dhe komentet që shkruan për të tjerët.",
-        "Nuk shfaqen publikisht: email-i, numri i telefonit, data e lindjes, gjinia, mesazhet, artikujt e ruajtur, pëlqimet, njoftimet, raportimet, të dhënat e pagesës dhe të dhënat teknike.",
-        "Profilet publike shërbehen përmes një pamje të kufizuar të bazës së të dhënave që përmban vetëm fushat publike të listuara më lart.",
-      ],
-    },
-    {
-      heading: "4. Mesazhet dhe komunikimi privat",
-      body: [
-        "Mesazhet mund t'i lexojnë vetëm blerësi dhe shitësi në atë bisedë; rregullat e sigurisë së bazës së të dhënave nuk lejojnë akses për përdorues të tretë.",
-        "Personeli i Rroba nuk lexon mesazhet në rutinë. Akses i kufizuar administrativ mund të përdoret vetëm kur është i nevojshëm për të hetuar një raportim, abuzim, mashtrim, ose kur kërkohet me ligj.",
-        "Mesazhet nuk janë të enkriptuara nga fundi në fund; ato ruhen të enkriptuara në transit dhe në ruajtje nga ofruesi i infrastrukturës.",
-      ],
-    },
-    {
-      heading: "5. Pagesat, promovimet dhe dorëzimi",
-      body: [
-        "Blerja e artikujve ndodh drejtpërdrejt mes blerësit dhe shitësit, jashtë aplikacionit. Rroba nuk përpunon pagesa për artikujt dhe nuk ofron transport.",
-        "Për promovime dhe anëtarësim, pagesa bëhet me PayPal ose transfertë bankare dhe ne ruajmë vetëm metodën, çmimin, referencën që shkruan dhe statusin e konfirmimit. Detajet e kartës ose të llogarisë bankare nuk kalojnë përmes Rroba.",
-      ],
-    },
-    {
-      heading: "6. Baza ligjore (GDPR)",
-      body: [
-        "Kontrata (neni 6(1)(b)): krijimi i llogarisë, publikimi i artikujve, mesazhet, vlerësimet, promovimet dhe anëtarësimi.",
-        "Interesi legjitim (neni 6(1)(f)): siguria, parandalimi i mashtrimit dhe abuzimit, moderimi, regjistrimi i gabimeve dhe mirëmbajtja e shërbimit.",
-        "Detyrimi ligjor (neni 6(1)(c)): përgjigje ndaj kërkesave ligjore dhe ruajtja e regjistrimeve të kërkuara.",
-        "Pëlqimi (neni 6(1)(a)): kur zgjedh preferenca opsionale, si personalizimi i faqes sipas gjinisë ose email-e informuese, ku ofrohen.",
-      ],
-    },
-    {
-      heading: "7. Ndarja me ofrues shërbimi",
-      body: [
-        "Infrastruktura e bazës së të dhënave, autentikimi dhe ruajtja e fotove: Supabase.",
-        "Hosting dhe shpërndarje e aplikacionit: Lovable / Cloudflare.",
-        "Email transaksionale: pjesa më e madhe e email-eve (konfirmim llogarie, rivendosje fjalëkalimi, njoftime të llogarisë) dërgohet përmes shërbimit të email-it të Lovable, ndërsa disa email-e specifike — si njoftimet për promovime/administrim dhe email-i i konfirmimit të fshirjes së llogarisë — dërgohen përmes Resend.",
-        "Për çdo email të dërguar ruajmë një regjistër (email_send_log) me adresën e marrësit, emrin e shabllonit, statusin e dërgimit dhe, në rast dështimi, mesazhin e gabimit.",
-
-        "Raportim i gabimeve teknike të aplikacionit: platforma e hostimit të Rroba.",
-        "Ne nuk shesim të dhënat personale dhe nuk i ndajmë me rrjete reklamash. Të dhënat mund t'i zbulohen autoriteteve vetëm kur kërkohet me ligj.",
-      ],
-    },
-    {
-      heading: "8. Ruajtja dhe fshirja",
-      body: [
-        "Të dhënat e llogarisë ruhen për sa kohë llogaria është aktive.",
-        "Artikujt kanë një datë skadence dhe kalojnë automatikisht në joaktiv kur skadojnë; ata mbeten të lidhur me llogarinë tënde derisa t'i fshish ose të fshish llogarinë.",
-        "Mesazhet dhe bisedat ruhen derisa fshihet një nga llogaritë pjesëmarrëse.",
-        "Regjistrat e dërgimit të email-eve dhe regjistrat e sigurisë ruhen për një periudhë të kufizuar për zbulim abuzimi dhe diagnostikim.",
-      ],
-    },
-    {
-      heading: "9. Fshirja e llogarisë",
-      body: [
-        "Mund të fshish llogarinë vetë nga Profili → Cilësimet → Fshi llogarinë. Kërkohet fjalëkalimi për të konfirmuar identitetin.",
-        "Fshirja është e menjëhershme dhe e pakthyeshme. Fshihen: profili, artikujt dhe fotot e tyre, fotoja e profilit, bisedat dhe mesazhet e tua, ofertat, ndjekjet, pëlqimet, artikujt e ruajtur, njoftimet, raportimet e dërguara, vlerësimet që kanë dhënë dhe marrë, si edhe llogaria e autentikimit.",
-        "Ruajmë vetëm një regjistrim minimal auditimi të kërkesës për fshirje (identifikuesi i llogarisë, data dhe statusi), i nevojshëm për të dokumentuar përmbushjen e detyrimit GDPR. Ky regjistrim nuk është i lexueshëm nga përdoruesit.",
-        "Nëse mesazhet e tua janë pjesë e një hetimi aktiv për abuzim ose kërkese ligjore, kopjet e nevojshme mund të ruhen deri në përfundimin e tij.",
-      ],
-    },
-    {
-      heading: "10. Të drejtat e tua",
-      body: [
-        "Ke të drejtë të kërkosh akses, korrigjim, fshirje, kufizim ose kundërshtim të përpunimit, si edhe transferim të të dhënave.",
-        "Shumicën e të dhënave mund t'i ndryshosh direkt në aplikacion (profil, artikuj, email). Për kërkesa të tjera shkruaj në support@rroba.app.",
-        "Ke të drejtë të paraqesësh ankesë pranë autoritetit kompetent të mbrojtjes së të dhënave.",
-      ],
-    },
-    {
-      heading: "11. Siguria",
-      body: [
-        "Aksesi në të dhëna kontrollohet me rregulla sigurie në nivel rreshti (RLS) në bazën e të dhënave, kështu që secili përdorues arrin vetëm të dhënat e tij dhe përmbajtjen publike.",
-        "Fotot ruhen në një depo private dhe shërbehen përmes lidhjeve të përkohshme të nënshkruara.",
-        "Komunikimi me serverin bëhet përmes HTTPS. Fjalëkalimet ruhen vetëm si hash nga ofruesi i autentikimit.",
-      ],
-    },
-    {
-      heading: "12. Transferimet ndërkombëtare",
-      body: [
-        "Ofruesit tanë të infrastrukturës mund të përpunojnë të dhëna jashtë Kosovës dhe BE-së, përfshirë SHBA-në. Në këto raste transferimi bazohet në klauzola standarde kontraktuale ose mekanizma të tjerë të lejuar nga GDPR.",
-      ],
-    },
-    {
-      heading: "13. Njoftimet dhe marketingu",
-      body: [
-        "Njoftimet për mesazhe, pëlqime, ndjekje, oferta dhe shitje shfaqen brenda aplikacionit.",
-        "Email-et që dërgojmë aktualisht janë transaksionale (konfirmim, rivendosje fjalëkalimi, informacion për llogarinë). Nuk dërgojmë email-e reklamuese pa pëlqimin tënd dhe mund të tërheqësh pëlqimin në çdo kohë.",
-        "Aplikacioni aktualmente nuk dërgon push-notifikime në pajisje.",
-      ],
-    },
-    {
-      heading: "14. Cookies dhe analitika",
-      body: [
-        "Përdorim vetëm ruajtje lokale dhe cookies të nevojshme për sesionin e hyrjes dhe preferencat si gjuha.",
-        "Nuk përdorim cookies reklamuese dhe nuk kemi integruar mjete analitike të palëve të treta për ndjekjen e sjelljes së përdoruesve. Ruhen vetëm regjistrime teknike gabimesh dhe kërkesash nga platforma e hostimit.",
-      ],
-    },
-    {
-      heading: "15. Mosha minimale",
-      body: [
-        "Rroba kërkon të paktën 16 vjeç. Data e lindjes verifikohet gjatë regjistrimit dhe llogaritë nën 16 vjeç nuk lejohen.",
-        "Nëse mësojmë se një llogari i përket një personi nën 16 vjeç, ajo fshihet.",
-      ],
-    },
-    {
-      heading: "16. Ndryshimet",
-      body: [
-        "Nëse e përditësojmë këtë politikë, do të ndryshojmë datën në krye dhe, për ndryshime të rëndësishme, do të informojmë brenda aplikacionit.",
-      ],
-    },
-    {
-      heading: "17. Kontakt",
-      body: ["Për çdo pyetje ose kërkesë privatësie: support@rroba.app"],
-    },
-  ],
-};
-
 const en: PolicyDoc = {
   title: "Privacy Policy",
-  updated: "Last updated: 25 August 2026",
+  updated: "Last updated: 6 September 2026",
   intro: [
-    "Rroba is an online marketplace for buying and selling clothing and second-hand items. This policy explains what personal data we collect, why we use it, what is public, who we share it with and how you can control it.",
-    "Data controller: Rroba. Contact: support@rroba.app",
+    "Rroba respects your privacy and is committed to protecting your personal data.",
+    "This Privacy Policy explains what information Rroba collects, how and why it is used, which information may be visible to other users, which service providers may process it, how long information is retained, and the rights available to you.",
+    "Rroba processes personal data only for purposes connected to operating, securing and improving the marketplace, complying with legal obligations, and providing the services requested by users.",
   ],
   sections: [
     {
-      heading: "1. Data we collect",
+      heading: "1. Who is responsible for your data",
       body: [
-        "Account data: first and last name, display name, username, email address, password (stored only as a hash by our authentication provider), phone number, date of birth, gender, city, bio and profile photo.",
-        "Content you publish: listing title, description, category, size, colour, condition, brand, price, city, delivery options and item photos.",
-        "Activity: messages with other users, followers and accounts you follow, likes, saved listings, ratings and reviews, reports, notifications and sale status (including the buyer you select when marking an item as sold).",
-        "Technical data: your device user-agent at sign-up, IP addresses processed by our infrastructure for security and abuse prevention, the time you accepted the terms, and application error logs.",
-        "Promotion and membership data: the plan you choose, its price, the payment method you declare (PayPal or bank transfer) and the payment reference you enter yourself.",
-        "We do not collect a postal address, we never store card numbers, and the app has no built-in payment or shipping system.",
+        "Rroba is responsible for the processing of personal data described in this Privacy Policy.",
+        "For privacy-related requests, including access, correction, deletion, restriction, objection or data portability, contact: hello@rroba.co",
+        "Full legal contact details for the data controller are provided in Section 16 below.",
       ],
     },
     {
-      heading: "2. Why we use it",
+      heading: "2. Information We Collect",
       body: [
-        "To create and operate your account and to enable sign-in.",
-        "To publish your listings and to power search, filtering and basic personalisation of the home feed based on your preferences.",
-        "To allow buyers and sellers to message each other and to deliver in-app notifications.",
-        "To verify manually paid promotions and memberships.",
-        "For security, moderation, handling reports and blocking accounts that break our terms.",
+        "Account and profile information",
+        "When you create or use a Rroba account, we may process: first and last name, display name, username, email address, telephone number, date of birth, gender, city, biography, profile photo, account preferences, language, account creation date, acceptance of Terms and Privacy Policy, and membership and credit information.",
+        "Authentication credentials are handled through our authentication provider. Rroba does not store your password in readable form.",
+        "Certain technical information, such as user-agent or device information, may also be processed for security and service operation.",
+        "Marketplace content",
+        "When you use Rroba, we may process: listings, listing descriptions, prices, categories, brands, sizes and other listing attributes, listing photos, favourites and saved listings, followers and following, ratings and reviews, reports, notifications, and information about whether an item has been marked as sold.",
+        "Messages",
+        "Messages and conversations between users are stored so that Rroba's messaging functionality can operate.",
+        "Messages are not publicly visible and are restricted to the relevant conversation participants, except where access is reasonably necessary for authorised support, security, abuse prevention, dispute handling or compliance with legal obligations.",
+        "Promotions, membership and purchase records",
+        "Rroba currently does not process or store payment-card information.",
+        "Where users purchase promotions, credits or membership-related services, Rroba may process: selected plan or service, price, chosen payment method, user-entered payment reference, confirmation status, and transaction-related administrative records.",
+        "Rroba does not store full payment-card details.",
+        "Technical and diagnostic data",
+        "To operate, secure and troubleshoot the service, limited technical information may be processed, including: browser and device information, request logs, error logs, application errors, and authentication and security events.",
+        "Rroba does not currently use advertising tracking SDKs, IDFA-based tracking or behavioural advertising analytics.",
       ],
     },
     {
-      heading: "3. What is public",
+      heading: "3. Information Visible to Other Users",
       body: [
-        "Publicly visible: display name, username, profile photo, bio, city, account creation date, average rating and rating count, active listings with their photos and descriptions, your followers and who you follow, and the ratings and reviews you write about others.",
-        "Not public: your email address, phone number, date of birth, gender, messages, saved listings, likes, notifications, reports, payment data and technical data.",
-        "Public profiles are served through a restricted database view that exposes only the public fields listed above.",
+        "Rroba is a marketplace and some information is intentionally public.",
+        "Depending on how you use the service, other users may see: your public profile name, display name, username, profile photo, biography, city, profile rating, account creation information displayed by the service, listings and listing photos, ratings and reviews, and follower and following relationships.",
+        "Private account data is not intended to be publicly visible. This includes: email address, telephone number, date of birth, gender, private messages, membership and credit information, and security and device information.",
+        "Buyer identity associated with a completed sale is not publicly exposed through the public listings data.",
       ],
     },
     {
-      heading: "4. Messages and private communication",
+      heading: "4. How We Use Personal Data",
       body: [
-        "Only the buyer and the seller in a conversation can read its messages; database security rules block access for any other user.",
-        "Rroba staff do not read messages as a matter of routine. Limited administrative access may be used only where necessary to investigate a report, abuse or fraud, or where required by law.",
-        "Messages are not end-to-end encrypted; they are encrypted in transit and at rest by our infrastructure provider.",
+        "We may use personal data to: create and manage user accounts; authenticate users; display public profiles; publish and manage listings; enable communication between buyers and sellers; provide likes, saves, followers and ratings; operate in-app notifications; manage promotions, credits or membership functionality; provide customer support; investigate reports and disputes; prevent fraud, spam and abuse; secure accounts and the service; diagnose technical problems; improve reliability and functionality; send necessary transactional emails; comply with legal obligations; and establish, exercise or defend legal claims.",
+        "Rroba does not sell personal data to advertisers, data brokers or other third parties.",
       ],
     },
     {
-      heading: "5. Payments, promotions and delivery",
+      heading: "5. Legal Bases for Processing",
       body: [
-        "Purchases happen directly between buyer and seller, outside the app. Rroba does not process payments for items and does not provide shipping.",
-        "For promotions and memberships, payment is made via PayPal or bank transfer and we store only the method, the price, the reference you enter and the confirmation status. Card or bank credentials never pass through Rroba.",
+        "Where the General Data Protection Regulation (GDPR) or similar data protection legislation applies, Rroba relies on one or more of the following legal bases:",
+        "Performance of a contract",
+        "We process information necessary to provide the Rroba service requested by you, including account management, marketplace functionality and communication between users.",
+        "Legitimate interests",
+        "We may process information where necessary for legitimate interests such as: maintaining service security, preventing fraud and misuse, operating and improving the marketplace, investigating reports, and protecting Rroba and its users. We consider the impact on users' privacy rights before relying on legitimate interests.",
+        "Legal obligations",
+        "We may retain or disclose information where required by applicable law, regulation, court order or lawful request from a competent authority.",
+        "Consent",
+        "Where consent is legally required, we will request it before the relevant processing takes place. Where processing is based on consent, you may withdraw your consent at any time.",
       ],
     },
     {
-      heading: "6. Legal bases (GDPR)",
+      heading: "6. Notifications and Communications",
       body: [
-        "Contract (Art. 6(1)(b)): account creation, publishing listings, messaging, ratings, promotions and memberships.",
-        "Legitimate interests (Art. 6(1)(f)): security, fraud and abuse prevention, moderation, error logging and keeping the service running.",
-        "Legal obligation (Art. 6(1)(c)): responding to lawful requests and keeping required records.",
-        "Consent (Art. 6(1)(a)): optional preferences such as gender-based feed personalisation, and informational emails where offered.",
+        "Rroba may send communications necessary for operating the service, including: account and security communications, marketplace activity, messages, service notices, administrative notices, and promotion or membership confirmations.",
+        "Rroba currently provides in-app notification functionality.",
+        "Rroba does not claim to provide device push notifications or marketing notification controls unless such functionality is actually implemented in the app.",
       ],
     },
     {
-      heading: "7. Sharing with service providers",
+      heading: "7. Service Providers and Data Sharing",
       body: [
-        "Database, authentication and photo storage infrastructure: Supabase.",
-        "Application hosting and delivery: Lovable / Cloudflare.",
-        "Transactional email: most emails (account confirmation, password reset, account notices) are sent through Lovable's email service, while certain specific emails — such as promotion/admin notifications and the account deletion confirmation — are sent through Resend.",
-        "For every email sent we keep a send log (email_send_log) containing the recipient address, the template name, the delivery status and, on failure, the error message.",
-
-        "Technical error reporting: Rroba's hosting platform.",
-        "We do not sell personal data and do not share it with advertising networks. Data may be disclosed to authorities only where legally required.",
+        "Rroba uses third-party service providers where necessary to operate the service. These may include:",
+        "Supabase — used for database, authentication, and file and image storage.",
+        "Lovable / Cloudflare infrastructure — used for application hosting, request processing, and technical and error logging.",
+        "Lovable email services — used for primary transactional email processing.",
+        "Resend — used for certain transactional and administrative emails.",
+        "Email-related logs may include: recipient email address, email template, delivery status, and error information.",
+        "These service providers may process personal data only as necessary to provide their services to Rroba and subject to applicable contractual and legal safeguards.",
+        "Rroba may also disclose personal data where reasonably necessary to: comply with applicable law, respond to lawful requests, prevent fraud, investigate abuse, protect users, enforce agreements, and establish or defend legal claims.",
+        "Rroba does not sell personal data.",
       ],
     },
     {
-      heading: "8. Retention and deletion",
+      heading: "8. Data Retention",
       body: [
-        "Account data is kept for as long as your account is active.",
-        "Listings have an expiry date and automatically become inactive when they expire; they stay linked to your account until you delete them or delete your account.",
-        "Messages and conversations are kept until one of the participating accounts is deleted.",
-        "Email delivery logs and security logs are kept for a limited period for abuse detection and diagnostics.",
+        "Rroba retains personal data only for as long as reasonably necessary for the purposes for which it was collected and for applicable legal, security, fraud-prevention or dispute-resolution requirements.",
+        "Generally: account information is retained while your account remains active; listings and account-related content are retained while necessary to provide the service; messages are retained while necessary for marketplace and account functionality; promotion, membership and transaction records may be retained where necessary for accounting, fraud prevention or legal obligations; security, email and technical logs may be retained for a limited period appropriate to their operational purpose.",
+        "Certain retention periods may depend on third-party service providers used by Rroba.",
+        "Where Rroba is legally required to retain specific records after account deletion, only the necessary information will be retained for the required period.",
       ],
     },
     {
-      heading: "9. Account deletion",
+      heading: "9. Account Deletion",
       body: [
-        "You can delete your account yourself from Profile → Settings → Delete account. Your password is required to confirm your identity.",
-        "Deletion is immediate and irreversible. We delete: your profile, your listings and their photos, your profile photo, your conversations and messages, offers, follows, likes, saved listings, notifications, reports you filed, ratings you gave and received, and your authentication account.",
-        "We keep only a minimal audit record of the deletion request (account identifier, date and status), needed to document compliance with GDPR. This record is not readable by users.",
-        "If your messages form part of an active abuse investigation or legal request, necessary copies may be retained until it concludes.",
+        "Rroba allows users to initiate deletion of their account directly from within the app. The deletion functionality is available through the account or profile settings.",
+        "When deletion is confirmed, the account and associated personal data are deleted immediately and permanently, subject only to information that Rroba is legally required to retain.",
+        "The deletion process may include deletion of: profile information, listings, listing images, profile images, messages and conversations, likes and saved items, followers and following relationships, notifications, reports, ratings associated with the account, relevant account-related records, and the authentication account.",
+        "Rroba may retain a limited deletion audit record containing information necessary to demonstrate that the deletion request was processed. Such audit information is not publicly available and is used only for compliance and security purposes.",
+        "Account deletion is irreversible once completed.",
       ],
     },
     {
-      heading: "10. Your rights",
+      heading: "10. Your Privacy Rights",
       body: [
-        "You have the right to request access, correction, deletion, restriction or objection to processing, and data portability.",
-        "Most data can be changed directly in the app (profile, listings, email). For other requests, write to support@rroba.app.",
-        "You also have the right to lodge a complaint with your competent data protection authority.",
+        "Depending on the law applicable to you, you may have the right to: request access to your personal data; request correction of inaccurate personal data; request deletion of personal data; request restriction of processing; object to certain processing; receive certain personal data in a portable format; withdraw consent where processing is based on consent; and lodge a complaint with a competent data protection authority.",
+        "To exercise your rights, contact: hello@rroba.co",
+        "We may need to verify your identity before completing certain requests.",
       ],
     },
     {
       heading: "11. Security",
       body: [
-        "Data access is enforced with row-level security rules in the database, so each user can only reach their own data plus public content.",
-        "Photos are kept in a private storage bucket and served through short-lived signed links.",
-        "Traffic to our servers uses HTTPS. Passwords are stored only as hashes by our authentication provider.",
+        "Rroba uses reasonable technical and organisational measures designed to protect personal data against: unauthorised access, accidental loss, misuse, alteration, disclosure, and destruction.",
+        "These measures may include: authentication controls, database access policies, row-level security, restricted access to private information, private storage for protected files, signed access URLs where appropriate, and access controls for service infrastructure.",
+        "No online service can guarantee absolute security.",
       ],
     },
     {
-      heading: "12. International transfers",
+      heading: "12. International Data Transfers",
       body: [
-        "Our infrastructure providers may process data outside Kosovo and the EU, including in the United States. Where that happens, transfers rely on standard contractual clauses or another mechanism permitted by the GDPR.",
+        "Some service providers used by Rroba may process personal data in countries other than the country where you live.",
+        "Where required by applicable data protection law, Rroba will rely on appropriate safeguards for international transfers, such as recognised contractual safeguards or other lawful transfer mechanisms.",
       ],
     },
     {
-      heading: "13. Notifications and marketing",
+      heading: "13. Cookies and Local Storage",
       body: [
-        "Notifications about messages, likes, follows, offers and sales are shown inside the app.",
-        "The emails we currently send are transactional (confirmation, password reset, account information). We do not send marketing emails without your consent, and you can withdraw consent at any time.",
-        "The app currently does not send device push notifications.",
+        "Rroba may use local storage or similar technologies where necessary for: authentication, maintaining session state, language preferences, and essential application functionality.",
+        "Rroba does not currently use advertising cookies or behavioural tracking technologies.",
+        "If optional analytics, advertising or marketing technologies are introduced in the future, this Privacy Policy and any legally required consent mechanisms must be updated before such processing begins.",
       ],
     },
     {
-      heading: "14. Cookies and analytics",
+      heading: "14. Children and Age Requirements",
       body: [
-        "We use only local storage and cookies necessary for your sign-in session and preferences such as language.",
-        "We use no advertising cookies and have not integrated third-party behavioural analytics. Only technical error and request logs from our hosting platform are recorded.",
+        "Rroba is intended for users aged 16 or older, unless a different minimum age is required by applicable law in a particular jurisdiction.",
+        "Rroba does not knowingly permit persons below the applicable minimum age to use the service.",
+        "If we become aware that personal data has been collected from a person who is not legally permitted to use Rroba, we may take reasonable steps to remove the account and associated information.",
       ],
     },
     {
-      heading: "15. Minimum age",
+      heading: "15. Changes to This Privacy Policy",
       body: [
-        "Rroba requires you to be at least 16 years old. Date of birth is checked at sign-up and accounts under 16 are not allowed.",
-        "If we learn that an account belongs to someone under 16, we delete it.",
+        "Rroba may update this Privacy Policy when: new functionality is introduced, data-processing practices change, service providers change, or legal or regulatory requirements change.",
+        "If material changes are made, users may be informed through the app, website, email or another appropriate method.",
+        "The date at the top of this Privacy Policy indicates when it was last updated.",
       ],
     },
     {
-      heading: "16. Changes to this policy",
+      heading: "16. Contact and Data Controller",
       body: [
-        "If we update this policy we will change the date at the top and, for significant changes, notify you inside the app.",
+        "For questions regarding privacy, personal data or your rights, contact: Rroba.",
+        "Data Controller:",
+        "Astrit Hasanaj",
+        "Konows gate 8A",
+        "0192 Oslo",
+        "Norway",
+        "Email: hello@rroba.co",
+        "Website: rroba.co",
+      ],
+    },
+  ],
+};
+
+const sq: PolicyDoc = {
+  title: "Politika e privatësisë",
+  updated: "Përditësuar: 6 shtator 2026",
+  intro: [
+    "Rroba respekton privatësinë tënde dhe është e përkushtuar të mbrojë të dhënat e tua personale.",
+    "Kjo Politikë e privatësisë shpjegon çfarë informacioni mbledh Rroba, si dhe pse përdoret, cili informacion mund të jetë i dukshëm për përdoruesit e tjerë, cilët ofrues shërbimi mund ta përpunojnë, sa gjatë ruhet informacioni dhe cilat janë të drejtat e tua.",
+    "Rroba përpunon të dhëna personale vetëm për qëllime të lidhura me operimin, sigurinë dhe përmirësimin e tregut, me përmbushjen e detyrimeve ligjore dhe me ofrimin e shërbimeve të kërkuara nga përdoruesit.",
+  ],
+  sections: [
+    {
+      heading: "1. Kush është përgjegjës për të dhënat e tua",
+      body: [
+        "Rroba është përgjegjëse për përpunimin e të dhënave personale të përshkruara në këtë Politikë të privatësisë.",
+        "Për kërkesa që lidhen me privatësinë, përfshirë akses, korrigjim, fshirje, kufizim, kundërshtim ose transferim të të dhënave, kontakto: hello@rroba.co",
+        "Të dhënat e plota ligjore të kontaktit të kontrolluesit të të dhënave jepen në Seksionin 16 më poshtë.",
       ],
     },
     {
-      heading: "17. Contact",
-      body: ["For any privacy question or request: support@rroba.app"],
+      heading: "2. Informacioni që mbledhim",
+      body: [
+        "Informacioni i llogarisë dhe i profilit",
+        "Kur krijon ose përdor një llogari Rroba, mund të përpunojmë: emrin dhe mbiemrin, emrin e shfaqur, emrin e përdoruesit, adresën e email-it, numrin e telefonit, datën e lindjes, gjininë, qytetin, biografinë, foton e profilit, preferencat e llogarisë, gjuhën, datën e krijimit të llogarisë, pranimin e Kushteve dhe të Politikës së privatësisë, si edhe informacionin e anëtarësimit dhe të kredive.",
+        "Kredencialet e autentikimit trajtohen përmes ofruesit tonë të autentikimit. Rroba nuk e ruan fjalëkalimin tënd në formë të lexueshme.",
+        "Informacion i caktuar teknik, si user-agent-i ose informacioni i pajisjes, mund të përpunohet gjithashtu për siguri dhe për operimin e shërbimit.",
+        "Përmbajtja e tregut",
+        "Kur përdor Rroba, mund të përpunojmë: njoftimet, përshkrimet e njoftimeve, çmimet, kategoritë, markat, madhësitë dhe atributet e tjera të njoftimeve, fotot e njoftimeve, të preferuarat dhe njoftimet e ruajtura, ndjekësit dhe ndjekjet, vlerësimet dhe komentet, raportimet, njoftimet në aplikacion, si edhe informacionin nëse një artikull është shënuar si i shitur.",
+        "Mesazhet",
+        "Mesazhet dhe bisedat mes përdoruesve ruhen në mënyrë që funksionaliteti i mesazheve i Rroba të funksionojë.",
+        "Mesazhet nuk janë publikisht të dukshme dhe janë të kufizuara për pjesëmarrësit përkatës të bisedës, përveç kur aksesi është arsyeshëm i nevojshëm për mbështetje të autorizuar, siguri, parandalim të abuzimit, trajtim të mosmarrëveshjeve ose përmbushje të detyrimeve ligjore.",
+        "Promovimet, anëtarësimi dhe regjistrat e blerjeve",
+        "Rroba aktualisht nuk përpunon dhe nuk ruan informacion të kartave të pagesës.",
+        "Kur përdoruesit blejnë promovime, kredi ose shërbime të lidhura me anëtarësimin, Rroba mund të përpunojë: planin ose shërbimin e zgjedhur, çmimin, metodën e zgjedhur të pagesës, referencën e pagesës të futur nga përdoruesi, statusin e konfirmimit dhe regjistrat administrativë të lidhur me transaksionin.",
+        "Rroba nuk ruan detaje të plota të kartave të pagesës.",
+        "Të dhënat teknike dhe diagnostike",
+        "Për të operuar, siguruar dhe diagnostikuar shërbimin, mund të përpunohet informacion i kufizuar teknik, përfshirë: informacionin e shfletuesit dhe të pajisjes, regjistrat e kërkesave, regjistrat e gabimeve, gabimet e aplikacionit, si edhe ngjarjet e autentikimit dhe të sigurisë.",
+        "Rroba aktualisht nuk përdor SDK-të e gjurmimit të reklamave, gjurmim të bazuar në IDFA ose analitikë reklamimi behaviorale.",
+      ],
+    },
+    {
+      heading: "3. Informacioni i dukshëm për përdoruesit e tjerë",
+      body: [
+        "Rroba është një treg dhe disa informacione janë qëllimisht publike.",
+        "Në varësi të mënyrës si e përdor shërbimin, përdoruesit e tjerë mund të shohin: emrin publik të profilit, emrin e shfaqur, emrin e përdoruesit, foton e profilit, biografinë, qytetin, vlerësimin e profilit, informacionin e krijimit të llogarisë të shfaqur nga shërbimi, njoftimet dhe fotot e tyre, vlerësimet dhe komentet, si edhe marrëdhëniet e ndjekësve dhe të ndjekjeve.",
+        "Të dhënat private të llogarisë nuk synohet të jenë publikisht të dukshme. Këto përfshijnë: adresën e email-it, numrin e telefonit, datën e lindjes, gjininë, mesazhet private, informacionin e anëtarësimit dhe të kredive, si edhe informacionin e sigurisë dhe të pajisjes.",
+        "Identiteti i blerësit i lidhur me një shitje të përfunduar nuk ekspozohet publikisht përmes të dhënave publike të njoftimeve.",
+      ],
+    },
+    {
+      heading: "4. Si i përdorim të dhënat personale",
+      body: [
+        "Mund t'i përdorim të dhënat personale për të: krijuar dhe administruar llogaritë e përdoruesve; autentikuar përdoruesit; shfaqur profilet publike; publikuar dhe administruar njoftimet; mundësuar komunikimin mes blerësve dhe shitësve; ofruar pëlqime, ruajtje, ndjekës dhe vlerësime; operuar njoftimet brenda aplikacionit; administruar funksionalitetin e promovimeve, kredive ose anëtarësimit; ofruar mbështetje për klientët; hetuar raportimet dhe mosmarrëveshjet; parandaluar mashtrimin, spam-in dhe abuzimin; siguruar llogaritë dhe shërbimin; diagnostikuar problemet teknike; përmirësuar besueshmërinë dhe funksionalitetin; dërguar email-et e nevojshme transaksionale; përmbushur detyrimet ligjore; si edhe krijuar, ushtruar ose mbrojtur pretendime ligjore.",
+        "Rroba nuk u shet të dhëna personale reklamuesve, ndërmjetërëve të të dhënave ose palëve të treta të tjera.",
+      ],
+    },
+    {
+      heading: "5. Bazat ligjore për përpunimin",
+      body: [
+        "Kur zbatohet Rregullorja e Përgjithshme për Mbrojtjen e të Dhënave (GDPR) ose legjislacion i ngjashëm i mbrojtjes së të dhënave, Rroba mbështetet në një ose më shumë nga bazat e mëposhtme ligjore:",
+        "Përmbushja e një kontrate",
+        "Përpunojmë informacionin e nevojshëm për të ofruar shërbimin e Rroba të kërkuar nga ty, përfshirë administrimin e llogarisë, funksionalitetin e tregut dhe komunikimin mes përdoruesve.",
+        "Interesat legjitime",
+        "Mund të përpunojmë informacion kur është i nevojshëm për interesa legjitime si: ruajtja e sigurisë së shërbimit, parandalimi i mashtrimit dhe i keqpërdorimit, operimi dhe përmirësimi i tregut, hetimi i raportimeve dhe mbrojtja e Rroba dhe e përdoruesve të saj. Ne e vlerësojmë ndikimin në të drejtat e privatësisë së përdoruesve përpara se të mbështetemi në interesa legjitime.",
+        "Detyrimet ligjore",
+        "Mund të ruajmë ose të zbulojmë informacion kur kërkohet nga ligji i zbatueshëm, rregullorja, urdhri i gjykatës ose kërkesa ligjore e një autoriteti kompetent.",
+        "Pëlqimi",
+        "Kur pëlqimi kërkohet ligjërisht, do ta kërkojmë atë përpara se të kryhet përpunimi përkatës. Kur përpunimi bazohet në pëlqim, mund ta tërheqësh pëlqimin tënd në çdo kohë.",
+      ],
+    },
+    {
+      heading: "6. Njoftimet dhe komunikimet",
+      body: [
+        "Rroba mund të dërgojë komunikime të nevojshme për operimin e shërbimit, përfshirë: komunikime të llogarisë dhe të sigurisë, aktivitetin e tregut, mesazhet, njoftimet e shërbimit, njoftimet administrative, si edhe konfirmimet e promovimeve ose të anëtarësimit.",
+        "Rroba aktualisht ofron funksionalitet njoftimesh brenda aplikacionit.",
+        "Rroba nuk pretendon të ofrojë push-notifikime në pajisje ose kontrolle të njoftimeve marketingu, përveç nëse një funksionalitet i tillë është i implementuar realisht në aplikacion.",
+      ],
+    },
+    {
+      heading: "7. Ofruesit e shërbimeve dhe ndarja e të dhënave",
+      body: [
+        "Rroba përdor ofrues shërbimesh të palëve të treta kur është e nevojshme për të operuar shërbimin. Këta mund të përfshijnë:",
+        "Supabase — përdoret për bazën e të dhënave, autentikimin dhe ruajtjen e skedarëve dhe fotove.",
+        "Infrastruktura Lovable / Cloudflare — përdoret për hostingun e aplikacionit, përpunimin e kërkesave dhe regjistrimin teknik dhe të gabimeve.",
+        "Shërbimet e email-it të Lovable — përdoren për përpunimin kryesor të email-eve transaksionale.",
+        "Resend — përdoret për disa email-e transaksionale dhe administrative.",
+        "Regjistrat e lidhur me email-et mund të përfshijnë: adresën e email-it të marrësit, shabllonin e email-it, statusin e dërgesës dhe informacionin e gabimit.",
+        "Këta ofrues shërbimesh mund të përpunojnë të dhëna personale vetëm për aq sa është e nevojshme për t'i ofruar shërbimet e tyre Rroba-s dhe në përputhje me mbrojtjet e zbatueshme kontraktuale dhe ligjore.",
+        "Rroba mund të zbulojë gjithashtu të dhëna personale kur është arsyeshëm e nevojshme për të: përmbushur ligjin e zbatueshëm, u përgjigjur kërkesave ligjore, parandaluar mashtrimin, hetuar abuzimin, mbrojtur përdoruesit, zbatuar marrëveshjet dhe krijuar ose mbrojtur pretendime ligjore.",
+        "Rroba nuk shet të dhëna personale.",
+      ],
+    },
+    {
+      heading: "8. Ruajtja e të dhënave",
+      body: [
+        "Rroba i ruan të dhënat personale vetëm për aq kohë sa është arsyeshëm e nevojshme për qëllimet për të cilat janë mbledhur dhe për kërkesat e zbatueshme ligjore, të sigurisë, të parandalimit të mashtrimit ose të zgjidhjes së mosmarrëveshjeve.",
+        "Në përgjithësi: informacioni i llogarisë ruhet për sa kohë llogaria mbetet aktive; njoftimet dhe përmbajtja e lidhur me llogarinë ruhen për aq sa është e nevojshme për të ofruar shërbimin; mesazhet ruhen për aq sa është e nevojshme për funksionalitetin e tregut dhe të llogarisë; regjistrat e promovimeve, të anëtarësimit dhe të transaksioneve mund të ruhen kur është e nevojshme për kontabilitet, parandalim mashtrimi ose detyrime ligjore; regjistrat e sigurisë, të email-eve dhe teknikë mund të ruhen për një periudhë të kufizuar të përshtatshme për qëllimin e tyre operativ.",
+        "Disa periudha ruajtjeje mund të varen nga ofruesit e shërbimeve të palëve të treta të përdorur nga Rroba.",
+        "Kur Rroba-s i kërkohet ligjërisht të ruajë regjistra specifikë pas fshirjes së llogarisë, do të ruhet vetëm informacioni i nevojshëm për periudhën e kërkuar.",
+      ],
+    },
+    {
+      heading: "9. Fshirja e llogarisë",
+      body: [
+        "Rroba u lejon përdoruesve të inicojnë fshirjen e llogarisë së tyre drejtpërdrejt brenda aplikacionit. Funksionaliteti i fshirjes është i disponueshëm përmes cilësimeve të llogarisë ose të profilit.",
+        "Kur fshirja konfirmohet, llogaria dhe të dhënat personale të lidhura fshihen menjëherë dhe përgjithmonë, me përjashtim të informacionit që Rroba-s i kërkohet ligjërisht ta ruajë.",
+        "Procesi i fshirjes mund të përfshijë fshirjen e: informacionit të profilit, njoftimeve, fotove të njoftimeve, fotove të profilit, mesazheve dhe bisedave, pëlqimeve dhe artikujve të ruajtur, marrëdhënieve të ndjekësve dhe të ndjekjeve, njoftimeve, raportimeve, vlerësimeve të lidhura me llogarinë, regjistrave përkatëse të lidhura me llogarinë, si edhe llogarisë së autentikimit.",
+        "Rroba mund të ruajë një regjistër të kufizuar auditimi të fshirjes që përmban informacionin e nevojshëm për të demonstruar se kërkesa për fshirje është përpunuar. Ky informacion auditimi nuk është publikisht i disponueshëm dhe përdoret vetëm për qëllime përputhshmërie dhe sigurie.",
+        "Fshirja e llogarisë është e pakthyeshme pasi të përfundojë.",
+      ],
+    },
+    {
+      heading: "10. Të drejtat e tua të privatësisë",
+      body: [
+        "Në varësi të ligjit që të zbatohet, mund të kesh të drejtë të: kërkosh akses në të dhënat e tua personale; kërkosh korrigjim të të dhënave personale të pasakta; kërkosh fshirje të të dhënave personale; kërkosh kufizim të përpunimit; kundërshtosh përpunim të caktuar; marrësh të dhëna të caktuara personale në format të transferueshëm; tërheqësh pëlqimin kur përpunimi bazohet në pëlqim; si edhe të paraqesësh ankesë pranë një autoriteti kompetent të mbrojtjes së të dhënave.",
+        "Për t'i ushtruar të drejtat e tua, kontakto: hello@rroba.co",
+        "Mund të jetë e nevojshme të verifikojmë identitetin tënd përpara se të plotësojmë disa kërkesa.",
+      ],
+    },
+    {
+      heading: "11. Siguria",
+      body: [
+        "Rroba përdor masa të arsyeshme teknike dhe organizative të krijuara për të mbrojtur të dhënat personale nga: aksesi i paautorizuar, humbja aksidentale, keqpërdorimi, ndryshimi, zbulimi dhe shkatërrimi.",
+        "Këto masa mund të përfshijnë: kontrollet e autentikimit, politikat e aksesit në bazën e të dhënave, sigurinë në nivel rreshti, aksesin e kufizuar në informacionin privat, ruajtjen private për skedarët e mbrojtur, URL-të e nënshkruara të aksesit kur është e përshtatshme, si edhe kontrollet e aksesit për infrastrukturën e shërbimit.",
+        "Asnjë shërbim online nuk mund të garantojë siguri absolute.",
+      ],
+    },
+    {
+      heading: "12. Transferimet ndërkombëtare të të dhënave",
+      body: [
+        "Disa ofrues shërbimesh të përdorur nga Rroba mund të përpunojnë të dhëna personale në vende të tjera nga vendi ku jeton.",
+        "Kur kërkohet nga ligji i zbatueshëm i mbrojtjes së të dhënave, Rroba do të mbështetet në mbrojtje të përshtatshme për transferimet ndërkombëtare, si mbrojtjet e njohura kontraktuale ose mekanizma të tjerë ligjorë transferimi.",
+      ],
+    },
+    {
+      heading: "13. Cookies dhe ruajtja lokale",
+      body: [
+        "Rroba mund të përdorë ruajtje lokale ose teknologji të ngjashme kur është e nevojshme për: autentikimin, ruajtjen e gjendjes së sesionit, preferencat e gjuhës dhe funksionalitetin thelbësor të aplikacionit.",
+        "Rroba aktualisht nuk përdor cookies reklamimi ose teknologji gjurmimi behaviorale.",
+        "Nëse në të ardhmen futen teknologji opsionale analitike, reklamimi ose marketingu, kjo Politikë e privatësisë dhe çdo mekanizëm pëlqimi i kërkuar ligjërisht duhet të përditësohen përpara se të fillojë një përpunim i tillë.",
+      ],
+    },
+    {
+      heading: "14. Fëmijët dhe kërkesat e moshës",
+      body: [
+        "Rroba është e menduar për përdorues 16 vjeç e lart, përveç nëse një moshë minimale tjetër kërkohet nga ligji i zbatueshëm në një juridiksion të caktuar.",
+        "Rroba nuk lejon me dijeni persona nën moshën minimale të zbatueshme të përdorin shërbimin.",
+        "Nëse mësojmë se janë mbledhur të dhëna personale nga një person që nuk i lejohet ligjërisht të përdorë Rroba, mund të ndërmarrim hapa të arsyeshëm për të hequr llogarinë dhe informacionin e lidhur.",
+      ],
+    },
+    {
+      heading: "15. Ndryshimet në këtë Politikë të privatësisë",
+      body: [
+        "Rroba mund ta përditësojë këtë Politikë të privatësisë kur: futet funksionalitet i ri, ndryshojnë praktikat e përpunimit të të dhënave, ndryshojnë ofruesit e shërbimeve ose ndryshojnë kërkesat ligjore apo rregullatore.",
+        "Nëse bëhen ndryshime thelbësore, përdoruesit mund të informohen përmes aplikacionit, faqes së internetit, email-it ose një metode tjetër të përshtatshme.",
+        "Data në krye të kësaj Politike të privatësisë tregon se kur është përditësuar për herë të fundit.",
+      ],
+    },
+    {
+      heading: "16. Kontakti dhe kontrolluesi i të dhënave",
+      body: [
+        "Për pyetje lidhur me privatësinë, të dhënat personale ose të drejtat e tua, kontakto: Rroba.",
+        "Kontrolluesi i të dhënave:",
+        "Astrit Hasanaj",
+        "Konows gate 8A",
+        "0192 Oslo",
+        "Norway",
+        "Email: hello@rroba.co",
+        "Faqja e internetit: rroba.co",
+      ],
     },
   ],
 };
