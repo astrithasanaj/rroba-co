@@ -21,7 +21,7 @@ import {
   Plus,
   Ruler,
   Settings as SettingsIcon,
-  Shirt,
+  
   ShieldCheck,
   SlidersHorizontal,
   Star,
