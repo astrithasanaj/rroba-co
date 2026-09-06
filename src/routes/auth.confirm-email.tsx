@@ -207,3 +207,85 @@ function ResendButton({ email }: { email: string }) {
     </>
   );
 }
+
+async function applyPendingProfile(userId: string) {
+  try {
+    const raw = localStorage.getItem("rroba_pending_profile");
+    if (!raw) return;
+    const patch = JSON.parse(raw);
+    const { error } = await supabase
+      .from("profiles")
+      .update(patch as any)
+      .eq("id", userId);
+    if (!error) {
+      localStorage.removeItem("rroba_pending_profile");
+      localStorage.removeItem("rroba_pending_email");
+    }
+  } catch (e) {
+    console.error("applyPendingProfile", e);
+  }
+}
+
+function CodeForm({ email }: { email: string }) {
+  const navigate = useNavigate();
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const verify = async () => {
+    if (code.length !== 6 || !email) return;
+    setBusy(true);
+    setErr(null);
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: "email",
+    });
+    if (error || !data.user) {
+      setBusy(false);
+      setErr("Kodi është i pasaktë ose ka skaduar.");
+      return;
+    }
+    await applyPendingProfile(data.user.id);
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    setBusy(false);
+    if ((profile as { onboarding_completed?: boolean } | null)?.onboarding_completed) {
+      navigate({ to: "/", replace: true });
+    } else {
+      navigate({ to: "/onboarding", replace: true });
+    }
+  };
+
+  return (
+    <div className="w-full">
+      <input
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        maxLength={6}
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+        placeholder="000000"
+        className="h-[52px] w-full rounded-[14px] border text-center text-[22px] font-semibold tracking-[8px] outline-none"
+        style={{ borderColor: "var(--brand-border, #e6e1da)", color: INK, background: "#fff" }}
+      />
+      <button
+        type="button"
+        disabled={busy || code.length !== 6}
+        onClick={verify}
+        className="mt-3 h-[52px] w-full rounded-[14px] text-[15px] font-semibold transition active:scale-[0.98] disabled:opacity-60"
+        style={{ background: INK, color: "#fff" }}
+      >
+        {busy ? "Duke verifikuar..." : "Verifiko kodin"}
+      </button>
+      {err && (
+        <p className="mt-2 text-xs" style={{ color: "var(--brand-danger)" }}>
+          {err}
+        </p>
+      )}
+    </div>
+  );
+}
