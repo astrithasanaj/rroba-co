@@ -23,7 +23,6 @@ import {
   Settings as SettingsIcon,
   
   ShieldCheck,
-  SlidersHorizontal,
   Star,
   Trash2,
   User as UserIcon,
