@@ -1843,18 +1843,47 @@ function LegalPage({ title, paragraphs }: { title: string; paragraphs: string[] 
 }
 
 function PrivacyView() {
-  const { t } = useTranslation();
+  const { language } = useTranslation();
+  const doc = PRIVACY_POLICY[language] ?? PRIVACY_POLICY.sq;
   return (
-    <LegalPage
-      title={t("profile.privacy_title")}
-      paragraphs={[
-        t("profile.privacy_p1"),
-        t("profile.privacy_p2"),
-        t("profile.privacy_p3"),
-      ]}
-    />
+    <div className="px-5 pt-2 pb-6">
+      <h2
+        style={{
+          fontFamily: "var(--font-display)",
+          fontStyle: "italic",
+          fontSize: 22,
+          color: INK,
+          marginBottom: 4,
+        }}
+      >
+        {doc.title}
+      </h2>
+      <div style={{ fontSize: 12, color: "rgba(45,21,33,0.6)", marginBottom: 12 }}>
+        {doc.updated}
+      </div>
+      <div className="space-y-3">
+        {doc.intro.map((p, i) => (
+          <p key={`intro-${i}`} style={{ fontSize: 14, lineHeight: 1.55, color: INK }}>
+            {p}
+          </p>
+        ))}
+      </div>
+      {doc.sections.map((s) => (
+        <section key={s.heading} className="mt-6">
+          <h3 style={{ fontSize: 15, fontWeight: 600, color: INK }}>{s.heading}</h3>
+          <div className="mt-2 space-y-2">
+            {s.body.map((p, i) => (
+              <p key={i} style={{ fontSize: 14, lineHeight: 1.55, color: INK }}>
+                {p}
+              </p>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }
+
 
 function TermsView() {
   const { t } = useTranslation();
