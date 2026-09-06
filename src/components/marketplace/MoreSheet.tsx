@@ -4,6 +4,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ChevronLeft, ArrowLeft, Flag, Link2, Share, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "@/i18n";
 
 
 const CREAM = "#ffffff";
@@ -16,17 +17,16 @@ const CORAL = "#c65a7a";
 
 type Reason = {
   key: "scam" | "counterfeit" | "misleading" | "inappropriate" | "spam" | "prohibited" | "other";
-  label: string;
 };
 
 const REASONS: Reason[] = [
-  { key: "scam", label: "Mashtrim" },
-  { key: "counterfeit", label: "Forfalskning" },
-  { key: "misleading", label: "Villedende" },
-  { key: "inappropriate", label: "Upassende" },
-  { key: "spam", label: "Spam" },
-  { key: "prohibited", label: "Forbudt vare" },
-  { key: "other", label: "Annet" },
+  { key: "scam" },
+  { key: "counterfeit" },
+  { key: "misleading" },
+  { key: "inappropriate" },
+  { key: "spam" },
+  { key: "prohibited" },
+  { key: "other" },
 ];
 
 
