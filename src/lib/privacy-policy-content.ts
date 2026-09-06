@@ -168,12 +168,12 @@ const en: PolicyDoc = {
     {
       heading: "16. Contact and Data Controller",
       body: [
-        "For questions regarding privacy, personal data or your rights, contact: Rroba.",
+        "For questions regarding privacy, personal data or your rights, contact:",
+        "Rroba",
+        "",
         "Data Controller:",
         "Astrit Hasanaj",
-        "Konows gate 8A",
-        "0192 Oslo",
-        "Norway",
+        "",
         "Email: hello@rroba.co",
         "Website: rroba.co",
       ],
@@ -340,12 +340,12 @@ const sq: PolicyDoc = {
     {
       heading: "16. Kontakti dhe kontrolluesi i të dhënave",
       body: [
-        "Për pyetje lidhur me privatësinë, të dhënat personale ose të drejtat e tua, kontakto: Rroba.",
+        "Për pyetje lidhur me privatësinë, të dhënat personale ose të drejtat e tua, kontakto:",
+        "Rroba",
+        "",
         "Kontrolluesi i të dhënave:",
         "Astrit Hasanaj",
-        "Konows gate 8A",
-        "0192 Oslo",
-        "Norway",
+        "",
         "Email: hello@rroba.co",
         "Faqja e internetit: rroba.co",
       ],
