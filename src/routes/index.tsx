@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Bell, UserPlus, Shirt } from "lucide-react";
+import { Bell, UserPlus } from "lucide-react";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ListingCardSkeleton, ProductGridSkeleton } from "@/components/marketplace/Skeletons";
