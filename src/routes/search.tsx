@@ -76,6 +76,10 @@ const INK = "var(--brand-ink)";
 const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const CORAL = "var(--brand-rose)";
+const GLASS_BG = "rgba(255,255,255,0.7)";
+const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const FOCUS_RING =
+  "outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-[color:var(--brand-surface)]";
 
 type Search = {
   q?: string;
