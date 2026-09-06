@@ -1142,13 +1142,7 @@ function ProfileTabGrid({
   isSavedLoading: boolean;
 }) {
   const loading =
-    tab === "mine"
-      ? isMineLoading
-      : tab === "liked"
-        ? isLikedLoading
-        : tab === "saved"
-          ? isSavedLoading
-          : isMineLoading; // wardrobe derives from mine listings
+    tab === "mine" ? isMineLoading : tab === "liked" ? isLikedLoading : isSavedLoading;
   return (
     <section
       id={`profile-panel-${tab}`}
