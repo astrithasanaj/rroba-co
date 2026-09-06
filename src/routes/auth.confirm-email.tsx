@@ -31,8 +31,8 @@ function ConfirmEmailPage() {
   const steps = [
     "Hap emailin tënd",
     "Kërko emailin nga Rroba",
-    "Kliko linkun e konfirmimit",
-    "Do të ridrejtohesh automatikisht",
+    "Shkruaj kodin 6-shifror më poshtë",
+    "Vazhdo direkt në aplikacion",
   ];
 
   return (
