@@ -1377,15 +1377,13 @@ function SoldRibbon() {
 function TabEmptyState({ tab }: { tab: Tab }) {
   const { t } = useTranslation();
   const Icon =
-    tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : tab === "saved" ? Bookmark : Shirt;
+    tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : Bookmark;
   const subtitle =
     tab === "mine"
       ? t("profile.empty_mine")
       : tab === "liked"
         ? t("profile.empty_liked")
-        : tab === "saved"
-          ? t("profile.empty_saved")
-          : t("profile.empty_wardrobe");
+        : t("profile.empty_saved");
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
       <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
