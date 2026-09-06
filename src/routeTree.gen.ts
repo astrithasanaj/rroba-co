@@ -35,6 +35,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMyPromotionsRouteImport } from './routes/_authenticated/my-promotions'
 import { Route as AuthenticatedMembershipRouteImport } from './routes/_authenticated/membership'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport } from './routes/[.well-known]/apple-app-site-association'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as UserIdIndexRouteImport } from './routes/user.$id.index'
 import { Route as UserIdFollowingRouteImport } from './routes/user.$id.following'
@@ -191,6 +192,12 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
     path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93AppleAppSiteAssociationRoute =
+  Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport.update({
+    id: '/.well-known/apple-app-site-association',
+    path: '/.well-known/apple-app-site-association',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotmcpChar93ListToolsRoute =
   Char91DotmcpChar93ListToolsRouteImport.update({
     id: '/.mcp/list-tools',
@@ -341,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/users': typeof UsersRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/apple-app-site-association': typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/membership': typeof AuthenticatedMembershipRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
@@ -391,6 +399,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/users': typeof UsersRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/apple-app-site-association': typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/membership': typeof AuthenticatedMembershipRoute
   '/my-promotions': typeof AuthenticatedMyPromotionsRoute
@@ -444,6 +453,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/users': typeof UsersRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/apple-app-site-association': typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/membership': typeof AuthenticatedMembershipRoute
   '/_authenticated/my-promotions': typeof AuthenticatedMyPromotionsRoute
@@ -497,6 +507,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/users'
     | '/.mcp/list-tools'
+    | '/.well-known/apple-app-site-association'
     | '/.well-known/oauth-protected-resource'
     | '/membership'
     | '/my-promotions'
@@ -547,6 +558,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/users'
     | '/.mcp/list-tools'
+    | '/.well-known/apple-app-site-association'
     | '/.well-known/oauth-protected-resource'
     | '/membership'
     | '/my-promotions'
@@ -599,6 +611,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/users'
     | '/.mcp/list-tools'
+    | '/.well-known/apple-app-site-association'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/membership'
     | '/_authenticated/my-promotions'
@@ -652,6 +665,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UsersRoute: typeof UsersRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93AppleAppSiteAssociationRoute: typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ProductIdRoute: typeof ProductIdRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -851,6 +865,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/oauth-protected-resource'
       fullPath: '/.well-known/oauth-protected-resource'
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/apple-app-site-association': {
+      id: '/.well-known/apple-app-site-association'
+      path: '/.well-known/apple-app-site-association'
+      fullPath: '/.well-known/apple-app-site-association'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -1098,6 +1119,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   UsersRoute: UsersRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93AppleAppSiteAssociationRoute:
+    Char91DotwellKnownChar93AppleAppSiteAssociationRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ProductIdRoute: ProductIdRoute,

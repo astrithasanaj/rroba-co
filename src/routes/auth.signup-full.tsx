@@ -445,7 +445,7 @@ function SignupFullPage() {
         email: emailLc,
         password,
         options: {
-          emailRedirectTo: window.location.origin + "/auth/callback",
+          emailRedirectTo: "https://rroba.co/auth/callback",
           data: {
             full_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
             first_name: firstName.trim(),

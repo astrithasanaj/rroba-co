@@ -163,7 +163,7 @@ function ResendButton({ email }: { email: string }) {
       type: "signup",
       email,
       options: {
-        emailRedirectTo: window.location.origin + "/auth/callback",
+        emailRedirectTo: "https://rroba.co/auth/callback",
       },
     });
     setResending(false);
