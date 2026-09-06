@@ -501,9 +501,25 @@ function SearchPage() {
     <MobileShell>
       <div style={{ backgroundColor: BG, minHeight: "100vh" }} className="pb-32">
         <header className="px-5 pt-10">
-          <h1 className="text-[32px] font-bold leading-none tracking-tight" style={{ color: INK }}>
-            {t("search.title")}
-          </h1>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              aria-label={t("common.back")}
+              className={`grid h-11 w-11 shrink-0 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] ${FOCUS_RING}`}
+              style={{
+                backgroundColor: GLASS_BG,
+                border: `1px solid ${GLASS_BORDER}`,
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            >
+              <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" style={{ color: INK }} />
+            </button>
+            <h1 className="text-[32px] font-bold leading-none tracking-tight" style={{ color: INK }}>
+              {t("search.title")}
+            </h1>
+          </div>
 
           <div
             className="mt-5 flex h-[52px] items-center gap-3 rounded-full px-5"
