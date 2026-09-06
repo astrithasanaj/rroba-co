@@ -106,6 +106,10 @@ function ConfirmEmailPage() {
         </div>
 
         <div className="mt-8 w-full">
+          <CodeForm email={email} />
+        </div>
+
+        <div className="mt-6 w-full">
           <ResendButton email={email} />
         </div>
 
