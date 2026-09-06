@@ -56,6 +56,20 @@ export const sq = {
     following_no_listings: "Ende asnjë artikull nga profilet që ndjek.",
   },
 
+  report: {
+    title: "Raporto artikullin",
+    helper: "Çfarë nuk shkon me këtë artikull?",
+    reason_scam: "Mashtrim",
+    reason_counterfeit: "Falsifikim",
+    reason_misleading: "Mashtruese",
+    reason_inappropriate: "E papërshtatshme",
+    reason_spam: "Spam",
+    reason_prohibited: "Artikull i ndaluar",
+    reason_other: "Tjetër",
+    details_placeholder: "Detaje shtesë (opsionale)...",
+    submit: "Dërgo raportin",
+  },
+
   favorites: {
     title: "Të ruajtura",
     loading_sr: "Duke ngarkuar të ruajturat…",

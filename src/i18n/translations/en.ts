@@ -55,6 +55,20 @@ export const en: TranslationSchema = {
     following_no_listings: "No listings yet from the profiles you follow.",
   },
 
+  report: {
+    title: "Report item",
+    helper: "What is wrong with this item?",
+    reason_scam: "Fraud",
+    reason_counterfeit: "Counterfeit",
+    reason_misleading: "Misleading",
+    reason_inappropriate: "Inappropriate",
+    reason_spam: "Spam",
+    reason_prohibited: "Prohibited item",
+    reason_other: "Other",
+    details_placeholder: "Additional details (optional)...",
+    submit: "Submit report",
+  },
+
   favorites: {
     title: "Favorites",
     loading_sr: "Loading favorites…",
