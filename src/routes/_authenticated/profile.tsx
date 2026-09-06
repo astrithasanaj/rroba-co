@@ -699,7 +699,6 @@ function ProfilePage() {
                 mine: t("profile.tab_mine"),
                 liked: t("profile.tab_liked"),
                 saved: t("profile.tab_saved"),
-                wardrobe: t("profile.tab_wardrobe"),
               };
               return (
                 <button
