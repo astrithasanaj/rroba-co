@@ -46,6 +46,7 @@ export function MoreSheet({
   reporterId: string | null;
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [view, setView] = useState<"more" | "report">("more");
   const [reason, setReason] = useState<Reason["key"] | null>(null);
   const [details, setDetails] = useState("");
@@ -196,12 +197,12 @@ export function MoreSheet({
                 <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
-                Raporto artikullin
+                {t("report.title")}
               </h2>
             </div>
             <div style={{ height: 1, backgroundColor: DIVIDER }} />
             <p className="px-5 pt-4 pb-2 text-sm" style={{ color: "#a89f94" }}>
-              Çfarë nuk shkon me këtë artikull?
+              {t("report.helper")}
             </p>
 
             <div className="max-h-[50vh] overflow-y-auto">
@@ -215,7 +216,7 @@ export function MoreSheet({
                       className="flex w-full items-center justify-between px-5 py-4 text-left"
                     >
                       <span className="pr-3 text-[15px]" style={{ color: INK }}>
-                        {r.label}
+                        {t(`report.reason_${r.key}`)}
                       </span>
                       <span
                         className="grid h-5 w-5 shrink-0 place-items-center rounded-full border"
@@ -234,7 +235,7 @@ export function MoreSheet({
                 <textarea
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
-                  placeholder="Detaje shtesë (opsionale)..."
+                  placeholder={t("report.details_placeholder")}
                   rows={4}
                   className="w-full resize-none rounded-xl border bg-transparent p-3 text-sm outline-none"
                   style={{ borderColor: DIVIDER, color: INK }}
@@ -253,7 +254,7 @@ export function MoreSheet({
                   color: submitEnabled ? "#fff" : "#7a7164",
                 }}
               >
-                Dërgo raportin
+                {t("report.submit")}
               </button>
             </div>
             <div className="h-[env(safe-area-inset-bottom)]" />
