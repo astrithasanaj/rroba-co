@@ -992,6 +992,10 @@ export type Database = {
       reveal_pending_ratings: { Args: never; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      verify_report_webhook_token: {
+        Args: { p_token: string }
+        Returns: boolean
+      }
     }
     Enums: {
       report_reason:
