@@ -22,9 +22,18 @@ export const Route = createFileRoute("/api/public/notify-new-report")({
       POST: async ({ request }) => {
         // 1. Verify shared secret
         const token = request.headers.get("x-webhook-token");
-        const expected = process.env.REPORT_WEBHOOK_TOKEN;
-        if (!expected || token !== expected) {
+        if (!token) {
           return new Response("Unauthorized", { status: 401 });
+        }
+        {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data: valid, error: verifyError } = await supabaseAdmin.rpc(
+            "verify_report_webhook_token",
+            { p_token: token },
+          );
+          if (verifyError || valid !== true) {
+            return new Response("Unauthorized", { status: 401 });
+          }
         }
 
         let reportId: string | null = null;
