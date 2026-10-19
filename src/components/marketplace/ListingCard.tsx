@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ImageOff } from "lucide-react";
+import { LikeButton } from "./LikeButton";
 import type { ListingView } from "@/lib/listings";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,14 +15,18 @@ export function ListingCard({
   aspect = "3/4",
   eager = false,
   isOnProfileGrid = false,
+  variant = "default",
 }: {
+  variant?: "default" | "home";
   listing: ListingView;
   aspect?: "3/4" | "1/1" | "4/5";
   eager?: boolean;
   isOnProfileGrid?: boolean;
 }) {
-  const aspectClass =
-    aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
+  const isHome = variant === "home";
+  const aspectClass = isHome
+    ? "aspect-square"
+    : aspect === "1/1" ? "aspect-square" : aspect === "4/5" ? "aspect-[4/5]" : "aspect-[3/4]";
   const isSold = listing.sold || listing.status === "sold";
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageBroken, setImageBroken] = useState(false);
@@ -49,7 +54,7 @@ export function ListingCard({
       className="group block"
     >
       <div
-        className={`relative ${aspectClass} overflow-hidden rounded-2xl`}
+        className={`relative ${aspectClass} overflow-hidden ${isHome ? "rounded-[22px]" : "rounded-2xl"}`}
         style={{ position: "relative", backgroundColor: "var(--brand-cream, #f3ede4)" }}
       >
         {/* Stabil placeholder — reserverer alltid plassen, ingen layout shift */}
@@ -93,7 +98,7 @@ export function ListingCard({
         )}
 
         {/* Rroba watermark */}
-        {hasCover && (
+        {hasCover && !isHome && (
           <span
             className="pointer-events-none absolute left-2 top-2 select-none italic"
             style={{
@@ -109,7 +114,7 @@ export function ListingCard({
           </span>
         )}
 
-        {totalImages > 1 && !isSold && hasCover && (
+        {totalImages > 1 && !isSold && hasCover && !isHome && (
           <div className="pointer-events-none absolute inset-x-2 top-2 flex gap-1">
             {Array.from({ length: totalImages }).map((_, i) => (
               <div
@@ -144,7 +149,16 @@ export function ListingCard({
           </span>
         )}
 
-        {listing.is_promoted && (
+        {isHome && (
+          <LikeButton
+            listingId={listing.id}
+            variant="overlay"
+            size={22}
+            className="absolute right-1.5 top-1.5 z-[3]"
+          />
+        )}
+
+        {listing.is_promoted && !isHome && (
           <span
             className="pointer-events-none select-none"
             style={{
@@ -163,6 +177,29 @@ export function ListingCard({
           </span>
         )}
       </div>
+      {isHome ? (
+        <div className="mt-2.5 px-0.5">
+          <div className="flex items-baseline justify-between gap-2">
+            <p
+              className="line-clamp-1 text-[17px] leading-tight"
+              style={{ fontFamily: "var(--font-display)", color: "var(--home-ink)" }}
+            >
+              {listing.title}
+            </p>
+            <p
+              className="shrink-0 whitespace-nowrap text-[17px] leading-tight"
+              style={{ fontFamily: "var(--font-display)", color: "var(--home-ink)" }}
+            >
+              €{listing.price}
+            </p>
+          </div>
+          <p className="mt-1 line-clamp-1 text-xs" style={{ color: "var(--home-taupe)" }}>
+            {[listing.brand || listing.category, listing.size, listing.city]
+              .filter(Boolean)
+              .join("  ·  ")}
+          </p>
+        </div>
+      ) : (
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">
           <p
@@ -183,6 +220,7 @@ export function ListingCard({
         </p>
         {listing.city && <p className="text-xs text-muted-foreground">{listing.city}</p>}
       </div>
+      )}
     </Link>
   );
 }
