@@ -61,6 +61,16 @@
   --brand-success: #2e7d32;       /* suksess */
   --brand-warning: #ffb13b;       /* varsel */
 
+  /* Home editorial palette */
+  --home-bg: #f7f1e8;
+  --home-ink: #1f2119;
+  --home-wine: #7a252b;
+  --home-taupe: #8d8175;
+  --home-olive: #252719;
+  --home-line: #ded5c8;
+  --home-sand: #ece4d8;
+  --home-ivory: #f4eee5;
+
   /* Pure white */
   --background: oklch(1 0 0);
   --foreground: oklch(0.16 0.01 60);

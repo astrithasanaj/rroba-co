@@ -42,6 +42,15 @@ export const sq = {
 
   home: {
     app_title: "Rroba",
+    banner_title: "Stil që gjen shtëpi",
+    banner_sub: "Bli · Shit · Rizbulo",
+    banner_cta: "Shiko koleksionin",
+    tagline: "Fashion marketplace",
+    nav_home: "Kreu",
+    nav_search: "Kërko",
+    nav_sell: "Shpall",
+    nav_messages: "Mesazhe",
+    nav_profile: "Profili",
     notifications_aria: "Njoftime",
     tab_for_you: "Për ty",
     tab_following: "Duke ndjekur",

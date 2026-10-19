@@ -1,16 +1,18 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useTranslation } from "@/i18n";
 
 type NavRoute = "/" | "/search" | "/sell" | "/messages" | "/profile";
 
 export const BottomNav = () => {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useTranslation();
 
-  const items: { icon: string; route: NavRoute }[] = [
-    { icon: "ti-home", route: "/" },
-    { icon: "ti-search", route: "/search" },
-    { icon: "plus", route: "/sell" },
-    { icon: "ti-message", route: "/messages" },
-    { icon: "ti-user", route: "/profile" },
+  const items: { icon: string; route: NavRoute; label: string }[] = [
+    { icon: "ti-home", route: "/", label: t("home.nav_home") },
+    { icon: "ti-search", route: "/search", label: t("home.nav_search") },
+    { icon: "plus", route: "/sell", label: t("home.nav_sell") },
+    { icon: "ti-message", route: "/messages", label: t("home.nav_messages") },
+    { icon: "ti-user", route: "/profile", label: t("home.nav_profile") },
   ];
 
   return (
@@ -18,108 +20,60 @@ export const BottomNav = () => {
       className="nav-bar bottom-nav"
       style={{
         position: "fixed",
-        bottom: "16px",
-        left: "16px",
-        right: "16px",
-        height: "68px",
-        background: "rgba(45,21,33,0.88)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        border: "0.5px solid rgba(255,255,255,0.08)",
-        borderRadius: "40px",
+        bottom: "calc(12px + env(safe-area-inset-bottom, 0px) * 0.5)",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "calc(100% - 24px)",
+        maxWidth: "456px",
+        height: "76px",
+        background: "var(--home-olive)",
+        borderRadius: "38px",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around",
         zIndex: 99999,
-        padding: "0",
+        padding: "0 8px",
         margin: "0",
         boxSizing: "border-box",
-        overflow: "hidden",
-        flexShrink: 0,
-        flexGrow: 0,
+        boxShadow: "0 10px 30px -12px rgba(31,33,25,0.45)",
       }}
     >
       {items.map((item) => {
         const isActive = path === item.route;
-
-        if (item.icon === "plus") {
-          return (
-            <Link
-              key={item.route}
-              to={item.route}
-              preload="intent"
-              aria-label="Sell"
-              className="nav-sell-btn tap-icon"
-              style={{
-                width: "52px",
-                height: "52px",
-                minWidth: "52px",
-                maxWidth: "52px",
-                minHeight: "52px",
-                maxHeight: "52px",
-                backgroundColor: "transparent",
-                border: "1.5px solid #ffffff",
-                borderRadius: "14px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                padding: "0",
-                margin: "0",
-                flexShrink: 0,
-                textDecoration: "none",
-              }}
-            >
-              <i
-                className="ti ti-plus"
-                style={{
-                  fontSize: "24px",
-                  color: "#ffffff",
-                  lineHeight: 1,
-                }}
-              />
-            </Link>
-          );
-        }
+        const isSell = item.icon === "plus";
 
         return (
           <Link
             key={item.route}
             to={item.route}
             preload="intent"
-            className="nav-item tap-icon"
+            aria-label={item.label}
+            className={`tap-icon ${isSell ? "nav-sell-btn" : "nav-item"}`}
             style={{
-              width: "52px",
-              height: "52px",
-              minWidth: "52px",
-              maxWidth: "52px",
-              minHeight: "52px",
-              maxHeight: "52px",
-              backgroundColor: isActive ? "rgba(255,255,255,0.22)" : "transparent",
-              border: "none",
-              borderRadius: "14px",
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              cursor: "pointer",
-              padding: "0",
-              margin: "0",
+              gap: 2,
+              width: 60,
+              height: 60,
               flexShrink: 0,
+              borderRadius: "50%",
               textDecoration: "none",
+              backgroundColor: isSell
+                ? "var(--home-wine)"
+                : isActive
+                  ? "var(--home-ivory)"
+                  : "transparent",
+              color: isActive && !isSell ? "var(--home-ink)" : "var(--home-ivory)",
             }}
           >
             <i
-              className={`ti ${item.icon}`}
-              style={{
-                fontSize: "24px",
-                color: "#ffffff",
-                lineHeight: 1,
-                display: "block",
-                width: "24px",
-                height: "24px",
-              }}
+              className={`ti ${isSell ? "ti-plus" : item.icon}`}
+              style={{ fontSize: isSell ? 24 : 22, lineHeight: 1 }}
             />
+            <span style={{ fontSize: 10.5, lineHeight: 1, fontWeight: 500 }}>{item.label}</span>
           </Link>
         );
       })}

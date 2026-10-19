@@ -9,111 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UsersRouteImport } from './routes/users'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SellRouteImport } from './routes/sell'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as MessagesRouteImport } from './routes/messages'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as FavoritesRouteImport } from './routes/favorites'
-import { Route as BlockedRouteImport } from './routes/blocked'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthIndexRouteImport } from './routes/auth.index'
-import { Route as ProductIdRouteImport } from './routes/product.$id'
-import { Route as AuthSignupFullRouteImport } from './routes/auth.signup-full'
-import { Route as AuthLoginRouteImport } from './routes/auth.login'
-import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
-import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
-import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as AuthenticatedMyPromotionsRouteImport } from './routes/_authenticated/my-promotions'
-import { Route as AuthenticatedMembershipRouteImport } from './routes/_authenticated/membership'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport } from './routes/[.well-known]/apple-app-site-association'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BlockedRouteImport } from './routes/blocked'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as SellRouteImport } from './routes/sell'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UsersRouteImport } from './routes/users'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as UserIdIndexRouteImport } from './routes/user.$id.index'
-import { Route as UserIdFollowingRouteImport } from './routes/user.$id.following'
-import { Route as UserIdFollowersRouteImport } from './routes/user.$id.followers'
-import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
-import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
-import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
-import { Route as ApiPublicNotifyPendingPromotionRouteImport } from './routes/api/public/notify-pending-promotion'
-import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
-import { Route as AuthenticatedProfileDeleteAccountRouteImport } from './routes/_authenticated/profile_.delete-account'
-import { Route as AuthenticatedProfileChangeEmailRouteImport } from './routes/_authenticated/profile_.change-email'
-import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
-import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
-import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
-import { Route as AuthenticatedAdminPromotionsRouteImport } from './routes/_authenticated/admin.promotions'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport } from './routes/[.well-known]/apple-app-site-association'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AuthenticatedMembershipRouteImport } from './routes/_authenticated/membership'
+import { Route as AuthenticatedMyPromotionsRouteImport } from './routes/_authenticated/my-promotions'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthSignupFullRouteImport } from './routes/auth.signup-full'
+import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
-import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
-import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as AuthenticatedAdminPromotionsRouteImport } from './routes/_authenticated/admin.promotions'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedBuyIdRouteImport } from './routes/_authenticated/buy.$id'
+import { Route as AuthenticatedProfileChangeEmailRouteImport } from './routes/_authenticated/profile_.change-email'
+import { Route as AuthenticatedProfileDeleteAccountRouteImport } from './routes/_authenticated/profile_.delete-account'
+import { Route as ApiPublicNotifyNewReportRouteImport } from './routes/api/public/notify-new-report'
+import { Route as ApiPublicNotifyPendingPromotionRouteImport } from './routes/api/public/notify-pending-promotion'
+import { Route as CategorySlugGenderRouteImport } from './routes/category.$slug.$gender'
+import { Route as CategorySlugChooseGenderRouteImport } from './routes/category.$slug.choose-gender'
+import { Route as CategorySlugSubcategoryRouteImport } from './routes/category.$slug.subcategory'
+import { Route as UserIdIndexRouteImport } from './routes/user.$id.index'
+import { Route as UserIdFollowersRouteImport } from './routes/user.$id.followers'
+import { Route as UserIdFollowingRouteImport } from './routes/user.$id.following'
 import { Route as AuthenticatedListingIdEditRouteImport } from './routes/_authenticated/listing.$id.edit'
+import { Route as AuthenticatedListingIdManageRouteImport } from './routes/_authenticated/listing.$id.manage'
+import { Route as AuthenticatedListingIdPremiumRouteImport } from './routes/_authenticated/listing.$id.premium'
+import { Route as AuthenticatedListingIdPromoteRouteImport } from './routes/_authenticated/listing.$id.promote'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
-const UsersRoute = UsersRouteImport.update({
-  id: '/users',
-  path: '/users',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SellRoute = SellRouteImport.update({
-  id: '/sell',
-  path: '/sell',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MessagesRoute = MessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FavoritesRoute = FavoritesRouteImport.update({
-  id: '/favorites',
-  path: '/favorites',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlockedRoute = BlockedRouteImport.update({
-  id: '/blocked',
-  path: '/blocked',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -121,75 +75,65 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const BlockedRoute = BlockedRouteImport.update({
+  id: '/blocked',
+  path: '/blocked',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthRoute,
-} as any)
-const ProductIdRoute = ProductIdRouteImport.update({
-  id: '/product/$id',
-  path: '/product/$id',
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignupFullRoute = AuthSignupFullRouteImport.update({
-  id: '/signup-full',
-  path: '/signup-full',
-  getParentRoute: () => AuthRoute,
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AuthRoute,
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => AuthRoute,
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthConfirmEmailRoute = AuthConfirmEmailRouteImport.update({
-  id: '/confirm-email',
-  path: '/confirm-email',
-  getParentRoute: () => AuthRoute,
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/callback',
-  path: '/callback',
-  getParentRoute: () => AuthRoute,
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const SellRoute = SellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedMyPromotionsRoute =
-  AuthenticatedMyPromotionsRouteImport.update({
-    id: '/my-promotions',
-    path: '/my-promotions',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedMembershipRoute = AuthenticatedMembershipRouteImport.update({
-  id: '/membership',
-  path: '/membership',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93AppleAppSiteAssociationRoute =
@@ -198,30 +142,128 @@ const Char91DotwellKnownChar93AppleAppSiteAssociationRoute =
     path: '/.well-known/apple-app-site-association',
     getParentRoute: () => rootRouteImport,
   } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
-const UserIdIndexRoute = UserIdIndexRouteImport.update({
-  id: '/user/$id/',
-  path: '/user/$id/',
+const AuthenticatedMembershipRoute = AuthenticatedMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMyPromotionsRoute =
+  AuthenticatedMyPromotionsRouteImport.update({
+    id: '/my-promotions',
+    path: '/my-promotions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthConfirmEmailRoute = AuthConfirmEmailRouteImport.update({
+  id: '/confirm-email',
+  path: '/confirm-email',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSignupFullRoute = AuthSignupFullRouteImport.update({
+  id: '/signup-full',
+  path: '/signup-full',
+  getParentRoute: () => AuthRoute,
+} as any)
+const ProductIdRoute = ProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserIdFollowingRoute = UserIdFollowingRouteImport.update({
-  id: '/user/$id/following',
-  path: '/user/$id/following',
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserIdFollowersRoute = UserIdFollowersRouteImport.update({
-  id: '/user/$id/followers',
-  path: '/user/$id/followers',
-  getParentRoute: () => rootRouteImport,
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAdminPromotionsRoute =
+  AuthenticatedAdminPromotionsRouteImport.update({
+    id: '/admin/promotions',
+    path: '/admin/promotions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/admin/reports',
+    path: '/admin/reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CategorySlugSubcategoryRoute = CategorySlugSubcategoryRouteImport.update({
-  id: '/category/$slug/subcategory',
-  path: '/category/$slug/subcategory',
+const AuthenticatedBuyIdRoute = AuthenticatedBuyIdRouteImport.update({
+  id: '/buy/$id',
+  path: '/buy/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileChangeEmailRoute =
+  AuthenticatedProfileChangeEmailRouteImport.update({
+    id: '/profile_/change-email',
+    path: '/profile/change-email',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileDeleteAccountRoute =
+  AuthenticatedProfileDeleteAccountRouteImport.update({
+    id: '/profile_/delete-account',
+    path: '/profile/delete-account',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicNotifyNewReportRoute =
+  ApiPublicNotifyNewReportRouteImport.update({
+    id: '/api/public/notify-new-report',
+    path: '/api/public/notify-new-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicNotifyPendingPromotionRoute =
+  ApiPublicNotifyPendingPromotionRouteImport.update({
+    id: '/api/public/notify-pending-promotion',
+    path: '/api/public/notify-pending-promotion',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
+  id: '/category/$slug/$gender',
+  path: '/category/$slug/$gender',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategorySlugChooseGenderRoute =
@@ -230,94 +272,30 @@ const CategorySlugChooseGenderRoute =
     path: '/category/$slug/choose-gender',
     getParentRoute: () => rootRouteImport,
   } as any)
-const CategorySlugGenderRoute = CategorySlugGenderRouteImport.update({
-  id: '/category/$slug/$gender',
-  path: '/category/$slug/$gender',
+const CategorySlugSubcategoryRoute = CategorySlugSubcategoryRouteImport.update({
+  id: '/category/$slug/subcategory',
+  path: '/category/$slug/subcategory',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicNotifyPendingPromotionRoute =
-  ApiPublicNotifyPendingPromotionRouteImport.update({
-    id: '/api/public/notify-pending-promotion',
-    path: '/api/public/notify-pending-promotion',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicNotifyNewReportRoute =
-  ApiPublicNotifyNewReportRouteImport.update({
-    id: '/api/public/notify-new-report',
-    path: '/api/public/notify-new-report',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AuthenticatedProfileDeleteAccountRoute =
-  AuthenticatedProfileDeleteAccountRouteImport.update({
-    id: '/profile_/delete-account',
-    path: '/profile/delete-account',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProfileChangeEmailRoute =
-  AuthenticatedProfileChangeEmailRouteImport.update({
-    id: '/profile_/change-email',
-    path: '/profile/change-email',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedBuyIdRoute = AuthenticatedBuyIdRouteImport.update({
-  id: '/buy/$id',
-  path: '/buy/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
-  id: '/admin/users',
-  path: '/admin/users',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminReportsRoute =
-  AuthenticatedAdminReportsRouteImport.update({
-    id: '/admin/reports',
-    path: '/admin/reports',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminPromotionsRoute =
-  AuthenticatedAdminPromotionsRouteImport.update({
-    id: '/admin/promotions',
-    path: '/admin/promotions',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
+const UserIdIndexRoute = UserIdIndexRouteImport.update({
+  id: '/user/$id/',
+  path: '/user/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
+const UserIdFollowersRoute = UserIdFollowersRouteImport.update({
+  id: '/user/$id/followers',
+  path: '/user/$id/followers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
+const UserIdFollowingRoute = UserIdFollowingRouteImport.update({
+  id: '/user/$id/following',
+  path: '/user/$id/following',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedListingIdPromoteRoute =
-  AuthenticatedListingIdPromoteRouteImport.update({
-    id: '/listing/$id/promote',
-    path: '/listing/$id/promote',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedListingIdPremiumRoute =
-  AuthenticatedListingIdPremiumRouteImport.update({
-    id: '/listing/$id/premium',
-    path: '/listing/$id/premium',
+const AuthenticatedListingIdEditRoute =
+  AuthenticatedListingIdEditRouteImport.update({
+    id: '/listing/$id/edit',
+    path: '/listing/$id/edit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedListingIdManageRoute =
@@ -326,11 +304,33 @@ const AuthenticatedListingIdManageRoute =
     path: '/listing/$id/manage',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedListingIdEditRoute =
-  AuthenticatedListingIdEditRouteImport.update({
-    id: '/listing/$id/edit',
-    path: '/listing/$id/edit',
+const AuthenticatedListingIdPremiumRoute =
+  AuthenticatedListingIdPremiumRouteImport.update({
+    id: '/listing/$id/premium',
+    path: '/listing/$id/premium',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedListingIdPromoteRoute =
+  AuthenticatedListingIdPromoteRouteImport.update({
+    id: '/listing/$id/promote',
+    path: '/listing/$id/promote',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -685,88 +685,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sell': {
-      id: '/sell'
-      path: '/sell'
-      fullPath: '/sell'
-      preLoaderRoute: typeof SellRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/messages': {
-      id: '/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof MessagesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/favorites': {
-      id: '/favorites'
-      path: '/favorites'
-      fullPath: '/favorites'
-      preLoaderRoute: typeof FavoritesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blocked': {
-      id: '/blocked'
-      path: '/blocked'
-      fullPath: '/blocked'
-      preLoaderRoute: typeof BlockedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -776,102 +699,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/': {
-      id: '/auth/'
-      path: '/'
-      fullPath: '/auth/'
-      preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/product/$id': {
-      id: '/product/$id'
-      path: '/product/$id'
-      fullPath: '/product/$id'
-      preLoaderRoute: typeof ProductIdRouteImport
+    '/blocked': {
+      id: '/blocked'
+      path: '/blocked'
+      fullPath: '/blocked'
+      preLoaderRoute: typeof BlockedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/signup-full': {
-      id: '/auth/signup-full'
-      path: '/signup-full'
-      fullPath: '/auth/signup-full'
-      preLoaderRoute: typeof AuthSignupFullRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/auth/forgot-password': {
-      id: '/auth/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/auth/forgot-password'
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/auth/confirm-email': {
-      id: '/auth/confirm-email'
-      path: '/confirm-email'
-      fullPath: '/auth/confirm-email'
-      preLoaderRoute: typeof AuthConfirmEmailRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/onboarding': {
-      id: '/_authenticated/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/my-promotions': {
-      id: '/_authenticated/my-promotions'
-      path: '/my-promotions'
-      fullPath: '/my-promotions'
-      preLoaderRoute: typeof AuthenticatedMyPromotionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/membership': {
-      id: '/_authenticated/membership'
-      path: '/membership'
-      fullPath: '/membership'
-      preLoaderRoute: typeof AuthenticatedMembershipRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/apple-app-site-association': {
-      id: '/.well-known/apple-app-site-association'
-      path: '/.well-known/apple-app-site-association'
-      fullPath: '/.well-known/apple-app-site-association'
-      preLoaderRoute: typeof Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell': {
+      id: '/sell'
+      path: '/sell'
+      fullPath: '/sell'
+      preLoaderRoute: typeof SellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -881,109 +790,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/$id/': {
-      id: '/user/$id/'
-      path: '/user/$id'
-      fullPath: '/user/$id/'
-      preLoaderRoute: typeof UserIdIndexRouteImport
+    '/.well-known/apple-app-site-association': {
+      id: '/.well-known/apple-app-site-association'
+      path: '/.well-known/apple-app-site-association'
+      fullPath: '/.well-known/apple-app-site-association'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/$id/following': {
-      id: '/user/$id/following'
-      path: '/user/$id/following'
-      fullPath: '/user/$id/following'
-      preLoaderRoute: typeof UserIdFollowingRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/$id/followers': {
-      id: '/user/$id/followers'
-      path: '/user/$id/followers'
-      fullPath: '/user/$id/followers'
-      preLoaderRoute: typeof UserIdFollowersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/category/$slug/subcategory': {
-      id: '/category/$slug/subcategory'
-      path: '/category/$slug/subcategory'
-      fullPath: '/category/$slug/subcategory'
-      preLoaderRoute: typeof CategorySlugSubcategoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/category/$slug/choose-gender': {
-      id: '/category/$slug/choose-gender'
-      path: '/category/$slug/choose-gender'
-      fullPath: '/category/$slug/choose-gender'
-      preLoaderRoute: typeof CategorySlugChooseGenderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/category/$slug/$gender': {
-      id: '/category/$slug/$gender'
-      path: '/category/$slug/$gender'
-      fullPath: '/category/$slug/$gender'
-      preLoaderRoute: typeof CategorySlugGenderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/notify-pending-promotion': {
-      id: '/api/public/notify-pending-promotion'
-      path: '/api/public/notify-pending-promotion'
-      fullPath: '/api/public/notify-pending-promotion'
-      preLoaderRoute: typeof ApiPublicNotifyPendingPromotionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/notify-new-report': {
-      id: '/api/public/notify-new-report'
-      path: '/api/public/notify-new-report'
-      fullPath: '/api/public/notify-new-report'
-      preLoaderRoute: typeof ApiPublicNotifyNewReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/profile_/delete-account': {
-      id: '/_authenticated/profile_/delete-account'
-      path: '/profile/delete-account'
-      fullPath: '/profile/delete-account'
-      preLoaderRoute: typeof AuthenticatedProfileDeleteAccountRouteImport
+    '/_authenticated/membership': {
+      id: '/_authenticated/membership'
+      path: '/membership'
+      fullPath: '/membership'
+      preLoaderRoute: typeof AuthenticatedMembershipRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile_/change-email': {
-      id: '/_authenticated/profile_/change-email'
-      path: '/profile/change-email'
-      fullPath: '/profile/change-email'
-      preLoaderRoute: typeof AuthenticatedProfileChangeEmailRouteImport
+    '/_authenticated/my-promotions': {
+      id: '/_authenticated/my-promotions'
+      path: '/my-promotions'
+      fullPath: '/my-promotions'
+      preLoaderRoute: typeof AuthenticatedMyPromotionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/buy/$id': {
-      id: '/_authenticated/buy/$id'
-      path: '/buy/$id'
-      fullPath: '/buy/$id'
-      preLoaderRoute: typeof AuthenticatedBuyIdRouteImport
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/users': {
-      id: '/_authenticated/admin/users'
-      path: '/admin/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/reports': {
-      id: '/_authenticated/admin/reports'
-      path: '/admin/reports'
-      fullPath: '/admin/reports'
-      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/_authenticated/admin/promotions': {
-      id: '/_authenticated/admin/promotions'
-      path: '/admin/promotions'
-      fullPath: '/admin/promotions'
-      preLoaderRoute: typeof AuthenticatedAdminPromotionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+    '/auth/confirm-email': {
+      id: '/auth/confirm-email'
+      path: '/confirm-email'
+      fullPath: '/auth/confirm-email'
+      preLoaderRoute: typeof AuthConfirmEmailRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/signup-full': {
+      id: '/auth/signup-full'
+      path: '/signup-full'
+      fullPath: '/auth/signup-full'
+      preLoaderRoute: typeof AuthSignupFullRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/product/$id': {
+      id: '/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
@@ -993,39 +888,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/webhook': {
-      id: '/lovable/email/auth/webhook'
-      path: '/lovable/email/auth/webhook'
-      fullPath: '/lovable/email/auth/webhook'
-      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/listing/$id/promote': {
-      id: '/_authenticated/listing/$id/promote'
-      path: '/listing/$id/promote'
-      fullPath: '/listing/$id/promote'
-      preLoaderRoute: typeof AuthenticatedListingIdPromoteRouteImport
+    '/_authenticated/admin/promotions': {
+      id: '/_authenticated/admin/promotions'
+      path: '/admin/promotions'
+      fullPath: '/admin/promotions'
+      preLoaderRoute: typeof AuthenticatedAdminPromotionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/listing/$id/premium': {
-      id: '/_authenticated/listing/$id/premium'
-      path: '/listing/$id/premium'
-      fullPath: '/listing/$id/premium'
-      preLoaderRoute: typeof AuthenticatedListingIdPremiumRouteImport
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/buy/$id': {
+      id: '/_authenticated/buy/$id'
+      path: '/buy/$id'
+      fullPath: '/buy/$id'
+      preLoaderRoute: typeof AuthenticatedBuyIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile_/change-email': {
+      id: '/_authenticated/profile_/change-email'
+      path: '/profile/change-email'
+      fullPath: '/profile/change-email'
+      preLoaderRoute: typeof AuthenticatedProfileChangeEmailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile_/delete-account': {
+      id: '/_authenticated/profile_/delete-account'
+      path: '/profile/delete-account'
+      fullPath: '/profile/delete-account'
+      preLoaderRoute: typeof AuthenticatedProfileDeleteAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/notify-new-report': {
+      id: '/api/public/notify-new-report'
+      path: '/api/public/notify-new-report'
+      fullPath: '/api/public/notify-new-report'
+      preLoaderRoute: typeof ApiPublicNotifyNewReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/notify-pending-promotion': {
+      id: '/api/public/notify-pending-promotion'
+      path: '/api/public/notify-pending-promotion'
+      fullPath: '/api/public/notify-pending-promotion'
+      preLoaderRoute: typeof ApiPublicNotifyPendingPromotionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug/$gender': {
+      id: '/category/$slug/$gender'
+      path: '/category/$slug/$gender'
+      fullPath: '/category/$slug/$gender'
+      preLoaderRoute: typeof CategorySlugGenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug/choose-gender': {
+      id: '/category/$slug/choose-gender'
+      path: '/category/$slug/choose-gender'
+      fullPath: '/category/$slug/choose-gender'
+      preLoaderRoute: typeof CategorySlugChooseGenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug/subcategory': {
+      id: '/category/$slug/subcategory'
+      path: '/category/$slug/subcategory'
+      fullPath: '/category/$slug/subcategory'
+      preLoaderRoute: typeof CategorySlugSubcategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$id/': {
+      id: '/user/$id/'
+      path: '/user/$id'
+      fullPath: '/user/$id/'
+      preLoaderRoute: typeof UserIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$id/followers': {
+      id: '/user/$id/followers'
+      path: '/user/$id/followers'
+      fullPath: '/user/$id/followers'
+      preLoaderRoute: typeof UserIdFollowersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$id/following': {
+      id: '/user/$id/following'
+      path: '/user/$id/following'
+      fullPath: '/user/$id/following'
+      preLoaderRoute: typeof UserIdFollowingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/listing/$id/edit': {
+      id: '/_authenticated/listing/$id/edit'
+      path: '/listing/$id/edit'
+      fullPath: '/listing/$id/edit'
+      preLoaderRoute: typeof AuthenticatedListingIdEditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/listing/$id/manage': {
@@ -1035,12 +1007,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedListingIdManageRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/listing/$id/edit': {
-      id: '/_authenticated/listing/$id/edit'
-      path: '/listing/$id/edit'
-      fullPath: '/listing/$id/edit'
-      preLoaderRoute: typeof AuthenticatedListingIdEditRouteImport
+    '/_authenticated/listing/$id/premium': {
+      id: '/_authenticated/listing/$id/premium'
+      path: '/listing/$id/premium'
+      fullPath: '/listing/$id/premium'
+      preLoaderRoute: typeof AuthenticatedListingIdPremiumRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/listing/$id/promote': {
+      id: '/_authenticated/listing/$id/promote'
+      path: '/listing/$id/promote'
+      fullPath: '/listing/$id/promote'
+      preLoaderRoute: typeof AuthenticatedListingIdPromoteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
