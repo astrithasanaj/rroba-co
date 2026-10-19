@@ -15,6 +15,7 @@ import {
   HelpCircle,
   ImageOff,
   Loader2,
+  MapPin,
   LogOut,
   MessageSquare,
   Minus,
@@ -438,202 +439,185 @@ function ProfilePage() {
     <MobileShell>
       <div
         style={{
-          backgroundColor: CREAM,
-          color: INK,
+          backgroundColor: "var(--home-bg)",
+          color: "var(--home-ink)",
           WebkitFontSmoothing: "antialiased",
           WebkitTapHighlightColor: "transparent",
         }}
-        className="min-h-screen pb-[90px]"
+        className="min-h-screen pb-[110px]"
       >
         {/* Header */}
         <header
-          className="flex items-center justify-between"
-          style={{ padding: "10px 16px 6px", backgroundColor: CREAM }}
+          className="grid items-center"
+          style={{ gridTemplateColumns: "1fr auto 1fr", padding: "12px 14px 8px" }}
         >
-          <div
-            className="flex items-center"
-            style={{ backgroundColor: CARD, borderRadius: 24, padding: "6px 10px", gap: 4 }}
-          >
+          <div className="flex items-center">
             <button
               onClick={() => navigate({ to: "/notifications" })}
               className="profile-btn relative grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
+              style={{ color: "var(--home-ink)", background: "transparent", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
               aria-label={t("home.notifications_aria")}
             >
-              <Bell style={{ width: 20, height: 20 }} strokeWidth={1.8} />
+              <Bell style={{ width: 22, height: 22 }} strokeWidth={1.6} />
               {hasUnreadNotifications && (
                 <span
                   aria-hidden="true"
                   className="absolute rounded-full"
-                  style={{ top: 6, right: 6, width: 10, height: 10, backgroundColor: "var(--brand-rose)" }}
+                  style={{ top: 9, right: 10, width: 8, height: 8, backgroundColor: "var(--home-wine)" }}
                 />
               )}
             </button>
           </div>
           <h1
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              letterSpacing: "0.1px",
-              color: INK,
-            }}
+            className="font-display"
+            style={{ fontSize: 30, lineHeight: 1, color: "var(--home-ink)", margin: 0 }}
+            aria-label={username || "Rroba"}
           >
-            {username}
+            Rroba
           </h1>
-          <div
-            className="flex items-center"
-            style={{ backgroundColor: CARD, borderRadius: 24, padding: "6px 10px", gap: 4 }}
-          >
+          <div className="flex items-center justify-end">
             <button
               onClick={handleShare}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
+              style={{ color: "var(--home-ink)", background: "transparent", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
               aria-label={t("common.share")}
             >
-              <IosShareIcon size={20} color={INK} strokeWidth={1.6} />
+              <IosShareIcon size={21} color="var(--home-ink)" strokeWidth={1.6} />
             </button>
             <button
               onClick={() => setSettingsOpen(true)}
               className="profile-btn grid place-items-center"
-              style={{ color: INK, background: "transparent", border: "none", padding: 0, width: 40, height: 40, borderRadius: 20 }}
+              style={{ color: "var(--home-ink)", background: "transparent", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
               aria-label={t("common.settings")}
             >
-              <SettingsIcon style={{ width: 20, height: 20 }} strokeWidth={1.8} />
+              <SettingsIcon style={{ width: 22, height: 22 }} strokeWidth={1.6} />
             </button>
           </div>
         </header>
 
         {/* Profile section */}
         <section>
-          <div
-            style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "8px 16px 12px" }}
-          >
+          <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 18px 6px" }}>
             {avatar ? (
               <img
                 src={avatar}
                 alt=""
                 style={{
-                  width: 80,
-                  height: 80,
+                  width: 96,
+                  height: 96,
                   borderRadius: "50%",
                   objectFit: "cover",
-                  border: `2px solid ${DIVIDER}`,
+                  border: "1px solid var(--home-line)",
                   flexShrink: 0,
                 }}
               />
             ) : (
               <div
                 aria-hidden="true"
+                className="grid place-items-center"
                 style={{
-                  width: 80,
-                  height: 80,
+                  width: 96,
+                  height: 96,
                   borderRadius: "50%",
-                  backgroundColor: DIVIDER,
-                  border: `2px solid ${DIVIDER}`,
+                  backgroundColor: "var(--home-sand)",
+                  border: "1px solid var(--home-line)",
                   flexShrink: 0,
+                  color: "var(--home-taupe)",
                 }}
-              />
+              >
+                <UserIcon style={{ width: 40, height: 40 }} strokeWidth={1.2} />
+              </div>
             )}
 
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <Stat
-                  value={articleCount}
-                  label={t("profile.stat_articles")}
-                />
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr 1px 1fr", alignItems: "center" }}>
+                <Stat value={articleCount} label={t("profile.stat_articles")} />
+                <span style={{ height: 30, backgroundColor: "var(--home-line)" }} />
                 <Stat
                   value={followers}
                   label={t("profile.stat_followers")}
                   onClick={() => navigate({ to: "/user/$id/followers", params: { id: user.id } })}
                 />
+                <span style={{ height: 30, backgroundColor: "var(--home-line)" }} />
                 <Stat
                   value={following}
                   label={t("profile.stat_following")}
                   onClick={() => navigate({ to: "/user/$id/following", params: { id: user.id } })}
                 />
               </div>
-              <div style={{ display: "flex", gap: 7 }}>
-                <button
-                  onClick={() => setBenefitsOpen(true)}
-                  className="profile-btn"
-                  style={{
-                    flex: 1,
-                    height: 34,
-                    borderRadius: 10,
-                    border: "1px solid var(--brand-border-strong)",
-                    backgroundColor: CREAM,
-                    color: INK,
-                    fontSize: 12,
-                    fontWeight: 500,
-                    letterSpacing: "0.2px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 4,
-                  }}
-                >
-                  <Gem style={{ width: 12, height: 12 }} strokeWidth={1.8} />
-                  {t("profile.benefits")}
-                </button>
-                <button
-                  onClick={() => setRatingsOpen(true)}
-                  className="profile-btn"
-                  style={{
-                    flex: 1,
-                    height: 34,
-                    borderRadius: 10,
-                    border: "1px solid var(--brand-border-strong)",
-                    backgroundColor: CREAM,
-                    color: INK,
-                    fontSize: 12,
-                    fontWeight: 500,
-                    letterSpacing: "0.2px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 4,
-                  }}
-                >
-                  {(profile?.rating_count ?? 0) > 0 ? (
-                    <>
-                      <Star style={{ width: 12, height: 12 }} fill="currentColor" strokeWidth={0} />
-                      {(profile?.rating_avg ?? 0).toFixed(1)}
-                    </>
-                  ) : (
-                    t("profile.no_rating")
-                  )}
-                </button>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[
+                  {
+                    key: "benefits",
+                    onClick: () => setBenefitsOpen(true),
+                    content: (
+                      <>
+                        <Gem style={{ width: 13, height: 13, color: "var(--home-wine)" }} strokeWidth={1.8} />
+                        {t("profile.benefits")}
+                      </>
+                    ),
+                  },
+                  {
+                    key: "ratings",
+                    onClick: () => setRatingsOpen(true),
+                    content:
+                      (profile?.rating_count ?? 0) > 0 ? (
+                        <>
+                          <Star style={{ width: 13, height: 13, color: "var(--home-wine)" }} fill="currentColor" strokeWidth={0} />
+                          {(profile?.rating_avg ?? 0).toFixed(1)}
+                        </>
+                      ) : (
+                        <>
+                          <Star style={{ width: 13, height: 13, color: "var(--home-wine)" }} strokeWidth={1.8} />
+                          {t("profile.no_rating")}
+                        </>
+                      ),
+                  },
+                ].map((pill) => (
+                  <button
+                    key={pill.key}
+                    onClick={pill.onClick}
+                    className="profile-btn"
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      height: 36,
+                      borderRadius: 18,
+                      border: "1px solid var(--home-line)",
+                      backgroundColor: "var(--home-ivory)",
+                      color: "var(--home-ink)",
+                      fontSize: 12.5,
+                      fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                    }}
+                  >
+                    {pill.content}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          <div style={{ padding: "0 16px 14px" }}>
+          <div style={{ padding: "14px 18px 18px" }}>
             <p
-              style={{
-                fontSize: 17,
-                fontWeight: 600,
-                letterSpacing: "-0.2px",
-                color: INK,
-                lineHeight: 1.2,
-              }}
+              className="font-display"
+              style={{ fontSize: 30, lineHeight: 1.1, color: "var(--home-ink)", minHeight: "1.1em", margin: 0 }}
             >
               {displayName}
             </p>
-            <div
-              style={{
-                marginTop: 4,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 8,
-              }}
-            >
-              <span style={{ fontSize: 13, fontWeight: 400, color: MUTED }}>
-                {profile?.city || ""}
+            <div style={{ marginTop: 6, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+              <span style={{ fontSize: 13.5, color: "var(--home-taupe)", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                {profile?.city ? (
+                  <>
+                    <MapPin style={{ width: 14, height: 14 }} strokeWidth={1.7} />
+                    {profile.city}
+                  </>
+                ) : null}
               </span>
               <button
                 onClick={() => setHeightOpen(true)}
@@ -644,45 +628,28 @@ function ProfilePage() {
                   padding: 0,
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 3,
-                  fontSize: 12,
-                  color: MUTED,
+                  gap: 5,
+                  fontSize: 13,
+                  color: "var(--home-taupe)",
                   fontStyle: profile?.height_cm ? "normal" : "italic",
                 }}
               >
-                {profile?.height_cm ? (
-                  <>
-                    <Ruler style={{ width: 13, height: 13 }} strokeWidth={1.8} />
-                    {profile.height_cm} cm
-                  </>
-                ) : (
-                  t("profile.add_height")
-                )}
+                <Ruler style={{ width: 14, height: 14 }} strokeWidth={1.7} />
+                {profile?.height_cm ? `${profile.height_cm} cm` : t("profile.add_height")}
               </button>
             </div>
             {profile?.bio && (
-              <p
-                className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed"
-                style={{ color: INK }}
-              >
+              <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed" style={{ color: "var(--home-ink)" }}>
                 {profile.bio}
               </p>
             )}
           </div>
         </section>
 
-        {/* Divider */}
-        <div style={{ height: 1, backgroundColor: DIVIDER, width: "100%" }} />
-
         {/* Tabs */}
-        <div>
-          <div
-            role="tablist"
-            aria-label={t("profile.sections_aria")}
-            className="grid grid-cols-3"
-            style={{ backgroundColor: CREAM }}
-          >
-            {tabs.map((tabItem) => {
+        <div style={{ borderTop: "1px solid var(--home-line)", borderBottom: "1px solid var(--home-line)" }}>
+          <div role="tablist" aria-label={t("profile.sections_aria")} className="grid grid-cols-3">
+            {tabs.map((tabItem, i) => {
               const Icon = tabItem.icon;
               const active = tab === tabItem.id;
               const tabLabels: Record<Tab, string> = {
@@ -690,6 +657,7 @@ function ProfilePage() {
                 liked: t("profile.tab_liked"),
                 saved: t("profile.tab_saved"),
               };
+              const color = active ? "var(--home-wine)" : "var(--home-taupe)";
               return (
                 <button
                   key={tabItem.id}
@@ -698,30 +666,23 @@ function ProfilePage() {
                   aria-selected={active}
                   aria-controls={`profile-panel-${tabItem.id}`}
                   tabIndex={active ? 0 : -1}
-                  aria-label={tabLabels[tabItem.id]}
                   onClick={() => setTab(tabItem.id)}
-                  className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
-                  style={{ height: 52, background: "transparent", border: "none" }}
+                  className={`profile-btn relative flex flex-col items-center justify-center ${FOCUS_CLASS}`}
+                  style={{
+                    height: 64,
+                    gap: 4,
+                    background: "transparent",
+                    border: "none",
+                    borderLeft: i > 0 ? "1px solid var(--home-line)" : "none",
+                    color,
+                  }}
                 >
-                  <Icon
-                    aria-hidden="true"
-                    style={{
-                      width: 26,
-                      height: 26,
-                      color: active ? INK : "var(--brand-border-strong)",
-                    }}
-                    strokeWidth={active ? 2 : 1.7}
-                  />
+                  <Icon aria-hidden="true" style={{ width: 22, height: 22 }} strokeWidth={active ? 1.9 : 1.6} />
+                  <span style={{ fontSize: 12, fontWeight: active ? 600 : 500 }}>{tabLabels[tabItem.id]}</span>
                   {active && (
                     <span
                       aria-hidden="true"
-                      style={{
-                        position: "absolute",
-                        bottom: 0,
-                        width: 26,
-                        height: 2,
-                        backgroundColor: INK,
-                      }}
+                      style={{ position: "absolute", bottom: -1, left: "22%", right: "22%", height: 2, backgroundColor: "var(--home-wine)" }}
                     />
                   )}
                 </button>
@@ -742,8 +703,6 @@ function ProfilePage() {
             !collectionsLoaded || (savedQuery.isPending && !savedQuery.data)
           }
         />
-
-
       </div>
 
 
@@ -1005,10 +964,11 @@ function Stat({
     <>
       <p
         style={{
-          fontSize: 18,
-          fontWeight: 600,
-          color: INK,
-          lineHeight: 1.2,
+          fontFamily: "var(--font-display)",
+          fontSize: 26,
+          fontWeight: 400,
+          color: "var(--home-ink)",
+          lineHeight: 1.1,
           minHeight: "1.2em",
           minWidth: "2.5ch",
           fontVariantNumeric: "tabular-nums",
@@ -1026,10 +986,10 @@ function Stat({
       </p>
       <p
         style={{
-          fontSize: 11,
+          fontSize: 11.5,
           fontWeight: 400,
-          color: MUTED,
-          marginTop: 2,
+          color: "var(--home-taupe)",
+          marginTop: 3,
           letterSpacing: "0.2px",
         }}
       >
@@ -1314,21 +1274,70 @@ function SoldRibbon() {
 
 function TabEmptyState({ tab }: { tab: Tab }) {
   const { t } = useTranslation();
-  const Icon =
-    tab === "mine" ? Grid2x2 : tab === "liked" ? Heart : Bookmark;
-  const subtitle =
-    tab === "mine"
-      ? t("profile.empty_mine")
-      : tab === "liked"
-        ? t("profile.empty_liked")
-        : t("profile.empty_saved");
+  if (tab === "mine") {
+    return (
+      <div style={{ padding: "18px 16px 8px" }}>
+        <div
+          className="flex flex-col items-center text-center"
+          style={{
+            borderRadius: 28,
+            border: "1px solid var(--home-line)",
+            background:
+              "radial-gradient(120% 80% at 50% 0%, var(--home-ivory) 0%, var(--home-sand) 70%)",
+            padding: "40px 24px 32px",
+          }}
+        >
+          <div
+            className="grid place-items-center"
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              backgroundColor: "var(--home-bg)",
+              border: "1px solid var(--home-line)",
+              color: "var(--home-wine)",
+            }}
+          >
+            <Grid2x2 size={26} strokeWidth={1.5} />
+          </div>
+          <p className="font-display" style={{ marginTop: 18, fontSize: 28, lineHeight: 1.1, color: "var(--home-ink)" }}>
+            {t("profile.empty_mine_title")}
+          </p>
+          <p style={{ marginTop: 8, fontSize: 13.5, color: "var(--home-taupe)", maxWidth: 260 }}>
+            {t("profile.empty_mine_helper")}
+          </p>
+          <Link
+            to="/sell"
+            className="profile-btn"
+            style={{
+              marginTop: 22,
+              height: 46,
+              padding: "0 24px",
+              borderRadius: 23,
+              backgroundColor: "var(--home-wine)",
+              color: "var(--home-ivory)",
+              fontSize: 14,
+              fontWeight: 600,
+              display: "inline-flex",
+              alignItems: "center",
+              textDecoration: "none",
+            }}
+          >
+            {t("profile.empty_mine_cta")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+  const Icon = tab === "liked" ? Heart : Bookmark;
+  const subtitle = tab === "liked" ? t("profile.empty_liked") : t("profile.empty_saved");
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
-      <Icon size={32} strokeWidth={1.5} style={{ color: MUTED }} />
-      <p className="mt-4 text-[15px] font-bold" style={{ color: INK }}>
+      <Icon size={30} strokeWidth={1.5} style={{ color: "var(--home-taupe)" }} />
+      <p className="font-display mt-4" style={{ fontSize: 24, color: "var(--home-ink)" }}>
         {t("profile.no_items_yet")}
       </p>
-      <p className="mt-1 text-[13px]" style={{ color: MUTED }}>
+      <p className="mt-1 text-[13px]" style={{ color: "var(--home-taupe)" }}>
         {subtitle}
       </p>
     </div>
