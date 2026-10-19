@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Bell, UserPlus } from "lucide-react";
+import { ArrowRight, Bell, ChevronRight, UserPlus } from "lucide-react";
+import catMode from "@/assets/cat-mode.jpg";
+import catOutdoor from "@/assets/cat-outdoor.jpg";
+import catInterior from "@/assets/cat-interior.jpg";
+import catFemije from "@/assets/cat-femije.jpg";
+import catArt from "@/assets/cat-art.jpg";
+import catElektronik from "@/assets/cat-elektronik.jpg";
+import catHobi from "@/assets/cat-hobi.jpg";
+import homeBanner from "@/assets/home-banner.jpg";
 import { MobileShell } from "@/components/marketplace/MobileShell";
 import { ListingCard } from "@/components/marketplace/ListingCard";
 import { ListingCardSkeleton, ProductGridSkeleton } from "@/components/marketplace/Skeletons";
@@ -20,9 +28,20 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const PAGE_BG = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const PAGE_BG = "var(--home-bg)";
+const INK = "var(--home-ink)";
+const MUTED = "var(--home-taupe)";
+const WINE = "var(--home-wine)";
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  mode: catMode,
+  outdoor: catOutdoor,
+  interior: catInterior,
+  femije: catFemije,
+  art: catArt,
+  elektronik: catElektronik,
+  hobi: catHobi,
+};
 
 type Tab = "for-you" | "following";
 
@@ -359,42 +378,50 @@ function HomePage() {
     <MobileShell>
       <div style={{ backgroundColor: PAGE_BG, minHeight: "100%" }}>
         <header
-          className="sticky top-0 z-30 backdrop-blur"
-          style={{ backgroundColor: `${PAGE_BG}f2` }}
+          className="sticky top-0 z-30"
+          style={{ backgroundColor: PAGE_BG }}
         >
-          <div className="flex items-center justify-between px-[18px] py-4">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between px-5 pb-4 pt-5">
+            <div>
               <h1
-                className="text-3xl italic"
+                className="italic leading-none"
                 style={{
                   color: INK,
                   fontFamily: 'Georgia, "Times New Roman", serif',
-                  fontWeight: 600,
-                  letterSpacing: "-0.02em",
+                  fontWeight: 700,
+                  fontSize: 40,
+                  letterSpacing: "-0.03em",
                 }}
               >
                 Rroba
               </h1>
+              <p
+                className="mt-1.5 uppercase"
+                style={{ color: INK, fontSize: 9.5, letterSpacing: "0.42em", opacity: 0.8 }}
+              >
+                {t("home.tagline")}
+              </p>
             </div>
             <Link
               to="/notifications"
-              className="relative grid h-12 w-12 place-items-center rounded-full"
+              className="relative grid h-12 w-12 place-items-center rounded-full border"
+              style={{ borderColor: "var(--home-line)" }}
               aria-label={t("home.notifications_aria")}
             >
-              <Bell className="h-6 w-6" strokeWidth={1.7} style={{ color: INK }} />
+              <Bell className="h-[22px] w-[22px]" strokeWidth={1.6} style={{ color: INK }} />
               {hasUnreadNotifications && (
                 <span
                   aria-hidden="true"
-                  className="absolute h-2.5 w-2.5 rounded-full"
-                  style={{ top: 10, right: 10, backgroundColor: "var(--brand-rose)" }}
+                  className="absolute h-2 w-2 rounded-full"
+                  style={{ top: 9, right: 9, backgroundColor: WINE }}
                 />
               )}
             </Link>
           </div>
-          <div className="px-[18px] pb-3">
+          <div className="px-5 pb-4">
             <div
-              className="flex p-1 rounded-full"
-              style={{ backgroundColor: "#ffffff" }}
+              className="flex rounded-full"
+              style={{ backgroundColor: "var(--home-sand)", height: 52 }}
               role="tablist"
             >
               <TabButton active={tab === "for-you"} onClick={() => handleTabChange("for-you")}>
@@ -446,10 +473,10 @@ function TabButton({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className="flex-1 py-2 text-sm font-semibold rounded-full transition-colors"
+      className="flex-1 rounded-full text-[15px] font-medium transition-colors"
       style={{
-        background: active ? "linear-gradient(120deg, #e8836a, #c65a7a)" : "transparent",
-        color: active ? "#ffffff" : MUTED,
+        background: active ? WINE : "transparent",
+        color: active ? "var(--home-ivory)" : MUTED,
         flexBasis: 0,
         minWidth: 0,
       }}
@@ -489,12 +516,12 @@ function ForYou({
   return (
     <>
       {/* Categories */}
-      <section className="mt-2">
-        <h2 className="px-[18px] text-[16px] font-bold" style={{ color: INK }}>
-          {t("home.categories")}
-        </h2>
-        <div className="category-scroll mt-3 pb-1">
-          {HOME_CATEGORIES.map(({ key, label, Icon, boxColor, iconColor }) => {
+      <section className="mt-3">
+        <div className="px-5">
+          <SectionHeader title={t("home.categories")} />
+        </div>
+        <div className="category-scroll mt-4 pb-1" style={{ padding: "0 20px", gap: 12 }}>
+          {HOME_CATEGORIES.map(({ key, label }) => {
             const k: string = key;
             const hasGender = k === "mode" || k === "femije";
             const hasSubcategory =
@@ -516,25 +543,30 @@ function ForYou({
                 key={key}
                 {...linkProps}
                 className="flex flex-col items-center"
-                style={{ flex: "0 0 84px", scrollSnapAlign: "start" }}
+                style={{ flex: "0 0 78px", scrollSnapAlign: "start" }}
               >
                 <div
-                  className="tap-icon grid place-items-center"
-                  style={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: "50%",
-                    background: "#2d1521",
-                    backdropFilter: "blur(8px)",
-                    WebkitBackdropFilter: "blur(8px)",
-                    border: "0.5px solid rgba(255,255,255,0.09)",
-                  }}
+                  className="tap-icon overflow-hidden rounded-full"
+                  style={{ width: 78, height: 78, backgroundColor: "var(--home-sand)" }}
                 >
-                  <Icon size={24} strokeWidth={1.5} style={{ color: "#e8836a" }} />
+                  <img
+                    src={CATEGORY_IMAGES[k]}
+                    alt=""
+                    width={78}
+                    height={78}
+                    loading="eager"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <span
-                  className="mt-1.5 text-center font-bold leading-tight line-clamp-2"
-                  style={{ color: INK, fontSize: 11, width: 84 }}
+                  className="mt-2 text-center leading-tight line-clamp-2"
+                  style={{
+                    color: INK,
+                    fontSize: 14,
+                    width: 82,
+                    fontFamily: "var(--font-display)",
+                  }}
                 >
                   {tCategory(label, t)}
                 </span>
@@ -544,10 +576,49 @@ function ForYou({
         </div>
       </section>
 
+      {/* Static editorial banner */}
+      <section className="mt-8 px-5">
+        <Link
+          to="/search"
+          className="relative block overflow-hidden rounded-[22px]"
+          style={{ aspectRatio: "2.1 / 1", backgroundColor: "var(--home-sand)" }}
+        >
+          <img
+            src={homeBanner}
+            alt=""
+            width={1280}
+            height={608}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="relative flex h-full flex-col justify-center pl-5 pr-[45%]">
+            <h3
+              className="leading-[1.05]"
+              style={{ color: INK, fontSize: 26, fontFamily: "var(--font-display)" }}
+            >
+              {t("home.banner_title")}
+            </h3>
+            <p
+              className="mt-2 uppercase whitespace-nowrap"
+              style={{ color: INK, fontSize: 8.5, letterSpacing: "0.28em", opacity: 0.75 }}
+            >
+              {t("home.banner_sub")}
+            </p>
+            <span
+              className="mt-3 inline-flex w-fit items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-xs"
+              style={{ backgroundColor: "var(--home-ivory)", color: INK }}
+            >
+              {t("home.banner_cta")} <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} />
+            </span>
+          </div>
+        </Link>
+      </section>
+
       {noContentAtAll ? (
         <div
           className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
-          style={{ borderColor: "#e2e2de", color: MUTED }}
+          style={{ borderColor: "var(--home-line)", color: MUTED }}
         >
           {t("home.empty_no_items")}
         </div>
@@ -564,7 +635,7 @@ function ForYou({
               >
                 {promoted.map((l, i) => (
                   <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                    <ListingCard listing={l} eager={i < 2} />
+                    <ListingCard listing={l} eager={i < 2} variant="home" />
                   </div>
                 ))}
               </div>
@@ -572,22 +643,22 @@ function ForYou({
           )}
 
           {(trendingLoading || trending.length > 0) && (
-            <section className="mt-8 px-5">
+            <section className="mt-9 px-5">
               <SectionHeader title={t("home.section_trending")} seeAllSearch={{ section: "trending" }} />
-              <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-5">
                 {trendingLoading
                   ? Array.from({ length: 4 }).map((_, i) => (
                       <ListingCardSkeleton key={i} aspect="3/4" />
                     ))
                   : trending.map((l, i) => (
-                      <ListingCard key={l.id} listing={l} eager={i < 4} />
+                      <ListingCard key={l.id} listing={l} eager={i < 4} variant="home" />
                     ))}
               </div>
             </section>
           )}
 
           {(newWeekLoading || newThisWeek.length > 0) && (
-            <section className="mt-8 px-5">
+            <section className="mt-9 px-5">
               <SectionHeader title={t("home.section_new_week")} seeAllSearch={{ section: "new" }} />
               <div
                 className="mt-3 flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
@@ -601,7 +672,7 @@ function ForYou({
                     ))
                   : newThisWeek.map((l, i) => (
                       <div key={l.id} style={{ width: 168, flexShrink: 0 }}>
-                        <ListingCard listing={l} eager={i < 2} />
+                        <ListingCard listing={l} eager={i < 2} variant="home" />
                       </div>
                     ))}
               </div>
@@ -645,7 +716,7 @@ function FollowingFeed({
       <div className="mt-10 flex flex-col items-center px-8 text-center">
         <div
           className="mb-4 grid h-16 w-16 place-items-center rounded-full"
-          style={{ backgroundColor: "#ffffff" }}
+          style={{ backgroundColor: "var(--home-sand)" }}
         >
           <UserPlus className="h-7 w-7" strokeWidth={1.6} style={{ color: INK }} />
         </div>
@@ -658,7 +729,7 @@ function FollowingFeed({
         <Link
           to="/search"
           className="mt-6 rounded-full px-6 py-3 text-sm font-semibold"
-          style={{ backgroundColor: INK, color: "#ffffff" }}
+          style={{ backgroundColor: WINE, color: "var(--home-ivory)" }}
         >
           {t("home.following_empty_cta")}
         </Link>
@@ -670,7 +741,7 @@ function FollowingFeed({
     return (
       <div
         className="mx-5 mt-8 rounded-2xl border border-dashed p-8 text-center text-sm"
-        style={{ borderColor: "#e2e2de", color: MUTED }}
+        style={{ borderColor: "var(--home-line)", color: MUTED }}
       >
         {t("home.following_no_listings")}
       </div>
@@ -679,9 +750,9 @@ function FollowingFeed({
 
   return (
     <section className="mt-4 px-[18px]">
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-5">
         {listings.map((l, i) => (
-          <ListingCard key={l.id} listing={l} eager={i < 4} />
+          <ListingCard key={l.id} listing={l} eager={i < 4} variant="home" />
         ))}
       </div>
       <div className="h-24" />
@@ -701,16 +772,20 @@ function SectionHeader({
   const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
-      <h3 className="text-[16px] font-bold" style={{ color: INK }}>
+      <h3
+        className="leading-none"
+        style={{ color: INK, fontSize: 28, fontFamily: "var(--font-display)" }}
+      >
         {title}
       </h3>
       <Link
         to="/search"
         search={seeAllSearch ?? {}}
-        className="text-xs font-medium"
+        className="inline-flex items-center gap-1 text-sm"
         style={{ color: MUTED }}
       >
         {t("common.seeAll")}
+        <ChevronRight className="h-4 w-4" strokeWidth={1.6} />
       </Link>
     </div>
   );
