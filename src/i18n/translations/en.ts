@@ -41,6 +41,15 @@ export const en: TranslationSchema = {
 
   home: {
     app_title: "Rroba",
+    banner_title: "Style that finds a home",
+    banner_sub: "Buy · Sell · Rediscover",
+    banner_cta: "View the collection",
+    tagline: "Fashion marketplace",
+    nav_home: "Home",
+    nav_search: "Search",
+    nav_sell: "Sell",
+    nav_messages: "Messages",
+    nav_profile: "Profile",
     notifications_aria: "Notifications",
     tab_for_you: "For you",
     tab_following: "Following",
