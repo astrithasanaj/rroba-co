@@ -85,7 +85,7 @@ export const HOME_CATEGORIES = [
     key: "mode",
     label: "Modë & aksesorë",
     Icon: Shirt,
-    boxColor: "#f0e0d8",
+    boxColor: "#f7f7f7",
     iconColor: "#b85c3e",
   },
   {
@@ -106,14 +106,14 @@ export const HOME_CATEGORIES = [
     key: "femije",
     label: "Fëmijë & bebe",
     Icon: Baby,
-    boxColor: "#f8e8dc",
+    boxColor: "#ffffff",
     iconColor: "#d9966e",
   },
   {
     key: "art",
     label: "Art & dizajn",
     Icon: Frame,
-    boxColor: "#f2ead6",
+    boxColor: "#f7f7f7",
     iconColor: "#b89255",
   },
   {

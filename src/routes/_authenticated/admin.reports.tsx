@@ -71,7 +71,7 @@ function AdminReports() {
 
   return (
     <MobileShell hideNav>
-      <div className="min-h-screen px-5 py-6" style={{ backgroundColor: "var(--brand-cream)", color: "#1d1b18" }}>
+      <div className="min-h-screen px-5 py-6" style={{ backgroundColor: "var(--brand-cream)", color: "#111111" }}>
         <h1 className="mb-4 text-2xl font-bold">Raportet</h1>
         {loading ? (
           <div className="grid place-items-center py-20"><Loader2 className="h-6 w-6 animate-spin" /></div>
@@ -80,7 +80,7 @@ function AdminReports() {
         ) : (
           <ul className="space-y-3 pb-20">
             {reports.map((r) => (
-              <li key={r.id} className="rounded-2xl border p-4" style={{ borderColor: "#e5ddd3", backgroundColor: "var(--brand-surface)" }}>
+              <li key={r.id} className="rounded-2xl border p-4" style={{ borderColor: "#e5e5e5", backgroundColor: "var(--brand-surface)" }}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <Link to="/product/$id" params={{ id: r.product_id }} className="font-semibold underline">
@@ -102,7 +102,7 @@ function AdminReports() {
                     value={r.status}
                     onChange={(e) => updateStatus(r.id, e.target.value as Report["status"])}
                     className="rounded-full border px-3 py-1.5 text-xs"
-                    style={{ borderColor: "#e5ddd3", backgroundColor: "var(--brand-surface)" }}
+                    style={{ borderColor: "#e5e5e5", backgroundColor: "var(--brand-surface)" }}
                   >
                     <option value="pending">pending</option>
                     <option value="reviewed">reviewed</option>

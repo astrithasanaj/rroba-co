@@ -55,7 +55,7 @@ function AuthLanding() {
         {authError === "confirmation_failed" && (
           <div
             className="mx-auto mt-6 flex w-full max-w-[320px] items-start gap-2 rounded-xl px-3 py-3 text-[13px]"
-            style={{ background: "#f9ebe6", color: "#b33830" }}
+            style={{ background: "#fdeef0", color: "#b33830" }}
           >
             <AlertTriangle size={16} className="mt-[2px] shrink-0" />
             <span>

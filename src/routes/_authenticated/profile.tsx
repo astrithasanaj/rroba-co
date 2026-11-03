@@ -98,7 +98,7 @@ const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const SOLD = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
-const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]";
 // Lokale semantiske farge-konstanter (kun brukt i profil).
 const OVERLAY_GLYPH = "#ffffff";
 const GLASS_BG = "rgba(255,255,255,0.7)";
@@ -106,7 +106,7 @@ const GLASS_BORDER = "rgba(226,226,222,0.8)";
 const DARK_GLASS_BG = "rgba(255,255,255,0.12)";
 const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
 const OFFER_ACCEPTED_BG = "#d1f4e0";
-const OFFER_DECLINED_BG = "#f4d1d1";
+const OFFER_DECLINED_BG = "#fdeef0";
 
 // ---- Fetchers (module-scope so they don't re-alloc per render) ---------
 
@@ -1072,7 +1072,7 @@ function ProfileGridSkeleton({ count = 6 }: { count?: number }) {
         <div
           key={i}
           className="aspect-square animate-pulse"
-          style={{ backgroundColor: "var(--brand-cream, #f4eee7)" }}
+          style={{ backgroundColor: "var(--brand-cream, #f7f7f7)" }}
         />
       ))}
       <span className="sr-only">Duke ngarkuar…</span>
@@ -1169,7 +1169,7 @@ function ListingGridTile({
     <Link
       {...linkProps}
       className="relative block aspect-square overflow-hidden"
-      style={{ backgroundColor: "var(--brand-cream, #f4eee7)", borderRadius: 0 }}
+      style={{ backgroundColor: "var(--brand-cream, #f7f7f7)", borderRadius: 0 }}
     >
       {hasCover ? (
         <img
@@ -1191,7 +1191,7 @@ function ListingGridTile({
           role="img"
           aria-label={l.title}
           className="flex h-full w-full items-center justify-center"
-          style={{ color: "var(--brand-ink-muted, #8e8177)" }}
+          style={{ color: "var(--brand-ink-muted, #8a8a8a)" }}
         >
           <ImageOff aria-hidden="true" className="h-8 w-8" strokeWidth={1.4} />
         </div>
@@ -1528,7 +1528,7 @@ function SettingsSheet({
             type="button"
             onClick={handleBack}
             aria-label={t("common.back")}
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
             style={{
               width: 44,
               height: 44,
@@ -2095,9 +2095,9 @@ function ProfileForm({
           <label
             className="cursor-pointer inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
             style={{
-              backgroundColor: "#f4eee7",
-              color: "#1c1a16",
-              border: "1px solid #e5ddd3",
+              backgroundColor: "#f7f7f7",
+              color: "#111111",
+              border: "1px solid #e5e5e5",
               borderRadius: 9999,
             }}
           >
@@ -2110,9 +2110,9 @@ function ProfileForm({
               onClick={() => setRemovePhotoOpen(true)}
               className="inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
               style={{
-                backgroundColor: "#f9ebe6",
+                backgroundColor: "#fdeef0",
                 color: "#b3392f",
-                border: "1px solid #f3d4d1",
+                border: "1px solid #fdeef0",
                 borderRadius: 9999,
                 cursor: "pointer",
               }}
@@ -2140,7 +2140,7 @@ function ProfileForm({
             className="text-xs font-semibold"
             style={{
               color: "#ffffff",
-              background: "linear-gradient(120deg, #922530, #8a1f2d)",
+              background: "linear-gradient(120deg, #8f1830, #a61e35)",
               border: "none",
               borderRadius: 9999,
               padding: "5px 12px",
@@ -2205,7 +2205,7 @@ function ProfileForm({
         disabled={saving}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm disabled:opacity-50"
         style={{
-          background: "linear-gradient(120deg, #922530, #8a1f2d)",
+          background: "linear-gradient(120deg, #8f1830, #a61e35)",
           color: "#ffffff",
           fontWeight: 600,
           border: "none",

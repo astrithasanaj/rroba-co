@@ -24,12 +24,12 @@ export const Route = createFileRoute("/_authenticated/admin/promotions")({
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#1d1b18";
-const MUTED = "#8e8177";
-const CORAL = "#8a1f2d";
+const INK = "#111111";
+const MUTED = "#8a8a8a";
+const CORAL = "#a61e35";
 const OK = "#4f6b53";
 const ERR = "#b33830";
-const DIVIDER = "#e5ddd3";
+const DIVIDER = "#e5e5e5";
 
 type Row = {
   id: string;
@@ -251,7 +251,7 @@ function AdminPromotions() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+            <ChevronLeft size={22} color="#111111" strokeWidth={2} />
           </button>
           <h1 className="flex-1 px-3 text-center font-display text-[22px] italic" style={{ color: INK }}>
             Promovime
@@ -386,7 +386,7 @@ function StatusBadge({ status }: { status: string }) {
     pending_payment: { bg: "#fff3cd", fg: "#7a5a00", label: "Në pritje" },
     active: { bg: "#d4f0d4", fg: OK, label: "Aktive" },
     expired: { bg: DIVIDER, fg: MUTED, label: "Skaduar" },
-    refused: { bg: "#f9ebe6", fg: ERR, label: "Refuzuar" },
+    refused: { bg: "#fdeef0", fg: ERR, label: "Refuzuar" },
   };
   const s = map[status] ?? { bg: DIVIDER, fg: MUTED, label: status };
   return (

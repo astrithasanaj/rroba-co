@@ -7,11 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "var(--brand-cream)";
-const INK = "#1d1b18";
-const MUTED = "#8e8177";
+const INK = "#111111";
+const MUTED = "#8a8a8a";
 const DIVIDER = "#e2d9c4";
-const CORAL = "#8a1f2d";
-const CHIP_BG = "#efe7d6";
+const CORAL = "#a61e35";
+const CHIP_BG = "#f7f7f7";
 const CHIP_BORDER = "#d9cbb0";
 
 const PAGE_SIZE = 20;
@@ -165,7 +165,7 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                 WebkitBackdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+              <ChevronLeft size={22} color="#111111" strokeWidth={2} />
             </button>
             <h1
               style={{
@@ -204,12 +204,12 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                     width: 64,
                     height: 64,
                     borderRadius: 999,
-                    backgroundColor: "#f1e7dd",
+                    backgroundColor: "#f7f7f7",
                     display: "grid",
                     placeItems: "center",
                   }}
                 >
-                  <Users size={28} color="#6e1a24" strokeWidth={1.6} />
+                  <Users size={28} color="#8f1830" strokeWidth={1.6} />
 
                 </div>
                 <p style={{ color: MUTED, fontSize: 14 }}>{emptyText}</p>
@@ -303,8 +303,8 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                             fontSize: 13,
                             fontWeight: 600,
                             border: "none",
-                            background: isFollowing ? "#f1e7dd" : "linear-gradient(120deg, #922530, #8a1f2d)",
-                            color: isFollowing ? "#6e1a24" : "#ffffff",
+                            background: isFollowing ? "#f7f7f7" : "linear-gradient(120deg, #8f1830, #a61e35)",
+                            color: isFollowing ? "#8f1830" : "#ffffff",
                             WebkitTapHighlightColor: "transparent",
                             whiteSpace: "nowrap",
                           }}

@@ -25,11 +25,11 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#1d1b18";
-const MUTED = "#8e8177";
-const CORAL = "#8a1f2d";
+const INK = "#111111";
+const MUTED = "#8a8a8a";
+const CORAL = "#a61e35";
 const ERR = "#b33830";
-const DIVIDER = "#e5ddd3";
+const DIVIDER = "#e5e5e5";
 
 const BLOCK_REASONS = [
   "Mashtrim / Scam",
@@ -180,7 +180,7 @@ function AdminUsers() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+            <ChevronLeft size={22} color="#111111" strokeWidth={2} />
           </button>
           <h1 className="text-2xl font-bold">Përdoruesit</h1>
         </div>
