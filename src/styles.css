@@ -110,9 +110,9 @@
   --secondary-foreground: oklch(0.975 0.012 80);
   --muted: oklch(0.25 0.01 60);
   --muted-foreground: oklch(0.7 0.012 65);
-  --accent: oklch(0.94 0.02 350); /* tilsvarer #f5e6e9, myk dust-rosa */
-  --accent-foreground: oklch(0.32 0.08 350); /* tilsvarer #6e2438 */
-  --destructive: oklch(0.58 0.21 25);
+  --accent: oklch(0.925 0.014 40); /* #f1e5e1, myk vin-tint */
+  --accent-foreground: oklch(0.33 0.08 22); /* #5c1e23 */
+  --destructive: oklch(0.5 0.14 27);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
