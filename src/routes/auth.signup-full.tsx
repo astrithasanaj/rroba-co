@@ -1030,7 +1030,7 @@ function SignupFullPage() {
             {globalErr && (
               <p
                 className="rounded-xl px-3 py-2 text-[13px]"
-                style={{ background: "#f7e8e4", color: "#b71c1c" }}
+                style={{ background: "#f7e8e4", color: "#b33830" }}
               >
                 ⚠️ {globalErr}
               </p>

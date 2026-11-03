@@ -2095,7 +2095,7 @@ function ProfileForm({
           <label
             className="cursor-pointer inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
             style={{
-              backgroundColor: "#f4f4f2",
+              backgroundColor: "#f4eee5",
               color: "#1c1a16",
               border: "1px solid #ded5c8",
               borderRadius: 9999,
