@@ -45,56 +45,56 @@
   /* Rroba merkevare-palett — kildepunkt for hardkodede farger i appen.
      Disse matcher de faktiske hex-verdiene som brukes gjennom frontend,
      slik at fremtidig migrering til token-klasser gir identisk output. */
-  --brand-ink: #1f2119;           /* mørk oliven / near-black, primærtekst */
-  --brand-ink-muted: #8d8175;     /* varm taupe, dekorativ/støttetekst */
+  --brand-ink: #1d1b18;           /* mørk oliven / near-black, primærtekst */
+  --brand-ink-muted: #8e8177;     /* varm taupe, dekorativ/støttetekst */
   --brand-ink-secondary: #6e665c; /* tilgjengelig sekundærtekst (AA mot cream/surface for 11–14 px) */
-  --brand-surface: #fdfaf4;       /* kort/bakgrunn — varm off-white */
-  --brand-cream: #f7f3ec;         /* primær appbakgrunn — soft ivory */
-  --brand-border: #ded5c8;        /* standard border — subtil beige */
-  --brand-border-strong: #c9bfae; /* sterkere separator/chevron */
-  --brand-rose: #7a252b;          /* aksent (CTA, lenker) — burgunder */
-  --brand-rose-soft: #f1e5e1;     /* aksent-bakgrunn (myk vin-tint) */
-  --brand-rose-ink: #5c1e23;      /* aksent på lys bakgrunn — dyp burgunder */
-  --brand-coral: #84292f;         /* varm sekundær-aksent — lys burgunder */
+  --brand-surface: #faf8f4;       /* kort/bakgrunn — varm off-white */
+  --brand-cream: #fbfaf7;         /* primær appbakgrunn — soft ivory */
+  --brand-border: #e5ddd3;        /* standard border — subtil beige */
+  --brand-border-strong: #cfc6b8; /* sterkere separator/chevron */
+  --brand-rose: #8a1f2d;          /* aksent (CTA, lenker) — burgunder */
+  --brand-rose-soft: #f1e7dd;     /* aksent-bakgrunn (myk vin-tint) */
+  --brand-rose-ink: #6e1a24;      /* aksent på lys bakgrunn — dyp burgunder */
+  --brand-coral: #922530;         /* varm sekundær-aksent — lys burgunder */
   --brand-danger: #b33830;        /* destruktiv/rød — dempet, klar */
-  --brand-danger-soft: #f7e8e4;   /* destruktiv-bakgrunn */
+  --brand-danger-soft: #f9ebe6;   /* destruktiv-bakgrunn */
   --brand-success: #4f6b53;       /* suksess — dempet premium grønn */
   --brand-warning: #c39338;       /* varsel — dempet amber */
 
   /* Home editorial palette */
-  --home-bg: #f7f3ec;
-  --home-ink: #1f2119;
-  --home-wine: #7a252b;
-  --home-taupe: #8d8175;
-  --home-olive: #252719;
-  --home-line: #ded5c8;
-  --home-sand: #ece4d8;
-  --home-ivory: #f4eee5;
+  --home-bg: #fbfaf7;
+  --home-ink: #1d1b18;
+  --home-wine: #8a1f2d;
+  --home-taupe: #8e8177;
+  --home-olive: #1d1b18;
+  --home-line: #e5ddd3;
+  --home-sand: #f4eee7;
+  --home-ivory: #f4eee7;
 
-  /* Warm cream */
-  --background: oklch(0.964 0.008 85); /* #f7f3ec */
-  --foreground: oklch(0.22 0.015 70); /* #1f2119 */
-  --card: oklch(0.982 0.006 85); /* #fdfaf4 */
-  --card-foreground: oklch(0.22 0.015 70);
-  --popover: oklch(0.982 0.006 85);
-  --popover-foreground: oklch(0.22 0.015 70);
-  --primary: oklch(0.36 0.09 22); /* #7a252b burgunder */
-  --primary-foreground: oklch(0.97 0.008 85);
-  --secondary: oklch(0.918 0.012 80); /* #ece4d8 sand */
-  --secondary-foreground: oklch(0.22 0.015 70);
-  --muted: oklch(0.918 0.012 80); /* #ece4d8 */
-  --muted-foreground: oklch(0.52 0.02 70); /* #8d8175 taupe */
-  --accent: oklch(0.925 0.014 40); /* #f1e5e1, myk vin-tint */
-  --accent-foreground: oklch(0.33 0.08 22); /* #5c1e23 */
+  /* Soft ivory premium */
+  --background: oklch(0.984 0.004 90); /* #fbfaf7 soft ivory */
+  --foreground: oklch(0.21 0.008 60); /* #1d1b18 deep charcoal */
+  --card: oklch(0.978 0.005 90); /* #faf8f4 warm white */
+  --card-foreground: oklch(0.21 0.008 60);
+  --popover: oklch(0.978 0.005 90);
+  --popover-foreground: oklch(0.21 0.008 60);
+  --primary: oklch(0.38 0.11 22); /* #8a1f2d burgunder */
+  --primary-foreground: oklch(0.985 0.004 90);
+  --secondary: oklch(0.944 0.008 80); /* #f4eee7 lys varm beige */
+  --secondary-foreground: oklch(0.21 0.008 60);
+  --muted: oklch(0.944 0.008 80); /* #f4eee7 */
+  --muted-foreground: oklch(0.55 0.02 70); /* #8e8177 taupe */
+  --accent: oklch(0.93 0.012 70); /* #f1e7dd lys cream */
+  --accent-foreground: oklch(0.34 0.09 22); /* #6e1a24 dyp burgunder */
   --success: oklch(0.5 0.06 145); /* #4f6b53 dempet grønn */
   --success-foreground: oklch(0.98 0 0);
   --warning: oklch(0.66 0.11 75); /* #c39338 dempet amber */
   --warning-foreground: oklch(0.25 0.03 60);
   --destructive: oklch(0.5 0.14 27); /* #b33830 dempet rød */
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.878 0.014 80); /* #ded5c8 */
-  --input: oklch(0.878 0.014 80);
-  --ring: oklch(0.36 0.09 22); /* burgunder focus */
+  --border: oklch(0.895 0.012 80); /* #e5ddd3 */
+  --input: oklch(0.895 0.012 80);
+  --ring: oklch(0.38 0.11 22); /* burgunder focus */
 }
 
 .dark {
@@ -110,8 +110,8 @@
   --secondary-foreground: oklch(0.975 0.012 80);
   --muted: oklch(0.25 0.01 60);
   --muted-foreground: oklch(0.7 0.012 65);
-  --accent: oklch(0.925 0.014 40); /* #f1e5e1, myk vin-tint */
-  --accent-foreground: oklch(0.33 0.08 22); /* #5c1e23 */
+  --accent: oklch(0.925 0.014 40); /* #f1e7dd, myk vin-tint */
+  --accent-foreground: oklch(0.33 0.08 22); /* #6e1a24 */
   --destructive: oklch(0.5 0.14 27);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
@@ -220,7 +220,7 @@ input, textarea, select {
 }
 .profile-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(198, 90, 122, 0.35);
+  box-shadow: 0 0 0 3px rgba(138,31,45, 0.35);
 }
 
 .settings-row {
@@ -240,7 +240,7 @@ input, textarea, select {
 .settings-row:active { background: var(--brand-cream); }
 .settings-row:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 3px rgba(198, 90, 122, 0.35);
+  box-shadow: inset 0 0 0 3px rgba(138,31,45, 0.35);
 }
 
 /* Tap feedback for round icon tiles (categories + bottom nav) */

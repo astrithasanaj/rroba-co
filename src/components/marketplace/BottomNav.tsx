@@ -26,7 +26,8 @@ export const BottomNav = () => {
         width: "calc(100% - 24px)",
         maxWidth: "456px",
         height: "76px",
-        background: "var(--home-olive)",
+        background: "var(--brand-surface)",
+        border: "1px solid var(--brand-border)",
         borderRadius: "38px",
         display: "flex",
         flexDirection: "row",
@@ -36,7 +37,7 @@ export const BottomNav = () => {
         padding: "0 8px",
         margin: "0",
         boxSizing: "border-box",
-        boxShadow: "0 10px 30px -12px rgba(31,33,25,0.45)",
+        boxShadow: "0 12px 32px -16px rgba(29,27,24,0.25)",
       }}
     >
       {items.map((item) => {
@@ -64,9 +65,9 @@ export const BottomNav = () => {
               backgroundColor: isSell
                 ? "var(--home-wine)"
                 : isActive
-                  ? "var(--home-ivory)"
+                  ? "var(--brand-rose-soft)"
                   : "transparent",
-              color: isActive && !isSell ? "var(--home-ink)" : "var(--home-ivory)",
+              color: isSell ? "#ffffff" : "var(--home-ink)",
             }}
           >
             <i

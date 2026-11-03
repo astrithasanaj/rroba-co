@@ -41,7 +41,7 @@ const CORAL_GRADIENT = "linear-gradient(120deg, var(--brand-coral), var(--brand-
 const DIVIDER = "var(--brand-border)";
 const ROSE = "var(--brand-rose)";
 // Single source for keyboard focus-ring styling across edit.tsx (matches sell.tsx).
-const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(198,90,122,0.35)]";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]";
 const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
 const OVERLAY_GLYPH = "#ffffff"; // intentional white glyph on dark/gradient badges & CTAs
 const OVERLAY_MUTED = "rgba(255,255,255,0.72)"; // muted glyph on gradient (condition subtitle)

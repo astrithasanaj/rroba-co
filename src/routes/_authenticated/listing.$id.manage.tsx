@@ -29,9 +29,9 @@ export const Route = createFileRoute("/_authenticated/listing/$id/manage")({
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#1f2119";
-const MUTED = "#8d8175";
-const DIVIDER = "#ded5c8";
+const INK = "#1d1b18";
+const MUTED = "#8e8177";
+const DIVIDER = "#e5ddd3";
 const DANGER = "#b33830";
 
 function ManageListingPage() {
@@ -275,7 +275,7 @@ function ManageListingPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
+            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
           </button>
           <h1
             className="flex-1 truncate px-3 text-center text-base font-bold"
@@ -401,7 +401,7 @@ function ManageListingPage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
+              <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
             </button>
             <SheetTitle style={{ color: INK }}>Ndrysho çmimin</SheetTitle>
           </div>
@@ -482,7 +482,7 @@ function ManageListingPage() {
               alignItems: "center",
               gap: 12,
               padding: "14px 16px 12px",
-              background: "#1f2119",
+              background: "#1d1b18",
               flexShrink: 0,
             }}
           >
@@ -635,7 +635,7 @@ function ConfirmSheet({
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "#1f2119",
+          background: "#1d1b18",
           flexShrink: 0,
         }}
       >

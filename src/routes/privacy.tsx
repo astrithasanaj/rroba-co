@@ -25,7 +25,7 @@ export const Route = createFileRoute("/privacy")({
 });
 
 const CREAM = "var(--brand-cream)";
-const INK = "#1f2119";
+const INK = "#1d1b18";
 const MUTED = "rgba(45,21,33,0.6)";
 
 // Renders text with clickable hello@rroba.co (mailto) and rroba.co links.

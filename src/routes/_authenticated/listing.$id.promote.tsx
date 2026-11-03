@@ -18,10 +18,10 @@ export const Route = createFileRoute("/_authenticated/listing/$id/promote")({
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#1f2119";
-const MUTED = "#8d8175";
-const CORAL = "#7a252b";
-const DIVIDER = "#ded5c8";
+const INK = "#1d1b18";
+const MUTED = "#8e8177";
+const CORAL = "#8a1f2d";
+const DIVIDER = "#e5ddd3";
 
 type PromoType = "feed_top" | "category_top" | "search_top";
 type CreditKind = "paid_placement_days" | "top_of_list_credits";
@@ -201,7 +201,7 @@ function PromotePage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
+            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
           </button>
           <h1
             className="flex-1 px-3 text-center font-display text-[22px] italic"
@@ -503,7 +503,7 @@ function PaySheet({
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "#1f2119",
+          background: "#1d1b18",
           flexShrink: 0,
         }}
       >
