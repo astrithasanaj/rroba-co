@@ -67,7 +67,7 @@ export const BottomNav = () => {
                 : isActive
                   ? "var(--brand-rose-soft)"
                   : "transparent",
-              color: isSell ? "#ffffff" : "var(--home-ink)",
+              color: isSell ? "#ffffff" : isActive ? "var(--home-wine)" : "var(--home-ink)",
             }}
           >
             <i
