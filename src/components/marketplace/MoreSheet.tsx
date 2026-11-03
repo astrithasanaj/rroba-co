@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/i18n";
 
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const INK = "#1f2119";
 const DIVIDER = "#ded5c8";
 const CANCEL_BG = "#ffffff";

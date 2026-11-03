@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/command";
 import { useCities, COUNTRY_ORDER, COUNTRY_LABEL, type City } from "@/hooks/useCities";
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-surface)";
 const CARD = "#ffffff";
 const INK = "#1f2119";
 const MUTED = "#8d8175";

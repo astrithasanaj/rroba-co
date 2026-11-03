@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useTranslation } from "@/i18n";
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
 const INK = "#1f2119";
 const MUTED = "#8d8175";

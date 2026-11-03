@@ -6,7 +6,7 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const INK = "#1f2119";
 const MUTED = "#8d8175";
 const DIVIDER = "#e2d9c4";

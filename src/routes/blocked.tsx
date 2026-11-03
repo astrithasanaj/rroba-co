@@ -8,7 +8,7 @@ export const Route = createFileRoute("/blocked")({
   component: BlockedPage,
 });
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const INK = "#1f2119";
 const MUTED = "#8d8175";
 const CORAL = "#7a252b";
