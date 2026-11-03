@@ -26,15 +26,15 @@ import { useTranslation } from "@/i18n";
 import { tCategory } from "@/i18n/tCategory";
 
 const BG = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const HEADER_BG = "#2d1521";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const DIVIDER = "#ded5c8";
+const HEADER_BG = "#1f2119";
 const HEADER_TEXT = "#ffffff";
-const ACCENT = "#c65a7a";
-const ROW_ACTIVE_BG = "#fbf6f2";
-const CHECK_BORDER = "#c8c3b9";
-const ACCENT_GRADIENT = "linear-gradient(120deg, #e8836a, #c65a7a)";
+const ACCENT = "#7a252b";
+const ROW_ACTIVE_BG = "#f4eee5";
+const CHECK_BORDER = "#c9bfae";
+const ACCENT_GRADIENT = "linear-gradient(120deg, #84292f, #7a252b)";
 
 const NODE_ICONS: Record<string, typeof Shirt> = {
   mode: Shirt,

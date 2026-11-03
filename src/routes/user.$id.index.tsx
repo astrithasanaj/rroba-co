@@ -669,7 +669,7 @@ function UserProfile() {
               <div
                 key={i}
                 className="aspect-square animate-pulse"
-                style={{ backgroundColor: "var(--brand-cream, #f3ede4)" }}
+                style={{ backgroundColor: "var(--brand-cream, #f4eee5)" }}
               />
             ))}
             <span className="sr-only">Duke ngarkuar…</span>

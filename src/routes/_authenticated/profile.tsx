@@ -1072,7 +1072,7 @@ function ProfileGridSkeleton({ count = 6 }: { count?: number }) {
         <div
           key={i}
           className="aspect-square animate-pulse"
-          style={{ backgroundColor: "var(--brand-cream, #f3ede4)" }}
+          style={{ backgroundColor: "var(--brand-cream, #f4eee5)" }}
         />
       ))}
       <span className="sr-only">Duke ngarkuar…</span>
@@ -1169,7 +1169,7 @@ function ListingGridTile({
     <Link
       {...linkProps}
       className="relative block aspect-square overflow-hidden"
-      style={{ backgroundColor: "var(--brand-cream, #f3ede4)", borderRadius: 0 }}
+      style={{ backgroundColor: "var(--brand-cream, #f4eee5)", borderRadius: 0 }}
     >
       {hasCover ? (
         <img
@@ -1191,7 +1191,7 @@ function ListingGridTile({
           role="img"
           aria-label={l.title}
           className="flex h-full w-full items-center justify-center"
-          style={{ color: "var(--brand-ink-muted, #a89f94)" }}
+          style={{ color: "var(--brand-ink-muted, #8d8175)" }}
         >
           <ImageOff aria-hidden="true" className="h-8 w-8" strokeWidth={1.4} />
         </div>
@@ -2097,7 +2097,7 @@ function ProfileForm({
             style={{
               backgroundColor: "#f4f4f2",
               color: "#1c1a16",
-              border: "1px solid #e2e2de",
+              border: "1px solid #ded5c8",
               borderRadius: 9999,
             }}
           >
@@ -2110,7 +2110,7 @@ function ProfileForm({
               onClick={() => setRemovePhotoOpen(true)}
               className="inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
               style={{
-                backgroundColor: "#fbeceb",
+                backgroundColor: "#f7e8e4",
                 color: "#b3392f",
                 border: "1px solid #f3d4d1",
                 borderRadius: 9999,
@@ -2140,7 +2140,7 @@ function ProfileForm({
             className="text-xs font-semibold"
             style={{
               color: "#ffffff",
-              background: "linear-gradient(120deg, #e8836a, #c65a7a)",
+              background: "linear-gradient(120deg, #84292f, #7a252b)",
               border: "none",
               borderRadius: 9999,
               padding: "5px 12px",
@@ -2205,7 +2205,7 @@ function ProfileForm({
         disabled={saving}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm disabled:opacity-50"
         style={{
-          background: "linear-gradient(120deg, #e8836a, #c65a7a)",
+          background: "linear-gradient(120deg, #84292f, #7a252b)",
           color: "#ffffff",
           fontWeight: 600,
           border: "none",

@@ -7,10 +7,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
 const DIVIDER = "#e2d9c4";
-const CORAL = "#c65a7a";
+const CORAL = "#7a252b";
 const CHIP_BG = "#efe7d6";
 const CHIP_BORDER = "#d9cbb0";
 
@@ -139,7 +139,7 @@ function UsersBrowsePage() {
                 WebkitBackdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
             </button>
             <h1 style={{ flex: 1, textAlign: "center", fontSize: 16, fontWeight: 600, color: INK, marginRight: 36 }}>
               Të gjithë përdoruesit
@@ -200,8 +200,8 @@ function UsersBrowsePage() {
                             fontSize: 13,
                             fontWeight: 600,
                             border: isFollowing ? "none" : "none",
-                            backgroundColor: isFollowing ? "#f5e6e9" : CORAL,
-                            color: isFollowing ? "#6e2438" : "#ffffff",
+                            backgroundColor: isFollowing ? "#f1e5e1" : CORAL,
+                            color: isFollowing ? "#5c1e23" : "#ffffff",
                             whiteSpace: "nowrap",
                           }}
                         >

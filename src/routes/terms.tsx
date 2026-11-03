@@ -26,7 +26,7 @@ export const Route = createFileRoute("/terms")({
 });
 
 const CREAM = "#ffffff";
-const INK = "#2d1521";
+const INK = "#1f2119";
 const MUTED = "rgba(45,21,33,0.6)";
 
 function TermsPage() {

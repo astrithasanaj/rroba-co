@@ -8,8 +8,8 @@ export const Route = createFileRoute("/auth/callback")({
 });
 
 const CREAM = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
 
 async function applyPendingProfile(userId: string) {
   try {

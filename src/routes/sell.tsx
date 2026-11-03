@@ -653,7 +653,7 @@ function MediaCategoryStep({
           <p
             role="alert"
             className="mt-2 text-[12px] font-medium"
-            style={{ color: "#c65a7a" }}
+            style={{ color: "#7a252b" }}
           >
             Duhet të paktën një foto për të publikuar artikullin.
           </p>
@@ -1202,7 +1202,7 @@ function FormStep({
                               style={{
                                 borderColor: DIVIDER,
                                 background:
-                                  "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)",
+                                  "conic-gradient(from 0deg, #b33830, #c39338, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #b33830)",
                               }}
                             />
                           );

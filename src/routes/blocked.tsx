@@ -9,10 +9,10 @@ export const Route = createFileRoute("/blocked")({
 });
 
 const CREAM = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const ERR = "#e53935";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const CORAL = "#7a252b";
+const ERR = "#b33830";
 
 function BlockedPage() {
   useEffect(() => {

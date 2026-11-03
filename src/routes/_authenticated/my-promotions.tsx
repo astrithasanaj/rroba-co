@@ -18,10 +18,10 @@ export const Route = createFileRoute("/_authenticated/my-promotions")({
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
-const DIVIDER = "#e2e2de";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const CORAL = "#7a252b";
+const DIVIDER = "#ded5c8";
 
 type Kind = "feed_top" | "category_top" | "search_top";
 
@@ -129,7 +129,7 @@ function MyPromotionsPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
           </button>
           <h1
             className="flex-1 px-3 text-center font-display text-[22px] italic"
@@ -259,7 +259,7 @@ function MyPromotionsPage() {
                 alignItems: "center",
                 gap: 12,
                 padding: "14px 16px 12px",
-                background: "#2d1521",
+                background: "#1f2119",
                 flexShrink: 0,
               }}
             >
@@ -443,7 +443,7 @@ function DaysSheet({
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "#2d1521",
+          background: "#1f2119",
           flexShrink: 0,
         }}
       >

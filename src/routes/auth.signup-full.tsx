@@ -750,7 +750,7 @@ function SignupFullPage() {
                     background: isCheckingPassword
                       ? CARD
                       : supabasePasswordError
-                        ? "#fdecea"
+                        ? "#f7e8e4"
                         : "#e8f5e9",
                     color: isCheckingPassword
                       ? MUTED
@@ -1030,7 +1030,7 @@ function SignupFullPage() {
             {globalErr && (
               <p
                 className="rounded-xl px-3 py-2 text-[13px]"
-                style={{ background: "#fdecea", color: "#b71c1c" }}
+                style={{ background: "#f7e8e4", color: "#b71c1c" }}
               >
                 ⚠️ {globalErr}
               </p>

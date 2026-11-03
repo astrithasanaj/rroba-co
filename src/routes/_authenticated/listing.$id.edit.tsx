@@ -697,7 +697,7 @@ function EditListingPage() {
                       if (!opt) return null;
                       const bg =
                         opt.inner === "rainbow"
-                          ? "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)"
+                          ? "conic-gradient(from 0deg, #b33830, #c39338, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #b33830)"
                           : opt.inner;
                       return (
                         <span

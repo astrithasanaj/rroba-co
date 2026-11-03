@@ -8,10 +8,10 @@ import { useTranslation } from "@/i18n";
 
 const CREAM = "#ffffff";
 const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const DIVIDER = "#ded5c8";
+const CORAL = "#7a252b";
 
 type Row = {
   id: string;
@@ -73,7 +73,7 @@ function Initials({ name }: { name: string }) {
         width: 44,
         height: 44,
         borderRadius: "50%",
-        background: "#e2e2de",
+        background: "#ded5c8",
         color: INK,
         display: "grid",
         placeItems: "center",
@@ -252,7 +252,7 @@ export function ReviewsSheet({
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
               </button>
             </div>
             <div style={{ textAlign: "center", flex: 1 }}>
@@ -508,7 +508,7 @@ export function ReviewsSheet({
                   backdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+                <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
               </button>
               <div style={{ fontSize: 16, fontWeight: 700, color: INK }}>{t("reviews.rate_title")}</div>
             </div>
