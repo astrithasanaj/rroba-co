@@ -71,7 +71,7 @@ function AdminReports() {
 
   return (
     <MobileShell hideNav>
-      <div className="min-h-screen px-5 py-6" style={{ backgroundColor: "#ffffff", color: "#2d1521" }}>
+      <div className="min-h-screen px-5 py-6" style={{ backgroundColor: "var(--brand-cream)", color: "#1f2119" }}>
         <h1 className="mb-4 text-2xl font-bold">Raportet</h1>
         {loading ? (
           <div className="grid place-items-center py-20"><Loader2 className="h-6 w-6 animate-spin" /></div>
@@ -80,7 +80,7 @@ function AdminReports() {
         ) : (
           <ul className="space-y-3 pb-20">
             {reports.map((r) => (
-              <li key={r.id} className="rounded-2xl border p-4" style={{ borderColor: "#e2e2de", backgroundColor: "#fff" }}>
+              <li key={r.id} className="rounded-2xl border p-4" style={{ borderColor: "#ded5c8", backgroundColor: "var(--brand-surface)" }}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <Link to="/product/$id" params={{ id: r.product_id }} className="font-semibold underline">
@@ -93,7 +93,7 @@ function AdminReports() {
                     </p>
                     <p className="mt-1 text-xs opacity-60">Listing status: {r.product?.status ?? "—"}</p>
                   </div>
-                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "#ffffff" }}>
+                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "var(--brand-surface)" }}>
                     {r.status}
                   </span>
                 </div>
@@ -102,7 +102,7 @@ function AdminReports() {
                     value={r.status}
                     onChange={(e) => updateStatus(r.id, e.target.value as Report["status"])}
                     className="rounded-full border px-3 py-1.5 text-xs"
-                    style={{ borderColor: "#e2e2de", backgroundColor: "#ffffff" }}
+                    style={{ borderColor: "#ded5c8", backgroundColor: "var(--brand-surface)" }}
                   >
                     <option value="pending">pending</option>
                     <option value="reviewed">reviewed</option>
@@ -112,7 +112,7 @@ function AdminReports() {
                   <button
                     onClick={() => removeListing(r.product_id)}
                     className="rounded-full px-3 py-1.5 text-xs font-semibold text-white"
-                    style={{ backgroundColor: "#e53935" }}
+                    style={{ backgroundColor: "#b33830" }}
                   >
                     Hiq artikullin
                   </button>

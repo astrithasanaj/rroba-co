@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/command";
 import { useCities, COUNTRY_ORDER, COUNTRY_LABEL, type City } from "@/hooks/useCities";
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-surface)";
 const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const DIVIDER = "#ded5c8";
 
 export type CityPickerProps = {
   value: string | null | undefined; // city_id

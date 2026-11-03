@@ -11,10 +11,10 @@ export const Route = createFileRoute("/_authenticated/profile_/change-email")({
   component: ChangeEmailPage,
 });
 
-const CREAM = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const RED = "#e53935";
+const CREAM = "var(--brand-cream)";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const RED = "#b33830";
 
 function ChangeEmailPage() {
   const router = useRouter();
@@ -118,7 +118,7 @@ function ChangeEmailPage() {
   const inputBox: React.CSSProperties = {
     width: "100%",
     height: 52,
-    background: "#ffffff",
+    background: "var(--brand-surface)",
     border: "none",
     borderRadius: 12,
     padding: "0 16px",
@@ -155,7 +155,7 @@ function ChangeEmailPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
           </button>
           <h1 className="text-[15px] font-semibold" style={{ color: INK }}>
             {title}

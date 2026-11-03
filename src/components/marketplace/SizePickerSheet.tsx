@@ -264,7 +264,7 @@ export function SizePickerSheet({
       style={{
         position: "fixed",
         inset: 0,
-        background: "#ffffff",
+        background: "var(--brand-cream)",
         zIndex: 60,
         display: "flex",
         flexDirection: "column",
@@ -272,7 +272,7 @@ export function SizePickerSheet({
     >
       <div
         style={{
-          background: "#2d1521",
+          background: "#1f2119",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
           paddingBottom: 12,
           paddingLeft: 16,
@@ -312,8 +312,8 @@ export function SizePickerSheet({
                   className="rounded-xl py-3.5 text-sm font-semibold transition"
                   style={
                     active
-                      ? { background: "linear-gradient(120deg, #e8836a, #c65a7a)", color: "#ffffff" }
-                      : { background: "#ffffff", color: "#2d1521", border: "1px solid #e2e2de" }
+                      ? { background: "linear-gradient(120deg, #84292f, #7a252b)", color: "#ffffff" }
+                      : { background: "var(--brand-cream)", color: "#1f2119", border: "1px solid #ded5c8" }
                   }
                 >
                   {s}
@@ -323,7 +323,7 @@ export function SizePickerSheet({
           </div>
 
           {guide.rows.length > 0 && (
-            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "#ffffff", border: "1px solid #e2e2de" }}>
+            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "var(--brand-cream)", border: "1px solid #ded5c8" }}>
               <button
                 onClick={() => setGuideOpen((o) => !o)}
                 className="flex w-full items-center justify-between px-4 py-3.5"
@@ -354,7 +354,7 @@ export function SizePickerSheet({
                               key={j}
                               className="py-2.5 pr-3 whitespace-nowrap"
                               style={{
-                                color: j === 0 ? "#2d1521" : "#8a8478",
+                                color: j === 0 ? "#1f2119" : "#8a8478",
                                 fontWeight: j === 0 ? 600 : 400,
                               }}
                             >

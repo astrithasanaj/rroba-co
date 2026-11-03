@@ -45,24 +45,24 @@
   /* Rroba merkevare-palett — kildepunkt for hardkodede farger i appen.
      Disse matcher de faktiske hex-verdiene som brukes gjennom frontend,
      slik at fremtidig migrering til token-klasser gir identisk output. */
-  --brand-ink: #2d1521;           /* mørk burgunder, primærtekst */
-  --brand-ink-muted: #a89f94;     /* varm grå, dekorativ/støttetekst (bruk kun for stor tekst eller ikke-tekst) */
+  --brand-ink: #1f2119;           /* mørk oliven / near-black, primærtekst */
+  --brand-ink-muted: #8d8175;     /* varm taupe, dekorativ/støttetekst */
   --brand-ink-secondary: #6e665c; /* tilgjengelig sekundærtekst (AA mot cream/surface for 11–14 px) */
-  --brand-surface: #ffffff;       /* kort/bakgrunn */
-  --brand-cream: #fbf6f2;         /* subtil surface-variant */
-  --brand-border: #e2e2de;        /* standard border */
-  --brand-border-strong: #c8c3b9; /* sterkere separator/chevron */
-  --brand-rose: #c65a7a;          /* aksent (CTA, lenker) */
-  --brand-rose-soft: #f5e6e9;     /* aksent-bakgrunn (dust-rosa) */
-  --brand-rose-ink: #6e2438;      /* aksent på lys bakgrunn */
-  --brand-coral: #e8836a;         /* varm sekundær-aksent */
-  --brand-danger: #e53935;        /* destruktiv/rød */
-  --brand-danger-soft: #fbeceb;   /* destruktiv-bakgrunn */
-  --brand-success: #2e7d32;       /* suksess */
-  --brand-warning: #ffb13b;       /* varsel */
+  --brand-surface: #fdfaf4;       /* kort/bakgrunn — varm off-white */
+  --brand-cream: #f7f3ec;         /* primær appbakgrunn — soft ivory */
+  --brand-border: #ded5c8;        /* standard border — subtil beige */
+  --brand-border-strong: #c9bfae; /* sterkere separator/chevron */
+  --brand-rose: #7a252b;          /* aksent (CTA, lenker) — burgunder */
+  --brand-rose-soft: #f1e5e1;     /* aksent-bakgrunn (myk vin-tint) */
+  --brand-rose-ink: #5c1e23;      /* aksent på lys bakgrunn — dyp burgunder */
+  --brand-coral: #84292f;         /* varm sekundær-aksent — lys burgunder */
+  --brand-danger: #b33830;        /* destruktiv/rød — dempet, klar */
+  --brand-danger-soft: #f7e8e4;   /* destruktiv-bakgrunn */
+  --brand-success: #4f6b53;       /* suksess — dempet premium grønn */
+  --brand-warning: #c39338;       /* varsel — dempet amber */
 
   /* Home editorial palette */
-  --home-bg: #f7f1e8;
+  --home-bg: #f7f3ec;
   --home-ink: #1f2119;
   --home-wine: #7a252b;
   --home-taupe: #8d8175;
@@ -71,30 +71,30 @@
   --home-sand: #ece4d8;
   --home-ivory: #f4eee5;
 
-  /* Pure white */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.16 0.01 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.16 0.01 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0.01 60);
-  --primary: oklch(0.18 0.01 60);
-  --primary-foreground: oklch(0.975 0.012 80);
-  --secondary: oklch(0.93 0.015 75);
-  --secondary-foreground: oklch(0.18 0.01 60);
-  --muted: oklch(0.94 0.012 78);
-  --muted-foreground: oklch(0.5 0.012 65);
-  --accent: oklch(0.94 0.02 350); /* tilsvarer #f5e6e9, myk dust-rosa */
-  --accent-foreground: oklch(0.32 0.08 350); /* tilsvarer #6e2438 */
-  --success: oklch(0.55 0.14 145);
+  /* Warm cream */
+  --background: oklch(0.964 0.008 85); /* #f7f3ec */
+  --foreground: oklch(0.22 0.015 70); /* #1f2119 */
+  --card: oklch(0.982 0.006 85); /* #fdfaf4 */
+  --card-foreground: oklch(0.22 0.015 70);
+  --popover: oklch(0.982 0.006 85);
+  --popover-foreground: oklch(0.22 0.015 70);
+  --primary: oklch(0.36 0.09 22); /* #7a252b burgunder */
+  --primary-foreground: oklch(0.97 0.008 85);
+  --secondary: oklch(0.918 0.012 80); /* #ece4d8 sand */
+  --secondary-foreground: oklch(0.22 0.015 70);
+  --muted: oklch(0.918 0.012 80); /* #ece4d8 */
+  --muted-foreground: oklch(0.52 0.02 70); /* #8d8175 taupe */
+  --accent: oklch(0.925 0.014 40); /* #f1e5e1, myk vin-tint */
+  --accent-foreground: oklch(0.33 0.08 22); /* #5c1e23 */
+  --success: oklch(0.5 0.06 145); /* #4f6b53 dempet grønn */
   --success-foreground: oklch(0.98 0 0);
-  --warning: oklch(0.78 0.14 75);
-  --warning-foreground: oklch(0.2 0.05 60);
-  --destructive: oklch(0.58 0.21 25);
+  --warning: oklch(0.66 0.11 75); /* #c39338 dempet amber */
+  --warning-foreground: oklch(0.25 0.03 60);
+  --destructive: oklch(0.5 0.14 27); /* #b33830 dempet rød */
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.9 0.012 75);
-  --input: oklch(0.9 0.012 75);
-  --ring: oklch(0.5 0.05 60);
+  --border: oklch(0.878 0.014 80); /* #ded5c8 */
+  --input: oklch(0.878 0.014 80);
+  --ring: oklch(0.36 0.09 22); /* burgunder focus */
 }
 
 .dark {
@@ -110,9 +110,9 @@
   --secondary-foreground: oklch(0.975 0.012 80);
   --muted: oklch(0.25 0.01 60);
   --muted-foreground: oklch(0.7 0.012 65);
-  --accent: oklch(0.94 0.02 350); /* tilsvarer #f5e6e9, myk dust-rosa */
-  --accent-foreground: oklch(0.32 0.08 350); /* tilsvarer #6e2438 */
-  --destructive: oklch(0.58 0.21 25);
+  --accent: oklch(0.925 0.014 40); /* #f1e5e1, myk vin-tint */
+  --accent-foreground: oklch(0.33 0.08 22); /* #5c1e23 */
+  --destructive: oklch(0.5 0.14 27);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);

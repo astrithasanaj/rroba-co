@@ -55,14 +55,14 @@ export function ListingCard({
     >
       <div
         className={`relative ${aspectClass} overflow-hidden ${isHome ? "rounded-[22px]" : "rounded-2xl"}`}
-        style={{ position: "relative", backgroundColor: "var(--brand-cream, #f3ede4)" }}
+        style={{ position: "relative", backgroundColor: "var(--brand-cream, #f4eee5)" }}
       >
         {/* Stabil placeholder — reserverer alltid plassen, ingen layout shift */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
-            backgroundColor: "var(--brand-cream, #f3ede4)",
+            backgroundColor: "var(--brand-cream, #f4eee5)",
             opacity: hasCover && imageLoaded ? 0 : 1,
             transition: "opacity 80ms linear",
           }}
@@ -91,7 +91,7 @@ export function ListingCard({
             role="img"
             aria-label={listing.title}
             className="absolute inset-0 flex items-center justify-center"
-            style={{ color: "var(--brand-ink-muted, #a89f94)" }}
+            style={{ color: "var(--brand-ink-muted, #8d8175)" }}
           >
             <ImageOff aria-hidden="true" className="h-8 w-8" strokeWidth={1.4} />
           </div>
@@ -133,7 +133,7 @@ export function ListingCard({
               top: 18,
               right: -28,
               width: 110,
-              background: "#c65a7a",
+              background: "#7a252b",
               color: "#ffffff",
               fontSize: 11,
               fontWeight: 700,
@@ -204,13 +204,13 @@ export function ListingCard({
         <div className="flex items-start justify-between gap-2">
           <p
             className="line-clamp-1 text-sm font-medium"
-            style={isSold && isOnProfileGrid ? { color: "#a89f94" } : undefined}
+            style={isSold && isOnProfileGrid ? { color: "#8d8175" } : undefined}
           >
             {listing.title}
           </p>
           <p
             className="shrink-0 text-sm font-semibold"
-            style={isSold && isOnProfileGrid ? { color: "#a89f94" } : undefined}
+            style={isSold && isOnProfileGrid ? { color: "#8d8175" } : undefined}
           >
             €{listing.price}
           </p>

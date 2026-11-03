@@ -6,11 +6,11 @@ import { SwipeBackWrapper } from "@/components/SwipeBackWrapper";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
-const CREAM = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
+const CREAM = "var(--brand-cream)";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
 const DIVIDER = "#e2d9c4";
-const CORAL = "#c65a7a";
+const CORAL = "#7a252b";
 const CHIP_BG = "#efe7d6";
 const CHIP_BORDER = "#d9cbb0";
 
@@ -165,7 +165,7 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                 WebkitBackdropFilter: "blur(8px)",
               }}
             >
-              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
             </button>
             <h1
               style={{
@@ -204,12 +204,12 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                     width: 64,
                     height: 64,
                     borderRadius: 999,
-                    backgroundColor: "#f5e6e9",
+                    backgroundColor: "#f1e5e1",
                     display: "grid",
                     placeItems: "center",
                   }}
                 >
-                  <Users size={28} color="#6e2438" strokeWidth={1.6} />
+                  <Users size={28} color="#5c1e23" strokeWidth={1.6} />
 
                 </div>
                 <p style={{ color: MUTED, fontSize: 14 }}>{emptyText}</p>
@@ -303,8 +303,8 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                             fontSize: 13,
                             fontWeight: 600,
                             border: "none",
-                            background: isFollowing ? "#f5e6e9" : "linear-gradient(120deg, #e8836a, #c65a7a)",
-                            color: isFollowing ? "#6e2438" : "#ffffff",
+                            background: isFollowing ? "#f1e5e1" : "linear-gradient(120deg, #84292f, #7a252b)",
+                            color: isFollowing ? "#5c1e23" : "#ffffff",
                             WebkitTapHighlightColor: "transparent",
                             whiteSpace: "nowrap",
                           }}

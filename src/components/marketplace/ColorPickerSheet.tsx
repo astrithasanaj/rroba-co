@@ -10,20 +10,20 @@ export type ColorOption = {
 };
 
 export const COLOR_OPTIONS: ColorOption[] = [
-  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#2d1521" },
+  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#1f2119" },
   { name: "Gri", inner: "#9e9e9e", selectedBorder: "#9e9e9e" },
-  { name: "E bardhë", inner: "#f5f5f5", innerRing: "#c8c3b9", selectedBorder: "#c8c3b9" },
-  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#2d1521" },
+  { name: "E bardhë", inner: "#f5f5f5", innerRing: "#c9bfae", selectedBorder: "#c9bfae" },
+  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#1f2119" },
   { name: "Bezhë", inner: "#d4b896", selectedBorder: "#bca07d" },
-  { name: "E gjelbër", inner: "#43a047", selectedBorder: "#2e7d32" },
+  { name: "E gjelbër", inner: "#43a047", selectedBorder: "#4f6b53" },
   { name: "Kaki", inner: "#8a8c5a", selectedBorder: "#6b6d45" },
   { name: "Blu", inner: "#42a5f5", selectedBorder: "#1976d2" },
-  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#2d1521" },
+  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#1f2119" },
   { name: "Turkez", inner: "#26c6da", selectedBorder: "#0097a7" },
   { name: "Vjollcë", inner: "#8e24aa", selectedBorder: "#6a1b9a" },
   { name: "Rozë", inner: "#f48fb1", selectedBorder: "#c2185b" },
-  { name: "E kuqe", inner: "#e53935", selectedBorder: "#c62828" },
-  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#2d1521" },
+  { name: "E kuqe", inner: "#b33830", selectedBorder: "#c62828" },
+  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#1f2119" },
   { name: "Kafe", inner: "#8B5E3C", selectedBorder: "#5d4037" },
   { name: "Portokalli", inner: "#fb8c00", selectedBorder: "#ef6c00" },
   { name: "E verdhë", inner: "#fdd835", selectedBorder: "#fbc02d" },
@@ -32,7 +32,7 @@ export const COLOR_OPTIONS: ColorOption[] = [
 ];
 
 const RAINBOW =
-  "conic-gradient(from 0deg, #ff3b3b, #ffb13b, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #ff3b3b)";
+  "conic-gradient(from 0deg, #b33830, #c39338, #ffe93b, #4ade80, #22d3ee, #6366f1, #d946ef, #b33830)";
 
 export function ColorPickerSheet({
   open,
@@ -71,7 +71,7 @@ export function ColorPickerSheet({
       style={{
         position: "fixed",
         inset: 0,
-        background: "#ffffff",
+        background: "var(--brand-cream)",
         zIndex: 60,
         display: "flex",
         flexDirection: "column",
@@ -80,7 +80,7 @@ export function ColorPickerSheet({
       <div
         className="shrink-0"
         style={{
-          background: "#2d1521",
+          background: "#1f2119",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
           paddingBottom: 12,
           paddingLeft: 16,
@@ -127,7 +127,7 @@ export function ColorPickerSheet({
                   <div
                     className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full transition"
                     style={{
-                      background: "#e2e2de",
+                      background: "#ded5c8",
                       boxShadow: active ? `0 0 0 2px ${opt.selectedBorder} inset` : undefined,
                     }}
                   >
@@ -139,7 +139,7 @@ export function ColorPickerSheet({
                       }}
                     />
                   </div>
-                  <span className="text-center text-[11px] font-medium" style={{ color: "#2d1521" }}>
+                  <span className="text-center text-[11px] font-medium" style={{ color: "#1f2119" }}>
                     {opt.name}
                   </span>
                 </button>
@@ -151,7 +151,7 @@ export function ColorPickerSheet({
         <div
           className="shrink-0 px-5 pt-3"
           style={{
-            background: "#ffffff",
+            background: "var(--brand-cream)",
             paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)",
           }}
         >
@@ -160,7 +160,7 @@ export function ColorPickerSheet({
             onClick={confirm}
             disabled={selected.length === 0}
             className="w-full rounded-[14px] py-4 text-sm font-semibold text-white transition disabled:opacity-100"
-            style={{ background: selected.length ? "linear-gradient(120deg, #e8836a, #c65a7a)" : "#c8c3b9" }}
+            style={{ background: selected.length ? "linear-gradient(120deg, #84292f, #7a252b)" : "#c9bfae" }}
           >
             Konfirmo
           </button>

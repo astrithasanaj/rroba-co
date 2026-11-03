@@ -20,11 +20,11 @@ function oauth(): OAuthAPI {
   return (supabase.auth as unknown as { oauth: OAuthAPI }).oauth;
 }
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#2d1521";
-const MUTED = "#a89f94";
-const CORAL = "#c65a7a";
+const INK = "#1f2119";
+const MUTED = "#8d8175";
+const CORAL = "#7a252b";
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
   ssr: false,
@@ -123,7 +123,7 @@ function Consent() {
           Kjo nuk anashkalon lejet ose politikat e mbrapa të Rroba.
         </p>
         {error && (
-          <p role="alert" style={{ color: "#e53935", fontSize: 13, marginBottom: 12 }}>
+          <p role="alert" style={{ color: "#b33830", fontSize: 13, marginBottom: 12 }}>
             {error}
           </p>
         )}

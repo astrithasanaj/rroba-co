@@ -14,12 +14,12 @@ export const Route = createFileRoute("/_authenticated/buy/$id")({
 
 type Seller = { id: string; name: string; avatar_url: string | null };
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const TEXT = "#2d1521";
-const MUTED = "#a89f94";
-const DIVIDER = "#e2e2de";
-const CORAL = "#c65a7a";
+const TEXT = "#1f2119";
+const MUTED = "#8d8175";
+const DIVIDER = "#ded5c8";
+const CORAL = "#7a252b";
 
 
 function BuyPage() {
@@ -172,7 +172,7 @@ function BuyPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+            <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
           </button>
           <h1 className="text-base font-bold" style={{ color: TEXT }}>Bli</h1>
           {seller ? (
@@ -364,7 +364,7 @@ function BuyPage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
             </button>
             <h3 className="text-base font-bold" style={{ color: TEXT }}>Propozim çmimi</h3>
           </div>
@@ -407,7 +407,7 @@ function BuyPage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={22} color="#2d1521" strokeWidth={2} />
+              <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
             </button>
             <h3 className="text-base font-bold" style={{ color: TEXT }}>Konfirmo blerjen</h3>
           </div>
