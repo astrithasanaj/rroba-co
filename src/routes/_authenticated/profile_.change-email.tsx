@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/profile_/change-email")({
   component: ChangeEmailPage,
 });
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const INK = "#1f2119";
 const MUTED = "#8d8175";
 const RED = "#b33830";

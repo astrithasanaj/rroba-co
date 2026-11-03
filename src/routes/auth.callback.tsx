@@ -7,7 +7,7 @@ export const Route = createFileRoute("/auth/callback")({
   component: AuthCallbackPage,
 });
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const INK = "#1f2119";
 const MUTED = "#8d8175";
 

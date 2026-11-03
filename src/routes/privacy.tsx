@@ -24,7 +24,7 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
 });
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const INK = "#1f2119";
 const MUTED = "rgba(45,21,33,0.6)";
 

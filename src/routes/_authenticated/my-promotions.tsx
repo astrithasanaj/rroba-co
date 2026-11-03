@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/my-promotions")({
   ),
 });
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
 const INK = "#1f2119";
 const MUTED = "#8d8175";

@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/listing/$id/manage")({
   component: () => (<SwipeBackWrapper><ManageListingPage /></SwipeBackWrapper>),
 });
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
 const INK = "#1f2119";
 const MUTED = "#8d8175";

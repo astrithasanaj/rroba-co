@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/buy/$id")({
 
 type Seller = { id: string; name: string; avatar_url: string | null };
 
-const CREAM = "#ffffff";
+const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
 const TEXT = "#1f2119";
 const MUTED = "#8d8175";
