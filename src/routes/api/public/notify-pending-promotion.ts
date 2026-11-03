@@ -86,49 +86,49 @@ export const Route = createFileRoute("/api/public/notify-pending-promotion")({
           const appUrl = process.env.APP_URL ?? "https://rroba-style-discover.lovable.app";
 
           const html = `
-<div style="font-family:Arial,sans-serif;background:#ffffff;color:#2d1521;max-width:600px;margin:0 auto;padding:24px;">
+<div style="font-family:Arial,sans-serif;background:#ffffff;color:#8f1830;max-width:600px;margin:0 auto;padding:24px;">
   <div style="text-align:center;padding:12px 0 20px;">
-    <div style="font-family:Georgia,serif;font-style:italic;font-size:28px;font-weight:600;color:#2d1521;">Rroba</div>
-    <div style="font-size:12px;color:#a89f94;letter-spacing:0.5px;text-transform:uppercase;margin-top:4px;">Paneli i administratorit</div>
+    <div style="font-family:Georgia,serif;font-style:italic;font-size:28px;font-weight:600;color:#8f1830;">Rroba</div>
+    <div style="font-size:12px;color:#8a8a8a;letter-spacing:0.5px;text-transform:uppercase;margin-top:4px;">Paneli i administratorit</div>
   </div>
 
-  <div style="background:#fbf6f2;border-radius:16px;padding:24px;text-align:center;">
+  <div style="background:#ffffff;border-radius:16px;padding:24px;text-align:center;">
     <div style="font-size:32px;">💰</div>
     <div style="margin-top:8px;font-size:16px;font-weight:600;">Pagesë e re në pritje konfirmimi</div>
-    <div style="margin-top:8px;font-size:28px;font-weight:700;color:#c65a7a;">€${Number(p.price_eur).toFixed(2)}</div>
+    <div style="margin-top:8px;font-size:28px;font-weight:700;color:#a61e35;">€${Number(p.price_eur).toFixed(2)}</div>
   </div>
 
-  <div style="background:#fbf6f2;border-radius:16px;padding:20px;margin-top:12px;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:#a89f94;margin-bottom:12px;">Detajet e promovimit</div>
+  <div style="background:#ffffff;border-radius:16px;padding:20px;margin-top:12px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:#8a8a8a;margin-bottom:12px;">Detajet e promovimit</div>
     <table style="width:100%;border-collapse:collapse;font-size:14px;">
-      <tr><td style="padding:6px 0;color:#a89f94;width:140px;">Lloji</td><td style="padding:6px 0;">${escapeHtml(typeLabel)}</td></tr>
-      <tr><td style="padding:6px 0;color:#a89f94;">Kohëzgjatja</td><td style="padding:6px 0;">${p.duration_days} ditë</td></tr>
-      <tr><td style="padding:6px 0;color:#a89f94;">Çmimi</td><td style="padding:6px 0;">€${Number(p.price_eur).toFixed(2)}</td></tr>
-      <tr><td style="padding:6px 0;color:#a89f94;">Metoda pagese</td><td style="padding:6px 0;">${escapeHtml(p.payment_method ?? "E paspecifikuar")}</td></tr>
-      <tr><td style="padding:6px 0;color:#a89f94;">Referenca</td><td style="padding:6px 0;font-family:monospace;">${escapeHtml(p.payment_reference ?? reference)}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;width:140px;">Lloji</td><td style="padding:6px 0;">${escapeHtml(typeLabel)}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;">Kohëzgjatja</td><td style="padding:6px 0;">${p.duration_days} ditë</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;">Çmimi</td><td style="padding:6px 0;">€${Number(p.price_eur).toFixed(2)}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;">Metoda pagese</td><td style="padding:6px 0;">${escapeHtml(p.payment_method ?? "E paspecifikuar")}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;">Referenca</td><td style="padding:6px 0;font-family:monospace;">${escapeHtml(p.payment_reference ?? reference)}</td></tr>
     </table>
   </div>
 
-  <div style="background:#fbf6f2;border-radius:16px;padding:20px;margin-top:12px;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:#a89f94;margin-bottom:12px;">Artikulli</div>
+  <div style="background:#ffffff;border-radius:16px;padding:20px;margin-top:12px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:#8a8a8a;margin-bottom:12px;">Artikulli</div>
     <div style="font-size:15px;font-weight:600;">${escapeHtml(l.title ?? "—")}</div>
-    <div style="font-size:14px;color:#a89f94;margin-top:4px;">€${l.price ?? "—"}</div>
+    <div style="font-size:14px;color:#8a8a8a;margin-top:4px;">€${l.price ?? "—"}</div>
   </div>
 
-  <div style="background:#fbf6f2;border-radius:16px;padding:20px;margin-top:12px;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:#a89f94;margin-bottom:12px;">Shitësi</div>
+  <div style="background:#ffffff;border-radius:16px;padding:20px;margin-top:12px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:#8a8a8a;margin-bottom:12px;">Shitësi</div>
     <table style="width:100%;border-collapse:collapse;font-size:14px;">
-      <tr><td style="padding:6px 0;color:#a89f94;width:140px;">Emri</td><td style="padding:6px 0;">${escapeHtml(s.display_name ?? "—")}</td></tr>
-      <tr><td style="padding:6px 0;color:#a89f94;">Username</td><td style="padding:6px 0;">@${escapeHtml(s.username ?? "—")}</td></tr>
-      <tr><td style="padding:6px 0;color:#a89f94;">Qyteti</td><td style="padding:6px 0;">${escapeHtml(s.city ?? "—")}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;width:140px;">Emri</td><td style="padding:6px 0;">${escapeHtml(s.display_name ?? "—")}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;">Username</td><td style="padding:6px 0;">@${escapeHtml(s.username ?? "—")}</td></tr>
+      <tr><td style="padding:6px 0;color:#8a8a8a;">Qyteti</td><td style="padding:6px 0;">${escapeHtml(s.city ?? "—")}</td></tr>
     </table>
   </div>
 
   <div style="margin-top:20px;text-align:center;">
-    <a href="${appUrl}/admin/promotions" style="display:inline-block;background:#2d1521;color:#ffffff;padding:14px 28px;border-radius:12px;text-decoration:none;font-size:14px;font-weight:600;">Konfirmo pagesën →</a>
+    <a href="${appUrl}/admin/promotions" style="display:inline-block;background:#8f1830;color:#ffffff;padding:14px 28px;border-radius:12px;text-decoration:none;font-size:14px;font-weight:600;">Konfirmo pagesën →</a>
   </div>
 
-  <div style="margin-top:24px;text-align:center;font-size:11px;color:#a89f94;">
+  <div style="margin-top:24px;text-align:center;font-size:11px;color:#8a8a8a;">
     © ${new Date().getFullYear()} Rroba · Email automatik nga sistemi i promovimeve
   </div>
 </div>`;

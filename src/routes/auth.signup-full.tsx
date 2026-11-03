@@ -187,7 +187,7 @@ function Header({ step, onBack, title }: { step: 1 | 2 | 3; onBack: () => void; 
         type="button"
         onClick={onBack}
         aria-label="Kthehu"
-        className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+        className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
         style={{
           color: INK,
           backgroundColor: "rgba(255,255,255,0.7)",
@@ -629,7 +629,7 @@ function SignupFullPage() {
                     onClick={() => setShowP((v) => !v)}
                     aria-label={showP ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showP}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
                     style={{ color: MUTED }}
                   >
                     {showP ? (
@@ -724,7 +724,7 @@ function SignupFullPage() {
                     onClick={() => setShowC((v) => !v)}
                     aria-label={showC ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showC}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
                     style={{ color: MUTED }}
                   >
                     {showC ? (
@@ -750,7 +750,7 @@ function SignupFullPage() {
                     background: isCheckingPassword
                       ? CARD
                       : supabasePasswordError
-                        ? "#f9ebe6"
+                        ? "#fdeef0"
                         : "#e8f5e9",
                     color: isCheckingPassword
                       ? MUTED
@@ -1005,7 +1005,7 @@ function SignupFullPage() {
                 aria-checked={terms}
                 aria-label="Pranoj kushtet e shërbimit dhe politikën e privatësisë"
                 onClick={() => setTerms((v) => !v)}
-                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
                 style={{
                   background: terms ? INK : "transparent",
                   border: `1.5px solid ${terms ? INK : DIVIDER}`,
@@ -1030,7 +1030,7 @@ function SignupFullPage() {
             {globalErr && (
               <p
                 className="rounded-xl px-3 py-2 text-[13px]"
-                style={{ background: "#f9ebe6", color: "#b33830" }}
+                style={{ background: "#fdeef0", color: "#b33830" }}
               >
                 ⚠️ {globalErr}
               </p>

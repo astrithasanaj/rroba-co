@@ -12,10 +12,10 @@ type Variant = {
 };
 
 const VARIANTS: Variant[] = [
-  { key: "cream", bg: "#fbfaf7", ink: "#1d1b18", accent: "#8a1f2d", accentInk: "#ffffff" },
-  { key: "ink", bg: "#1d1b18", ink: "#fbfaf7", accent: "#d9a08e", accentInk: "#1d1b18" },
-  { key: "rose", bg: "#8a1f2d", ink: "#ffffff", accent: "#ffffff", accentInk: "#8a1f2d" },
-  { key: "coral", bg: "#d9a08e", ink: "#1d1b18", accent: "#1d1b18", accentInk: "#ffffff" },
+  { key: "cream", bg: "#ffffff", ink: "#111111", accent: "#a61e35", accentInk: "#ffffff" },
+  { key: "ink", bg: "#111111", ink: "#ffffff", accent: "#d9a08e", accentInk: "#111111" },
+  { key: "rose", bg: "#a61e35", ink: "#ffffff", accent: "#ffffff", accentInk: "#a61e35" },
+  { key: "coral", bg: "#d9a08e", ink: "#111111", accent: "#111111", accentInk: "#ffffff" },
 ];
 
 const W = 1080;

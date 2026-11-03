@@ -272,7 +272,7 @@ export function SizePickerSheet({
     >
       <div
         style={{
-          background: "#1d1b18",
+          background: "#111111",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
           paddingBottom: 12,
           paddingLeft: 16,
@@ -312,8 +312,8 @@ export function SizePickerSheet({
                   className="rounded-xl py-3.5 text-sm font-semibold transition"
                   style={
                     active
-                      ? { background: "linear-gradient(120deg, #922530, #8a1f2d)", color: "#ffffff" }
-                      : { background: "var(--brand-cream)", color: "#1d1b18", border: "1px solid #e5ddd3" }
+                      ? { background: "linear-gradient(120deg, #8f1830, #a61e35)", color: "#ffffff" }
+                      : { background: "var(--brand-cream)", color: "#111111", border: "1px solid #e5e5e5" }
                   }
                 >
                   {s}
@@ -323,7 +323,7 @@ export function SizePickerSheet({
           </div>
 
           {guide.rows.length > 0 && (
-            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "var(--brand-cream)", border: "1px solid #e5ddd3" }}>
+            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "var(--brand-cream)", border: "1px solid #e5e5e5" }}>
               <button
                 onClick={() => setGuideOpen((o) => !o)}
                 className="flex w-full items-center justify-between px-4 py-3.5"
@@ -340,7 +340,7 @@ export function SizePickerSheet({
                 <div className="overflow-x-auto px-4 pb-4">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="text-xs uppercase tracking-wider" style={{ color: "#8a8478" }}>
+                      <tr className="text-xs uppercase tracking-wider" style={{ color: "#8a8a8a" }}>
                         {guide.headers.map((h) => (
                           <th key={h} className="py-2 font-medium">{h}</th>
                         ))}
@@ -348,13 +348,13 @@ export function SizePickerSheet({
                     </thead>
                     <tbody>
                       {guide.rows.map((row, i) => (
-                        <tr key={i} className="border-t" style={{ borderColor: "#d8d3c9" }}>
+                        <tr key={i} className="border-t" style={{ borderColor: "#e5e5e5" }}>
                           {row.map((cell, j) => (
                             <td
                               key={j}
                               className="py-2.5 pr-3 whitespace-nowrap"
                               style={{
-                                color: j === 0 ? "#1d1b18" : "#8a8478",
+                                color: j === 0 ? "#111111" : "#8a8a8a",
                                 fontWeight: j === 0 ? 600 : 400,
                               }}
                             >

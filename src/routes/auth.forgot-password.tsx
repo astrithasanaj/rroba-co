@@ -52,7 +52,7 @@ function ForgotPage() {
           type="button"
           onClick={() => window.history.back()}
           aria-label="Kthehu"
-          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
           style={{
             color: INK,
             backgroundColor: "rgba(255,255,255,0.7)",
@@ -119,7 +119,7 @@ function ForgotPage() {
                 aria-label="Adresa e emailit"
                 aria-invalid={err ? true : undefined}
                 aria-describedby={err ? "forgot-email-err" : undefined}
-                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
                 style={{
                   background: CARD,
                   color: INK,

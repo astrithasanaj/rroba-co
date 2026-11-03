@@ -76,20 +76,20 @@ export const Route = createFileRoute("/api/public/notify-new-report")({
           const reporterName = r.reporter?.name ?? r.reporter_id;
 
           const html = `
-            <div style="font-family:Arial,sans-serif;color:#2d1521;max-width:560px;margin:0 auto;padding:24px;">
+            <div style="font-family:Arial,sans-serif;color:#8f1830;max-width:560px;margin:0 auto;padding:24px;">
               <h2 style="margin:0 0 12px 0;">Raportim i ri</h2>
-              <p style="margin:0 0 16px 0;color:#555;">Një përdorues raportoi një artikull në Rroba.</p>
+              <p style="margin:0 0 16px 0;color:#6b6b6b;">Një përdorues raportoi një artikull në Rroba.</p>
               <table style="width:100%;border-collapse:collapse;font-size:14px;">
-                <tr><td style="padding:6px 0;color:#777;width:120px;">Artikulli</td><td style="padding:6px 0;">${escapeHtml(productTitle)}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">ID e artikullit</td><td style="padding:6px 0;font-family:monospace;">${escapeHtml(r.product_id)}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Arsyeja</td><td style="padding:6px 0;">${escapeHtml(reasonLabel)}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Raportuesi</td><td style="padding:6px 0;">${escapeHtml(String(reporterName))}</td></tr>
-                <tr><td style="padding:6px 0;color:#777;">Dërguar më</td><td style="padding:6px 0;">${escapeHtml(new Date(r.created_at).toISOString())}</td></tr>
-                ${r.details ? `<tr><td style="padding:6px 0;color:#777;vertical-align:top;">Detaje</td><td style="padding:6px 0;white-space:pre-wrap;">${escapeHtml(r.details)}</td></tr>` : ""}
+                <tr><td style="padding:6px 0;color:#777777;width:120px;">Artikulli</td><td style="padding:6px 0;">${escapeHtml(productTitle)}</td></tr>
+                <tr><td style="padding:6px 0;color:#777777;">ID e artikullit</td><td style="padding:6px 0;font-family:monospace;">${escapeHtml(r.product_id)}</td></tr>
+                <tr><td style="padding:6px 0;color:#777777;">Arsyeja</td><td style="padding:6px 0;">${escapeHtml(reasonLabel)}</td></tr>
+                <tr><td style="padding:6px 0;color:#777777;">Raportuesi</td><td style="padding:6px 0;">${escapeHtml(String(reporterName))}</td></tr>
+                <tr><td style="padding:6px 0;color:#777777;">Dërguar më</td><td style="padding:6px 0;">${escapeHtml(new Date(r.created_at).toISOString())}</td></tr>
+                ${r.details ? `<tr><td style="padding:6px 0;color:#777777;vertical-align:top;">Detaje</td><td style="padding:6px 0;white-space:pre-wrap;">${escapeHtml(r.details)}</td></tr>` : ""}
               </table>
               <p style="margin:20px 0 0 0;">
                 <a href="https://rroba-style-discover.lovable.app/admin/reports"
-                   style="display:inline-block;background:#c65a7a;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;">
+                   style="display:inline-block;background:#a61e35;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;">
                   Shqyrto në panel
                 </a>
               </p>

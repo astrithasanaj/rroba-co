@@ -8,12 +8,12 @@ import { useTranslation } from "@/i18n";
 
 
 const CREAM = "var(--brand-cream)";
-const INK = "#1d1b18";
-const DIVIDER = "#e5ddd3";
+const INK = "#111111";
+const DIVIDER = "#e5e5e5";
 const CANCEL_BG = "#ffffff";
-const DISABLED = "#e5ddd3";
+const DISABLED = "#e5e5e5";
 const RED = "#b33830";
-const CORAL = "#8a1f2d";
+const CORAL = "#a61e35";
 
 type Reason = {
   key: "scam" | "counterfeit" | "misleading" | "inappropriate" | "spam" | "prohibited" | "other";
@@ -144,7 +144,7 @@ export function MoreSheet({
                   backdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+                <ChevronLeft size={22} color="#111111" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 Më shumë
@@ -194,14 +194,14 @@ export function MoreSheet({
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+                <ChevronLeft size={22} color="#111111" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 {t("report.title")}
               </h2>
             </div>
             <div style={{ height: 1, backgroundColor: DIVIDER }} />
-            <p className="px-5 pt-4 pb-2 text-sm" style={{ color: "#8e8177" }}>
+            <p className="px-5 pt-4 pb-2 text-sm" style={{ color: "#8a8a8a" }}>
               {t("report.helper")}
             </p>
 
@@ -221,7 +221,7 @@ export function MoreSheet({
                       <span
                         className="grid h-5 w-5 shrink-0 place-items-center rounded-full border"
                         style={{
-                          borderColor: selected ? INK : "#bcb3a4",
+                          borderColor: selected ? INK : "#d4d4d4",
                           backgroundColor: selected ? INK : "transparent",
                         }}
                       >
@@ -251,7 +251,7 @@ export function MoreSheet({
                 className="w-full rounded-full py-3.5 text-sm font-semibold transition"
                 style={{
                   backgroundColor: submitEnabled ? RED : DISABLED,
-                  color: submitEnabled ? "#fff" : "#7a7164",
+                  color: submitEnabled ? "#fff" : "#8a8a8a",
                 }}
               >
                 {t("report.submit")}

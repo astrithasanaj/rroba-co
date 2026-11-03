@@ -6,14 +6,14 @@ export function renderErrorPage(): string {
     <title>Kjo faqe nuk u ngarkua</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #f7f3ec; color: #1f2119; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
+      body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #ffffff; color: #111111; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
       .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
       h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-      p { color: #8d8175; margin: 0 0 1.5rem; }
+      p { color: #8a8a8a; margin: 0 0 1.5rem; }
       .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
       a, button { padding: 0.5rem 1rem; border-radius: 0.375rem; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      .primary { background: #7a252b; color: #fdfaf4; }
-      .secondary { background: #fdfaf4; color: #1f2119; border-color: #ded5c8; }
+      .primary { background: #a61e35; color: #f7f7f7; }
+      .secondary { background: #f7f7f7; color: #111111; border-color: #e5e5e5; }
     </style>
   </head>
   <body>

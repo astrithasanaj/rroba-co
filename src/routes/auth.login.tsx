@@ -25,7 +25,7 @@ const MUTED = "var(--brand-ink-muted)";
 const CORAL = "var(--brand-rose)";
 const DIVIDER = "var(--brand-border)";
 const ERR = "var(--brand-danger)";
-const FOCUS_RING = "0 0 0 3px rgba(138,31,45,0.35)";
+const FOCUS_RING = "0 0 0 3px rgba(166,30,53,0.35)";
 
 function AuthField({
   type = "text",
@@ -183,7 +183,7 @@ function LoginPage() {
           type="button"
           onClick={() => window.history.back()}
           aria-label="Kthehu"
-          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
           style={{
             color: INK,
             backgroundColor: "rgba(255,255,255,0.7)",
@@ -287,7 +287,7 @@ function LoginPage() {
                 onClick={() => setShowPass((v) => !v)}
                 aria-label={showPass ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                 aria-pressed={showPass}
-                className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]"
+                className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
                 style={{ color: MUTED }}
               >
                 {showPass ? (

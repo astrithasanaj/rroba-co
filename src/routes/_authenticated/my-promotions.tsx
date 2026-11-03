@@ -18,10 +18,10 @@ export const Route = createFileRoute("/_authenticated/my-promotions")({
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#1d1b18";
-const MUTED = "#8e8177";
-const CORAL = "#8a1f2d";
-const DIVIDER = "#e5ddd3";
+const INK = "#111111";
+const MUTED = "#8a8a8a";
+const CORAL = "#a61e35";
+const DIVIDER = "#e5e5e5";
 
 type Kind = "feed_top" | "category_top" | "search_top";
 
@@ -129,7 +129,7 @@ function MyPromotionsPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+            <ChevronLeft size={22} color="#111111" strokeWidth={2} />
           </button>
           <h1
             className="flex-1 px-3 text-center font-display text-[22px] italic"
@@ -157,7 +157,7 @@ function MyPromotionsPage() {
               >
                 <p
                   className="text-[12px]"
-                  style={{ color: "#e5e0d5", letterSpacing: 1, fontWeight: 700 }}
+                  style={{ color: "#e5e5e5", letterSpacing: 1, fontWeight: 700 }}
                 >
                   {tier ? tier.toUpperCase() : "PA MEDLEMSKAP"}
                 </p>
@@ -176,7 +176,7 @@ function MyPromotionsPage() {
                   />
                 </div>
                 {!tier && (
-                  <p className="mt-3 text-[12px]" style={{ color: "#e5e0d5" }}>
+                  <p className="mt-3 text-[12px]" style={{ color: "#e5e5e5" }}>
                     Bli një medlemskap ose kredite për të filluar promovimet.
                   </p>
                 )}
@@ -259,7 +259,7 @@ function MyPromotionsPage() {
                 alignItems: "center",
                 gap: 12,
                 padding: "14px 16px 12px",
-                background: "#1d1b18",
+                background: "#111111",
                 flexShrink: 0,
               }}
             >
@@ -397,7 +397,7 @@ function BalanceTile({
 }) {
   return (
     <div style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 12, padding: 12 }}>
-      <div className="flex items-center gap-1.5" style={{ color: "#e5e0d5" }}>
+      <div className="flex items-center gap-1.5" style={{ color: "#e5e5e5" }}>
         {icon}
         <span className="text-[11px]" style={{ letterSpacing: 0.3 }}>
           {label}
@@ -405,7 +405,7 @@ function BalanceTile({
       </div>
       <p className="mt-1 font-bold" style={{ color: "#fff", fontSize: 24 }}>
         {value}{" "}
-        <span className="text-[12px] font-normal" style={{ color: "#e5e0d5" }}>
+        <span className="text-[12px] font-normal" style={{ color: "#e5e5e5" }}>
           {suffix}
         </span>
       </p>
@@ -443,7 +443,7 @@ function DaysSheet({
           alignItems: "center",
           gap: 12,
           padding: "14px 16px 12px",
-          background: "#1d1b18",
+          background: "#111111",
           flexShrink: 0,
         }}
       >

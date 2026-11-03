@@ -16,10 +16,10 @@ type Seller = { id: string; name: string; avatar_url: string | null };
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const TEXT = "#1d1b18";
-const MUTED = "#8e8177";
-const DIVIDER = "#e5ddd3";
-const CORAL = "#8a1f2d";
+const TEXT = "#111111";
+const MUTED = "#8a8a8a";
+const DIVIDER = "#e5e5e5";
+const CORAL = "#a61e35";
 
 
 function BuyPage() {
@@ -172,7 +172,7 @@ function BuyPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+            <ChevronLeft size={22} color="#111111" strokeWidth={2} />
           </button>
           <h1 className="text-base font-bold" style={{ color: TEXT }}>Bli</h1>
           {seller ? (
@@ -364,7 +364,7 @@ function BuyPage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+              <ChevronLeft size={22} color="#111111" strokeWidth={2} />
             </button>
             <h3 className="text-base font-bold" style={{ color: TEXT }}>Propozim çmimi</h3>
           </div>
@@ -407,7 +407,7 @@ function BuyPage() {
               className="grid place-items-center rounded-full transition-transform duration-150 active:scale-90"
               style={{ width: 36, height: 36, backgroundColor: "rgba(255,255,255,0.7)", border: "1px solid rgba(226,226,222,0.8)", backdropFilter: "blur(8px)" }}
             >
-              <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
+              <ChevronLeft size={22} color="#111111" strokeWidth={2} />
             </button>
             <h3 className="text-base font-bold" style={{ color: TEXT }}>Konfirmo blerjen</h3>
           </div>

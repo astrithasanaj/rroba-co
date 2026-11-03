@@ -52,7 +52,7 @@ const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const CORAL = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
-const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]";
 
 function Stat({
   value,
@@ -669,7 +669,7 @@ function UserProfile() {
               <div
                 key={i}
                 className="aspect-square animate-pulse"
-                style={{ backgroundColor: "var(--brand-cream, #f4eee7)" }}
+                style={{ backgroundColor: "var(--brand-cream, #f7f7f7)" }}
               />
             ))}
             <span className="sr-only">Duke ngarkuar…</span>
