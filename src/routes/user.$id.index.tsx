@@ -661,7 +661,7 @@ function UserProfile() {
         {listingsLoading && sorted.length === 0 ? (
           <div
             className="grid grid-cols-2"
-            style={{ gap: 1.5, backgroundColor: "#ffffff" }}
+            style={{ gap: 1.5, backgroundColor: "var(--brand-cream)" }}
             role="status"
             aria-live="polite"
           >
@@ -679,7 +679,7 @@ function UserProfile() {
             Asnjë artikull për tu shfaqur.
           </div>
         ) : (
-          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#ffffff" }}>
+          <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "var(--brand-cream)" }}>
             {sorted.map((l, i) => (
               <div key={l.id} className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }}>
                 <ListingCard listing={l} aspect="1/1" isOnProfileGrid eager={i < 4} />

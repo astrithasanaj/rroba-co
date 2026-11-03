@@ -270,7 +270,7 @@ function CodeForm({ email }: { email: string }) {
         onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
         placeholder="000000"
         className="h-[52px] w-full rounded-[14px] border text-center text-[22px] font-semibold tracking-[8px] outline-none"
-        style={{ borderColor: "var(--brand-border, #e6e1da)", color: INK, background: "#fff" }}
+        style={{ borderColor: "var(--brand-border, #e6e1da)", color: INK, background: "var(--brand-surface)" }}
       />
       <button
         type="button"

@@ -1064,7 +1064,7 @@ function ProfileGridSkeleton({ count = 6 }: { count?: number }) {
   return (
     <div
       className="grid grid-cols-2"
-      style={{ gap: 1.5, backgroundColor: "#ffffff" }}
+      style={{ gap: 1.5, backgroundColor: "var(--brand-cream)" }}
       role="status"
       aria-live="polite"
     >
@@ -1142,7 +1142,7 @@ function TierCard({
 
 function ListingsGrid({ listings, manage }: { listings: ListingView[]; manage?: boolean }) {
   return (
-    <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "#ffffff" }}>
+    <div className="grid grid-cols-2" style={{ gap: 1.5, backgroundColor: "var(--brand-cream)" }}>
       {listings.map((l, i) => (
         <ListingGridTile key={l.id} listing={l} manage={manage} eager={i < 4} />
       ))}

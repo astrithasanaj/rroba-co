@@ -28,7 +28,7 @@ function BlockedPage() {
       <div className="flex flex-col items-center text-center" style={{ maxWidth: 340 }}>
         <div
           className="mb-4 flex items-center justify-center"
-          style={{ width: 72, height: 72, borderRadius: 36, background: "#ffffff" }}
+          style={{ width: 72, height: 72, borderRadius: 36, background: "var(--brand-surface)" }}
         >
           <Lock size={40} color={ERR} strokeWidth={2} />
         </div>

@@ -71,7 +71,7 @@ export function ColorPickerSheet({
       style={{
         position: "fixed",
         inset: 0,
-        background: "#ffffff",
+        background: "var(--brand-cream)",
         zIndex: 60,
         display: "flex",
         flexDirection: "column",
@@ -151,7 +151,7 @@ export function ColorPickerSheet({
         <div
           className="shrink-0 px-5 pt-3"
           style={{
-            background: "#ffffff",
+            background: "var(--brand-cream)",
             paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)",
           }}
         >

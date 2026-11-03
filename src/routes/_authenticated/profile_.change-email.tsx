@@ -118,7 +118,7 @@ function ChangeEmailPage() {
   const inputBox: React.CSSProperties = {
     width: "100%",
     height: 52,
-    background: "#ffffff",
+    background: "var(--brand-surface)",
     border: "none",
     borderRadius: 12,
     padding: "0 16px",

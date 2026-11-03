@@ -264,7 +264,7 @@ export function SizePickerSheet({
       style={{
         position: "fixed",
         inset: 0,
-        background: "#ffffff",
+        background: "var(--brand-cream)",
         zIndex: 60,
         display: "flex",
         flexDirection: "column",
@@ -313,7 +313,7 @@ export function SizePickerSheet({
                   style={
                     active
                       ? { background: "linear-gradient(120deg, #84292f, #7a252b)", color: "#ffffff" }
-                      : { background: "#ffffff", color: "#1f2119", border: "1px solid #ded5c8" }
+                      : { background: "var(--brand-cream)", color: "#1f2119", border: "1px solid #ded5c8" }
                   }
                 >
                   {s}
@@ -323,7 +323,7 @@ export function SizePickerSheet({
           </div>
 
           {guide.rows.length > 0 && (
-            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "#ffffff", border: "1px solid #ded5c8" }}>
+            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "var(--brand-cream)", border: "1px solid #ded5c8" }}>
               <button
                 onClick={() => setGuideOpen((o) => !o)}
                 className="flex w-full items-center justify-between px-4 py-3.5"

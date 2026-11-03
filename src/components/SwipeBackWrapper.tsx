@@ -48,7 +48,7 @@ export function SwipeBackWrapper({
         style={{
           position: "relative",
           minHeight: "100dvh",
-          background: "#ffffff",
+          background: "var(--brand-surface)",
           willChange: "transform",
           touchAction: "pan-y",
           zIndex: 1,
