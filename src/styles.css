@@ -92,9 +92,9 @@
   --warning-foreground: oklch(0.25 0.03 60);
   --destructive: oklch(0.5 0.14 27); /* #b33830 dempet rød */
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.878 0.014 80); /* #e5ddd3 */
-  --input: oklch(0.878 0.014 80);
-  --ring: oklch(0.36 0.09 22); /* burgunder focus */
+  --border: oklch(0.895 0.012 80); /* #e5ddd3 */
+  --input: oklch(0.895 0.012 80);
+  --ring: oklch(0.38 0.11 22); /* burgunder focus */
 }
 
 .dark {
