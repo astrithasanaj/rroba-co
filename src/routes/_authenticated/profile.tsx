@@ -455,7 +455,7 @@ function ProfilePage() {
             <button
               onClick={() => navigate({ to: "/notifications" })}
               className="profile-btn relative grid place-items-center"
-              style={{ color: "var(--home-ink)", background: "transparent", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
+              style={{ color: "var(--home-ink)", background: "var(--home-sand)", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
               aria-label={t("home.notifications_aria")}
             >
               <Bell style={{ width: 22, height: 22 }} strokeWidth={1.6} />
@@ -469,17 +469,16 @@ function ProfilePage() {
             </button>
           </div>
           <h1
-            className="font-display"
-            style={{ fontSize: 30, lineHeight: 1, color: "var(--home-ink)", margin: 0 }}
+            style={{ fontSize: 17, fontWeight: 700, lineHeight: 1, color: "var(--home-ink)", margin: 0, minHeight: "1em", letterSpacing: "-0.01em" }}
             aria-label={username || "Rroba"}
           >
-            Rroba
+            {username}
           </h1>
           <div className="flex items-center justify-end">
             <button
               onClick={handleShare}
               className="profile-btn grid place-items-center"
-              style={{ color: "var(--home-ink)", background: "transparent", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
+              style={{ color: "var(--home-ink)", background: "var(--home-sand)", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
               aria-label={t("common.share")}
             >
               <IosShareIcon size={21} color="var(--home-ink)" strokeWidth={1.6} />
@@ -487,7 +486,7 @@ function ProfilePage() {
             <button
               onClick={() => setSettingsOpen(true)}
               className="profile-btn grid place-items-center"
-              style={{ color: "var(--home-ink)", background: "transparent", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
+              style={{ color: "var(--home-ink)", background: "var(--home-sand)", border: "none", padding: 0, width: 44, height: 44, borderRadius: 22 }}
               aria-label={t("common.settings")}
             >
               <SettingsIcon style={{ width: 22, height: 22 }} strokeWidth={1.6} />
@@ -584,7 +583,7 @@ function ProfilePage() {
                       height: 36,
                       borderRadius: 18,
                       border: "1px solid var(--home-line)",
-                      backgroundColor: "var(--home-ivory)",
+                      backgroundColor: "var(--brand-surface)",
                       color: "var(--home-ink)",
                       fontSize: 12.5,
                       fontWeight: 500,
@@ -605,8 +604,7 @@ function ProfilePage() {
 
           <div style={{ padding: "14px 18px 18px" }}>
             <p
-              className="font-display"
-              style={{ fontSize: 30, lineHeight: 1.1, color: "var(--home-ink)", minHeight: "1.1em", margin: 0 }}
+              style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--home-ink)", minHeight: "1.1em", margin: 0 }}
             >
               {displayName}
             </p>
@@ -647,9 +645,9 @@ function ProfilePage() {
         </section>
 
         {/* Tabs */}
-        <div style={{ borderTop: "1px solid var(--home-line)", borderBottom: "1px solid var(--home-line)" }}>
+        <div style={{ borderBottom: "1px solid var(--home-line)" }}>
           <div role="tablist" aria-label={t("profile.sections_aria")} className="grid grid-cols-3">
-            {tabs.map((tabItem, i) => {
+            {tabs.map((tabItem) => {
               const Icon = tabItem.icon;
               const active = tab === tabItem.id;
               const tabLabels: Record<Tab, string> = {
@@ -657,7 +655,7 @@ function ProfilePage() {
                 liked: t("profile.tab_liked"),
                 saved: t("profile.tab_saved"),
               };
-              const color = active ? "var(--home-wine)" : "var(--home-taupe)";
+              const color = active ? "var(--home-wine)" : "var(--brand-ink-secondary)";
               return (
                 <button
                   key={tabItem.id}
@@ -665,24 +663,22 @@ function ProfilePage() {
                   role="tab"
                   aria-selected={active}
                   aria-controls={`profile-panel-${tabItem.id}`}
+                  aria-label={tabLabels[tabItem.id]}
                   tabIndex={active ? 0 : -1}
                   onClick={() => setTab(tabItem.id)}
-                  className={`profile-btn relative flex flex-col items-center justify-center ${FOCUS_CLASS}`}
+                  className={`profile-btn relative flex items-center justify-center ${FOCUS_CLASS}`}
                   style={{
-                    height: 64,
-                    gap: 4,
+                    height: 52,
                     background: "transparent",
                     border: "none",
-                    borderLeft: i > 0 ? "1px solid var(--home-line)" : "none",
                     color,
                   }}
                 >
-                  <Icon aria-hidden="true" style={{ width: 22, height: 22 }} strokeWidth={active ? 1.9 : 1.6} />
-                  <span style={{ fontSize: 12, fontWeight: active ? 600 : 500 }}>{tabLabels[tabItem.id]}</span>
+                  <Icon aria-hidden="true" style={{ width: 23, height: 23 }} strokeWidth={active ? 1.9 : 1.6} />
                   {active && (
                     <span
                       aria-hidden="true"
-                      style={{ position: "absolute", bottom: -1, left: "22%", right: "22%", height: 2, backgroundColor: "var(--home-wine)" }}
+                      style={{ position: "absolute", bottom: -1, left: "22%", right: "22%", height: 2, borderRadius: 1, backgroundColor: "var(--home-wine)" }}
                     />
                   )}
                 </button>
@@ -964,14 +960,14 @@ function Stat({
     <>
       <p
         style={{
-          fontFamily: "var(--font-display)",
-          fontSize: 26,
-          fontWeight: 400,
+          fontSize: 24,
+          fontWeight: 700,
           color: "var(--home-ink)",
           lineHeight: 1.1,
           minHeight: "1.2em",
           minWidth: "2.5ch",
           fontVariantNumeric: "tabular-nums",
+          letterSpacing: "-0.01em",
         }}
       >
         {value === null ? (
@@ -1276,56 +1272,47 @@ function TabEmptyState({ tab }: { tab: Tab }) {
   const { t } = useTranslation();
   if (tab === "mine") {
     return (
-      <div style={{ padding: "18px 16px 8px" }}>
+      <div
+        className="flex flex-col items-center text-center"
+        style={{ padding: "56px 24px 32px" }}
+      >
         <div
-          className="flex flex-col items-center text-center"
+          className="grid place-items-center"
           style={{
-            borderRadius: 28,
-            border: "1px solid var(--home-line)",
-            background:
-              "radial-gradient(120% 80% at 50% 0%, var(--home-ivory) 0%, var(--home-sand) 70%)",
-            padding: "40px 24px 32px",
+            width: 72,
+            height: 72,
+            borderRadius: 36,
+            backgroundColor: "var(--home-sand)",
+            color: "var(--home-wine)",
           }}
         >
-          <div
-            className="grid place-items-center"
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 32,
-              backgroundColor: "var(--home-bg)",
-              border: "1px solid var(--home-line)",
-              color: "var(--home-wine)",
-            }}
-          >
-            <Grid2x2 size={26} strokeWidth={1.5} />
-          </div>
-          <p className="font-display" style={{ marginTop: 18, fontSize: 28, lineHeight: 1.1, color: "var(--home-ink)" }}>
-            {t("profile.empty_mine_title")}
-          </p>
-          <p style={{ marginTop: 8, fontSize: 13.5, color: "var(--home-taupe)", maxWidth: 260 }}>
-            {t("profile.empty_mine_helper")}
-          </p>
-          <Link
-            to="/sell"
-            className="profile-btn"
-            style={{
-              marginTop: 22,
-              height: 46,
-              padding: "0 24px",
-              borderRadius: 23,
-              backgroundColor: "var(--home-wine)",
-              color: "var(--home-ivory)",
-              fontSize: 14,
-              fontWeight: 600,
-              display: "inline-flex",
-              alignItems: "center",
-              textDecoration: "none",
-            }}
-          >
-            {t("profile.empty_mine_cta")}
-          </Link>
+          <Grid2x2 size={28} strokeWidth={1.5} />
         </div>
+        <p style={{ marginTop: 20, fontSize: 22, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.15, color: "var(--home-ink)" }}>
+          {t("profile.empty_mine_title")}
+        </p>
+        <p style={{ marginTop: 8, fontSize: 13.5, lineHeight: 1.5, color: "var(--home-taupe)", maxWidth: 260 }}>
+          {t("profile.empty_mine_helper")}
+        </p>
+        <Link
+          to="/sell"
+          className="profile-btn"
+          style={{
+            marginTop: 24,
+            height: 46,
+            padding: "0 24px",
+            borderRadius: 23,
+            backgroundColor: "var(--home-wine)",
+            color: "#ffffff",
+            fontSize: 14,
+            fontWeight: 600,
+            display: "inline-flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+        >
+          {t("profile.empty_mine_cta")}
+        </Link>
       </div>
     );
   }
@@ -1334,7 +1321,7 @@ function TabEmptyState({ tab }: { tab: Tab }) {
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
       <Icon size={30} strokeWidth={1.5} style={{ color: "var(--home-taupe)" }} />
-      <p className="font-display mt-4" style={{ fontSize: 24, color: "var(--home-ink)" }}>
+      <p className="mt-4" style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--home-ink)" }}>
         {t("profile.no_items_yet")}
       </p>
       <p className="mt-1 text-[13px]" style={{ color: "var(--home-taupe)" }}>
