@@ -13,9 +13,9 @@ import { useCities, COUNTRY_ORDER, COUNTRY_LABEL, type City } from "@/hooks/useC
 
 const CREAM = "var(--brand-surface)";
 const CARD = "#ffffff";
-const INK = "#1f2119";
-const MUTED = "#8d8175";
-const DIVIDER = "#ded5c8";
+const INK = "#1d1b18";
+const MUTED = "#8e8177";
+const DIVIDER = "#e5ddd3";
 
 export type CityPickerProps = {
   value: string | null | undefined; // city_id

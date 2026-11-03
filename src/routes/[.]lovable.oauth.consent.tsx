@@ -22,9 +22,9 @@ function oauth(): OAuthAPI {
 
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
-const INK = "#1f2119";
-const MUTED = "#8d8175";
-const CORAL = "#7a252b";
+const INK = "#1d1b18";
+const MUTED = "#8e8177";
+const CORAL = "#8a1f2d";
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
   ssr: false,

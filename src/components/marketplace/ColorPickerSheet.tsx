@@ -10,20 +10,20 @@ export type ColorOption = {
 };
 
 export const COLOR_OPTIONS: ColorOption[] = [
-  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#1f2119" },
+  { name: "E zezë", inner: "#1a1a1a", selectedBorder: "#1d1b18" },
   { name: "Gri", inner: "#9e9e9e", selectedBorder: "#9e9e9e" },
-  { name: "E bardhë", inner: "#f5f5f5", innerRing: "#c9bfae", selectedBorder: "#c9bfae" },
-  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#1f2119" },
+  { name: "E bardhë", inner: "#f5f5f5", innerRing: "#cfc6b8", selectedBorder: "#cfc6b8" },
+  { name: "Shumëngjyrësh", inner: "rainbow", selectedBorder: "#1d1b18" },
   { name: "Bezhë", inner: "#d4b896", selectedBorder: "#bca07d" },
   { name: "E gjelbër", inner: "#43a047", selectedBorder: "#4f6b53" },
   { name: "Kaki", inner: "#8a8c5a", selectedBorder: "#6b6d45" },
   { name: "Blu", inner: "#42a5f5", selectedBorder: "#1976d2" },
-  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#1f2119" },
+  { name: "Blu marine", inner: "#1a237e", selectedBorder: "#1d1b18" },
   { name: "Turkez", inner: "#26c6da", selectedBorder: "#0097a7" },
   { name: "Vjollcë", inner: "#8e24aa", selectedBorder: "#6a1b9a" },
   { name: "Rozë", inner: "#f48fb1", selectedBorder: "#c2185b" },
   { name: "E kuqe", inner: "#b33830", selectedBorder: "#c62828" },
-  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#1f2119" },
+  { name: "Burgundy", inner: "#7b1a2a", selectedBorder: "#1d1b18" },
   { name: "Kafe", inner: "#8B5E3C", selectedBorder: "#5d4037" },
   { name: "Portokalli", inner: "#fb8c00", selectedBorder: "#ef6c00" },
   { name: "E verdhë", inner: "#fdd835", selectedBorder: "#fbc02d" },
@@ -80,7 +80,7 @@ export function ColorPickerSheet({
       <div
         className="shrink-0"
         style={{
-          background: "#1f2119",
+          background: "#1d1b18",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
           paddingBottom: 12,
           paddingLeft: 16,
@@ -127,7 +127,7 @@ export function ColorPickerSheet({
                   <div
                     className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full transition"
                     style={{
-                      background: "#ded5c8",
+                      background: "#e5ddd3",
                       boxShadow: active ? `0 0 0 2px ${opt.selectedBorder} inset` : undefined,
                     }}
                   >
@@ -139,7 +139,7 @@ export function ColorPickerSheet({
                       }}
                     />
                   </div>
-                  <span className="text-center text-[11px] font-medium" style={{ color: "#1f2119" }}>
+                  <span className="text-center text-[11px] font-medium" style={{ color: "#1d1b18" }}>
                     {opt.name}
                   </span>
                 </button>
@@ -160,7 +160,7 @@ export function ColorPickerSheet({
             onClick={confirm}
             disabled={selected.length === 0}
             className="w-full rounded-[14px] py-4 text-sm font-semibold text-white transition disabled:opacity-100"
-            style={{ background: selected.length ? "linear-gradient(120deg, #84292f, #7a252b)" : "#c9bfae" }}
+            style={{ background: selected.length ? "linear-gradient(120deg, #922530, #8a1f2d)" : "#cfc6b8" }}
           >
             Konfirmo
           </button>

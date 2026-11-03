@@ -12,8 +12,8 @@ export const Route = createFileRoute("/_authenticated/profile_/change-email")({
 });
 
 const CREAM = "var(--brand-cream)";
-const INK = "#1f2119";
-const MUTED = "#8d8175";
+const INK = "#1d1b18";
+const MUTED = "#8e8177";
 const RED = "#b33830";
 
 function ChangeEmailPage() {
@@ -155,7 +155,7 @@ function ChangeEmailPage() {
               WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
+            <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
           </button>
           <h1 className="text-[15px] font-semibold" style={{ color: INK }}>
             {title}

@@ -8,12 +8,12 @@ import { useTranslation } from "@/i18n";
 
 
 const CREAM = "var(--brand-cream)";
-const INK = "#1f2119";
-const DIVIDER = "#ded5c8";
+const INK = "#1d1b18";
+const DIVIDER = "#e5ddd3";
 const CANCEL_BG = "#ffffff";
-const DISABLED = "#ded5c8";
+const DISABLED = "#e5ddd3";
 const RED = "#b33830";
-const CORAL = "#7a252b";
+const CORAL = "#8a1f2d";
 
 type Reason = {
   key: "scam" | "counterfeit" | "misleading" | "inappropriate" | "spam" | "prohibited" | "other";
@@ -144,7 +144,7 @@ export function MoreSheet({
                   backdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
+                <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 Më shumë
@@ -194,14 +194,14 @@ export function MoreSheet({
                   WebkitBackdropFilter: "blur(8px)",
                 }}
               >
-                <ChevronLeft size={22} color="#1f2119" strokeWidth={2} />
+                <ChevronLeft size={22} color="#1d1b18" strokeWidth={2} />
               </button>
               <h2 className="text-base font-bold" style={{ color: INK }}>
                 {t("report.title")}
               </h2>
             </div>
             <div style={{ height: 1, backgroundColor: DIVIDER }} />
-            <p className="px-5 pt-4 pb-2 text-sm" style={{ color: "#8d8175" }}>
+            <p className="px-5 pt-4 pb-2 text-sm" style={{ color: "#8e8177" }}>
               {t("report.helper")}
             </p>
 

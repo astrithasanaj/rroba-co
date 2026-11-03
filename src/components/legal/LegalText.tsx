@@ -1,5 +1,5 @@
 // Renders legal text with clickable email, website and privacy-policy links.
-const INK = "#1f2119";
+const INK = "#1d1b18";
 
 const PATTERN = /(rroba\.co\/privacy|hello@rroba\.co|rroba\.co)/g;
 

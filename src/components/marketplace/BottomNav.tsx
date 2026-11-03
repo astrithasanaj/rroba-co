@@ -36,7 +36,7 @@ export const BottomNav = () => {
         padding: "0 8px",
         margin: "0",
         boxSizing: "border-box",
-        boxShadow: "0 10px 30px -12px rgba(31,33,25,0.45)",
+        boxShadow: "0 10px 30px -12px rgba(29,27,24,0.45)",
       }}
     >
       {items.map((item) => {
