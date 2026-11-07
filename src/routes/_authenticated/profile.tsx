@@ -58,6 +58,7 @@ import { IosShareIcon } from "@/components/marketplace/IosShareIcon";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { getProfileStats, setProfileStats } from "@/lib/profile-stats-cache";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -1503,6 +1504,7 @@ function SettingsSheet({
       >
         {/* Header */}
         <div
+          className={view === "support" ? "!bg-background !px-6 !pt-6 !pb-4" : undefined}
           style={{
             display: "flex",
             alignItems: "center",
@@ -1515,7 +1517,7 @@ function SettingsSheet({
             type="button"
             onClick={handleBack}
             aria-label={t("common.back")}
-            className="grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+            className={`grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none ${view === "support" ? "!bg-background !border-border focus-visible:ring-2 focus-visible:ring-ring" : "focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"}`}
             style={{
               width: 44,
               height: 44,
@@ -1530,7 +1532,7 @@ function SettingsSheet({
             <ChevronLeft aria-hidden="true" size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle
-            className="italic"
+            className={view === "support" ? "italic !text-[28px] !font-normal !tracking-normal" : "italic"}
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 17,
@@ -2424,10 +2426,6 @@ function SupportView() {
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
 
-  const inputBase = "w-full rounded-xl px-4 py-3 text-[15px] outline-none placeholder:font-normal";
-  const inputStyle = { backgroundColor: CARD, color: INK } as const;
-  const placeholderStyle = { ["--tw-placeholder-color" as never]: MUTED };
-
   const send = async () => {
     if (!subject.trim() || !body.trim()) {
       toast.error(t("profile.support_fill_all"));
@@ -2442,32 +2440,36 @@ function SupportView() {
   };
 
   return (
-    <div className="space-y-3 px-5 pt-4">
-      <input
+    <div className="space-y-8 bg-background px-6 pt-8 pb-[calc(112px+env(safe-area-inset-bottom,0px))] text-foreground">
+      <div className="space-y-3">
+      <Label htmlFor="support-subject" className="block text-[18px] font-semibold">{t("profile.support_subject")}</Label>
+      <Input
+        id="support-subject"
         value={subject}
         onChange={(e) => setSubject(e.target.value)}
-        placeholder={t("profile.support_subject")}
-        className={inputBase}
-        style={{ ...inputStyle, ...placeholderStyle }}
+        placeholder={t("profile.support_subject_ph")}
+        className="h-[58px] rounded-[16px] border-input bg-background px-4 text-base shadow-none placeholder:text-muted-foreground md:text-base scroll-my-6"
       />
-      <textarea
+      </div>
+      <div className="space-y-3">
+      <Label htmlFor="support-body" className="block text-[18px] font-semibold">{t("profile.support_body_label")}</Label>
+      <Textarea
+        id="support-body"
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder={t("profile.support_body_ph")}
-        rows={6}
-        className={inputBase + " resize-none"}
-        style={{ ...inputStyle, ...placeholderStyle }}
+        rows={10}
+        className="h-[260px] resize-none rounded-[16px] border-input bg-background p-4 text-base leading-relaxed shadow-none placeholder:text-muted-foreground md:text-base scroll-my-6"
       />
-      <style>{`textarea::placeholder, input::placeholder { color: ${MUTED}; }`}</style>
-      <button
+      </div>
+      <Button
         onClick={send}
         disabled={sending}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-[15px] font-semibold disabled:opacity-50"
-        style={{ backgroundColor: INK, color: "#ffffff" }}
+        className="h-14 w-full rounded-full bg-foreground text-background text-[18px] font-semibold shadow-none hover:bg-foreground/90 scroll-my-6"
       >
         {sending && <Loader2 className="h-4 w-4 animate-spin" />}
         {t("common.send")}
-      </button>
+      </Button>
     </div>
   );
 }
