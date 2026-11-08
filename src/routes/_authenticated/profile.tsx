@@ -99,11 +99,11 @@ const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const SOLD = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
-const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]";
 // Lokale semantiske farge-konstanter (kun brukt i profil).
 const OVERLAY_GLYPH = "#ffffff";
 const GLASS_BG = "rgba(255,255,255,0.7)";
-const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const GLASS_BORDER = "color-mix(in srgb, var(--brand-border) 80%, transparent)";
 const DARK_GLASS_BG = "rgba(255,255,255,0.12)";
 const DARK_GLASS_INK_SOFT = "rgba(255,255,255,0.65)";
 const OFFER_ACCEPTED_BG = "#d1f4e0";
@@ -1069,7 +1069,7 @@ function ProfileGridSkeleton({ count = 6 }: { count?: number }) {
         <div
           key={i}
           className="aspect-square animate-pulse"
-          style={{ backgroundColor: "var(--brand-cream, #f7f7f7)" }}
+          style={{ backgroundColor: "var(--brand-rose-soft)" }}
         />
       ))}
       <span className="sr-only">Duke ngarkuar…</span>
@@ -1166,7 +1166,7 @@ function ListingGridTile({
     <Link
       {...linkProps}
       className="relative block aspect-square overflow-hidden"
-      style={{ backgroundColor: "var(--brand-cream, #f7f7f7)", borderRadius: 0 }}
+      style={{ backgroundColor: "var(--brand-rose-soft)", borderRadius: 0 }}
     >
       {hasCover ? (
         <img
@@ -1517,7 +1517,7 @@ function SettingsSheet({
             type="button"
             onClick={handleBack}
             aria-label={t("common.back")}
-            className={`grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none ${view === "support" ? "!bg-background !border-border focus-visible:ring-2 focus-visible:ring-ring" : "focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"}`}
+            className={`grid place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none ${view === "support" ? "!bg-background !border-border focus-visible:ring-2 focus-visible:ring-ring" : "focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"}`}
             style={{
               width: 44,
               height: 44,
@@ -2084,9 +2084,9 @@ function ProfileForm({
           <label
             className="cursor-pointer inline-flex flex-1 items-center justify-center px-4 py-2 text-xs font-medium"
             style={{
-              backgroundColor: "#f7f7f7",
+              backgroundColor: "var(--brand-rose-soft)",
               color: "#111111",
-              border: "1px solid #e5e5e5",
+              border: "1px solid var(--brand-border)",
               borderRadius: 9999,
             }}
           >
@@ -2129,7 +2129,7 @@ function ProfileForm({
             className="text-xs font-semibold"
             style={{
               color: "#ffffff",
-              background: "linear-gradient(120deg, #8f1830, #a61e35)",
+              background: "linear-gradient(120deg, var(--brand-rose), var(--brand-rose))",
               border: "none",
               borderRadius: 9999,
               padding: "5px 12px",
@@ -2194,7 +2194,7 @@ function ProfileForm({
         disabled={saving}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm disabled:opacity-50"
         style={{
-          background: "linear-gradient(120deg, #8f1830, #a61e35)",
+          background: "linear-gradient(120deg, var(--brand-rose), var(--brand-rose))",
           color: "#ffffff",
           fontWeight: 600,
           border: "none",
@@ -2465,7 +2465,7 @@ function SupportView() {
       <Button
         onClick={send}
         disabled={sending}
-        className="h-14 w-full rounded-full bg-foreground text-background text-[18px] font-semibold shadow-none hover:bg-foreground/90 scroll-my-6"
+        className="h-14 w-full rounded-full bg-primary text-primary-foreground text-[18px] font-semibold shadow-none hover:bg-primary/90 scroll-my-6"
       >
         {sending && <Loader2 className="h-4 w-4 animate-spin" />}
         {t("common.send")}

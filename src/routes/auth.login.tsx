@@ -25,7 +25,7 @@ const MUTED = "var(--brand-ink-muted)";
 const CORAL = "var(--brand-rose)";
 const DIVIDER = "var(--brand-border)";
 const ERR = "var(--brand-danger)";
-const FOCUS_RING = "0 0 0 3px rgba(166,30,53,0.35)";
+const FOCUS_RING = "0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent)";
 
 function AuthField({
   type = "text",
@@ -183,11 +183,11 @@ function LoginPage() {
           type="button"
           onClick={() => window.history.back()}
           aria-label="Kthehu"
-          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
           style={{
             color: INK,
             backgroundColor: "rgba(255,255,255,0.7)",
-            border: "1px solid rgba(226,226,222,0.8)",
+            border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}
@@ -287,7 +287,7 @@ function LoginPage() {
                 onClick={() => setShowPass((v) => !v)}
                 aria-label={showPass ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                 aria-pressed={showPass}
-                className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                 style={{ color: MUTED }}
               >
                 {showPass ? (
@@ -319,7 +319,7 @@ function LoginPage() {
             disabled={loading || !email || !password}
             className="mt-4 w-full text-[15px] font-bold transition disabled:opacity-50 active:scale-[0.98]"
             style={{
-              background: INK,
+              background: "var(--brand-rose)",
               color: "#fff",
               height: 54,
               borderRadius: 14,

@@ -21,7 +21,7 @@ const ROSE = "var(--brand-rose)";
 const ROSE_SOFT = "var(--brand-rose-soft)";
 // Documented specials — glass overlay for header back button (used app-wide)
 const GLASS_BG = "rgba(255,255,255,0.7)";
-const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const GLASS_BORDER = "color-mix(in srgb, var(--brand-border) 80%, transparent)";
 
 const FOCUS_RING =
   "outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-[color:var(--brand-surface)]";

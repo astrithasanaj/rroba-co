@@ -55,14 +55,14 @@ export function ListingCard({
     >
       <div
         className={`relative ${aspectClass} overflow-hidden ${isHome ? "rounded-[22px]" : "rounded-2xl"}`}
-        style={{ position: "relative", backgroundColor: "var(--brand-cream, #f7f7f7)" }}
+        style={{ position: "relative", backgroundColor: "var(--brand-rose-soft)" }}
       >
         {/* Stabil placeholder — reserverer alltid plassen, ingen layout shift */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
-            backgroundColor: "var(--brand-cream, #f7f7f7)",
+            backgroundColor: "var(--brand-rose-soft)",
             opacity: hasCover && imageLoaded ? 0 : 1,
             transition: "opacity 80ms linear",
           }}
@@ -133,7 +133,7 @@ export function ListingCard({
               top: 18,
               right: -28,
               width: 110,
-              background: "#a61e35",
+              background: "var(--brand-rose)",
               color: "#ffffff",
               fontSize: 11,
               fontWeight: 700,

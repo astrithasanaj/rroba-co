@@ -187,11 +187,11 @@ function Header({ step, onBack, title }: { step: 1 | 2 | 3; onBack: () => void; 
         type="button"
         onClick={onBack}
         aria-label="Kthehu"
-        className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+        className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
         style={{
           color: INK,
           backgroundColor: "rgba(255,255,255,0.7)",
-          border: "1px solid rgba(226,226,222,0.8)",
+          border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
         }}
@@ -629,7 +629,7 @@ function SignupFullPage() {
                     onClick={() => setShowP((v) => !v)}
                     aria-label={showP ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showP}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                     style={{ color: MUTED }}
                   >
                     {showP ? (
@@ -724,7 +724,7 @@ function SignupFullPage() {
                     onClick={() => setShowC((v) => !v)}
                     aria-label={showC ? "Fshih fjalëkalimin" : "Shfaq fjalëkalimin"}
                     aria-pressed={showC}
-                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                    className="grid h-11 w-11 place-items-center rounded-full transition active:scale-[0.97] disabled:active:scale-100 focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                     style={{ color: MUTED }}
                   >
                     {showC ? (
@@ -786,7 +786,7 @@ function SignupFullPage() {
                 type="submit"
                 disabled={!step1Filled}
                 className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
-                style={{ background: INK, color: "#fff", height: 52, borderRadius: 14 }}
+                style={{ background: "var(--brand-rose)", color: "#fff", height: 52, borderRadius: 14 }}
               >
                 {isCheckingPassword ? "Duke kontrolluar..." : "Vazhdo →"}
               </button>
@@ -863,7 +863,7 @@ function SignupFullPage() {
               onClick={nextFromStep2}
               disabled={!step2Filled || loading}
               className="mt-2 w-full text-[15px] font-bold text-white transition disabled:opacity-50 active:scale-[0.98]"
-              style={{ background: INK, color: "#fff", height: 52, borderRadius: 14 }}
+              style={{ background: "var(--brand-rose)", color: "#fff", height: 52, borderRadius: 14 }}
             >
               {loading ? "Duke kontrolluar..." : "Vazhdo →"}
             </button>
@@ -1005,10 +1005,10 @@ function SignupFullPage() {
                 aria-checked={terms}
                 aria-label="Pranoj kushtet e shërbimit dhe politikën e privatësisë"
                 onClick={() => setTerms((v) => !v)}
-                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center transition active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                 style={{
-                  background: terms ? INK : "transparent",
-                  border: `1.5px solid ${terms ? INK : DIVIDER}`,
+                  background: terms ? "var(--brand-rose)" : "transparent",
+                  border: `1.5px solid ${terms ? "var(--brand-rose)" : DIVIDER}`,
                   borderRadius: 5,
                 }}
               >

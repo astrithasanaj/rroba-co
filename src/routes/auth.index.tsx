@@ -69,7 +69,7 @@ function AuthLanding() {
           <Link
             to="/auth/signup-full"
             className="flex h-[54px] w-full items-center justify-center gap-2 text-[15px] font-bold transition active:scale-[0.98]"
-            style={{ background: INK, color: "#fff", borderRadius: 14 }}
+            style={{ background: "var(--brand-rose)", color: "#fff", borderRadius: 14 }}
           >
             <UserPlus size={18} />
             Krijo llogari të re

@@ -21,7 +21,7 @@ const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const ROSE = "var(--brand-rose)";
 const FOCUS_CLASS =
-  "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(138,31,45,0.35)]";
+  "focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]";
 
 function PremiumPage() {
   const { t } = useTranslation();

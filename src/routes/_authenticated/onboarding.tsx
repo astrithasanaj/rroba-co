@@ -21,7 +21,7 @@ const CORAL = "var(--brand-rose)";
 const DIVIDER = "var(--brand-border)";
 const ERR = "var(--brand-danger)";
 const SUCCESS = "var(--brand-success)";
-const FOCUS_RING = "0 0 0 3px rgba(166,30,53,0.35)";
+const FOCUS_RING = "0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent)";
 const SAFE_BOTTOM = "calc(1.5rem + env(safe-area-inset-bottom))";
 
 // City list moved to DB — see CityPicker/useCities
@@ -81,7 +81,7 @@ function TopBar({
           type="button"
           onClick={onBack}
           aria-label="Kthehu"
-          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+          className="grid h-11 w-11 place-items-center rounded-full transition-transform duration-150 active:scale-[0.97] focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
           style={{
             color: DARK,
             backgroundColor: "rgba(255,255,255,0.7)",
@@ -102,7 +102,7 @@ function TopBar({
             type="button"
             onClick={onSkip}
             aria-label="Kalo këtë hap"
-            className="min-h-11 px-2 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)] rounded-md"
+            className="min-h-11 px-2 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)] rounded-md"
             style={{ color: MUTED, background: "transparent" }}
           >
             Kalo
@@ -130,7 +130,7 @@ function BigButton({
 }) {
   const isDisabled = disabled || loading;
   const base =
-    "relative w-full rounded-full text-[15px] font-semibold transition disabled:opacity-40 disabled:active:scale-100 enabled:active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]";
+    "relative w-full rounded-full text-[15px] font-semibold transition disabled:opacity-40 disabled:active:scale-100 enabled:active:scale-[0.98] focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]";
   const height = { height: 54, minHeight: 54 } as const;
   if (variant === "ghost") {
     return (
@@ -154,7 +154,7 @@ function BigButton({
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={base}
-      style={{ background: DARK, color: "#fff", ...height }}
+      style={{ background: "var(--brand-rose)", color: "#fff", ...height }}
     >
       <span style={{ visibility: loading ? "hidden" : "visible" }}>{children}</span>
       {loading && <Spinner colorHex="#ffffff" />}
@@ -189,11 +189,11 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       aria-label={ariaLabel}
-      className="min-h-11 rounded-full px-4 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+      className="min-h-11 rounded-full px-4 text-sm font-medium transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
       style={{
-        background: active ? DARK : CHIP_BG,
-        color: active ? "#fff" : DARK,
-        border: `1px solid ${active ? DARK : DIVIDER}`,
+        background: active ? "var(--brand-rose)" : CHIP_BG,
+        color: active ? "#fff" : "var(--brand-ink-secondary)",
+        border: `1px solid ${active ? "var(--brand-rose)" : DIVIDER}`,
       }}
     >
       {children}
@@ -434,7 +434,7 @@ function StepProfile({
               avatarPreview ? "Ndrysho fotografinë e profilit" : "Ngarko fotografinë e profilit"
             }
             aria-busy={uploading || undefined}
-            className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)] disabled:opacity-70"
+            className="relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-full transition active:scale-95 focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)] disabled:opacity-70"
             style={{ background: CHIP_BG, border: `1px solid ${DIVIDER}` }}
           >
             {avatarPreview ? (
@@ -465,7 +465,7 @@ function StepProfile({
             <span
               aria-hidden="true"
               className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border-2"
-              style={{ background: DARK, borderColor: CREAM }}
+              style={{ background: "var(--brand-rose)", borderColor: CREAM }}
             >
               <Camera size={14} color="#fff" />
             </span>
@@ -500,7 +500,7 @@ function StepProfile({
               placeholder="Emri yt"
               autoComplete="name"
               enterKeyHint="next"
-              className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+              className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
               style={{
                 background: CHIP_BG,
                 color: DARK,
@@ -543,7 +543,7 @@ function StepProfile({
                       ? "ob-username-err-taken"
                       : undefined
                 }
-                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                className="w-full text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                 style={{
                   background: CHIP_BG,
                   color: DARK,
@@ -616,7 +616,7 @@ function StepProfile({
                 placeholder="Trego diçka për veten..."
                 rows={3}
                 aria-describedby="ob-bio-count"
-                className="w-full resize-none text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                className="w-full resize-none text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                 style={{
                   background: CHIP_BG,
                   color: DARK,
@@ -654,7 +654,7 @@ function StepProfile({
                 onChange={(e) => setHeight(e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
                 placeholder="170"
                 aria-label="Gjatësia në centimetra"
-                className="w-24 text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]"
+                className="w-24 text-[15px] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]"
                 style={{
                   background: CHIP_BG,
                   color: DARK,

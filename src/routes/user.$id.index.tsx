@@ -52,7 +52,7 @@ const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const CORAL = "var(--brand-rose)";
 const BORDER_STRONG = "var(--brand-border-strong)";
-const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(166,30,53,0.35)]";
+const FOCUS_CLASS = "focus:outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]";
 
 function Stat({
   value,
@@ -321,7 +321,7 @@ function UserProfile() {
                 height: 44,
                 borderRadius: "9999px",
                 backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
               }}
               aria-hidden="true"
             />
@@ -439,7 +439,7 @@ function UserProfile() {
               width: 44,
               height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
+              border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
@@ -534,7 +534,7 @@ function UserProfile() {
                       background: isFollowing
                         ? "var(--brand-rose-soft)"
                         : "linear-gradient(120deg, var(--brand-coral), var(--brand-rose))",
-                      color: isFollowing ? "var(--brand-rose-ink)" : "#ffffff",
+                      color: isFollowing ? "var(--brand-rose)" : "#ffffff",
                       fontSize: 12,
                       fontWeight: 600,
                       letterSpacing: "0.2px",
@@ -632,14 +632,14 @@ function UserProfile() {
               style={{ height: 40, background: "transparent", border: "none" }}
               aria-label="Rrjeti"
             >
-              <GridIcon color={INK} />
+              <GridIcon color={CORAL} />
               <span
                 style={{
                   position: "absolute",
                   bottom: 0,
                   width: 20,
                   height: 2,
-                  backgroundColor: INK,
+                  backgroundColor: CORAL,
                 }}
               />
             </button>
@@ -669,7 +669,7 @@ function UserProfile() {
               <div
                 key={i}
                 className="aspect-square animate-pulse"
-                style={{ backgroundColor: "var(--brand-cream, #f7f7f7)" }}
+                style={{ backgroundColor: "var(--brand-rose-soft)" }}
               />
             ))}
             <span className="sr-only">Duke ngarkuar…</span>
@@ -748,7 +748,7 @@ function UserProfile() {
                 width: 44,
                 height: 44,
                 backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
                 backdropFilter: "blur(8px)",
               }}
             >
@@ -785,7 +785,7 @@ function UserProfile() {
                 width: 44,
                 height: 44,
                 backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
                 backdropFilter: "blur(8px)",
               }}
             >

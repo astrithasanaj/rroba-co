@@ -19,9 +19,9 @@ export const Route = createFileRoute("/_authenticated/my-promotions")({
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
 const INK = "#111111";
-const MUTED = "#8a8a8a";
-const CORAL = "#a61e35";
-const DIVIDER = "#e5e5e5";
+const MUTED = "var(--brand-ink-secondary)";
+const CORAL = "var(--brand-rose)";
+const DIVIDER = "var(--brand-border)";
 
 type Kind = "feed_top" | "category_top" | "search_top";
 
@@ -124,7 +124,7 @@ function MyPromotionsPage() {
               width: 36,
               height: 36,
               backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
+              border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
@@ -157,7 +157,7 @@ function MyPromotionsPage() {
               >
                 <p
                   className="text-[12px]"
-                  style={{ color: "#e5e5e5", letterSpacing: 1, fontWeight: 700 }}
+                  style={{ color: "var(--brand-border)", letterSpacing: 1, fontWeight: 700 }}
                 >
                   {tier ? tier.toUpperCase() : "PA MEDLEMSKAP"}
                 </p>
@@ -176,7 +176,7 @@ function MyPromotionsPage() {
                   />
                 </div>
                 {!tier && (
-                  <p className="mt-3 text-[12px]" style={{ color: "#e5e5e5" }}>
+                  <p className="mt-3 text-[12px]" style={{ color: "var(--brand-border)" }}>
                     Bli një medlemskap ose kredite për të filluar promovimet.
                   </p>
                 )}
@@ -397,7 +397,7 @@ function BalanceTile({
 }) {
   return (
     <div style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 12, padding: 12 }}>
-      <div className="flex items-center gap-1.5" style={{ color: "#e5e5e5" }}>
+      <div className="flex items-center gap-1.5" style={{ color: "var(--brand-border)" }}>
         {icon}
         <span className="text-[11px]" style={{ letterSpacing: 0.3 }}>
           {label}
@@ -405,7 +405,7 @@ function BalanceTile({
       </div>
       <p className="mt-1 font-bold" style={{ color: "#fff", fontSize: 24 }}>
         {value}{" "}
-        <span className="text-[12px] font-normal" style={{ color: "#e5e5e5" }}>
+        <span className="text-[12px] font-normal" style={{ color: "var(--brand-border)" }}>
           {suffix}
         </span>
       </p>

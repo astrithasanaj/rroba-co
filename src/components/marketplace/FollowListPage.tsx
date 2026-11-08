@@ -8,11 +8,11 @@ import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "var(--brand-cream)";
 const INK = "#111111";
-const MUTED = "#8a8a8a";
-const DIVIDER = "#e2d9c4";
-const CORAL = "#a61e35";
-const CHIP_BG = "#f7f7f7";
-const CHIP_BORDER = "#d9cbb0";
+const MUTED = "var(--brand-ink-secondary)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
+const CHIP_BG = "var(--brand-rose-soft)";
+const CHIP_BORDER = "var(--brand-border)";
 
 const PAGE_SIZE = 20;
 
@@ -160,7 +160,7 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                 width: 36,
                 height: 36,
                 backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
               }}
@@ -204,12 +204,12 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                     width: 64,
                     height: 64,
                     borderRadius: 999,
-                    backgroundColor: "#f7f7f7",
+                    backgroundColor: "var(--brand-rose-soft)",
                     display: "grid",
                     placeItems: "center",
                   }}
                 >
-                  <Users size={28} color="#8f1830" strokeWidth={1.6} />
+                  <Users size={28} color="var(--brand-rose)" strokeWidth={1.6} />
 
                 </div>
                 <p style={{ color: MUTED, fontSize: 14 }}>{emptyText}</p>
@@ -303,8 +303,8 @@ export function FollowListPage({ userId, mode }: { userId: string; mode: Mode })
                             fontSize: 13,
                             fontWeight: 600,
                             border: "none",
-                            background: isFollowing ? "#f7f7f7" : "linear-gradient(120deg, #8f1830, #a61e35)",
-                            color: isFollowing ? "#8f1830" : "#ffffff",
+                            background: isFollowing ? "var(--brand-rose-soft)" : "linear-gradient(120deg, var(--brand-rose), var(--brand-rose))",
+                            color: isFollowing ? "var(--brand-rose)" : "#ffffff",
                             WebkitTapHighlightColor: "transparent",
                             whiteSpace: "nowrap",
                           }}

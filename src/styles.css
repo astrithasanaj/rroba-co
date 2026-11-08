@@ -46,16 +46,17 @@
      Disse matcher de faktiske hex-verdiene som brukes gjennom frontend,
      slik at fremtidig migrering til token-klasser gir identisk output. */
   --brand-ink: #111111;           /* primærtekst — nøytral near-black */
-  --brand-ink-muted: #8a8a8a;     /* muted metadata */
+  --brand-ink-muted: #6b6b6b;     /* muted metadata */
   --brand-ink-secondary: #6b6b6b; /* sekundærtekst */
   --brand-surface: #ffffff;       /* kort/bakgrunn — hvit */
   --brand-cream: #ffffff;         /* primær appbakgrunn — helt hvit */
-  --brand-border: #e5e5e5;        /* standard border — nøytral grå */
+  --brand-border: #e4e4e7;        /* standard border — nøytral grå */
   --brand-border-strong: #d4d4d4; /* sterkere separator/chevron */
-  --brand-rose: #a61e35;          /* aksent (CTA, lenker) — vinrød */
-  --brand-rose-soft: #f7f7f7;     /* aksent-bakgrunn (subtil grå) */
-  --brand-rose-ink: #8f1830;      /* aksent pressed/mørkere — dyp vinrød */
-  --brand-coral: #a61e35;         /* sekundær-aksent — samme vinrød */
+  --brand-rose: #5a2e4a;          /* aksent (CTA, lenker) — plomme */
+  --brand-rose-soft: #f3f3f5;     /* aksent-bakgrunn (subtil grå) */
+  --brand-rose-ink: #472238;      /* aksent pressed/mørkere — mørk plomme */
+  --brand-coral: #5a2e4a;         /* sekundær-aksent — samme plomme */
+  --brand-placeholder: #8a8a8a;
   --brand-danger: #b33830;        /* destruktiv/rød — dempet, klar */
   --brand-danger-soft: #fdeef0;   /* destruktiv-bakgrunn */
   --brand-success: #4f6b53;       /* suksess — dempet premium grønn */
@@ -64,12 +65,12 @@
   /* Home editorial palette */
   --home-bg: #ffffff;
   --home-ink: #111111;
-  --home-wine: #a61e35;
-  --home-taupe: #8a8a8a;
+  --home-wine: #5a2e4a;
+  --home-taupe: #6b6b6b;
   --home-olive: #111111;
-  --home-line: #e5e5e5;
-  --home-sand: #f7f7f7;
-  --home-ivory: #f7f7f7;
+  --home-line: #e4e4e7;
+  --home-sand: #f3f3f5;
+  --home-ivory: #f3f3f5;
 
   /* Clean white premium */
   --background: #ffffff;
@@ -78,23 +79,23 @@
   --card-foreground: #111111;
   --popover: #ffffff;
   --popover-foreground: #111111;
-  --primary: #a61e35; /* vinrød */
+  --primary: #5a2e4a; /* plomme */
   --primary-foreground: #ffffff;
-  --secondary: #f7f7f7;
+  --secondary: #f3f3f5;
   --secondary-foreground: #111111;
-  --muted: #f7f7f7;
-  --muted-foreground: #8a8a8a;
-  --accent: #f7f7f7;
-  --accent-foreground: #a61e35;
+  --muted: #f3f3f5;
+  --muted-foreground: #6b6b6b;
+  --accent: #f3f3f5;
+  --accent-foreground: #5a2e4a;
   --success: #4f6b53; /* dempet grønn */
   --success-foreground: #ffffff;
   --warning: #c39338; /* dempet amber */
   --warning-foreground: #111111;
   --destructive: #b33830; /* dempet rød */
   --destructive-foreground: #ffffff;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
-  --ring: #a61e35; /* vinrød focus */
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #5a2e4a; /* plomme focus */
 }
 
 .dark {
@@ -104,19 +105,19 @@
   --card-foreground: oklch(0.975 0.012 80);
   --popover: oklch(0.2 0.01 60);
   --popover-foreground: oklch(0.975 0.012 80);
-  --primary: oklch(0.975 0.012 80);
-  --primary-foreground: oklch(0.16 0.01 60);
+  --primary: #5a2e4a;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.25 0.01 60);
   --secondary-foreground: oklch(0.975 0.012 80);
   --muted: oklch(0.25 0.01 60);
   --muted-foreground: oklch(0.7 0.012 65);
-  --accent: oklch(0.925 0.014 40); /* #f7f7f7, myk vin-tint */
-  --accent-foreground: oklch(0.33 0.08 22); /* #8f1830 */
+  --accent: #472238;
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.5 0.14 27);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.04 60);
+  --ring: #5a2e4a;
 }
 
 @layer base {
@@ -176,6 +177,10 @@ input, textarea, select {
   -webkit-text-size-adjust: 100%;
 }
 
+input::placeholder, textarea::placeholder {
+  color: var(--brand-placeholder);
+}
+
 /* Nav bar portal should not block sheets/modals when BottomNav is hidden */
 #nav-bar-root {
   pointer-events: none !important;
@@ -220,7 +225,7 @@ input, textarea, select {
 }
 .profile-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(166,30,53, 0.35);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent);
 }
 
 .settings-row {
@@ -240,7 +245,7 @@ input, textarea, select {
 .settings-row:active { background: var(--brand-cream); }
 .settings-row:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 3px rgba(166,30,53, 0.35);
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent);
 }
 
 /* Tap feedback for round icon tiles (categories + bottom nav) */

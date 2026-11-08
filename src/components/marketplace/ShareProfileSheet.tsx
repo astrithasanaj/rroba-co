@@ -12,10 +12,10 @@ type Variant = {
 };
 
 const VARIANTS: Variant[] = [
-  { key: "cream", bg: "#ffffff", ink: "#111111", accent: "#a61e35", accentInk: "#ffffff" },
-  { key: "ink", bg: "#111111", ink: "#ffffff", accent: "#d9a08e", accentInk: "#111111" },
-  { key: "rose", bg: "#a61e35", ink: "#ffffff", accent: "#ffffff", accentInk: "#a61e35" },
-  { key: "coral", bg: "#d9a08e", ink: "#111111", accent: "#111111", accentInk: "#ffffff" },
+  { key: "cream", bg: "#ffffff", ink: "#111111", accent: "#5a2e4a", accentInk: "#ffffff" },
+  { key: "ink", bg: "#111111", ink: "#ffffff", accent: "#ffffff", accentInk: "#111111" },
+  { key: "rose", bg: "#5a2e4a", ink: "#ffffff", accent: "#ffffff", accentInk: "#5a2e4a" },
+  { key: "coral", bg: "#f3f3f5", ink: "#111111", accent: "#5a2e4a", accentInk: "#ffffff" },
 ];
 
 const W = 1080;
@@ -237,7 +237,7 @@ export function ShareProfileSheet({
               width: 44,
               height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
+              border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
               backdropFilter: "blur(8px)",
             }}
           >

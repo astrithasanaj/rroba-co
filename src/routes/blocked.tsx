@@ -10,8 +10,8 @@ export const Route = createFileRoute("/blocked")({
 
 const CREAM = "var(--brand-cream)";
 const INK = "#111111";
-const MUTED = "#8a8a8a";
-const CORAL = "#a61e35";
+const MUTED = "var(--brand-ink-secondary)";
+const CORAL = "var(--brand-rose)";
 const ERR = "#b33830";
 
 function BlockedPage() {

@@ -312,8 +312,8 @@ export function SizePickerSheet({
                   className="rounded-xl py-3.5 text-sm font-semibold transition"
                   style={
                     active
-                      ? { background: "linear-gradient(120deg, #8f1830, #a61e35)", color: "#ffffff" }
-                      : { background: "var(--brand-cream)", color: "#111111", border: "1px solid #e5e5e5" }
+                      ? { background: "linear-gradient(120deg, var(--brand-rose), var(--brand-rose))", color: "#ffffff" }
+                      : { background: "var(--brand-cream)", color: "#111111", border: "1px solid var(--brand-border)" }
                   }
                 >
                   {s}
@@ -323,7 +323,7 @@ export function SizePickerSheet({
           </div>
 
           {guide.rows.length > 0 && (
-            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "var(--brand-cream)", border: "1px solid #e5e5e5" }}>
+            <div className="mt-6 overflow-hidden rounded-2xl" style={{ background: "var(--brand-cream)", border: "1px solid var(--brand-border)" }}>
               <button
                 onClick={() => setGuideOpen((o) => !o)}
                 className="flex w-full items-center justify-between px-4 py-3.5"
@@ -348,7 +348,7 @@ export function SizePickerSheet({
                     </thead>
                     <tbody>
                       {guide.rows.map((row, i) => (
-                        <tr key={i} className="border-t" style={{ borderColor: "#e5e5e5" }}>
+                        <tr key={i} className="border-t" style={{ borderColor: "var(--brand-border)" }}>
                           {row.map((cell, j) => (
                             <td
                               key={j}

@@ -44,7 +44,7 @@ function TermsPage() {
             width: 36,
             height: 36,
             backgroundColor: "rgba(255,255,255,0.7)",
-            border: "1px solid rgba(226,226,222,0.8)",
+            border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
           }}

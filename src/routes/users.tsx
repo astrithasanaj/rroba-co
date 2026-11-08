@@ -8,11 +8,11 @@ import { getCurrentUserId } from "@/hooks/useCurrentUser";
 
 const CREAM = "var(--brand-cream)";
 const INK = "#111111";
-const MUTED = "#8a8a8a";
-const DIVIDER = "#e2d9c4";
-const CORAL = "#a61e35";
-const CHIP_BG = "#f7f7f7";
-const CHIP_BORDER = "#d9cbb0";
+const MUTED = "var(--brand-ink-secondary)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
+const CHIP_BG = "var(--brand-rose-soft)";
+const CHIP_BORDER = "var(--brand-border)";
 
 const PAGE_SIZE = 30;
 
@@ -134,7 +134,7 @@ function UsersBrowsePage() {
                 width: 36,
                 height: 36,
                 backgroundColor: "rgba(255,255,255,0.7)",
-                border: "1px solid rgba(226,226,222,0.8)",
+                border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
               }}
@@ -200,8 +200,8 @@ function UsersBrowsePage() {
                             fontSize: 13,
                             fontWeight: 600,
                             border: isFollowing ? "none" : "none",
-                            backgroundColor: isFollowing ? "#f7f7f7" : CORAL,
-                            color: isFollowing ? "#8f1830" : "#ffffff",
+                            backgroundColor: isFollowing ? "var(--brand-rose-soft)" : CORAL,
+                            color: isFollowing ? "var(--brand-rose)" : "#ffffff",
                             whiteSpace: "nowrap",
                           }}
                         >

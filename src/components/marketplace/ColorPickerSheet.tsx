@@ -80,7 +80,7 @@ export function ColorPickerSheet({
       <div
         className="shrink-0"
         style={{
-          background: "#1d1b18",
+          background: "var(--brand-ink)",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
           paddingBottom: 12,
           paddingLeft: 16,
@@ -127,7 +127,7 @@ export function ColorPickerSheet({
                   <div
                     className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full transition"
                     style={{
-                      background: "#e5ddd3",
+                      background: "var(--brand-rose-soft)",
                       boxShadow: active ? `0 0 0 2px ${opt.selectedBorder} inset` : undefined,
                     }}
                   >
@@ -139,7 +139,7 @@ export function ColorPickerSheet({
                       }}
                     />
                   </div>
-                  <span className="text-center text-[11px] font-medium" style={{ color: "#1d1b18" }}>
+                  <span className="text-center text-[11px] font-medium" style={{ color: "var(--brand-ink)" }}>
                     {opt.name}
                   </span>
                 </button>
@@ -160,7 +160,7 @@ export function ColorPickerSheet({
             onClick={confirm}
             disabled={selected.length === 0}
             className="w-full rounded-[14px] py-4 text-sm font-semibold text-white transition disabled:opacity-100"
-            style={{ background: selected.length ? "linear-gradient(120deg, #922530, #8a1f2d)" : "#cfc6b8" }}
+            style={{ background: selected.length ? "var(--brand-rose)" : "var(--brand-border-strong)" }}
           >
             Konfirmo
           </button>

@@ -94,7 +94,7 @@ function ConfirmEmailPage() {
             <div key={i} className="flex items-center gap-3">
               <div
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold"
-                style={{ background: INK, color: "#fff" }}
+                style={{ background: "var(--brand-rose)", color: "#fff" }}
               >
                 {i + 1}
               </div>
@@ -270,14 +270,14 @@ function CodeForm({ email }: { email: string }) {
         onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
         placeholder="000000"
         className="h-[52px] w-full rounded-[14px] border text-center text-[22px] font-semibold tracking-[8px] outline-none"
-        style={{ borderColor: "var(--brand-border, #e5e5e5)", color: INK, background: "var(--brand-surface)" }}
+        style={{ borderColor: "var(--brand-border)", color: INK, background: "var(--brand-surface)" }}
       />
       <button
         type="button"
         disabled={busy || code.length !== 6}
         onClick={verify}
         className="mt-3 h-[52px] w-full rounded-[14px] text-[15px] font-semibold transition active:scale-[0.98] disabled:opacity-60"
-        style={{ background: INK, color: "#fff" }}
+        style={{ background: "var(--brand-rose)", color: "#fff" }}
       >
         {busy ? "Duke verifikuar..." : "Verifiko kodin"}
       </button>

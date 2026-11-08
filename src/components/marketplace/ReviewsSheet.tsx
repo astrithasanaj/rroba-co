@@ -9,9 +9,9 @@ import { useTranslation } from "@/i18n";
 const CREAM = "var(--brand-cream)";
 const CARD = "#ffffff";
 const INK = "#111111";
-const MUTED = "#8a8a8a";
-const DIVIDER = "#e5e5e5";
-const CORAL = "#a61e35";
+const MUTED = "var(--brand-ink-secondary)";
+const DIVIDER = "var(--brand-border)";
+const CORAL = "var(--brand-rose)";
 
 type Row = {
   id: string;
@@ -73,7 +73,7 @@ function Initials({ name }: { name: string }) {
         width: 44,
         height: 44,
         borderRadius: "50%",
-        background: "#e5e5e5",
+        background: "var(--brand-border)",
         color: INK,
         display: "grid",
         placeItems: "center",
@@ -247,7 +247,7 @@ export function ReviewsSheet({
                   width: 36,
                   height: 36,
                   backgroundColor: "rgba(255,255,255,0.7)",
-                  border: "1px solid rgba(226,226,222,0.8)",
+                  border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
                 }}
@@ -504,7 +504,7 @@ export function ReviewsSheet({
                   width: 36,
                   height: 36,
                   backgroundColor: "rgba(255,255,255,0.7)",
-                  border: "1px solid rgba(226,226,222,0.8)",
+                  border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
                   backdropFilter: "blur(8px)",
                 }}
               >

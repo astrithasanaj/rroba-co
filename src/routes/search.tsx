@@ -77,7 +77,7 @@ const MUTED = "var(--brand-ink-secondary)";
 const DIVIDER = "var(--brand-border)";
 const CORAL = "var(--brand-rose)";
 const GLASS_BG = "rgba(255,255,255,0.7)";
-const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const GLASS_BORDER = "color-mix(in srgb, var(--brand-border) 80%, transparent)";
 const FOCUS_RING =
   "outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--brand-rose)] focus-visible:ring-offset-[color:var(--brand-surface)]";
 
@@ -1264,7 +1264,7 @@ function ProfileListRow({
           className="shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-opacity active:opacity-80"
           style={{
             backgroundColor: isFollowing ? "var(--brand-rose-soft)" : CORAL,
-            color: isFollowing ? "var(--brand-rose-ink)" : "var(--brand-surface)",
+            color: isFollowing ? "var(--brand-rose)" : "var(--brand-surface)",
             border: "none",
             fontWeight: 600,
           }}
@@ -1381,7 +1381,7 @@ function FiltersSheet({
               width: 44,
               height: 44,
               backgroundColor: "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(226,226,222,0.8)",
+              border: "1px solid color-mix(in srgb, var(--brand-border) 80%, transparent)",
               backdropFilter: "blur(8px)",
             }}
           >

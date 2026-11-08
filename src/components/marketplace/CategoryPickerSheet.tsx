@@ -27,14 +27,14 @@ import { tCategory } from "@/i18n/tCategory";
 
 const BG = "#ffffff";
 const INK = "#111111";
-const MUTED = "#8a8a8a";
-const DIVIDER = "#e5e5e5";
+const MUTED = "var(--brand-ink-secondary)";
+const DIVIDER = "var(--brand-border)";
 const HEADER_BG = "#111111";
 const HEADER_TEXT = "#ffffff";
-const ACCENT = "#a61e35";
-const ROW_ACTIVE_BG = "#f7f7f7";
+const ACCENT = "var(--brand-rose)";
+const ROW_ACTIVE_BG = "var(--brand-rose-soft)";
 const CHECK_BORDER = "#d4d4d4";
-const ACCENT_GRADIENT = "linear-gradient(120deg, #8f1830, #a61e35)";
+const ACCENT_GRADIENT = "linear-gradient(120deg, var(--brand-rose), var(--brand-rose))";
 
 const NODE_ICONS: Record<string, typeof Shirt> = {
   mode: Shirt,

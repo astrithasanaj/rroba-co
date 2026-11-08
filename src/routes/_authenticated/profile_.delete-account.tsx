@@ -18,7 +18,7 @@ const INK = "var(--brand-ink)";
 const MUTED = "var(--brand-ink-secondary)";
 const DANGER = "var(--brand-danger)";
 const GLASS_BG = "rgba(255,255,255,0.7)";
-const GLASS_BORDER = "rgba(226,226,222,0.8)";
+const GLASS_BORDER = "color-mix(in srgb, var(--brand-border) 80%, transparent)";
 
 function DeleteAccountPage() {
   const router = useRouter();

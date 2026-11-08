@@ -53,12 +53,7 @@ export function LikeButton({
         style={{
           width: size,
           height: size,
-          color:
-            variant === "overlay"
-              ? "#ffffff"
-              : liked
-                ? "var(--brand-rose)"
-                : "var(--brand-ink)",
+          color: liked ? "var(--brand-rose)" : "var(--brand-ink)",
           filter: variant === "overlay" ? "drop-shadow(0 1px 2px rgba(0,0,0,0.35))" : undefined,
         }}
         strokeWidth={1.8}
@@ -108,7 +103,7 @@ export function SaveButton({
       className={`inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full backdrop-blur transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-100 ${className}`}
       style={{
         backgroundColor: "color-mix(in srgb, var(--brand-surface) 85%, transparent)",
-        color: "var(--brand-ink)",
+        color: saved ? "var(--brand-rose)" : "var(--brand-ink)",
       }}
     >
       <svg
