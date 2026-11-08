@@ -446,7 +446,7 @@ function UserProfile() {
           >
             <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
           </button>
-          <h1 style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
+          <h1 className="type-profile-handle" style={{ fontSize: 14, fontWeight: 500, letterSpacing: "0.1px", color: INK }}>
             {username}
           </h1>
           <button

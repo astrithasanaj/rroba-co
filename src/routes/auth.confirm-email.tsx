@@ -45,7 +45,7 @@ function ConfirmEmailPage() {
         style={{ paddingBottom: "calc(3rem + env(safe-area-inset-bottom))" }}
       >
         <div
-          className="italic"
+          className="type-brand italic"
           style={{
             fontFamily: '"Instrument Serif", serif',
             fontSize: 44,

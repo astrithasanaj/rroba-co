@@ -36,7 +36,7 @@ function AuthLanding() {
       >
         <div className="text-center">
           <div
-            className="italic"
+            className="type-brand italic"
             style={{
               fontFamily: '"Instrument Serif", serif',
               fontSize: 52,

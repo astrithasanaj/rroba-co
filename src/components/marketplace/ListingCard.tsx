@@ -181,19 +181,19 @@ export function ListingCard({
         <div className="mt-2.5 px-0.5">
           <div className="flex items-baseline justify-between gap-2">
             <p
-              className="line-clamp-1 text-[17px] leading-tight"
-              style={{ fontFamily: "var(--font-display)", color: "var(--home-ink)" }}
+              className="type-product line-clamp-1"
+              style={{ color: "var(--home-ink)" }}
             >
               {listing.title}
             </p>
             <p
-              className="shrink-0 whitespace-nowrap text-[17px] leading-tight"
-              style={{ fontFamily: "var(--font-display)", color: "var(--home-ink)" }}
+              className="type-product shrink-0 whitespace-nowrap"
+              style={{ color: "var(--home-ink)" }}
             >
               €{listing.price}
             </p>
           </div>
-          <p className="mt-1 line-clamp-1 text-xs" style={{ color: "var(--home-taupe)" }}>
+          <p className="type-metadata mt-1 line-clamp-1" style={{ color: "var(--home-taupe)" }}>
             {[listing.brand || listing.category, listing.size, listing.city]
               .filter(Boolean)
               .join("  ·  ")}
@@ -203,22 +203,22 @@ export function ListingCard({
       <div className="mt-2 px-0.5">
         <div className="flex items-start justify-between gap-2">
           <p
-            className="line-clamp-1 text-sm font-medium"
+            className="type-product line-clamp-1"
             style={isSold && isOnProfileGrid ? { color: "#8a8a8a" } : undefined}
           >
             {listing.title}
           </p>
           <p
-            className="shrink-0 text-sm font-semibold"
+            className="type-product shrink-0"
             style={isSold && isOnProfileGrid ? { color: "#8a8a8a" } : undefined}
           >
             €{listing.price}
           </p>
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="type-metadata mt-0.5 text-muted-foreground">
           {listing.brand || listing.category} · {listing.size}
         </p>
-        {listing.city && <p className="text-xs text-muted-foreground">{listing.city}</p>}
+        {listing.city && <p className="type-metadata text-muted-foreground">{listing.city}</p>}
       </div>
       )}
     </Link>

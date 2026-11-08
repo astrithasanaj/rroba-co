@@ -37,10 +37,22 @@
   --color-ring-offset-background: var(--background);
   --font-display: "Instrument Serif", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.4;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.45;
 }
 
 :root {
   --radius: 1rem;
+  --type-display-size: 40px;
+  --type-page-size: 28px;
+  --type-section-size: 24px;
+  --type-product-size: 16px;
+  --type-ui-size: 16px;
+  --type-button-size: 15px;
+  --type-meta-size: 13px;
+  --type-nav-size: 11px;
 
   /* Rroba merkevare-palett — kildepunkt for hardkodede farger i appen.
      Disse matcher de faktiske hex-verdiene som brukes gjennom frontend,
@@ -129,6 +141,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    font-size: var(--type-ui-size);
+    line-height: 1.45;
     -webkit-font-smoothing: antialiased;
     overflow: hidden !important;
     position: fixed !important;
@@ -136,9 +150,15 @@
     height: 100% !important;
   }
 
-  h1, h2, h3, .font-display {
+  h1, h2, h3 {
+    font-family: var(--font-sans);
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
 }
 
@@ -271,22 +291,107 @@ input::placeholder, textarea::placeholder {
 
 .settings-text { flex: 1; min-width: 0; }
 .settings-title {
-  font-size: 14px;
+  font-size: var(--type-ui-size);
   font-weight: 600;
   color: var(--brand-ink);
-  line-height: 1.3;
+  line-height: 1.4;
 }
 .settings-subtitle {
-  font-size: 12px;
+  font-size: var(--type-meta-size);
   color: var(--brand-ink-secondary);
   margin-top: 2px;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 .settings-chevron {
   font-size: 14px;
   color: var(--brand-border-strong);
   flex-shrink: 0;
 }
+
+/* Shared text roles override legacy per-screen typography, never colors or geometry. */
+h1:not(.type-brand):not(.type-product):not(.type-profile-handle),
+.type-page-title {
+  font-family: var(--font-sans) !important;
+  font-size: var(--type-page-size) !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+}
+
+h2:not(.type-page-title), h3:not(.type-editorial) {
+  font-family: var(--font-sans);
+  font-size: var(--type-section-size);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.type-brand {
+  font-family: var(--font-display) !important;
+  font-size: var(--type-display-size) !important;
+  font-weight: 400 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+}
+
+.type-editorial {
+  font-family: var(--font-display) !important;
+  font-size: var(--type-section-size) !important;
+  font-weight: 400 !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0 !important;
+}
+
+.type-product, .type-profile-handle {
+  font-family: var(--font-sans) !important;
+  font-size: var(--type-product-size) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+}
+
+.type-metadata {
+  font-family: var(--font-sans) !important;
+  font-size: var(--type-meta-size) !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+}
+
+button, label, input, textarea, select, .settings-row {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+}
+
+button { font-size: var(--type-button-size); font-weight: 600; line-height: 1.4; }
+input, textarea, select { font-size: var(--type-ui-size) !important; line-height: 1.45; }
+.bottom-nav span { font-family: var(--font-sans); }
+
+/* Compact legacy labels retain their placement, with a readable minimum. */
+:is(p, span, div, label, dt, dd, a, button):is(
+  [class*="text-[9px]"], [class*="text-[10px]"], [class*="text-[11px]"],
+  [class*="text-[12px]"], [class*="text-[12.5px]"],
+  [style*="font-size: 9px"], [style*="font-size: 10px"],
+  [style*="font-size: 11px"], [style*="font-size: 11.5px"],
+  [style*="font-size: 12px"]
+):not(.ti):not(.type-brand):not(.type-nav-label) {
+  font-size: var(--type-meta-size) !important;
+  line-height: 1.4 !important;
+}
+
+button:not(.settings-row):not([role="checkbox"]) { font-weight: 600; }
+button[class*="font-bold"] { font-weight: 600 !important; }
+button:is([class*="text-xs"], [class*="text-sm"], [class*="text-[14px]"], [class*="text-[18px]"]) {
+  font-size: var(--type-button-size) !important;
+}
+
+button > span:is([class*="text-[12px]"], [class*="text-[13px]"]),
+button:is([class*="text-[12px]"], [class*="text-[13px]"]) {
+  font-size: var(--type-button-size) !important;
+}
+
+.settings-subtitle { font-weight: 400; }
 
 
 

@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep shared typography roles in `src/styles.css`; mark branding, editorial headings, product titles and profile handles explicitly so global UI defaults remain readable without changing behavior.

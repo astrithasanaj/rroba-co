@@ -118,7 +118,7 @@ function AuthCallbackPage() {
     >
       <div className="flex min-h-screen w-full flex-col items-center justify-center px-6 text-center">
         <div
-          className="italic"
+          className="type-brand italic"
           style={{
             fontFamily: '"Instrument Serif", serif',
             fontSize: 44,

@@ -242,7 +242,7 @@ function StepSplash({ onDone }: { onDone: () => void }) {
         style={{
           fontFamily: '"Instrument Serif", serif',
           color: CREAM,
-          fontSize: 64,
+          fontSize: 40,
           lineHeight: 1,
         }}
       >

@@ -235,7 +235,7 @@ function ProductDetail() {
           <ChevronLeft size={22} color="var(--brand-ink)" strokeWidth={2} aria-hidden="true" />
         </button>
         <div className="min-w-0 flex-1 px-2 text-center">
-          <h1 className="truncate font-display text-base font-semibold" style={META_TEXT_INK}>
+          <h1 className="type-product truncate" style={META_TEXT_INK}>
             {listing.title}
           </h1>
           <p className="text-sm font-semibold" style={{ color: "var(--brand-rose)" }}>

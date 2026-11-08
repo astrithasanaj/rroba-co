@@ -470,6 +470,7 @@ function ProfilePage() {
             </button>
           </div>
           <h1
+            className="type-profile-handle"
             style={{ fontSize: 17, fontWeight: 700, lineHeight: 1, color: "var(--home-ink)", margin: 0, minHeight: "1em", letterSpacing: "-0.01em" }}
             aria-label={username || "Rroba"}
           >
@@ -1532,7 +1533,7 @@ function SettingsSheet({
             <ChevronLeft aria-hidden="true" size={22} color="var(--brand-ink)" strokeWidth={2} />
           </button>
           <SheetTitle
-            className={view === "support" ? "italic !text-[28px] !font-normal !tracking-normal" : "italic"}
+            className="type-page-title"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 17,

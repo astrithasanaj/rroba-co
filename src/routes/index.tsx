@@ -384,7 +384,7 @@ function HomePage() {
           <div className="flex items-center justify-between px-5 pb-4 pt-5">
             <div>
               <h1
-                className="italic leading-none"
+                className="type-brand italic leading-none"
                 style={{
                   color: INK,
                   fontFamily: 'Georgia, "Times New Roman", serif',
@@ -565,7 +565,7 @@ function ForYou({
                     color: INK,
                     fontSize: 14,
                     width: 82,
-                    fontFamily: "var(--font-display)",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   {tCategory(label, t)}
@@ -594,14 +594,14 @@ function ForYou({
           />
           <div className="relative flex h-full flex-col justify-center pl-5 pr-[45%]">
             <h3
-              className="leading-[1.05]"
+              className="type-editorial leading-[1.15]"
               style={{ color: INK, fontSize: 26, fontFamily: "var(--font-display)" }}
             >
               {t("home.banner_title")}
             </h3>
             <p
-              className="mt-2 uppercase whitespace-nowrap"
-              style={{ color: INK, fontSize: 8.5, letterSpacing: "0.28em", opacity: 0.75 }}
+              className="mt-2 uppercase"
+              style={{ color: INK, fontSize: 12, letterSpacing: 0, opacity: 0.75 }}
             >
               {t("home.banner_sub")}
             </p>
@@ -773,7 +773,7 @@ function SectionHeader({
   return (
     <div className="flex items-center justify-between">
       <h3
-        className="leading-none"
+        className="type-editorial"
         style={{ color: INK, fontSize: 28, fontFamily: "var(--font-display)" }}
       >
         {title}

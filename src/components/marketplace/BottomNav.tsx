@@ -74,7 +74,7 @@ export const BottomNav = () => {
               className={`ti ${isSell ? "ti-plus" : item.icon}`}
               style={{ fontSize: isSell ? 24 : 22, lineHeight: 1 }}
             />
-            <span style={{ fontSize: 10.5, lineHeight: 1, fontWeight: 500 }}>{item.label}</span>
+            <span className="type-nav-label" style={{ fontSize: "var(--type-nav-size)", lineHeight: 1.35, fontWeight: 500 }}>{item.label}</span>
           </Link>
         );
       })}
